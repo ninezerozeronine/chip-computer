@@ -1,0 +1,75 @@
+The game is for two players (A and B). Player A enters a number into the computer in secret. Player B has to guess that number and the computer will tell them iff the guess is too high, too low, or correct.
+
+The game was originally designed for 8 bit unsigned ints (0 - 255), but has been extended to be for 8 bit signed ints (-128 - 127)
+
+Most of the difficulty here compes from comparing the two numbers.
+
+Repeated subtraction (unsigned only)
+====================================
+We can subtract one from the target and guess alternately, we know that the first one to hit zero is the smaller of the two
+
+
+Bit comparison
+==============
+This works by that fact we can use a sequential chain of:
+
+if X + 1000 overflows then X has 1XXX
+if X + 1100 overflows then X has X1XX
+if X + 1110 overflows then X has XX1X
+if X + 1111 overflows then X has XXX1
+
+(Using an 8 bit number as an example)
+
+To see whether target or guess is largest. The first one not to have a bit set going from most to least significant bit is the smaller of the two.
+
+guess
+target
+
+# mult_by_2_n_times
+input
+count
+if count is not zero
+	input = input + input
+	count = count - 1
+else
+	blah
+
+if guess - target == 0
+	correct guess
+	goto complete
+
+ones = 0b11111111
+count = 7
+test_bit = 0
+
+# gtlt_test
+test_bit = mult_by_2_n_times(ones, count)
+if guess + test_bit overflows
+    guess has this test bit set
+    if target + test_bit overflows
+        both have this test bit set
+        count = count - 1
+        goto gt_lt_test
+    else
+    	guess has the test bit set, target does not
+        guess > target
+        goto too_big
+else:
+    guess does not have the test it set
+    if target + test_bit overflows
+    	guess does not have this test bit set, target does
+    	guess < target
+    	goto too_small
+    else:
+        neither have this test bit set
+        count = count - 1
+        goto gt_lt_test
+
+
+Quasi shifting and signed numbers
+=================================
+When using signed ints we can invert the most significant bit (by adding (1000000) which wil "re arrange" values so that the numbers can be interpreted as unsigned ints for the purposes of size comparison (Credit to Voja Milosevoc for this insight!)
+
+The previous method of generating a bit mask by repeated addition of 11111111 can be replaced instead by just taking the tarhet or the guess and adding it to itself. As you repeat this process (feeding the result back into the input) you can determine if the most significant bit was set by checking the overflow.
+
+
