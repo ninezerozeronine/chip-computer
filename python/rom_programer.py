@@ -7,7 +7,7 @@ from pprint import pprint
 
 DataTemplate = namedtuple("DataTemplate", ["address_range", "data"])
 """
-Some data and a range of addresses to apply to
+Some data and a range of addresses to store that data in
 
 Attributes:
     address_range (str): The range of addresses to store the data in.
@@ -89,6 +89,60 @@ def num_bytes_for_value(value):
     return whole_bytes + partial_bytes
 
 
+def get_data_byte_at_index(data, byte_index):
+    """
+    Get the data at a given byte position.
+
+    Given a data value that may require more than 8 bits to represent in
+    unsigned binary, return the value of the data in the byte at the 
+    given index. If the data doesn't extend into the byte index
+    requested, the space is filled with zeroes. The index starts at 0
+    and increases from right to left (or least to most signifcant bit).
+
+    Args:
+        data (int): The bit pattern of data (as an int) to get 8 bits
+            (a byte) from
+        byte_index (int): The index of the byte you want to retrieve.
+    Returns:
+        int: The bit pattern (as an 8 bit unsigned int) of the byte of
+        data at the given byte index.
+
+    """
+
+    # Shift by desired amount and extract least significant byte
+    shifted = data >> (byte_index * 8)
+    res = shifted & 0b11111111
+
+    return res
+
+
+def get_value_from_bit_range(value, start, end):
+    """
+    Extract a value from a range of bits in another value
+
+    Lets say the value is 001001010011 and we start at 2 and end at 5.
+    the bit mask we want is 111100. One we and the value and the mask we
+    get 010000. Next we shift that value over so its as if the least 
+    significant bit was where start was. 010000 >> 2 = 0100 = 4
+
+    Args:
+        value (int): The value to extract information from
+        start (int): The index of the bit that begins the extraction
+            range. The index starts at 0 from the rightmost (least
+            significant) bit
+        end (int): The index of the bit that ends the extraction range.
+            The index starts at 0 from the rightmost (least significant)
+            bit.
+    Returns:
+        (int): The extracted value
+    """
+
+    bit_mask = "1" * ((end - start) + 1) + "0" * start
+    extraction = value & bin(bit_mask)
+    shifted_extraction = extraction >> start
+    return shifted_extraction
+
+
 def expand_address_range(address_range):
     """
     Expand an address if bits are marked as optional
@@ -121,33 +175,6 @@ def string_addresses_to_ints(addresses):
     """
 
     return [binary_string_to_value(address) for address in addresses]
-
-
-def get_data_byte_at_index(data, byte_index):
-    """
-    Get the data at a given byte position.
-
-    Given a data value that may require more than 8 bits to represent in
-    unsigned binary, return the value of the data in the byte at the 
-    given index. If the data doesn't extend into the byte index
-    requested, the space is filled with zeroes. The index starts at 0
-    and increases from right to left (or least to most signifcant bit)
-
-    Args:
-        data (int): The bit pattern of data (as an int) to get 8 bits
-            (a byte) from
-        byte_index (int): The index of the byte you want to retrieve.
-    Returns:
-        int: The bit pattern (as an 8 bit unsigned int) of the byte of
-        data at the given byte index.
-
-    """
-
-    # Shift by desired amount and extract least significant byte
-    shifted = data >> (byte_index * 8)
-    res = shifted & 0b11111111
-
-    return res
 
 
 def data_template_to_dict(template):
@@ -203,7 +230,7 @@ def data_templates_to_dict(templates):
 
 def num_bytes_needed_for_data(rom_dict):
     """
-    Get the number of bytes needed to store the largest piece of data.
+    Get the number of bytes to store the largest data in the rom.
 
     Args:
         rom_dict (dict(int:int)): Dictionary of address and data values
@@ -219,9 +246,11 @@ def ROM_to_parallel_byte_lists(rom):
     """
     Convert a rom dictionary to parallel byte lists
 
-    Converts a rom to parallel lists of bytes. Address of the data in
-    the rom is converted to the index of that piece of data in the list.
+    Converts a rom to parallel lists of bytes. The address of the data 
+    in the rom is converted to the index of that piece of data in the
+    list.
     The data is split into 8 bit wide chunks - hence the parallel lists.
+    The returned lists are in order from least signficant byte to most.
     If nothing is specified for the rom at a given address, 0 is used
     as the data value.
 
@@ -245,18 +274,19 @@ def ROM_to_parallel_byte_lists(rom):
     return byte_lists
 
 
-def byte_list_to_string(byte_list, bytes_per_line=8):
+def byte_list_to_hex_string_list(byte_list):
+    """
+    
     """
 
-    """
+    hex_list = []
+    for byte_value in byte_list:
+        if byte_value > 255:
+            raise RuntimeError("Invalid byte value: {0}".format(byte_val))
+        else:
+            hex_list.append "{0:02X}".format(byte_value)
 
-    rom_string = ""
-    for index_start in xrange(0, len(byte_list), bytes_per_line):
-        byte_vals = byte_list[index_start : index_start + bytes_per_line]
-        rom_string += " ".join(
-            ["{0:02X}".format(value) for value in byte_vals]) + "\n"
-
-    return rom_string
+    return hex_list
 
 
 def rom_to_logisim(rom, bytes_per_line=8):
@@ -266,7 +296,12 @@ def rom_to_logisim(rom, bytes_per_line=8):
 
     byte_lists = ROM_to_parallel_byte_lists(rom)
     for byte_list in byte_lists:
-        print byte_list_to_string(byte_list) + "\n\n"
+        rom_string = ""
+        hex_bytes = byte_list_to_hex_string_list(byte_list)
+        for index_start in xrange(0, len(byte_list), bytes_per_line):
+            byte_vals = byte_list[index_start : index_start + bytes_per_line]
+            rom_string += " ".join(byte_vals)
+        print rom_string + "\n\n"
 
 
 def gen_control_signal_dict():
@@ -371,9 +406,9 @@ def gen_input_signal_addr_component_dict():
     component_dict = {}
     for index, name in enumerate(input_signals):
         component_dict[name] = AddressComponent(
-            start = index,
-            end = index,
-            value = 1
+            start = 0,
+            end = 1,
+            value = 1 << index
             )
 
     return component_dict
@@ -481,7 +516,7 @@ def decompose_address(address):
     }
 
 
-def extract_component(address, component_dict):
+def extract_unique_component(address, component_dict):
     """
 
     """
@@ -493,6 +528,28 @@ def extract_component(address, component_dict):
             break
 
     return component_name
+
+
+def extract_combination_component(address, component_dict):
+    """
+
+    """
+
+    component_names = []
+    for name, component in component_dict:
+        extraction = get_value_from_bit_range(
+            address,
+            component.start,
+            component.end)
+        if extraction == component.value:
+            component_names.append(name)
+
+    ret = "----"
+    if component_names:
+        ret = " | ".join(component_names)
+
+    return ret
+
 
 
 def decompose_data(value):
