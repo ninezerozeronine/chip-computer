@@ -2,49 +2,144 @@
 Helps programming EEPROMS for my 74 series computer project
 """
 
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 from pprint import pprint
 
-DataTemplate = namedtuple("DataTemplate", ["address_template", "data"])
-AddressComponent = namedtuple("AddressComponent", ["start", "end", "value"])
+DataTemplate = namedtuple("DataTemplate", ["address_range", "data"])
+"""
+Some data and a range of addresses to apply to
 
-def expand_address(address):
+Attributes:
+    address_range (str): The range of addresses to store the data in.
+        0 and 1 are absolute values, X is either a 0 or 1 and the
+        expectation is that the data will expand out to the parts of the
+        address marked with an X. and example could be "0010XX001".
+    data (int): The data to be stored at the given addreses.
+"""
+
+AddressComponent = namedtuple("AddressComponent", ["start", "end", "value"])
+"""
+Represents a part of an address
+
+Attributes:
+    start (int): The index of the address bit that this component starts
+        at. The first index is 0 and is the at the rightmost (least
+        significant) bit.
+    end (int): The index of the address bit that this component ends at.
+        The first index is 0 and is the at the rightmost (least
+        significant) bit.
+    value (int): The unsigned integer value of the address in that bit range
+"""
+
+def value_to_binary_string(value, width=-1):
+    """
+
+    """
+    binary_string = None
+
+    if width < 0:
+        binary_string = bin(value)[2:]
+    elif width == 0:
+        binary_string = ""
+    else:
+        binary_string = "{0:0{width}b}".format(value, width=width)
+
+    return binary_string
+
+
+def binary_string_to_value(binary_string):
+    """
+    Convert a binary string representing an unsigned int to a value
+
+    Args:
+        binary_string (str): The string to convert. e.g. "001010010"
+    Returns:
+        (int): the value of the binary string
+    """
+
+    return int(binary_string, 2)
+
+
+def bit_width(value):
+    """
+    Determine how many bits are needed to store this vaule
+
+    Args:
+        value (int): The value to see how many bits we need to store it
+    Returns:
+        (int): The number of bits needed to store this value
+    """
+
+    return len(bin(value)) - 2
+
+
+def num_bytes_for_value(value):
+    """
+    Calculate how many bytes "wide" this value is
+
+    Args:
+        value (int): The value to be stored as an unsinged int
+    Returns:
+        (int): The number of bytes "wide" this value is
+    """
+
+    num_bits = bit_width(value)
+    whole_bytes = num_bits / 8
+    partial_bytes = 1 if (num_bits % 8 != 0) else 0
+    return whole_bytes + partial_bytes
+
+
+def expand_address_range(address_range):
     """
     Expand an address if bits are marked as optional
 
     Args:
-        address (str): The address to expand
+        address_range (str): The address to expand
 
     Returns:
         list(str): A list of addresses this address has been expanded to
     """
 
     if "X" in address:
-        res = expand_address(address.replace("X", "0", 1))
-        res.extend(expand_address(address.replace("X", "1", 1)))
+        res = expand_address_range(address.replace("X", "0", 1))
+        res.extend(expand_address_range(address.replace("X", "1", 1)))
     else:
         res = [address]
 
     return res
 
 
-def get_data_byte_at(data, byte_index):
+def string_addresses_to_ints(addresses):
     """
-    Get the data bits at a given byte position.
+    Convert string addresses to int addresses
 
-    Given some data bits, return the value of the data in the byte at
-    the given index. If the data doesn't extend into the byte index
-    requested, the space is filled with zeroes.
+    Args:
+        addresses (list(str)): List of string addresses in binary. e.g:
+            ["00100100", "001010"]
+    Returns:
+        list(int): Converted addresses
+    """
+
+    return [binary_string_to_value(address) for address in addresses]
+
+
+def get_data_byte_at_index(data, byte_index):
+    """
+    Get the data at a given byte position.
+
+    Given a data value that may require more than 8 bits to represent in
+    unsigned binary, return the value of the data in the byte at the 
+    given index. If the data doesn't extend into the byte index
+    requested, the space is filled with zeroes. The index starts at 0
+    and increases from right to left (or least to most signifcant bit)
 
     Args:
         data (int): The bit pattern of data (as an int) to get 8 bits
             (a byte) from
         byte_index (int): The index of the byte you want to retrieve.
-            The index starts at 0 being the least significant
-            (rightmost) side 
     Returns:
-        int: the bit pattern (as an int) of the byte of data at the
-        given byte index
+        int: The bit pattern (as an 8 bit unsigned int) of the byte of
+        data at the given byte index.
 
     """
 
@@ -55,7 +150,7 @@ def get_data_byte_at(data, byte_index):
     return res
 
 
-def template_to_dict(template):
+def data_template_to_dict(template):
     """
     Convert a DataTemplate to address-data pairs
 
@@ -68,14 +163,15 @@ def template_to_dict(template):
 
     """
 
-    addresses = expand_address(template.address_template)
+    string_addresses = expand_address_range(template.address_range)
+    addresses = string_addresses_to_ints(string_addresses)
     ret = {}
     for address in addresses:
         ret[address] = template.data
     return ret
 
 
-def templates_to_dict(templates):
+def data_templates_to_dict(templates):
     """
     Convert a list of templates to a single dictionary
 
@@ -93,11 +189,11 @@ def templates_to_dict(templates):
 
     resolved = {}
     for template in templates:
-        template_dict = template_to_dict(template)
+        template_dict = data_template_to_dict(template)
         for address, data in template_dict.items():
             if address in resolved:
                 msg = "Address {0} ({1}) already has data".format(
-                    address, address)
+                    bin(address), address)
                 raise RuntimeError(msg)
             else:
                 resolved[address] = data
@@ -105,15 +201,18 @@ def templates_to_dict(templates):
     return resolved
 
 
-def num_bytes_needed(rom_dict):
+def num_bytes_needed_for_data(rom_dict):
     """
     Get the number of bytes needed to store the largest piece of data.
+
+    Args:
+        rom_dict (dict(int:int)): Dictionary of address and data values
+    Returns:
+        (int): Number of bytes needed for largest piece of data
     """
     largest_data = max(rom_dict.itervalues())
-    num_bits = len(bin(largest_data)) - 2
-    whole_bytes = num_bits / 8
-    partial_bytes = 1 if (num_bits % 8 != 0) else 0
-    return whole_bytes + partial_bytes
+    num_bytes = num_bytes_for_value(largest_data)
+    return num_bytes
 
 
 def ROM_to_parallel_byte_lists(rom):
@@ -121,21 +220,25 @@ def ROM_to_parallel_byte_lists(rom):
     Convert a rom dictionary to parallel byte lists
 
     Converts a rom to parallel lists of bytes. Address of the data in
-    the rom is converted to the index of the list. If nothing is
-    specified for the rom at a given address, 0 is used instead. 
+    the rom is converted to the index of that piece of data in the list.
+    The data is split into 8 bit wide chunks - hence the parallel lists.
+    If nothing is specified for the rom at a given address, 0 is used
+    as the data value.
+
+    Args:
+        rom (dict(int:int)): The rom dictionary of addresses and data
+    Returns:
+        (list(list(int))): Parallel lists of the data split into bytes
     """
 
-    num_bytes = num_bytes_needed(rom)
-    num_address_bits = len(rom.keys()[0])
+    num_data_bytes = num_bytes_needed_for_data(rom)
+    num_address_bits = bit_width(max(rom.keys()))
 
     byte_lists = []
-    for byte_index in range(num_bytes):
+    for byte_index in range(num_data_bytes):
         byte_list = []
         for address in range(2 ** num_address_bits):
-            binary_string = value_to_binary_string(address, 10)
-            # print binary_string
-            print binary_string in rom
-            data = get_data_byte_at(rom.get(binary_string, 0), byte_index)
+            data = get_data_byte_at_index(rom.get(address, 0), byte_index)
             byte_list.append(data)
         byte_lists.append(byte_list)
 
@@ -164,15 +267,6 @@ def rom_to_logisim(rom, bytes_per_line=8):
     byte_lists = ROM_to_parallel_byte_lists(rom)
     for byte_list in byte_lists:
         print byte_list_to_string(byte_list) + "\n\n"
-
-
-
-def ROM_to_arduino():
-    """
-    Convert a microcode dictionary to an arduino ready string
-    """
-
-    pass
 
 
 def gen_control_signal_dict():
@@ -240,8 +334,8 @@ def gen_opcode_addr_component_dict():
     component_dict = {}
     for index, name in enumerate(opcodes):
         component_dict[name] = AddressComponent(
-            start = 0,
-            end = 4,
+            start = 5,
+            end = 9,
             value = index
             )
 
@@ -256,8 +350,8 @@ def gen_microcode_step_addr_component_dict():
     component_dict = {}
     for index in range(8):
         component_dict[index] = AddressComponent(
-            start = 5,
-            end = 7,
+            start = 2,
+            end = 4,
             value = index
             )
 
@@ -272,59 +366,100 @@ def gen_input_signal_addr_component_dict():
     input_signals = [
         "WAIT_FOR_USER",
         "CARRY"
-        ]
+        ].reverse()
 
     component_dict = {}
     for index, name in enumerate(input_signals):
         component_dict[name] = AddressComponent(
-            start = 8,
-            end = 9,
-            value = 1 << index
+            start = index,
+            end = index,
+            value = 1
             )
 
     return component_dict
 
 
-def combine_address_components(length, *components):
+def combine_address_components(address_width, components):
     """
     Create address template from components
 
     Args:
-        length (int): How many bits should be in the address
-        *components (AddressComponent): The components that will make up
-            the address
+        address_width (int): How many bits wide the address should be
+        components (list(AddressComponent)): The components that will
+            make up the address
     Returns:
         (str): The address template
     """
 
+    if components_overlap(components):
+        raise RuntimeError("Overlapping address components passed")
+
+    address_width = address_width_from_components(components)
+
     template = ""
-    for index in range(length):
+    for index in range(address_width):
         bit = "X"
         for component in components:
-            if component.start <= index <= component.end:
-                if bit != "X":
-                    raise RuntimeError("Overlapping address components passed")
-                width = (component.end - component.start) + 1
-                binary_string = value_to_binary_string(component.value, width)
-                bit = binary_string[index - component.start]
-                
+            if component.end <= index <= component.start:
+                component_width = (component.end - component.start) + 1
+                binary_string = value_to_binary_string(component.value << component.start, address_width)
+                bit = binary_string[index]
         template += bit
 
     return template
 
 
-def value_to_binary_string(value, width):
+def components_overlap(components):
+    """
+    Check if components overlap
+
+    Args:
+        components (list(AddressComponent)): List of components to check
+            for overlaps
+    Returns:
+        (bool): Whether or not the components overlap
     """
 
+    address_width = address_width_from_components(components)
+
+    # This is a very brute force approach...
+    overlap = False
+    for index in range(address_width):
+        index_match = False
+        if overlap:
+            break
+        for component in components:
+            if component.end <= index <= component.start:
+                if index_match:
+                    overlap = True
+                    break
+                else:
+                    index_match = True
+
+    return overlap
+
+
+def address_width_from_components(components):
     """
-    
-    return "{0:0{width}b}".format(value, width=width)
+    Determine how wide an address needs to be based on components used
+
+    Args:
+        components (list(AddressComponent)): List of components to find
+            max width of
+    Returns:
+        (int): Maximum width
+    """
+
+    max_index = max([component.end for component in components])
+    width = max_index + 1
+    return width
 
 
 def decompose_address(address):
     """
 
     """
+    address = value_to_binary_string(address, 10)
     opcode_addrs = gen_opcode_addr_component_dict()
     mc_step_addrs = gen_microcode_step_addr_component_dict()
     input_sig_addrs = gen_input_signal_addr_component_dict()
@@ -394,7 +529,7 @@ def create_microcode_rom():
     data_templates.extend(HALT(address_width))
     data_templates.extend(NOOP(address_width))
 
-    rom_dict = templates_to_dict(data_templates)
+    rom_dict = data_templates_to_dict(data_templates)
 
     return rom_dict
 
@@ -740,7 +875,7 @@ def rom_info(rom):
 # print combine_address_components(5, first, second, bad)
 
 # pprint(fetch(11))
-LDA = templates_to_dict(LDA(10))
+LDA = data_templates_to_dict(LDA(10))
 pprint(LDA)
 rom_info(LDA)
 rom_to_logisim(LDA)
