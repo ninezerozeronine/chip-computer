@@ -49,7 +49,7 @@ def get_data_byte_at(data, byte_index):
     """
 
     # Shift by desired amount and extract least significant byte
-    shifted = data >> (index * 8)
+    shifted = data >> (byte_index * 8)
     res = shifted & 0b11111111
 
     return res
@@ -132,7 +132,9 @@ def ROM_to_parallel_byte_lists(rom):
     for byte_index in range(num_bytes):
         byte_list = []
         for address in range(2 ** num_address_bits):
-            binary_string = value_to_binary_string(address)
+            binary_string = value_to_binary_string(address, 10)
+            # print binary_string
+            print binary_string in rom
             data = get_data_byte_at(rom.get(binary_string, 0), byte_index)
             byte_list.append(data)
         byte_lists.append(byte_list)
@@ -140,15 +142,29 @@ def ROM_to_parallel_byte_lists(rom):
     return byte_lists
 
 
-def byte_list_to_logisim(byte_list, bytes_per_line=8):
+def byte_list_to_string(byte_list, bytes_per_line=8):
     """
 
     """
 
     rom_string = ""
-    for index_start in xrange(0, len(byte_list), bytes_per_line)
+    for index_start in xrange(0, len(byte_list), bytes_per_line):
         byte_vals = byte_list[index_start : index_start + bytes_per_line]
-        rom_string += " ".join([hex(value)[2:] for value in byte_vals])
+        rom_string += " ".join(
+            ["{0:02X}".format(value) for value in byte_vals]) + "\n"
+
+    return rom_string
+
+
+def rom_to_logisim(rom, bytes_per_line=8):
+    """
+
+    """
+
+    byte_lists = ROM_to_parallel_byte_lists(rom)
+    for byte_list in byte_lists:
+        print byte_list_to_string(byte_list) + "\n\n"
+
 
 
 def ROM_to_arduino():
@@ -727,6 +743,7 @@ def rom_info(rom):
 LDA = templates_to_dict(LDA(10))
 pprint(LDA)
 rom_info(LDA)
+rom_to_logisim(LDA)
 # rom = create_microcode_rom()
 
 
