@@ -68,10 +68,10 @@ def template_to_dict(template):
 
     """
 
-    addresses = expand_address(template["address_template"])
+    addresses = expand_address(template.address_template)
     ret = {}
     for address in addresses:
-        ret[address] = template["data"]
+        ret[address] = template.data
     return ret
 
 
@@ -93,12 +93,11 @@ def templates_to_dict(templates):
 
     resolved = {}
     for template in templates:
-        template_dict = template_to_dict(
-            template["address_template"], template["data"])
-        for address, data in template_dict.iteritems():
+        template_dict = template_to_dict(template)
+        for address, data in template_dict.items():
             if address in resolved:
                 msg = "Address {0} ({1}) already has data".format(
-                    address, bin(address))
+                    address, address)
                 raise RuntimeError(msg)
             else:
                 resolved[address] = data
@@ -106,36 +105,50 @@ def templates_to_dict(templates):
     return resolved
 
 
-def create_rom_dict(templates):
-    """
-    Create a ROM default dict of all the templates passed in
-
-    Args:
-        templates (list(`ROMTemplate`)): The templates to convert
-    Returns:
-        defaultdict: The address-data paris to write into the ROM
-    """
-
-    data = templates_to_dict(templates)
-    rom_dict = defaultdict(int)
-    rom_dict.update(data)
-
-    return rom_dict
-
-
 def num_bytes_needed(rom_dict):
     """
     Get the number of bytes needed to store the largest piece of data.
     """
     largest_data = max(rom_dict.itervalues())
+    num_bits = len(bin(largest_data)) - 2
+    whole_bytes = num_bits / 8
+    partial_bytes = 1 if (num_bits % 8 != 0) else 0
+    return whole_bytes + partial_bytes
 
 
-def ROM_to_logisim():
+def ROM_to_parallel_byte_lists(rom):
     """
-    Convert a microcode dictionary to a logisim ready string
+    Convert a rom dictionary to parallel byte lists
+
+    Converts a rom to parallel lists of bytes. Address of the data in
+    the rom is converted to the index of the list. If nothing is
+    specified for the rom at a given address, 0 is used instead. 
     """
 
-    pass
+    num_bytes = num_bytes_needed(rom)
+    num_address_bits = len(rom.keys()[0])
+
+    byte_lists = []
+    for byte_index in range(num_bytes):
+        byte_list = []
+        for address in range(2 ** num_address_bits):
+            binary_string = value_to_binary_string(address)
+            data = get_data_byte_at(rom.get(binary_string, 0), byte_index)
+            byte_list.append(data)
+        byte_lists.append(byte_list)
+
+    return byte_lists
+
+
+def byte_list_to_logisim(byte_list, bytes_per_line=8):
+    """
+
+    """
+
+    rom_string = ""
+    for index_start in xrange(0, len(byte_list), bytes_per_line)
+        byte_vals = byte_list[index_start : index_start + bytes_per_line]
+        rom_string += " ".join([hex(value)[2:] for value in byte_vals])
 
 
 def ROM_to_arduino():
@@ -156,6 +169,7 @@ def gen_control_signal_dict():
         "A_OUT",
         "B_IN",
         "B_OUT",
+        "OUT_IN",
         "ALU_OUT",
         "ALU_SUB",
         "RAM_ADDR_IN",
@@ -166,8 +180,8 @@ def gen_control_signal_dict():
         "PROGRAM_COUNTER_OUT",
         "PROGRAM_COUNTER_COUNT",
         "INSTRUCTION_REGISTER_IN",
-        "ZEROCHECK_IN",
-        "STEP_COUNTER_RESET"
+        "STEP_COUNTER_RESET",
+        "HALT"
         ]
 
     signal_dict = {}
@@ -186,7 +200,6 @@ def gen_opcode_addr_component_dict():
         "LDA",
         "STA",
         "JMPA",
-        "JIAZ",
         "OUTA",
         "AADD",
         "ASUB",
@@ -195,14 +208,12 @@ def gen_opcode_addr_component_dict():
         "LDB",
         "STB",
         "JMPB",
-        "JIBZ",
         "OUTB",
         "BADD",
         "BSUB",
         "BUI",
 
-        "JCA",
-        "JCS",
+        "JC",
         "JUF",
         "JMP",
         "BUW",
@@ -243,7 +254,6 @@ def gen_input_signal_addr_component_dict():
     """
 
     input_signals = [
-        "IS_ZERO",
         "WAIT_FOR_USER",
         "CARRY"
         ]
@@ -252,9 +262,11 @@ def gen_input_signal_addr_component_dict():
     for index, name in enumerate(input_signals):
         component_dict[name] = AddressComponent(
             start = 8,
-            end = 10,
+            end = 9,
             value = 1 << index
             )
+
+    return component_dict
 
 
 def combine_address_components(length, *components):
@@ -277,12 +289,77 @@ def combine_address_components(length, *components):
                 if bit != "X":
                     raise RuntimeError("Overlapping address components passed")
                 width = (component.end - component.start) + 1
-                binary_string = "{0:0{width}b}".format(component.value, width=width)
+                binary_string = value_to_binary_string(component.value, width)
                 bit = binary_string[index - component.start]
                 
         template += bit
 
     return template
+
+
+def value_to_binary_string(value, width):
+    """
+
+    """
+    
+    return "{0:0{width}b}".format(value, width=width)
+
+
+def decompose_address(address):
+    """
+
+    """
+    opcode_addrs = gen_opcode_addr_component_dict()
+    mc_step_addrs = gen_microcode_step_addr_component_dict()
+    input_sig_addrs = gen_input_signal_addr_component_dict()
+
+    opcode = extract_component(address, opcode_addrs)
+    if opcode is None:
+        opcode = "----"
+    step = extract_component(address, mc_step_addrs)
+    if step is None:
+        step = "----"
+    input_sig = extract_component(address, input_sig_addrs)
+    if input_sig is None:
+        input_sig = "----"
+
+    return {
+        "opcode":opcode,
+        "step":step,
+        "input_signal":input_sig
+    }
+
+
+def extract_component(address, component_dict):
+    """
+
+    """
+    component_name = None
+    for name, component in component_dict.items():
+        bits = address[component.start : component.end + 1]
+        if int(bits, 2) == component.value:
+            component_name = name
+            break
+
+    return component_name
+
+
+def decompose_data(value):
+    """
+
+    """
+
+    signals = []
+    control_signals = gen_control_signal_dict()
+    for name, active_bit in control_signals.items():
+        if value & active_bit:
+            signals.append(name)
+
+    ret = "----"
+    if signals:
+        ret = " | ".join(signals)
+
+    return ret
 
 
 def create_microcode_rom():
@@ -291,10 +368,19 @@ def create_microcode_rom():
     """
 
     data_templates = []
-    address_width = 11
+    address_width = 10
 
     data_templates.extend(fetch(address_width))
     data_templates.extend(LDA(address_width))
+    data_templates.extend(LDB(address_width))
+    data_templates.extend(AADD(address_width))
+    data_templates.extend(OUTA(address_width))    
+    data_templates.extend(HALT(address_width))
+    data_templates.extend(NOOP(address_width))
+
+    rom_dict = templates_to_dict(data_templates)
+
+    return rom_dict
 
 
 def fetch(address_width):
@@ -478,6 +564,46 @@ def AADD(address_width):
     return templates
 
 
+def OUTA(address_width):
+    """
+    The OUTA Operation
+    """
+
+    control_signal = gen_control_signal_dict()
+    opcode_addr = gen_opcode_addr_component_dict()
+    mc_step_addr = gen_microcode_step_addr_component_dict()
+    input_sig_addr = gen_input_signal_addr_component_dict()
+
+    templates = []
+
+    # Step 2 - A -> OUT
+    addresses = combine_address_components(
+        address_width,
+        mc_step_addr[2],
+        opcode_addr["OUTA"]
+        )
+    data = (
+        control_signal["A_OUT"] |
+        control_signal["OUT_IN"]
+        )
+
+    templates.append(DataTemplate(addresses, data))
+
+    # Step 3: Reset microcode step
+    addresses = combine_address_components(
+        address_width,
+        mc_step_addr[3],
+        opcode_addr["OUTA"]
+        )
+    data = (
+        control_signal["STEP_COUNTER_RESET"]
+        )
+
+    templates.append(DataTemplate(addresses, data))
+
+    return templates
+
+
 def HALT(address_width):
     """
 
@@ -501,6 +627,46 @@ def HALT(address_width):
 
     return [DataTemplate(addresses, data)]
 
+
+def NOOP(address_width):
+    """
+    The NOOP Operation
+    """
+
+    opcode_addr = gen_opcode_addr_component_dict()
+    mc_step_addr = gen_microcode_step_addr_component_dict()
+    control_signal = gen_control_signal_dict()
+
+
+    # Step 2: Reset microcode step
+    addresses = combine_address_components(
+        address_width,
+        mc_step_addr[2],
+        opcode_addr["NOOP"]
+        )
+    data = (
+        control_signal["STEP_COUNTER_RESET"]
+        )
+
+    return [DataTemplate(addresses, data)]
+
+
+def rom_info(rom):
+    """
+
+    """
+    for address in sorted(rom.keys()):
+        address_info = decompose_address(address)
+        print "{address} (opcode:{opcode:<10} step:{step:<10} signal:{input_signal:<15})".format(
+            address=address,
+            opcode=address_info["opcode"],
+            step=address_info["step"],
+            input_signal=address_info["input_signal"]
+            )
+        print "{data:<10} ({data_info})".format(
+            data=rom[address],
+            data_info=decompose_data(rom[address])
+            )
 
 
 # def OPCODE(address_width):
@@ -557,9 +723,17 @@ def HALT(address_width):
 # print combine_address_components(5, first, bad)
 # print combine_address_components(5, first, second, bad)
 
-pprint(fetch(11))
-pprint(LDA(11))
+# pprint(fetch(11))
+LDA = templates_to_dict(LDA(10))
+pprint(LDA)
+rom_info(LDA)
+# rom = create_microcode_rom()
 
+
+
+# aadd, step 3 and no signal
+# pprint(decompose_address("0010000000"))
+# pprint(decompose_data(4224))
 
 """
 An address but some bits need to be expanded to all thier combinations
