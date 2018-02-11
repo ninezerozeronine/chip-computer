@@ -134,30 +134,45 @@ def fetch():
     """
     control_signal = gen_control_signal_dict()
     mc_step_addr = gen_microcode_step_addr_component_dict()
+    opcode_addr = gen_opcode_addr_component_dict()
+
     templates = []
 
-    # Step 0: PC -> RAM Addr
-    addresses = rom_programmer.combine_address_components([
-        mc_step_addr[0]
-        ])
-    data = rom_programmer.combine_data_components([
-        control_signal["PROGRAM_COUNTER_OUT"],
-        control_signal["RAM_ADDR_IN"]
-        ])
+    opcodes = [
+        opcode_addr["LDA"],
+        opcode_addr["LDB"],
+        opcode_addr["AADD"],
+        opcode_addr["OUTA"],
+        opcode_addr["HALT"],
+        opcode_addr["NOOP"],
+        opcode_addr["JIC"]
+    ]
 
-    templates.append(rom_programmer.DataTemplate(addresses, data))
+    for opcode in opcodes:
+        # Step 0: PC -> RAM Addr
+        addresses = rom_programmer.combine_address_components([
+            opcode,
+            mc_step_addr[0]
+            ])
+        data = rom_programmer.combine_data_components([
+            control_signal["PROGRAM_COUNTER_OUT"],
+            control_signal["RAM_ADDR_IN"]
+            ])
 
-    # Step 1: RAM -> instruction register and program counter count
-    addresses = rom_programmer.combine_address_components([
-        mc_step_addr[1]
-        ])
-    data = rom_programmer.combine_data_components([
-        control_signal["PROGRAM_COUNTER_COUNT"],
-        control_signal["RAM_OUT"],
-        control_signal["INSTRUCTION_REGISTER_IN"]
-        ])
+        templates.append(rom_programmer.DataTemplate(addresses, data))
 
-    templates.append(rom_programmer.DataTemplate(addresses, data))
+        # Step 1: RAM -> instruction register and program counter count
+        addresses = rom_programmer.combine_address_components([
+            opcode,
+            mc_step_addr[1]
+            ])
+        data = rom_programmer.combine_data_components([
+            control_signal["PROGRAM_COUNTER_COUNT"],
+            control_signal["RAM_OUT"],
+            control_signal["INSTRUCTION_REGISTER_IN"]
+            ])
+
+        templates.append(rom_programmer.DataTemplate(addresses, data))
 
     return templates
 
@@ -407,7 +422,6 @@ def JIC():
         control_signal["PROGRAM_COUNTER_OUT"],
         control_signal["RAM_ADDR_IN"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
     # Step 3: RAM -> PC
@@ -420,7 +434,6 @@ def JIC():
         control_signal["RAM_OUT"],
         control_signal["PROGRAM_COUNTER_IN"],
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
     # Step 4: Reset microcode step counter
@@ -432,6 +445,7 @@ def JIC():
     data = rom_programmer.combine_data_components([
         control_signal["STEP_COUNTER_RESET"]
         ])
+    templates.append(rom_programmer.DataTemplate(addresses, data))
 
     ################
     # IF NOT CARRY #
@@ -445,6 +459,17 @@ def JIC():
         ])
     data = rom_programmer.combine_data_components([
         control_signal["PROGRAM_COUNTER_COUNT"],
+        ])
+    templates.append(rom_programmer.DataTemplate(addresses, data))
+
+    # Step 3: Reset microcode step counter
+    addresses = rom_programmer.combine_address_components([
+        mc_step_addr[3],
+        opcode_addr["JIC"],
+        input_signals["NOT_CARRY"]
+        ])
+    data = rom_programmer.combine_data_components([
+        control_signal["STEP_COUNTER_RESET"]
         ])
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
@@ -579,17 +604,22 @@ def print_microcode_rom(rom):
 # mc_steps = gen_microcode_step_addr_component_dict()
 # pprint(mc_steps)
 
-pprint(fetch())
-pprint(LDA())
-pprint(LDB())
-pprint(AADD())
-pprint(OUTA())    
-pprint(HALT())
-pprint(NOOP())
+# pprint(fetch())
+# pprint(LDA())
+# pprint(LDB())
+# pprint(AADD())
+# pprint(OUTA())    
+# pprint(HALT())
+# pprint(NOOP())
 
 rom = create_microcode_rom()
+print len(rom)
 pprint(rom)
-print_microcode_rom(rom)
+# print_microcode_rom(rom)
+
+rom_programmer.rom_to_logisim(rom, bytes_per_line=16)
+rom_programmer.rom_to_arduino(rom)
+
 
 # steps = gen_microcode_step_addr_component_dict()
 # pprint(steps)
