@@ -150,6 +150,7 @@ def get_value_from_bit_range(value, end, start):
 def width_from_bitdefs(bitdefs):
     """
     Determine how wide an binary value needs to be based on bitdefs used
+    to define it.
 
     Args:
         bitdefs (list(BitDef)): List of bitdefs to find max width of
@@ -173,11 +174,11 @@ def expand_address_range(address_range):
         list(str): A list of addresses this address has been expanded to
     """
 
-    if "X" in address:
-        res = expand_address_range(address.replace("X", "0", 1))
-        res.extend(expand_address_range(address.replace("X", "1", 1)))
+    if "X" in address_range:
+        res = expand_address_range(address_range.replace("X", "0", 1))
+        res.extend(expand_address_range(address_range.replace("X", "1", 1)))
     else:
-        res = [address]
+        res = [address_range]
 
     return res
 
@@ -225,7 +226,7 @@ def data_templates_to_dict(templates):
     address clashes with each expanded step of each template.
 
     Args:
-        templates list(`ROMTemplate`)): A list of ROM templates
+        templates list(`DataTemplate`)): A list of data templates
     Returns:
         dict(int:int): A dictionary of addresses and data values
     Raises:
@@ -325,7 +326,7 @@ def rom_to_logisim(rom, bytes_per_line=8):
 
 def combine_address_components(components):
     """
-    Create address template from components
+    Create address template from address components
 
     Args:
         components (list(BitDef)): The components that will make up the
@@ -334,7 +335,7 @@ def combine_address_components(components):
         (str): The address template
     """
 
-    if components_overlap(components):
+    if bitdefs_overlap(components):
         raise RuntimeError("Overlapping address components passed")
 
     address_width = width_from_bitdefs(components)
@@ -348,7 +349,8 @@ def combine_address_components(components):
                 component_width = (component.end - component.start) + 1
                 value_in_position = component.value << component.start
                 binary_string = value_to_binary_string(value_in_position, address_width)
-                bit = binary_string[index]
+                bit_index = address_width - (index + 1)
+                bit = binary_string[bit_index]
         template += bit
 
     return template
@@ -359,7 +361,7 @@ def combine_data_components(components):
 
     """
 
-    if components_overlap(components):
+    if bitdefs_overlap(components):
         raise RuntimeError("Overlapping data components passed")
 
     ret = 0
@@ -369,27 +371,27 @@ def combine_data_components(components):
     return ret
 
 
-def components_overlap(components):
+def bitdefs_overlap(bitdefs):
     """
-    Check if components overlap
+    Check if bitdefs overlap
 
     Args:
-        components (list(BitDef)): List of components to check
-            for overlaps
+        bitdefs (list(BitDef)): List of BitDefs to check for overlaps.
     Returns:
-        (bool): Whether or not the components overlap
+        (bool): Whether or not the BitDefs overlap
     """
 
-    address_width = width_from_bitdefs(components)
+    address_width = width_from_bitdefs(bitdefs)
+
+    overlap = False
 
     # This is a very brute force approach...
-    overlap = False
     for index in range(address_width):
         index_match = False
         if overlap:
             break
-        for component in components:
-            if component.end <= index <= component.start:
+        for bitdef in bitdefs:
+            if bitdef.end >= index >= bitdef.start:
                 if index_match:
                     overlap = True
                     break
@@ -399,23 +401,25 @@ def components_overlap(components):
     return overlap
 
 
-def decompose_address(address):
+def decompose_address(address, component_dicts):
+    """
+    Decompose an address into named components.
+
+    Args:
+        adddress (int): The address to decode
+        component_dicts (dict(str:(dict(str:BitDef)))): A dictionary of
+            names of component groups to the component groups
+            themselves.
+    Returns:
+        (dict(str:str)): Dictionary of names of component groups to 
+            matches of named components.
     """
 
-    """
-    opcode_defs = gen_opcode_addr_component_dict()
-    mc_step_defs = gen_microcode_step_addr_component_dict()
-    input_sig_defs = gen_input_signal_addr_component_dict()
+    ret = {}
+    for name, component_dict in component_dicts.items():
+        ret[name] = extract_bitdefs(address, component_dict)
 
-    opcode = extract_bitdefs(address, opcode_defs)
-    step = extract_bitdefs(address, mc_step_defs)
-    input_sig = extract_bitdefs(address, input_sig_defs)
-
-    return {
-        "opcode":opcode,
-        "step":step,
-        "input_signal":input_sig
-    }
+    return ret
 
 
 def extract_bitdefs(value, bitdef_dict):
@@ -434,7 +438,7 @@ def extract_bitdefs(value, bitdef_dict):
 
     ret = "----"
     if bitdef_names:
-        ret = " | ".join(bitdef_names)
+        ret = " | ".join([str(bitdef_name) for bitdef_name in bitdef_names])
 
     return ret
 
@@ -452,551 +456,86 @@ def address_width_from_data_templates(templates):
 
     return max([len(template.address_range) for template in templates])
 
-
-def create_microcode_rom():
-    """
-
-    """
-
-    data_templates = []
-
-    data_templates.extend(fetch())
-    data_templates.extend(LDA(address_width))
-    data_templates.extend(LDB(address_width))
-    data_templates.extend(AADD(address_width))
-    data_templates.extend(OUTA(address_width))    
-    data_templates.extend(HALT(address_width))
-    data_templates.extend(NOOP(address_width))
-
-    rom_dict = data_templates_to_dict(data_templates)
-
-    return rom_dict
-
-
-def fetch():
-    """
-
-    """
-    control_signal = gen_control_signal_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-    templates = []
-
-    # Step 0: PC -> RAM Addr
-    addresses = combine_address_components([
-        mc_step_addr[0]
-        ])
-    data = combine_data_components([
-        control_signal["PROGRAM_COUNTER_OUT"],
-        control_signal["RAM_ADDR_IN"]
-        ])
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 1: RAM -> Instruction register and Progrm counter count
-    addresses = combine_address_components([
-        mc_step_addr[1]
-        ])
-    data = combine_data_components([
-        control_signal["PROGRAM_COUNTER_COUNT"],
-        control_signal["RAM_OUT"],
-        control_signal["INSTRUCTION_REGISTER_IN"]
-        ])
-
-    templates.append(DataTemplate(addresses, data))
-
-    return templates
-
-
-def LDA(address_width):
-    """
-
-    """
-
-    control_signal = gen_control_signal_dict()
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-
-    templates = []
-
-    # Step 2: PC -> RAM Addr
-    addresses = combine_address_components(
-        [
-            mc_step_addr[2],
-            opcode_addr["LDA"]
-        ]
-    )
-    data = (
-        control_signal["PROGRAM_COUNTER_OUT"] |
-        control_signal["RAM_ADDR_IN"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 3: RAM -> A and PC Incr
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[3],
-        opcode_addr["LDA"]
-        )
-    data = (
-        control_signal["RAM_OUT"] |
-        control_signal["A_IN"] |
-        control_signal["PROGRAM_COUNTER_COUNT"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 4: Reset microcode step counter
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[4],
-        opcode_addr["LDA"]
-        )
-    data = (
-        control_signal["STEP_COUNTER_RESET"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    return templates
-
-
-def LDB(address_width):
-    """
-
-    """
-
-    control_signal = gen_control_signal_dict()
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-
-    templates = []
-
-    # Step 2: PC -> RAM Addr
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[2],
-        opcode_addr["LDB"]
-        )
-    data = (
-        control_signal["PROGRAM_COUNTER_OUT"] |
-        control_signal["RAM_ADDR_IN"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 3: RAM -> A and PC Incr
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[3],
-        opcode_addr["LDB"]
-        )
-    data = (
-        control_signal["RAM_OUT"] |
-        control_signal["B_IN"] |
-        control_signal["PROGRAM_COUNTER_COUNT"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 4: Reset microcode step counter
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[4],
-        opcode_addr["LDB"]
-        )
-    data = (
-        control_signal["STEP_COUNTER_RESET"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    return templates
-
-
-def AADD(address_width):
-    """
-
-    """
-
-    control_signal = gen_control_signal_dict()
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-
-    templates = []
-
-    # Step 2: ALU -> A
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[2],
-        opcode_addr["AADD"]
-        )
-    data = (
-        control_signal["ALU_OUT"] |
-        control_signal["A_IN"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 3: Reset microcode step
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[3],
-        opcode_addr["AADD"]
-        )
-    data = (
-        control_signal["STEP_COUNTER_RESET"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    return templates
-
-
-def OUTA(address_width):
-    """
-    The OUTA Operation
-    """
-
-    control_signal = gen_control_signal_dict()
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-    input_sig_addr = gen_input_signal_addr_component_dict()
-
-    templates = []
-
-    # Step 2 - A -> OUT
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[2],
-        opcode_addr["OUTA"]
-        )
-    data = (
-        control_signal["A_OUT"] |
-        control_signal["OUT_IN"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    # Step 3: Reset microcode step
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[3],
-        opcode_addr["OUTA"]
-        )
-    data = (
-        control_signal["STEP_COUNTER_RESET"]
-        )
-
-    templates.append(DataTemplate(addresses, data))
-
-    return templates
-
-
-def HALT(address_width):
-    """
-
-    """
-
-    control_signal = gen_control_signal_dict()
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-
-    templates = []
-
-    # Step 2: Set halt flag
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[2],
-        opcode_addr["HALT"]
-        )
-    data = (
-        control_signal["HALT"]
-        )
-
-    return [DataTemplate(addresses, data)]
-
-
-def NOOP(address_width):
-    """
-    The NOOP Operation
-    """
-
-    opcode_addr = gen_opcode_addr_component_dict()
-    mc_step_addr = gen_microcode_step_addr_component_dict()
-    control_signal = gen_control_signal_dict()
-
-
-    # Step 2: Reset microcode step
-    addresses = combine_address_components(
-        address_width,
-        mc_step_addr[2],
-        opcode_addr["NOOP"]
-        )
-    data = (
-        control_signal["STEP_COUNTER_RESET"]
-        )
-
-    return [DataTemplate(addresses, data)]
-
-
-def rom_info(rom):
-    """
-
-    """
-    for address in sorted(rom.keys()):
-        address_info = decompose_address(address)
-        print "{address} (opcode:{opcode:<10} step:{step:<10} signal:{input_signal:<15})".format(
-            address=address,
-            opcode=address_info["opcode"],
-            step=address_info["step"],
-            input_signal=address_info["input_signal"]
-            )
-        print "{data:<10} ({data_info})".format(
-            data=rom[address],
-            data_info=decompose_data(rom[address])
-            )
-
-# steps = gen_microcode_step_addr_component_dict()
-# pprint(steps)
-
-# print steps[0]
-
-# step0 = combine_address_components([steps[0]])
-# print step0
-
-
-
-
-control_sigs = gen_control_signal_dict()
-pprint(control_sigs)
-
-fetch_def = fetch()
-print fetch_def
-
-# print get_value_from_bit_range(528, 4, 4)
-
-
-print extract_bitdefs(0, gen_control_signal_dict())
-print extract_bitdefs(1, gen_control_signal_dict())
-print extract_bitdefs(2, gen_control_signal_dict())
-print extract_bitdefs(4, gen_control_signal_dict())
-print extract_bitdefs(8, gen_control_signal_dict())
-print extract_bitdefs(16, gen_control_signal_dict())
-print extract_bitdefs(2**16, gen_control_signal_dict())
-
-# def OPCODE(address_width):
+# 547 = 1000100011
+pprint (extract_bitdefs(
+    547,
+    {
+        "ONES":BitDef(start=0, end=0, value=1),
+        "TWOS":BitDef(start=1, end=1, value=1),
+        "FOURS":BitDef(start=2, end=2, value=1)
+    }
+    ))
+
+
+# pprint(
+#     combine_address_components([
+#         BitDef(start=5, end=9, value=1),
+#         BitDef(start=2, end=4, value=7)
+#         ])
+#     )
+
+# pprint(
+#     width_from_bitdefs([
+#         BitDef(start=5, end=9, value=1),
+#         BitDef(start=2, end=4, value=0)
+#         ])
+#     )
+
+
+# pprint(
+#     bitdefs_overlap([
+#         BitDef(start=5, end=9, value=1),
+#         BitDef(start=2, end=4, value=0)
+#         ])
+#     )
+
+# def decompose_address_old(address):
+#     """
+
+#     """
+#     opcode_defs = gen_opcode_addr_component_dict()
+#     mc_step_defs = gen_microcode_step_addr_component_dict()
+#     input_sig_defs = gen_input_signal_addr_component_dict()
+
+#     opcode = extract_bitdefs(address, opcode_defs)
+#     step = extract_bitdefs(address, mc_step_defs)
+#     input_sig = extract_bitdefs(address, input_sig_defs)
+
+#     return {
+#         "opcode":opcode,
+#         "step":step,
+#         "input_signal":input_sig
+#     }
+
+
+# def extract_unique_component(address, component_dict):
+#     """
+
+#     """
+#     component_name = None
+#     for name, component in component_dict.items():
+#         bits = address[component.start : component.end + 1]
+#         if int(bits, 2) == component.value:
+#             component_name = name
+#             break
+
+#     return component_name
+
+
+
+# def decompose_data(value):
 #     """
 
 #     """
 
-#     control_signal = gen_control_signal_dict()
-#     opcode_addr = gen_opcode_addr_component_dict()
-#     mc_step_addr = gen_microcode_step_addr_component_dict()
-#     input_sig_addr = gen_input_signal_addr_component_dict()
+#     signals = []
+#     control_signals = gen_control_signal_dict()
+#     for name, active_bit in control_signals.items():
+#         if value & active_bit:
+#             signals.append(name)
 
-#     templates = []
+#     ret = "----"
+#     if signals:
+#         ret = " | ".join(signals)
 
-#     # Step 2
-#     addresses = combine_address_components(
-#         address_width,
-#         mc_step_addr[2],
-#         opcode_addr[ ]
-#         )
-#     data = (
-#         control_signal[""]
-#         )
-
-#     templates.append(DataTemplate(addresses, data))
-
-#     # Step N - 1: Reset microcode step
-#     addresses = combine_address_components(
-#         address_width,
-#         mc_step_addr[ ],
-#         opcode_addr[ ]
-#         )
-#     data = (
-#         control_signal["STEP_COUNTER_RESET"]
-#         )
-
-#     templates.append(DataTemplate(addresses, data))
-
-#     return templates
-
-
-# pprint(gen_control_signal_dict())
-
-# first = BitDef(0,0,0)
-# second = BitDef(1,3,7)
-# bad = BitDef(2,2,0)
-
-# print first.start
-
-# print combine_address_components(5, second, first)
-# print combine_address_components(5, first, second)
-# print combine_address_components(5, first)
-# print combine_address_components(5, second)
-# print combine_address_components(5, first, bad)
-# print combine_address_components(5, first, second, bad)
-
-# pprint(fetch(11))
-# LDA = data_templates_to_dict(LDA(10))
-# pprint(LDA)
-# rom_info(LDA)
-# rom_to_logisim(LDA)
-# rom = create_microcode_rom()
-
-
-
-# aadd, step 3 and no signal
-# pprint(decompose_address("0010000000"))
-# pprint(decompose_data(4224))
-
-"""
-An address but some bits need to be expanded to all thier combinations
-e.g. 11010XX00100
-address template
-address range
-address combo
-address seed
-address base
-address blueprint
-address breakdown
-address group
-address collection
-compressed address
-folded address
-stacked address
-
-
-The addresses to be expanded have this data:
-data canvas
-data blanket
-data range
-data cover
-data group
-data set
-data collection
-rom section
-rom slice
-rom fill(er)
-storage
-data template
-data plan
-
-
-
-This part of the address has this value
-addressComponent
-bitDef
-
-Opcode planning
-LOAD A
-STORE A
-JUMP IF A == 0
-OUTPUT A
-A = A + B
-A = A - B
-A = USER_INPUT
-
-LOAD B
-STORE B
-JUMP IF B == 0
-OUTPUT B
-B = A + B
-B = A - B
-B = USER_INPUT
-
-JUMP IF CARRY ADD
-JUMP IF CARRY SUB
-JUMP IF USER FINISHED
-JUMP
-BEGIN USER WAIT
-NOOP
-HALT
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-LOAD A
-SAVE A
-JUMP IF A == 0
-JUMP TO ADDRESS IN A
-JUMP TO ADDRESS IN A IF CARRY ADD
-JUMP TO ADDRESS IN A IF CARRY SUB
-JUMP TO ADDRESS IN A IF USER FINISHED
-OUTPUT A
-A = A + B
-A = A - B
-A = USER_INPUT
-
-LOAD B
-SAVE B
-JUMP IF B == 0
-JUMP TO ADDRESS IN B
-JUMP TO ADDRESS IN B IF CARRY ADD
-JUMP TO ADDRESS IN B IF CARRY SUB
-JUMP TO ADDRESS IN B IF USER FINISHED
-OUTPUT B
-B = A + B
-B = A - B
-B = USER_INPUT
-
-JUMP TO ADDRESS IN Y IF Z == 0
-LOAD Y FROM ADDRESS IN Z
-STORE Y TO ADDRESS IN Z
-MOVE Y TO Z
-
-JUMP IF CARRY ADD
-JUMP IF CARRY SUB
-JUMP IF USER FINISHED
-JUMP
-BEGIN USER WAIT
-NOOP
-HALT
-"""
-
-
-def extract_unique_component(address, component_dict):
-    """
-
-    """
-    component_name = None
-    for name, component in component_dict.items():
-        bits = address[component.start : component.end + 1]
-        if int(bits, 2) == component.value:
-            component_name = name
-            break
-
-    return component_name
-
-
-
-def decompose_data(value):
-    """
-
-    """
-
-    signals = []
-    control_signals = gen_control_signal_dict()
-    for name, active_bit in control_signals.items():
-        if value & active_bit:
-            signals.append(name)
-
-    ret = "----"
-    if signals:
-        ret = " | ".join(signals)
-
-    return ret
+#     return ret
