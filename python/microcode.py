@@ -620,7 +620,11 @@ print len(rom)
 pprint(rom)
 # print_microcode_rom(rom)
 
-rom_programmer.rom_to_logisim(rom, bytes_per_line=16)
+rom_programmer.rom_to_logisim(
+    rom, 
+    directory="/Users/andy/Documents/74_series_computer/logisim_roms",
+    filename_base="microcode",
+    bytes_per_line=16)
 rom_programmer.rom_to_arduino(rom)
 
 

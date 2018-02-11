@@ -4,6 +4,7 @@ Helps programming EEPROMS for my 74 series computer project
 
 from collections import namedtuple
 from pprint import pprint
+import os
 
 DataTemplate = namedtuple("DataTemplate", ["address_range", "data"])
 """
@@ -353,15 +354,9 @@ def byte_list_to_hex_string_list(byte_list):
     return hex_list
 
 
-def rom_to_logisim(
-        rom,
-        directory=None,
-        name="rom",
-        bytes_per_line=8,
-        bytes_per_chunk=4
-        ):
+def rom_to_logisim(rom, directory=None, filename_base="rom", bytes_per_line=8, bytes_per_chunk=4):
     """
-
+    
     """
 
     byte_lists = rom_to_parallel_byte_lists(rom)
@@ -386,8 +381,12 @@ def rom_to_logisim(
             rom_string)
 
         if directory is not None:
-            pass
-
+            romname = "{0}_{1}".format(filename_base, index)
+            filepath = os.path.join(directory, romname)
+            with open(filepath, "w") as romfile:
+                romfile.write("v2.0 raw\n")
+                romfile.write(rom_string)
+                romfile.write("\n")
 
 
 def prune_zero_values(rom):
