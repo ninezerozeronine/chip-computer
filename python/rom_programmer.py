@@ -456,15 +456,16 @@ def address_width_from_data_templates(templates):
 
     return max([len(template.address_range) for template in templates])
 
+
 # 547 = 1000100011
-pprint (extract_bitdefs(
-    547,
-    {
-        "ONES":BitDef(start=0, end=0, value=1),
-        "TWOS":BitDef(start=1, end=1, value=1),
-        "FOURS":BitDef(start=2, end=2, value=1)
-    }
-    ))
+# pprint (extract_bitdefs(
+#     547,
+#     {
+#         "ONES":BitDef(start=0, end=0, value=1),
+#         "TWOS":BitDef(start=1, end=1, value=1),
+#         "FOURS":BitDef(start=2, end=2, value=1)
+#     }
+#     ))
 
 
 # pprint(

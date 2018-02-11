@@ -589,7 +589,7 @@ pprint(NOOP())
 
 rom = create_microcode_rom()
 pprint(rom)
-print_microcode_info(rom)
+print_microcode_rom(rom)
 
 # steps = gen_microcode_step_addr_component_dict()
 # pprint(steps)
