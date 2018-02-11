@@ -262,7 +262,57 @@ def num_bytes_needed_for_data(rom_dict):
     return num_bytes
 
 
-def ROM_to_parallel_byte_lists(rom):
+def rom_to_parallel_byte_roms(rom):
+    """
+    Convert a rom dictionary to parallel byte romss
+
+    The data in the rom is split into 8 bit wide chunks - hence the
+    parallel roms.
+    The returned roms are in order from least signficant byte to most.
+
+    Args:
+        rom (dict(int:int)): The rom dictionary of addresses and data
+    Returns:
+        (list(dict(int:int))): Parallel roms
+    """
+
+    num_data_bytes = num_bytes_needed_for_data(rom)
+
+    byte_roms = []
+    for byte_index in range(num_data_bytes):
+        byte_rom = {}
+        for address in rom:
+            data = get_data_byte_at_index(rom[address], byte_index)
+            byte_rom[address] = data
+        byte_roms.append(byte_rom)
+
+    return byte_roms
+
+
+def rom_to_list(rom):
+    """
+    Convert a rom dictionary to a list
+
+    The address of the data in the rom is converted to the index of that
+    piece of data in the list.
+    If nothing is specified for the rom at a given address, 0 is used
+    as the data value.
+
+    Args:
+        rom (dict(int:int)): The rom dictionary of addresses and data
+    Returns:
+        (list(int)): Rom data converted to list
+    """
+
+    num_address_bits = bit_width(max(rom.keys()))
+    byte_list = []
+    for address in range(2 ** num_address_bits):
+        data = rom.get(address, 0)
+        byte_list.append(data)
+    return byte_list
+
+
+def rom_to_parallel_byte_lists(rom):
     """
     Convert a rom dictionary to parallel byte lists
 
@@ -280,17 +330,11 @@ def ROM_to_parallel_byte_lists(rom):
         (list(list(int))): Parallel lists of the data split into bytes
     """
 
-    num_data_bytes = num_bytes_needed_for_data(rom)
-    num_address_bits = bit_width(max(rom.keys()))
 
+    parallel_roms = rom_to_parallel_byte_roms(rom)
     byte_lists = []
-    for byte_index in range(num_data_bytes):
-        byte_list = []
-        for address in range(2 ** num_address_bits):
-            data = get_data_byte_at_index(rom.get(address, 0), byte_index)
-            byte_list.append(data)
-        byte_lists.append(byte_list)
-
+    for parallel_rom in parallel_roms:
+        byte_lists.append(rom_to_list(parallel_rom))
     return byte_lists
 
 
@@ -309,19 +353,66 @@ def byte_list_to_hex_string_list(byte_list):
     return hex_list
 
 
-def rom_to_logisim(rom, bytes_per_line=8):
+def rom_to_logisim(
+        rom,
+        directory=None,
+        name="rom",
+        bytes_per_line=8,
+        bytes_per_chunk=4
+        ):
     """
 
     """
 
-    byte_lists = ROM_to_parallel_byte_lists(rom)
+    byte_lists = rom_to_parallel_byte_lists(rom)
+    rom_strings = []
     for byte_list in byte_lists:
-        rom_string = ""
+        hex_lines = []
         hex_bytes = byte_list_to_hex_string_list(byte_list)
         for index_start in xrange(0, len(byte_list), bytes_per_line):
-            byte_vals = byte_list[index_start : index_start + bytes_per_line]
-            rom_string += " ".join(byte_vals)
-        print rom_string + "\n\n"
+            hex_line_vals = hex_bytes[index_start : index_start + bytes_per_line]
+            hex_chunks = []
+            for chunk_index_start in range(0, bytes_per_line, bytes_per_chunk):
+                hex_chunk_vals = hex_line_vals[chunk_index_start : chunk_index_start + bytes_per_chunk]
+                hex_chunks.append(" ".join(hex_chunk_vals))
+            hex_lines.append("  ".join(hex_chunks))
+        rom_strings.append("\n".join(hex_lines))
+
+    for index, rom_string in enumerate(rom_strings):
+        print "ROM {0} - Length: {1}, Address bit width: {2}\n{3}".format(
+            index, 
+            len(rom),
+            bit_width(max(rom.keys())),
+            rom_string)
+
+        if directory is not None:
+            pass
+
+
+
+def prune_zero_values(rom):
+    """
+
+    """
+
+    addresses = rom.keys()
+    for address in addresses:
+        if rom[address] == 0:
+            del rom[address]
+
+
+def rom_to_arduino(rom):
+    """
+
+    """
+
+    parallel_roms = rom_to_parallel_byte_roms(rom)
+    for parallel_rom in parallel_roms:
+        prune_zero_values(parallel_rom)
+
+    for index, parallel_rom in enumerate(parallel_roms):
+        print "ROM {0} (length {1})".format(index, len(parallel_rom))
+        pprint(parallel_rom)
 
 
 def combine_address_components(components):
@@ -540,3 +631,34 @@ def address_width_from_data_templates(templates):
 #         ret = " | ".join(signals)
 
 #     return ret
+
+# def rom_to_parallel_byte_lists(rom):
+#     """
+#     Convert a rom dictionary to parallel byte lists
+
+#     Converts a rom to parallel lists of bytes. The address of the data 
+#     in the rom is converted to the index of that piece of data in the
+#     list.
+#     The data is split into 8 bit wide chunks - hence the parallel lists.
+#     The returned lists are in order from least signficant byte to most.
+#     If nothing is specified for the rom at a given address, 0 is used
+#     as the data value.
+
+#     Args:
+#         rom (dict(int:int)): The rom dictionary of addresses and data
+#     Returns:
+#         (list(list(int))): Parallel lists of the data split into bytes
+#     """
+
+#     num_data_bytes = num_bytes_needed_for_data(rom)
+#     num_address_bits = bit_width(max(rom.keys()))
+
+#     byte_lists = []
+#     for byte_index in range(num_data_bytes):
+#         byte_list = []
+#         for address in range(2 ** num_address_bits):
+#             data = get_data_byte_at_index(rom.get(address, 0), byte_index)
+#             byte_list.append(data)
+#         byte_lists.append(byte_list)
+
+#     return byte_lists

@@ -17,10 +17,11 @@ def gen_control_signal_dict():
         "RAM_ADDR_IN",
         "RAM_IN",
         "RAM_OUT",
-        "SET_USER_WAIT",
+        "REQUEST_USER_INPUT",
+        "USER_INPUT_OUT",
         "PROGRAM_COUNTER_IN",
         "PROGRAM_COUNTER_OUT",
-        "PROGRAM_COUNTER_COUNT",
+        "PROGRAM_COUNTER_INCREMENT",
         "INSTRUCTION_REGISTER_IN",
         "STEP_COUNTER_RESET",
         "HALT"
@@ -105,7 +106,7 @@ def gen_input_signal_addr_component_dict():
     """
 
     input_signals = [
-        "WAIT_FOR_USER",
+        "USER_INPUT_READY",
         "CARRY"
         ]
 
@@ -138,6 +139,8 @@ def fetch():
 
     templates = []
 
+    # opcodes = opcode_addr.values()
+
     opcodes = [
         opcode_addr["LDA"],
         opcode_addr["LDB"],
@@ -167,7 +170,7 @@ def fetch():
             mc_step_addr[1]
             ])
         data = rom_programmer.combine_data_components([
-            control_signal["PROGRAM_COUNTER_COUNT"],
+            control_signal["PROGRAM_COUNTER_INCREMENT"],
             control_signal["RAM_OUT"],
             control_signal["INSTRUCTION_REGISTER_IN"]
             ])
@@ -208,7 +211,7 @@ def LDA():
     data = rom_programmer.combine_data_components([
         control_signal["RAM_OUT"],
         control_signal["A_IN"],
-        control_signal["PROGRAM_COUNTER_COUNT"]
+        control_signal["PROGRAM_COUNTER_INCREMENT"]
         ])
 
     templates.append(rom_programmer.DataTemplate(addresses, data))
@@ -258,7 +261,7 @@ def LDB():
     data = rom_programmer.combine_data_components([
         control_signal["RAM_OUT"],
         control_signal["B_IN"],
-        control_signal["PROGRAM_COUNTER_COUNT"]
+        control_signal["PROGRAM_COUNTER_INCREMENT"]
         ])
 
     templates.append(rom_programmer.DataTemplate(addresses, data))
@@ -458,7 +461,7 @@ def JIC():
         input_signals["NOT_CARRY"]
         ])
     data = rom_programmer.combine_data_components([
-        control_signal["PROGRAM_COUNTER_COUNT"],
+        control_signal["PROGRAM_COUNTER_INCREMENT"],
         ])
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
