@@ -139,17 +139,17 @@ def fetch():
 
     templates = []
 
-    # opcodes = opcode_addr.values()
+    opcodes = opcode_addr.values()
 
-    opcodes = [
-        opcode_addr["LDA"],
-        opcode_addr["LDB"],
-        opcode_addr["AADD"],
-        opcode_addr["OUTA"],
-        opcode_addr["HALT"],
-        opcode_addr["NOOP"],
-        opcode_addr["JIC"]
-    ]
+    # opcodes = [
+    #     opcode_addr["LDA"],
+    #     opcode_addr["LDB"],
+    #     opcode_addr["AADD"],
+    #     opcode_addr["OUTA"],
+    #     opcode_addr["HALT"],
+    #     opcode_addr["NOOP"],
+    #     opcode_addr["JIC"]
+    # ]
 
     for opcode in opcodes:
         # Step 0: PC -> RAM Addr
