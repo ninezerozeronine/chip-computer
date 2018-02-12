@@ -200,31 +200,39 @@ def LDA():
         control_signal["PROGRAM_COUNTER_OUT"],
         control_signal["RAM_ADDR_IN"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
-    # Step 3: RAM -> A and PC Incr
+    # Step 3: RAM -> RAM Addr and PC Incr
     addresses = rom_programmer.combine_address_components([
         mc_step_addr[3],
         opcode_addr["LDA"]
         ])
     data = rom_programmer.combine_data_components([
         control_signal["RAM_OUT"],
-        control_signal["A_IN"],
+        control_signal["RAM_ADDR_IN"],
         control_signal["PROGRAM_COUNTER_INCREMENT"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
-    # Step 4: Reset microcode step counter
+    # Step 4: RAM -> A and PC Incr
     addresses = rom_programmer.combine_address_components([
         mc_step_addr[4],
         opcode_addr["LDA"]
         ])
     data = rom_programmer.combine_data_components([
+        control_signal["RAM_OUT"],
+        control_signal["A_IN"]
+        ])
+    templates.append(rom_programmer.DataTemplate(addresses, data))
+
+    # Step 5: Reset microcode step counter
+    addresses = rom_programmer.combine_address_components([
+        mc_step_addr[5],
+        opcode_addr["LDA"]
+        ])
+    data = rom_programmer.combine_data_components([
         control_signal["STEP_COUNTER_RESET"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
     return templates
@@ -250,31 +258,39 @@ def LDB():
         control_signal["PROGRAM_COUNTER_OUT"],
         control_signal["RAM_ADDR_IN"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
-    # Step 3: RAM -> B and PC Incr
+    # Step 3: RAM -> RAM Addr and PC Incr
     addresses = rom_programmer.combine_address_components([
         mc_step_addr[3],
         opcode_addr["LDB"]
         ])
     data = rom_programmer.combine_data_components([
         control_signal["RAM_OUT"],
-        control_signal["B_IN"],
+        control_signal["RAM_ADDR_IN"],
         control_signal["PROGRAM_COUNTER_INCREMENT"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
-    # Step 4: Reset microcode step counter
+    # Step 3: RAM -> B
     addresses = rom_programmer.combine_address_components([
         mc_step_addr[4],
         opcode_addr["LDB"]
         ])
     data = rom_programmer.combine_data_components([
+        control_signal["RAM_OUT"],
+        control_signal["B_IN"]
+        ])
+    templates.append(rom_programmer.DataTemplate(addresses, data))
+
+    # Step 5: Reset microcode step counter
+    addresses = rom_programmer.combine_address_components([
+        mc_step_addr[5],
+        opcode_addr["LDB"]
+        ])
+    data = rom_programmer.combine_data_components([
         control_signal["STEP_COUNTER_RESET"]
         ])
-
     templates.append(rom_programmer.DataTemplate(addresses, data))
 
     return templates
