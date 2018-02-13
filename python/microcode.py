@@ -766,20 +766,7 @@ BEGIN USER WAIT
 NOOP
 HALT
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-----
 
 LOAD A
 SAVE A
@@ -817,7 +804,113 @@ JUMP
 BEGIN USER WAIT
 NOOP
 HALT
+
+----
+
+
+Memory mapped and proper ALU planning
+
+
+Opcodes
+-------
+LDMX
+LDIX
+STOX
+ADDX
+SUBX
+ANDX
+ORX
+NOTX
+XORX
+BSLX
+BSRX
+JMPX
+JMPXZ
+PCX
+
+JMP
+JMPCADD
+JMPCBSL
+JMPCBSR
+NOOP
+HALT
+
+MOVXY (12)
+
+00XXXXXX - Register speciific instructions
+0000XXXX - Register A speciific instructions
+0001XXXX - Register B speciific instructions
+0010XXXX - Register C speciific instructions
+0011XXXX - Register D speciific instructions
+
+01XXXXXX - General instructions
+
+10XXXXXX - Move instructions
+1000YYZZ - Move YY to ZZ
+
+11XXXXXX - Unused
+
+
+
+Control Sigs
+------------
+A_IN
+A_OUT
+B_IN
+B_OUT
+C_IN
+C_OUT
+D_IN
+D_OUT
+
+ALU_OUT
+ALUOP_0
+ALUOP_1
+ALUOP_2
+ZERO_CHECK_ENABLE
+RAM_ADDR_IN
+RAM_IN
+RAM_OUT
+
+PROGRAM_COUNTER_IN
+PROGRAM_COUNTER_OUT
+PROGRAM_COUNTER_INCREMENT
+INSTRUCTION_REGISTER_IN
+HALT
+STEP_COUNTER_RESET
+
+Input sigs
+----------
+IS_ZERO
+OVERFLOW
+
+
+
 """
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
