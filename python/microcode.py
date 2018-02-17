@@ -825,30 +825,28 @@ XORX
 BSLX
 BSRX
 JMPX
-JMPXZ
 PCX
 
 JMP
-JMPCADD
-JMPCBSL
-JMPCBSR
+JMPIC
+JMPIBSL
+JMPIBSR
+JMPZ
 NOOP
 HALT
 
 MOVXY (12)
 
-00XXXXXX - Register speciific instructions
-0000XXXX - Register A speciific instructions
-0001XXXX - Register B speciific instructions
-0010XXXX - Register C speciific instructions
-0011XXXX - Register D speciific instructions
+0XXXXXXX - Register speciific instructions
+000XXXXX - Register A speciific instructions
+001XXXXX - Register B speciific instructions
+010XXXXX - Register C speciific instructions
+011XXXXX - Register D speciific instructions
 
-01XXXXXX - General instructions
+11XXXXXX - General instructions
 
 10XXXXXX - Move instructions
 1000YYZZ - Move YY to ZZ
-
-11XXXXXX - Unused
 
 
 
