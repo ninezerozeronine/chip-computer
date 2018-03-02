@@ -20,7 +20,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = u'8-bit 74LS Computer'
+project = u'8-bit 74 Series Computer'
 copyright = u'2018, Andy Palmer'
 author = u'Andy Palmer'
 
@@ -106,7 +106,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = '8-bit74LSComputerdoc'
+htmlhelp_basename = '8-bit74SeriesComputerdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -133,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, '8-bit74LSComputer.tex', u'8-bit 74LS Computer Documentation',
+    (master_doc, '8-bit74SeriesComputer.tex', u'8-bit 74 Series Computer Documentation',
      u'Andy Palmer', 'manual'),
 ]
 
@@ -143,7 +143,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, '8-bit74lscomputer', u'8-bit 74LS Computer Documentation',
+    (master_doc, '8-bit74serieslscomputer', u'8-bit 74 Series Computer Documentation',
      [author], 1)
 ]
 
@@ -154,8 +154,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, '8-bit74LSComputer', u'8-bit 74LS Computer Documentation',
-     author, '8-bit74LSComputer', 'One line description of project.',
+    (master_doc, '8-bit74SeriesComputer', u'8-bit 74 Series Computer Documentation',
+     author, '8-bit74SeriesComputer', 'One line description of project.',
      'Miscellaneous'),
 ]
 

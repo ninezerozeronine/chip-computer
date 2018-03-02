@@ -1,7 +1,7 @@
-8-bit 74LS Computer
-===================
+8-bit 74 Series Computer
+========================
 
-Welcome to the documentation for my 8-bit 74LS Computer project! 
+Welcome to the documentation for my 8-bit 74 Series Computer project! 
 
 I have to start by saying a huge thank you to `Ben Eater`_ whose simply excellent series of `YouTube videos`_  inspired and informed this project. If you would like to get the most out of this documentation please watch his series of videos first. The bulk of the work in this project has been implementing the designs in his videos and extending them a little.
 
