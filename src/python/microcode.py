@@ -1063,29 +1063,32 @@ ZZ
 11 = D
 
 ALU Operations
-0000: ZZ = ZZ + 1
-0001: ZZ = ZZ - 1
-0010: ZZ = ZZ + B
-0011: ZZ = ZZ - B
-0100: ZZ = ZZ AND B
-0101: ZZ = ZZ OR B
-0110: ZZ = ZZ XOR B
-0111: ZZ = NOT ZZ
-1000: Test if ZZ == 0
-1001: Test if ZZ == B
-1010: Test if ZZ > B
-1011: Test if ZZ >= B
-1100: Test if ZZ < B
-1101: Test if ZZ <= B
-1110: 
+0000: ZZ = 0
+0001: ZZ = ZZ + 1
+0010: ZZ = ZZ - 1
+0011: ZZ = ZZ + B
+0100: ZZ = ZZ - B
+0101: ZZ = ZZ AND B
+0110: ZZ = ZZ OR B
+0111: ZZ = ZZ XOR B
+1000: ZZ = NOT ZZ
+1001: Test if ZZ == 0
+1010: Test if ZZ == B
+1011: Test if ZZ > B
+1100: Test if ZZ >= B
+1101: Test if ZZ < B
+1110: Test if ZZ <= B 
 1111: (Reserved for halt)
 
 POP - Decrement SP and copy the memory at SP into DDD
     Actually a load with the source set to [SP+/-]
+    01 XXX 110
 PUSH - Copy DDD into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
+    10 110 XXX
 DATA - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
+    00 XXX 111
 JUMP - Set the program counter to a value
     Actually a copy where the desination is PC
 CALL - Push the program counter, then set the program counter to a value
@@ -1099,12 +1102,33 @@ PROGRAM_LOAD - Load the contents of program memory at DDD into the A register
 HALT - Halt the computer
     Use the special 1111 operation in the ALU (11111111)
 
+JUMP_IF_ZERO_FLAG
+JUMP_IF_EQUAL_FLAG
+JUMP_IF_CARRY_FLAG
+JUMP_IF_BORROW_FLAG
+JUMP_IF_GREATER_THAN_FLAG
+JUMP_IF_GREATHER_THAN_OR_EQUAL_FLAG
+JUMP_IF_LESS_THAN_FLAG
+JUMP_IF_LESS_THAN_OR_EQUAL_FLAG
+
+TEST_AND_JUMP_IF_ZERO
+TEST_AND_JUMP_IF_EQUAL
+TEST_AND_JUMP_IF_CARRY
+TEST_AND_JUMP_IF_BORROW
+TEST_AND_JUMP_IF_GREATER_THAN
+TEST_AND_JUMP_IF_GREATHER_THAN_OR_EQUAL
+TEST_AND_JUMP_IF_LESS_THAN
+TEST_AND_JUMP_IF_LESS_THAN_OR_EQUAL
+
+
+
+
 Available opcodes
 
 00 001 001 - A = 1
-00 010 010 - Add with carry
-00 011 011 - Subtract with borrow
-00 100 100
+00 010 010
+00 011 011 - Add with carry
+00 100 100 - Subtract with borrow
 00 101 101
 00 110 110
 00 111 111
