@@ -1063,8 +1063,8 @@ ZZ
 11 = D
 
 ALU Operations
-0000: ZZ = 0
-0001: ZZ = 1
+0000: ZZ = ZZ + 1
+0001: ZZ = ZZ - 1
 0010: ZZ = ZZ + B
 0011: ZZ = ZZ - B
 0100: ZZ = ZZ AND B
@@ -1077,7 +1077,7 @@ ALU Operations
 1011: Test if ZZ >= B
 1100: Test if ZZ < B
 1101: Test if ZZ <= B
-1110: ZZ = -1
+1110: 
 1111: (Reserved for halt)
 
 POP - Decrement SP and copy the memory at SP into DDD
@@ -1101,7 +1101,7 @@ HALT - Halt the computer
 
 Available opcodes
 
-00 001 001
+00 001 001 - A = 1
 00 010 010 - Add with carry
 00 011 011 - Subtract with borrow
 00 100 100
