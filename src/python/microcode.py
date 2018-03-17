@@ -985,7 +985,6 @@ ALU ZERO
 ALU CARRY/COMPARE
 ALU EQUALITY
 
-
 Control Sigs
 ------------
 A_IN
@@ -1032,6 +1031,10 @@ STEP_COUNTER_RESET
 
 
 
+
+
+
+
 #########################
 Op Codes from James Bates
 #########################
@@ -1040,13 +1043,17 @@ Op Codes from James Bates
 01 DDD [SSS] - Load instructions - Load memory contents at SSS into DDD
 10 [DDD] SSS - Store instructions - Store SSS into memory at DDD
 11 WWWW ZZ - ALU instructions - Do WWWW using ZZ (and sometimes B), and store the result in ZZ
+00 110 CCC - Jump to an immediate value based on the result of the last test using the ALU (Pushes, Pops, Calls, Returns and other ALU operations will clobber the test results (Unless I AND bits 3, 4 and 5 (index starting at the right) of the op code and the alu write signal to enable a write to the flags register. But that will mean checking of other routine operations won't be possible))
+00 111 CCC - Jump to an immediate value based on a test and check CCC between A and B register
 
+Copy, Load and Store
+====================
 SSS = Source
 DDD = Destination
 WWWW = Operation
 ZZ = Source/Dest
 
-SSS/DDD
+SSS/DDD - Source / Destination
 000 = A
 001 = B
 010 = C
@@ -1056,98 +1063,112 @@ SSS/DDD
 110 = SP+/-
 111 = Immediate
 
-ZZ
+ALU
+===
+ZZ - Source / Destination
 00 = A
 01 = B
 10 = C
 11 = D
 
-ALU Operations
-0000: ZZ = 0
+WWWW - ALU Operation
+0000: ZZ = 0 
 0001: ZZ = ZZ + 1
 0010: ZZ = ZZ - 1
-0011: ZZ = ZZ + B
-0100: ZZ = ZZ - B
-0101: ZZ = ZZ AND B
-0110: ZZ = ZZ OR B
-0111: ZZ = ZZ XOR B
-1000: ZZ = NOT ZZ
-1001: Test if ZZ == 0
-1010: Test if ZZ == B
-1011: Test if ZZ > B
-1100: Test if ZZ >= B
-1101: Test if ZZ < B
-1110: Test if ZZ <= B 
-1111: (Reserved for halt)
+0011: ZZ = A + B
+0100: ZZ = A - B
+0101: ZZ = A + B with carry
+0110: ZZ = A - B with borrow
+0111: ZZ = A AND B
+1000: ZZ = A OR B 
+1001: ZZ = A NAND B
+1010: ZZ = A XOR B 
+1011: ZZ = NOT A 
+1100: ZZ = A < 1
+1101: ZZ = A < 1 with carry 
+1110: Test ZZ and B (Greater than or equal to or less than and all other non size comparison tests) 
+1111: Test ZZ and B (Less than or equal to or greater than and all other non size comparison tests)
 
+Checks
+======
+000: Check for equality to zero of the first value
+001: Check for equality between the two values
+010: Check if an addition resulted in a carry 
+011: Check if subtraction resulted in a borrow 
+100: Check if the first value is greater than the second value  
+101: Check if the first value is greater than or equal to the second value 
+110: Check if the first value is less than the second value
+111: Check if the first value is less than or equal to the second value
+
+Op Codes
+========
+COPY - Copy SSS into DDD
+    00 DDD SSS
+LOAD - Copy the value in memory at SSS to DDD
+    01 DDD [SSS]
+STORE - Copy the value in SSS to memory at DDD
+    10 [DDD] SSS
 POP - Decrement SP and copy the memory at SP into DDD
     Actually a load with the source set to [SP+/-]
-    01 XXX 110
+    01 DDD 110
 PUSH - Copy DDD into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
-    10 110 XXX
+    10 110 SSS
 DATA - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
-    00 XXX 111
+    00 DDD 1113
 JUMP - Set the program counter to a value
     Actually a copy where the desination is PC
+    00 101 SSS
+CONDITIONAL_JUMP - Conditionally jump to an immediate value based on a check (CCC) of the result of the last test using the ALU
+    Uses the unused move instruction with the destination as SP+/-
+    00 110 CCC
+TEST_AND_CONDITONAL_JUMP - Conditionally jump to an immediate value based on a check (CCC) of a test between A and B register
+    Uses the unused move instruction with the destination as Immediate
+    00 111 CCC
+ALU - Perform the WWWW operation with the ALU where ZZ is a source, destination or both
+    11 WWWW ZZ
 CALL - Push the program counter, then set the program counter to a value
-    Actually a store of the PC to SP+/-
+    Actually a store of the PC to [SP+/-]
+    10 110 101
 RETURN - Set the program counter to the value pointed at by the stack pointer, then increment the stack pointer
-    Actually a load from SP+/- to PC
+    Actually a load from [SP+/-] to PC
+    10 101 110
 NOOP - Do nothing
-    Can be considered a copy from A to A (00000000)
-PROGRAM_LOAD - Load the contents of program memory at DDD into the A register
+    Can be considered a copy from A to A
+    00 000 000
+PROGRAM_LOAD - Load the contents of program memory at [DDD] into the A register
     A special load when the source is set as the program counter
+    01 DDD 101
 HALT - Halt the computer
-    Use the special 1111 operation in the ALU (11111111)
+    00 111 111
 
-JUMP_IF_ZERO_FLAG
-JUMP_IF_EQUAL_FLAG
-JUMP_IF_CARRY_FLAG
-JUMP_IF_BORROW_FLAG
-JUMP_IF_GREATER_THAN_FLAG
-JUMP_IF_GREATHER_THAN_OR_EQUAL_FLAG
-JUMP_IF_LESS_THAN_FLAG
-JUMP_IF_LESS_THAN_OR_EQUAL_FLAG
-
-TEST_AND_JUMP_IF_ZERO
-TEST_AND_JUMP_IF_EQUAL
-TEST_AND_JUMP_IF_CARRY
-TEST_AND_JUMP_IF_BORROW
-TEST_AND_JUMP_IF_GREATER_THAN
-TEST_AND_JUMP_IF_GREATHER_THAN_OR_EQUAL
-TEST_AND_JUMP_IF_LESS_THAN
-TEST_AND_JUMP_IF_LESS_THAN_OR_EQUAL
-
-
-
-
-Available opcodes
-
-00 001 001 - A = 1
+Opcode Gaps
+===========
+Copying a register to itelf is meaningless
+00 000 000 - NOOP
+00 001 001
 00 010 010
-00 011 011 - Add with carry
-00 100 100 - Subtract with borrow
+00 011 011
+00 100 100
 00 101 101
 00 110 110
-00 111 111
-Copying a register to itelf is meaningless (apart from NOOP)
+00 111 111 - HALT
 
-00 111 XXX
-A copy to an immediate value doesnt make sense, you can't write to an immediate value
-
-00 110 XXX
 A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
+00 110 XXX - Used by conditional check and jump
 
-01 110 XXX
+A copy to an immediate value doesnt make sense, you can't write to an immediate value
+00 111 XXX - Used by conditional test, check and jump
+
 Loading into SP+/- isn't useful, the value wil be incremented or decremented straight away
+01 110 XXX
 
-01 111 XXX
 Loading into an immediate doeasn't make sense, you cant write to immediate values
+01 111 XXX
 
-10 XXX 110
 Storing SP+/- isn't very useful
+10 XXX 110
 
 
 Call microcode steps
@@ -1160,7 +1181,49 @@ constant -> pc
 
 
 
+SET_ZERO
 
+INCR
+
+DECR
+
+ADD
+
+ADD_WITH_CARRY
+
+SUBTRACT
+
+SUBTRACT_WITH_BORROW
+
+AND
+
+OR
+
+NAND
+
+XOR
+
+NOT
+
+SHIFT_LEFT
+
+SHIFT_LEFT_WITH_CARRY
+
+CHECK_IF_ZERO
+
+CHECK_IF_EQUAL
+
+CHECK_IF_CARRY
+
+CHECK_IF_BORROW
+
+CHECK_IF_GREATER_THAN
+
+CHECK_IF_GREATER_THAN_OR_EQUAL
+
+CHECK_IF_LESS_THAN
+
+CHECK_IF_LESS_THAN_OR_EQUAL
 
 
 
