@@ -1091,7 +1091,7 @@ WWWW - ALU Operation
 
 Checks
 ======
-000: Check for equality to zero of the first value
+000: Check for equality to zero of the first value or last operation
 001: Check for equality between the two values
 010: Check if an addition resulted in a carry 
 011: Check if subtraction resulted in a borrow 
@@ -1117,9 +1117,9 @@ PUSH - Copy DDD into memory at SP and increment SP
 DATA - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
     00 DDD 1113
-JUMP - Set the program counter to a value
+JUMP - Set the program counter to a value. JJJ has the same meaning as SSS/DDD
     Actually a copy where the desination is PC
-    00 101 SSS
+    00 101 JJJ
 CONDITIONAL_JUMP - Conditionally jump to an immediate value based on a check (CCC) of the result of the last test using the ALU
     Uses the unused move instruction with the destination as SP+/-
     00 110 CCC
@@ -1128,18 +1128,21 @@ TEST_AND_CONDITONAL_JUMP - Conditionally jump to an immediate value based on a c
     00 111 CCC
 ALU - Perform the WWWW operation with the ALU where ZZ is a source, destination or both
     11 WWWW ZZ
-CALL - Push the program counter, then set the program counter to a value
-    Actually a store of the PC to [SP+/-]
-    10 110 101
+CALL - Push the program counter, then set the program counter to a value. LLL has the same meaning as SSS/DDD
+    Actually a load where the destination is PC+/-
+    01 110 LLL
 RETURN - Set the program counter to the value pointed at by the stack pointer, then increment the stack pointer
-    Actually a load from [SP+/-] to PC
+    Actually a POP into the PC which is actually a load from [SP+/-] to PC
     10 101 110
 NOOP - Do nothing
     Can be considered a copy from A to A
     00 000 000
-PROGRAM_LOAD - Load the contents of program memory at [DDD] into the A register
-    A special load when the source is set as the program counter
-    01 DDD 101
+PROGRAM_LOAD - Load the contents of program memory at PPP into the D register. PPP has the same meaning as SSS/DDD
+    01 111 PPP
+PROGRAM_STORE - Store the D register into program memory at PPP
+    10 PPP 110
+NOOP - Do nothing
+    00 000 000
 HALT - Halt the computer
     00 111 111
 
@@ -1155,20 +1158,21 @@ Copying a register to itelf is meaningless
 00 110 110
 00 111 111 - HALT
 
-A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
+A copy to or from SP+/- doesn't make sense, it only has a meaning when doing load or stores
 00 110 XXX - Used by conditional check and jump
+00 XXX 110
 
 A copy to an immediate value doesnt make sense, you can't write to an immediate value
 00 111 XXX - Used by conditional test, check and jump
 
-Loading into SP+/- isn't useful, the value wil be incremented or decremented straight away
-01 110 XXX
+Loading into SP+/- doesn't make sense, do you want to increment or decrement?
+01 110 XXX - Used by CALL
 
 Loading into an immediate doeasn't make sense, you cant write to immediate values
-01 111 XXX
+01 111 XXX - Used by PROGRAM_LOAD
 
 Storing SP+/- isn't very useful
-10 XXX 110
+10 XXX 110 - Used by PROGRAM_STORE
 
 
 Call microcode steps
@@ -1227,9 +1231,72 @@ CHECK_IF_LESS_THAN_OR_EQUAL
 
 
 
+Microcode II breakdown
+======================
+32:09
+38:54
+1:06:09
+
+Call an immediate
+-----------------
+T0: _PCE | _MAW
+T1: _ME | PGM | _IRW | PCC
+T2: _SPE | _ALW | ALS(A_MINUS_B)
+T3: _ALE | _MAW | _SPW | PCC
+T4: _PCE | _MW | _ALW | ALS(A_MINUS_B)
+T5: _ALE | _MAW
+T6: _ME | PGM | _PCW | _TR
+
+T0: PC -> MAR
+T1: PROGRAM_MEM -> IR, PCC
+T2: SP -> ALU, ALU:SUB1
+T3: ALU -> (MAR, SP), PCC
+T4: PC -> (DATA_MEM, ALU), ALU:SUB1
+T5: ALU -> MAR
+T6: PROGRAM_MEM -> PC, TR
+
+0  0000 0000 
+1  0000 0001 ---- CALL #6
+2  0000 0010 ---- 0000 0110
+3  0000 0011
+4  0000 0100
+5  0000 0101
+6  0000 0110
+7  0000 0111
+
+End of T0: SP = 255  PC = 1  MAR = ?    
+End of T1: SP = 255  PC = 2  MAR = ?    
+End of T2: SP = 255  PC = 2  MAR = ?    
+End of T3: SP = 254  PC = 3  MAR = 254  
+End of T4: SP = 254  PC = 3  MAR = 254  D[254] = 3
+End of T5: SP = 254  PC = 3  MAR = 2    D[254] = 3
+End of T6: SP = 254  PC = 6  MAR = 2    D[254] = 3
 
 
+Call a register
+---------------
+T0: PC -> MAR
+T1: PROGRAM_MEM -> IR, PCC
+T2: SP -> ALU, ALU:SUB1
+T3: ALU -> (SP, MAR)
+T4: PC -> DATA_MEM
+T5: REG_X -> PC, TR
 
+0  0000 0000 
+1  0000 0001 ---- CALL REG_X
+2  0000 0010
+3  0000 0011
+4  0000 0100
+5  0000 0101
+6  0000 0110
+7  0000 0111
+
+End of T0: SP = 255  PC = 1      MAR = ?    
+End of T1: SP = 255  PC = 2      MAR = ?    
+End of T2: SP = 255  PC = 2      MAR = ?    
+End of T3: SP = 254  PC = 2      MAR = 254  
+End of T4: SP = 254  PC = 2      MAR = 254  D[254] = 2
+End of T5: SP = 254  PC = REG_X  MAR = 2    D[254] = 2
 
 
 
