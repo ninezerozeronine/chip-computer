@@ -19,4 +19,4 @@ The source for any code used (and these docs) is available in the `GitHub reposi
 
 
 
-.. _GitHub Repository: https://github.com/ninezerozeronine/8bit-74LS-computer
+.. _GitHub Repository: https://github.com/ninezerozeronine/8bit-74-series-computer
