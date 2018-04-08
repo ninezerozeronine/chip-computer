@@ -12,3 +12,5 @@ I've tried to keep this implementation independent but there are some places whe
    design/overview
    design/modules
    design/operation
+   design/machine_code
+   design/assembly_language

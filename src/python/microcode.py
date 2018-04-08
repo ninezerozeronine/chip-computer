@@ -1133,9 +1133,6 @@ CALL - Push the program counter, then set the program counter to a value. LLL ha
 RETURN - Set the program counter to the value pointed at by the stack pointer, then increment the stack pointer
     Actually a POP into the PC which is actually a load from [SP+/-] to PC
     10 101 110
-NOOP - Do nothing
-    Can be considered a copy from A to A
-    00 000 000
 PROGRAM_LOAD - Load the contents of program memory at PPP into the D register. PPP has the same meaning as SSS/DDD
     01 111 PPP
 PROGRAM_STORE - Store the D register into program memory at PPP
