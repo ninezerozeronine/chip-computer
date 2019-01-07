@@ -1112,10 +1112,10 @@ POP - Decrement SP and copy the memory at SP into DDD
     01 DDD 110
 PUSH - Copy DDD into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
-    10 110 SSS
+    10 110 DDD
 DATA - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
-    00 DDD 1113
+    00 DDD 111
 JUMP - Set the program counter to a value. JJJ has the same meaning as SSS/DDD
     Actually a copy where the desination is PC
     00 101 JJJ
@@ -1297,8 +1297,11 @@ End of T5: SP = 254  PC = REG_X  MAR = 2    D[254] = 2
 
 
 
-
-
+We can't connect the output of the instruction register directly to the address lines of the EEPROMS.
+This is because it takes time for the EEPROMS to settle after an address change.
+This means that we need to buffer the inputs to the EEPROMS with a "mirror" register that's clocked on the faling edge of the clock instead.
+It's the same trick that we use to increment the microcode step on the falling edge.
+https://www.youtube.com/watch?v=ticGSEi0OW4&t=2282s
 
 
 
