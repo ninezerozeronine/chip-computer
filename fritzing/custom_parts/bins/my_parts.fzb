@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806" icon="Mine.png">
+    <title>My Parts</title>
+    <instances>
+        <instance moduleIdRef="74HCT245_0e8676d5e5ce44b1ef6c8453a5a1dc81_1" modelIndex="5905" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT245_0e8676d5e5ce44b1ef6c8453a5a1dc81_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT377_d100c5b4edcc38b5cf5cd21d7d125005_1" modelIndex="5921" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT377_d100c5b4edcc38b5cf5cd21d7d125005_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT161_f9d536e5d922c2f78b229d856fffefba_1" modelIndex="23323" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT161_f9d536e5d922c2f78b229d856fffefba_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT04_43e5a47c5bc1d005d5889307be8db56d_1" modelIndex="44950" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT04_43e5a47c5bc1d005d5889307be8db56d_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74LS181_b4997a88083e73f189bcf55ac7dfe75b_1" modelIndex="47043" path="C:/Users/Andy/Documents/Fritzing/parts/user/74LS181_b4997a88083e73f189bcf55ac7dfe75b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT00_5d183e572a39e6391bffc0f215b770c6_1" modelIndex="47286" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT00_5d183e572a39e6391bffc0f215b770c6_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT173_2266ee0ad143910bbd09e86fdb9ac73b_1" modelIndex="47884" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT173_2266ee0ad143910bbd09e86fdb9ac73b_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74LS02_e21f73245b727cde9e501d82e47f6f3d_1" modelIndex="51193" path="C:/Users/Andy/Documents/Fritzing/parts/user/74LS02_e21f73245b727cde9e501d82e47f6f3d_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74CHT32_5711e345d36935117ef469aa9ae48dde_1" modelIndex="58445" path="C:/Users/Andy/Documents/Fritzing/parts/user/74CHT32_5711e345d36935117ef469aa9ae48dde_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT14_1fd46c5ae2d26e6f58e398138e9f31a5_1" modelIndex="58455" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT14_1fd46c5ae2d26e6f58e398138e9f31a5_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="6116SA15TPG_6c4e5b2d4ea033537b4061eb216d5733_1" modelIndex="58468" path="C:/Users/Andy/Documents/Fritzing/parts/user/6116SA15TPG_6c4e5b2d4ea033537b4061eb216d5733_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT32_6a2c5c6418ff72d02c87826aa734a32c_1" modelIndex="58487" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT32_6a2c5c6418ff72d02c87826aa734a32c_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT08_da0de0894ca346485be958349d760951_1" modelIndex="58500" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT08_da0de0894ca346485be958349d760951_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT157_1f423cf75f48a7964057cb8610cf5815_1" modelIndex="60050" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT157_1f423cf75f48a7964057cb8610cf5815_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="AT28C256_be4494ec96135e23991080af996ecd7d_1" modelIndex="60065" path="C:/Users/Andy/Documents/Fritzing/parts/user/AT28C256_be4494ec96135e23991080af996ecd7d_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT138_c1b9c9f2856e461181698189a50f1e22_1" modelIndex="63120" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT138_c1b9c9f2856e461181698189a50f1e22_1.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>
