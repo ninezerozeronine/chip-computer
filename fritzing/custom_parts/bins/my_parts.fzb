@@ -50,5 +50,17 @@
         <instance moduleIdRef="74HCT138_c1b9c9f2856e461181698189a50f1e22_1" modelIndex="63120" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT138_c1b9c9f2856e461181698189a50f1e22_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="74HCT574_aba57312ca0ecee894301c4a1e561851_1" modelIndex="68262" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT574_aba57312ca0ecee894301c4a1e561851_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT86_d1ae2ee327aacc0aa45667a7d063a3b8_1" modelIndex="68459" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT86_d1ae2ee327aacc0aa45667a7d063a3b8_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT02_378e88bd8be5396f06b482023c1c666e_1" modelIndex="69058" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT02_378e88bd8be5396f06b482023c1c666e_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="74HCT109fixed_92e1dc410d94209e3ec7a517d7e5af86_1" modelIndex="73891" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT109fixed_92e1dc410d94209e3ec7a517d7e5af86_1.fzp">
+            <views/>
+        </instance>
     </instances>
 </module>
