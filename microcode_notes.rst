@@ -131,6 +131,7 @@ SET_ZERO (A, B, C, D, SP, PC)
 JUMP DST
 JUMP (A, B, C, D, SP, PC, #)
     Set the program counter to a value.
+    An alias for copying into PC.
 
 JUMP_IF_TEST TTT #
 JUMP_IF_TEST (ZERO, EQUAL, NEGATIVE, LTE, GT, LT, GTE) #
@@ -315,10 +316,10 @@ Opcode Gaps
 ===========
 Copying a register to itelf is meaningless
 00 000 000 - NOOP
-00 001 001
-00 010 010
-00 011 011
-00 100 100
+00 001 001 - JUMP_IF_FLAG ZERO
+00 010 010 - JUMP_IF_FLAG NEGATIVE
+00 011 011 - JUMP_IF_FLAG OVERFLOW
+00 100 100 - JUMP_IF_FLAG UNDERFLOW
 00 101 101
 00 110 110
 00 111 111 - HALT
@@ -327,7 +328,7 @@ A copy from SP+/- doesn't make sense, it only has a meaning when doing load or s
 00 110 XXX - Used by jump if test result
 
 Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
-10 110 [XXX] - Used by jump if flag
+10 110 [XXX] -
 
 A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
 00 XXX 110 - 
