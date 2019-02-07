@@ -27,21 +27,22 @@ ALU_CIN
 ALU_M
 
 ALU_FLAGS_STORE
+ALU_INPUT_SEL
 RAM_ADDR_IN
 RAM_IN
 RAM_OUT
 PROGRAM_COUNTER_IN
 PROGRAM_COUNTER_OUT
 PROGRAM_COUNTER_COUNT
-SP_IN
 
+SP_IN
 SP_OUT
 INSTRUCTION_REGISTER_IN
 PROGRAM_MEMORY_SELECT
 STEP_COUNTER_RESET
 HALT
 
-29 in total
+30 in total
 
 Instructions
 ============
@@ -123,21 +124,21 @@ SET DST #
 SET (A, B, C, D, SP, PC) #
     Set DST to an absolute value
 
+SET_ZERO DST
+SET_ZERO (A, B, C, D, SP, PC)
+    Set DST to 0 (Saves a program byte!)
+
 JUMP DST
 JUMP (A, B, C, D, SP, PC, #)
     Set the program counter to a value.
 
-CONDITIONAL_JUMP CCC #
-CONDITIONAL_JUMP (ZERO, EQUAL, NEGATIVE, LTE, GT, LT, GTE) #
-    If the result of the check using A is true, jump to #
+JUMP_IF_TEST TTT #
+JUMP_IF_TEST (ZERO, EQUAL, NEGATIVE, LTE, GT, LT, GTE) #
+    If the result of the test that was done using the ALU was true, jump to #
 
-CONDITIONAL_CHECK_JUMP CCC #
-CONDITIONAL_CHECK_JUMP (ZERO, EQUAL, NEGATIVE, LTE, GT, LT, GTE) #
-    If the result of the check the ALU just did is true, jump to #
-
-CONDITONAL_RESULT_JUMP RRR #
-CONDITONAL_RESULT_JUMP (ZERO, NEGATIVE, OVERFLOW, UNDERFLOW) #
-    If the result of the last operation is as being tested for, jump to #
+JUMP_IF_FLAG FFF #
+JUMP_IF_FLAG (ZERO, NEGATIVE, OVERFLOW, UNDERFLOW) #
+    If the flag set by the ALU is true, jump to #
 
 ALU TASK OPER
 ALU (INCR, DECR, ADD, SUB, ADD_CARRY, SUB_BORROW, AND, OR, NAND, XOR, NOT, SHIFT, SHIFT_CARRY, TEST_LTE, TEST_GT, TEST_LT, TEST_GTE, TEST_ZERO, TEST_NEGATIVE) (A, B, C, D)
@@ -191,12 +192,10 @@ DATA - Set a DDD to a specific value
 JUMP - Set the program counter to a value.
     Actually a copy where the desination is PC
     00 SSS 101
-CONDITIONAL_CHECK_JUMP - Conditionally jump to an immediate value based on a check (CCC) of the result of a test using the ALU
-    Uses the unused move instruction with the destination as SP+/-
-    00 110 CCC
-CONDITONAL_RESULT_JUMP - Conditionally jump to an immediate value based on the result of the last ALU operation
-    Uses the unused move instruction with the destination as Immediate
-    00 111 CCC
+JUMP_IF_TEST_RESULT - Conditionally jump to an immediate value based on a check (CCC) of the result of a test using the ALU
+    00 110 TTT
+JUMP_IF_FLAG - Conditionally jump to an immediate value based on the state of an ALU flag
+    11 110 FFF
 ALU - Perform the WWWW operation with the ALU where ZZ is a source, destination or both
     11 WWWW ZZ
 CALL - Push the program counter, then set the program counter to a value. LLL has the same meaning as SSS/DDD
@@ -298,7 +297,7 @@ Jump if test result:
 110: ZZ >= B
 111: -
 
-RRR - ALU results
+FFF - ALU Flags
 000: Result was zero
 001: Result was negative (2's Compliment)
 010: Addition overflowed
@@ -325,16 +324,19 @@ Copying a register to itelf is meaningless
 00 111 111 - HALT
 
 A copy from SP+/- doesn't make sense, it only has a meaning when doing load or stores
-00 110 XXX - Used by jump if result was zero
+00 110 XXX - Used by jump if test result
+
+Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
+10 110 [XXX] - Used by jump if flag
 
 A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
-00 XXX 110 - Used by jump if result was negative (2's compliment)
+00 XXX 110 - 
 
 A copy to an immediate value doesnt make sense, you can't write to an immediate value
-00 XXX 111 - Used by jump if result carried/overflowed
+00 XXX 111 - 
 
 Loading into SP - Not very useful. Can be achieved with a load to a reg then a copy anyway.
-01 [XXX] 100 - Used by jump if test result is true
+01 [XXX] 100 - 
 
 Loading into SP+/- doesn't make sense, SP+/- isn't somewhere you can store data
 01 [XXX] 110 - Used by CALL
@@ -343,10 +345,7 @@ Loading into an immediate doeasn't make sense, you cant write to immediate value
 01 [XXX] 111 - Used by PROGRAM_LOAD
 
 Storing SP - Not very useful - that's what SP is there for. Can be achieved with a load to a reg then a copy anyway.
-10 100 [XXX] - Used by jump to D if test result is true
-
-Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
-10 110 [XXX] - Used by jump if result underflowed/borrowed
+10 100 [XXX] - 
 
 Storing immediate values - Simply not possible as a value needs be copied from one location in memory to another and we have no intermediate storage space
 10 111 [XXX] - Used by PROGRAM_STORE
