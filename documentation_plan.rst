@@ -19,7 +19,7 @@ Hardware details
     Tools
 
 Usage
-    Setting up
+    Setup
     Inputting programs
     Running and Resetting
 
