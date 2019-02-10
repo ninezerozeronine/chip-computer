@@ -1,8 +1,11 @@
 Input Sigs
 ==========
 Opcode (8 bits)
-Microcode Step (3 bits)
 ALU Flags (4 bits) (Zero, Carry/compare, Equality, Negative)
+Microcode Step (3 bits)
+
+Opcode    Flags  Microcode Step
+00000000  0000   000
 
 15 in total
 
@@ -17,7 +20,7 @@ C_OUT
 D_IN
 D_OUT
 
-ALU_STORE
+ALU_STORE_RESULT
 ALU_OUT
 ALU_S0
 ALU_S1
@@ -26,8 +29,8 @@ ALU_S3
 ALU_CIN
 ALU_M
 
-ALU_FLAGS_STORE
-ALU_INPUT_SEL
+ALU_STORE_FLAGS
+ALU_A_FROM_BUS
 RAM_ADDR_IN
 RAM_IN
 RAM_OUT
@@ -198,7 +201,7 @@ POP - Decrement SP and copy the memory at SP into DDD
 PUSH - Copy SSS into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
     10 SSS [110]
-DATA - Set a DDD to a specific value
+SET - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
     00 111 DDD
 JUMP - Set the program counter to a value.
@@ -353,7 +356,7 @@ A copy to SP+/- doesn't make sense, it only has a meaning when doing load or sto
 00 XXX 110 - Used by jump if zero
 
 A copy to an immediate value doesnt make sense, you can't write to an immediate value
-00 XXX 111 - Used by jump if Negative
+00 XXX 111 - Used by jump if negative
 
 Loading into SP - Not very useful. Can be achieved with a load to a reg then a copy anyway.
 01 [XXX] 100
@@ -375,3 +378,54 @@ Storing immediate values - Simply not possible as a value needs be copied from o
 
 
 
+00 SSS DDD - Copy instructions - Copy SSS to DDD
+01 [SSS] DDD - Load instructions - Load memory contents at SSS into DDD
+10 SSS [DDD] - Store instructions - Store SSS into memory at DDD
+11 WWWW ZZ - ALU instructions - Do WWWW using ZZ (and sometimes B), and store the result in ZZ
+
+SSS/DDD - Source / Destination
+000 = A
+001 = B
+010 = C
+011 = D
+100 = SP
+101 = PC
+110 = SP+/-
+111 = Immediate
+
+00 000 101
+    COPY A PC
+    JUMP A
+
+00 111 101
+    COPY IMM PC
+    JUMP #
+
+01 [110] 000
+    LOAD [SP+/-] A
+    POP A
+
+00 111 000
+    COPY IMM A
+    SET A #
+
+Machine language categories
+
+Copy
+Load
+Store
+ALU
+Jump
+Jump if flag
+Jump if test result
+Jump if zero
+Jump if equal
+Jump if less than
+Jump if greater than
+Jump if Negative
+Call
+Return
+Program Load
+Program Store
+Halt
+Noop
