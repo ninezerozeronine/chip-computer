@@ -21,6 +21,10 @@ Hardware details
     Edge Detection
     Debouncing
 
+Programming
+    Machine Code
+    Assembly
+
 Usage
     Setup
     Inputting programs
