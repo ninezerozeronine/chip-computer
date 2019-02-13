@@ -2,7 +2,7 @@
 
 from itertools import product
 
-from language.definitions import REGISTERS, OPCODE_GROUPS, MODULE_CONTROL_FLAGS
+from language.definitions import SRC_REGISTERS, DST_REGISTERS, OPCODE_GROUPS, MODULE_CONTROL, FLAGS
 import language.utils
 
 
@@ -27,21 +27,21 @@ def create_datatemplate(src, dest):
     """
     Create the datatemplates to define a copy from src to dest.
     """
-    instruction_bits = "{group_code}{source_code}{dest_code}".format(
-        group_code = OPCODE_GROUPS["COPY"],
-        source_code = REGISTERS[src],
-        dest_code = REGISTERS[dest]
-    )
+    instruction_bitdefs = [
+        OPCODE_GROUPS["COPY"],
+        SRC_REGISTERS[src],
+        DST_REGISTERS[dest],
+    ]
 
-    flags_bits = utils.match_any_flag_bitpattern()
+    flags_bitdefs = [FLAGS["ALL"]]
 
-    steps = [
+    instruction_steps = [
         [
-            MODULE_CONTROL_FLAGS[src]["OUT"],
-            MODULE_CONTROL_FLAGS[dest]["IN"]
+            MODULE_CONTROL[src]["OUT"],
+            MODULE_CONTROL[dest]["IN"],
         ]
     ]
 
-    return language.utils.steps_to_data_templates(
-        instruction_bits, flags_bits, steps
+    return language.utils.assemble_operation_templates(
+        instruction_bitdefs, flags_bitdefs, instruction_steps
     )

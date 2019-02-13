@@ -10,13 +10,17 @@ def generate_datatemplates():
     """
 
     """
-    sources = ["ACC", "A", "B", "C", "PC", "IMM"]
+    sources = ["ACC", "A", "B", "C", "PC"]
     destinations = ["ACC", "A", "B", "C", "SP"]
 
     data_templates = []
 
     for src, dest in product(sources, destinations):
         template = create_datatemplate(src, dest)
+        data_templates.append(template)
+
+    for dest in destinations:
+        template = create_immediate_datatemplate(dest)
         data_templates.append(template)
 
     return data_templates
@@ -47,3 +51,9 @@ def create_datatemplate(src, dest):
     ]
 
     return utils.data_templates_from_steps(instruction_bits, flags_bits, steps)
+
+def create_immediate_datatemplate(dest):
+    """
+
+    """
+    pass
