@@ -201,6 +201,9 @@ POP - Decrement SP and copy the memory at SP into DDD
 PUSH - Copy SSS into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
     10 SSS [110]
+PEEK
+
+POKE
 SET - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
     00 111 DDD

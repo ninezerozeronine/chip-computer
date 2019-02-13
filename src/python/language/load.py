@@ -1,4 +1,4 @@
-"""The copy operation"""
+"""The load operation"""
 
 from itertools import product
 
@@ -8,27 +8,27 @@ import language.utils
 
 def generate_datatemplates():
     """
-    Gernerate datatemplates for all the copy operations.
-    """
 
-    sources = ["ACC", "A", "B", "C", "PC", "SP"]
+    """
+    sources = ["ACC", "A", "B", "C", "PC", "IMM"]
     destinations = ["ACC", "A", "B", "C", "SP"]
 
     data_templates = []
 
     for src, dest in product(sources, destinations):
-        if src != dest:
-            template = create_datatemplate(src, dest)
-            data_templates.append(template)
+        template = create_datatemplate(src, dest)
+        data_templates.append(template)
 
     return data_templates
 
+
 def create_datatemplate(src, dest):
     """
-    Create the datatemplates to define a copy from src to dest.
+    Define a load from data memory at src into dest.
     """
+
     instruction_bits = "{group_code}{source_code}{dest_code}".format(
-        group_code = OPCODE_GROUPS["COPY"],
+        group_code = OPCODE_GROUPS["LOAD"],
         source_code = REGISTERS[src],
         dest_code = REGISTERS[dest]
     )
@@ -37,11 +37,13 @@ def create_datatemplate(src, dest):
 
     steps = [
         [
-            MODULE_CONTROL_FLAGS[src]["OUT"],
-            MODULE_CONTROL_FLAGS[dest]["IN"]
+           MODULE_CONTROL_FLAGS[src]["OUT"],
+           MODULE_CONTROL_FLAGS["MAR"]["IN"]
+        ],
+        [
+           MODULE_CONTROL_FLAGS["RAM"]["OUT"],
+           MODULE_CONTROL_FLAGS[dst]["IN"]
         ]
     ]
 
-    return language.utils.steps_to_data_templates(
-        instruction_bits, flags_bits, steps
-    )
+    return utils.data_templates_from_steps(instruction_bits, flags_bits, steps)

@@ -1,5 +1,7 @@
 """Defnitions of named items"""
 
+import utils
+
 REGISTERS = {
     "ACC":   "000",
     "A":     "001",
@@ -114,7 +116,7 @@ MODULE_CONTROL_FLAGS = {
         "IN":
     },
     "CU": {
-        "MC_STEP_RESET":
+        "STEP_RESET":
     },
     "CLOCK": {
         "HALT":
@@ -131,3 +133,22 @@ TESTS = {
     "GTE"     "110"
 }
 
+FLAGS = {
+    "ZERO": {
+        "HIGH":
+        "LOW": 
+    },
+    "NEGATIVE": {
+        "HIGH": 
+        "LOW": 
+    },
+    "CARRY_BORROW": {
+        "HIGH": 
+        "LOW":
+    },
+    "EQUAL": {
+        "HIGH":
+        "LOW":
+    },
+    "ALL" :
+}
