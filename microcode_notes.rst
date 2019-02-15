@@ -432,3 +432,6 @@ Program Load
 Program Store
 Halt
 Noop
+
+
+........010X0010..

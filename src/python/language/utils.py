@@ -1,7 +1,7 @@
 import utils
 from language.definitions import MODULE_CONTROL, MODULE_CONTROL_END, MODULE_CONTROL_START, STEPS
 
-def assemble_operation_templates(instruction_bitdefs, flags_bitdefs, instruction_steps):
+def assemble_instruction(instruction_bitdefs, flags_bitdefs, instruction_steps):
     """
     Create templates for all steps to form a complete instruction.
     """
@@ -10,17 +10,17 @@ def assemble_operation_templates(instruction_bitdefs, flags_bitdefs, instruction
     if num_steps > 6:
         msg = "{num_steps} steps were passed, the maxiumum is 6.".format(
             num_steps=num_steps)
-        raise RuntimeError(msg)
+        raise ValueError(msg)
 
     templates = []
 
-    instruction_bitdef = utils.join_bitdefs(instruction_bitdefs)
+    instruction_bitdef = utils.concatenate_bitdefs(instruction_bitdefs)
     flags_bitdef = utils.merge_bitdefs(flags_bitdefs)
 
     for index, current_step_controls in enumerate(instruction_steps, start=2):
         step_bitdef = STEPS[index]
 
-        address_bitdef = utils.join_bitdefs(
+        address_bitdef = utils.concatenate_bitdefs(
             [
                 instruction_bitdef,
                 flags_bitdef,

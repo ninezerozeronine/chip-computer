@@ -6,7 +6,7 @@ from language.definitions import SRC_REGISTERS, DST_REGISTERS, OPCODE_GROUPS, MO
 import language.utils
 
 
-def generate_datatemplates():
+def operation_microcode():
     """
     Gernerate datatemplates for all the copy operations.
     """
@@ -18,12 +18,12 @@ def generate_datatemplates():
 
     for src, dest in product(sources, destinations):
         if src != dest:
-            template = create_datatemplate(src, dest)
-            data_templates.append(template)
+            templates = generate_instruction_datatemplates(src, dest)
+            data_templates.extend(templates)
 
     return data_templates
 
-def create_datatemplate(src, dest):
+def generate_instruction(src, dest):
     """
     Create the datatemplates to define a copy from src to dest.
     """
@@ -42,6 +42,6 @@ def create_datatemplate(src, dest):
         ]
     ]
 
-    return language.utils.assemble_operation_templates(
+    return language.utils.assemble_instruction(
         instruction_bitdefs, flags_bitdefs, instruction_steps
     )

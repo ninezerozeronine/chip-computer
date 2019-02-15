@@ -29,15 +29,15 @@ Attributes:
 """
 
 
-def join_bitdefs(bitdefs):
+def concatenate_bitdefs(bitdefs):
     """
     Join the values of the passed in bitdefs
     """
 
     if bitdefs_have_gaps(bitdefs):
-        raise RuntimeError("Bitdefs have gaps.")
+        raise ValueError("Bitdefs have gaps.")
     if bitdefs_overlap(bitdefs):
-        raise RuntimeError("Bitdefs overlap.")
+        raise ValueError("Bitdefs overlap.")
 
     new_end, new_start = bitdef_limits(bitdefs)
     sorted_bitdefs = sorted(
@@ -50,16 +50,38 @@ def join_bitdefs(bitdefs):
 
 def merge_bitdefs(bitdefs):
     """
+    Merge the bitdefs into a single bitdef.
 
+    The bitdefs must:
+        Be the same length and position
+        Not have any absolute values in common indexes
     """
     pass
 
 
-def stack_bitdefs(end, start, bitdefs, base_value=0):
+def stack_bitdefs(bitdefs, fill_value="0"):
     """
 
     """
     pass
+
+def resize_bitdef(bitdef, new_end, new_start, fill_value="0"):
+    """
+    Change the size and or position of a bitdef.
+
+    Can be thought of as a trim/extend operation
+    """
+
+    new_value = ""
+    for new_index in reversed(range(new_start, new_end + 1)):
+        if (new_index >= bitdef.start) and (new_index <= bitdef.end):
+            old_value_index = new_index - bitdef.start
+            reversed_old_value_index = (bitdef.end - bitdef.start) - old_value_index
+            new_value += bitdef.value[reversed_old_value_index]
+        else:
+            new_value += fill_value
+    
+    return BitDef(end=new_end, start=new_start, value=new_value)
 
 
 def bitdefs_overlap(bitdefs):
@@ -118,3 +140,41 @@ def bitdef_limits(bitdefs):
     max_end = max([bitdef.end for bitdef in bitdefs])
     min_start = min([bitdef.start for bitdef in bitdefs])
     return (max_end, min_start)
+
+def bitdefs_in_same_position(bitdefs):
+    """
+    Check if the bitdefs are all in the same position
+    """
+
+    ends = set([bitdef.end for bitdef in bitdefs])
+    starts = set([bitdef.start for start in bitdefs])
+
+    same_position = False
+    if len(ends) == 0 and len(starts) == 0:
+        same_position = True
+    return same_position
+
+def bitdefs_have_different_absolutes(bitdefs):
+    """
+    Check if the bitdefs have any different absolute (non X) values.
+    """
+
+    # This is a slow, brute force approach...
+    max_end, max_start = bitdef_limits(bitdefs)
+    padded_values = []
+    for bitdef in bitdefs:
+        padded = resize_bitdef(bitdef, max_end, max_start, fill_value="X")
+        padded_values.append(padded.value)
+
+    different_absolutes = False
+    for index, padded_value in enumerate(padded_values):
+        for bit_index, bit in enumerate(padded_value):
+            for test_value in padded_values[(index + 1):]:
+                test_bit = test_value[bit_index]
+                if bit != "X" and test_bit != "X" and bit != test_bit:
+                    different_absolutes = True
+
+    return different_absolutes
+
+def collapse_bitdef_possibilities(bitdefs):
+    pass
