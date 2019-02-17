@@ -16,9 +16,16 @@ Attributes:
     data (int): The data to be stored at the given addreses.
 """
 
+
 def bitdefs_same_length(bitdefs):
     """
-    Check if the passed in bitdefs are all the same length
+    Check if the passed in bitdefs are all the same length.
+
+    Args:
+        bitdefs list(str): Bitdefs to check length of.
+    Returns:
+        bool: True if all the bitdefs are the same length, False
+            otherwise
     """
 
     all_same = True
@@ -30,17 +37,37 @@ def bitdefs_same_length(bitdefs):
             break
     return all_same
 
+
 def bitdef_length(bitdef):
     """
-    Calculate length of bitdef
+    Calculate length of a bitdef.
+
+    Args:
+        bitdef (str): The bitdef to find the length of.
+    Returns:
+        int: The length of the bitdef.
     """
 
     return len(bitdef)
 
+
 def bitdefs_have_overlapping_bits(bitdefs):
     """
-    Check if the bitdefs have any bits set in the same position
+    Check if the bitdefs have any bits set in the same position.
+
+    Example with overlap (bits at index 6 overlap:
+        0...101.
+        11......
+    Example with no overlap:
+        11010...
+        ......11
+
+    Args:
+        bitdefs (list(str)): Bitdefs to check for overlaps
+    Returns:
+        bool: Whether or not there were overlaps.
     """
+
     if not bitdefs_same_length(bitdefs):
         raise ValueError("Bitdefs are not all the same length.")
 
@@ -54,11 +81,13 @@ def bitdefs_have_overlapping_bits(bitdefs):
 
     return different_bits
 
+
 def remove_whitespace(input_string):
     """
     Remove the whitespace from a string
     """
     return "".join(input_string.strip().split())
+
 
 def merge_bitdefs(bitdefs):
     """
@@ -86,6 +115,7 @@ def merge_bitdefs(bitdefs):
 
     return output
 
+
 def collapse_bitdef(bitdef):
     """
     Collapse undefined bits into real bits to make new bitdefs.
@@ -105,6 +135,7 @@ def collapse_bitdef(bitdef):
 
     return res
 
+
 def fill_bitdef(bitdef, value):
     """
     Fill undefined bits with a value
@@ -120,6 +151,7 @@ def fill_bitdef(bitdef, value):
             output += bit
     return output
 
+
 def extract_bits(end, start, bitdef):
     """
     Extract a region from the bitdef.
@@ -132,7 +164,9 @@ def extract_bits(end, start, bitdef):
     if end > length:
         raise ValueError("Extraction region is larger than bitdef.")
     if end < start:
-        raise ValueError("Extraction end index is before extraction start index.")
+        raise ValueError(
+            "Extraction end index is before extraction start index."
+        )
     if start < 0:
         raise ValueError("Extraction start index is less than 0.")
     if length == 0:
@@ -143,6 +177,6 @@ def extract_bits(end, start, bitdef):
 
     return bitdef[reverse_end:reverse_start + 1]
 
+
 def reverse_index(index, length):
     return length - index - 1
-
