@@ -2,11 +2,10 @@
 
 from itertools import product
 
-from language.definitions import SRC_REGISTERS, DST_REGISTERS, OPCODE_GROUPS, MODULE_CONTROL, FLAGS
-import language.utils
+from .definitions import OPCODE_GROUPS, SRC_REGISTERS, DEST_REGISTERS, MODULE_CONTROL, FLAGS
+from . import utils
 
-
-def operation_microcode():
+def generate_microcode_templates():
     """
     Gernerate datatemplates for all the copy operations.
     """
@@ -18,7 +17,7 @@ def operation_microcode():
 
     for src, dest in product(sources, destinations):
         if src != dest:
-            templates = generate_instruction_datatemplates(src, dest)
+            templates = generate_instruction(src, dest)
             data_templates.extend(templates)
 
     return data_templates
@@ -30,18 +29,18 @@ def generate_instruction(src, dest):
     instruction_bitdefs = [
         OPCODE_GROUPS["COPY"],
         SRC_REGISTERS[src],
-        DST_REGISTERS[dest],
+        DEST_REGISTERS[dest],
     ]
 
-    flags_bitdefs = [FLAGS["ALL"]]
+    flags_bitdefs = [FLAGS["ANY"]]
 
-    instruction_steps = [
+    control_steps = [
         [
             MODULE_CONTROL[src]["OUT"],
             MODULE_CONTROL[dest]["IN"],
         ]
     ]
 
-    return language.utils.assemble_instruction(
-        instruction_bitdefs, flags_bitdefs, instruction_steps
+    return utils.assemble_instruction(
+        instruction_bitdefs, flags_bitdefs, control_steps
     )

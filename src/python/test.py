@@ -1,6 +1,6 @@
 import unittest
 
-import utils
+from eight_bit_computer import utils
 
 class TestUtils(unittest.TestCase):
 
@@ -209,7 +209,7 @@ class TestUtils(unittest.TestCase):
             with self.assertRaises(ValueError):
                 utils.merge_bitdefs(bitdefs)
 
-def test_collapse_bitdef(bitdef):
+    def test_collapse_bitdef(self):
         test_data = [
             {
                 "bitdef": "",
@@ -246,140 +246,81 @@ def test_collapse_bitdef(bitdef):
 
         for test_set in test_data:
             self.assertEqual(
-                set(collapse_bitdef(test_set["bitdef"]), test_set["result"])
+                set(utils.collapse_bitdef(test_set["bitdef"])), test_set["result"]
             )
 
-    # def test_bitdef_limits(self):
-    #     bitdefs = [
-    #         utils.BitDef(end=3, start=0, value="101X"),
-    #         utils.BitDef(end=7, start=4, value="0000")
-    #     ]
-    #     self.assertEqual(utils.bitdef_limits(bitdefs), (7,0))
+    def test_fill_bitdef(self):
+        test_data = [
+            ("", "", "1"),
+            (".", "0", "0"),
+            (".10.", "1101", "1"),
+            ("1010", "1010", "0"),
+        ]
+
+        for bitdef, result, fill_value in test_data:
+            self.assertEqual(utils.fill_bitdef(bitdef, fill_value), result)
 
 
-    # def test_bitdefs_overlap(self):
-    #     non_overlap_bitdefs = [
-    #         utils.BitDef(end=3, start=0, value="101X"),
-    #         utils.BitDef(end=7, start=4, value="0000")
-    #     ]
+    def test_datatemplates_to_romdatas(self):
+        test_data = [
+            {
+                "datatemplates": [
+                    utils.DataTemplate(address_range="00.", data="00"),
+                ],
+                "romdatas": [
+                    utils.RomData(address="000", data="00"),
+                    utils.RomData(address="001", data="00"),
+                ]
+            },
+            {
+                "datatemplates": [
+                    utils.DataTemplate(address_range=".", data="10"),
+                ],
+                "romdatas": [
+                    utils.RomData(address="0", data="10"),
+                    utils.RomData(address="1", data="10"),
+                ]
+            },
+            {
+                "datatemplates": [
+                    utils.DataTemplate(address_range="0", data="10"),
+                ],
+                "romdatas": [
+                    utils.RomData(address="0", data="10"),
+                ]
+            },
+            {
+                "datatemplates": [
+                    utils.DataTemplate(address_range="01.", data="0"),
+                    utils.DataTemplate(address_range="10.", data="1"),
+                ],
+                "romdatas": [
+                    utils.RomData(address="010", data="0"),
+                    utils.RomData(address="011", data="0"),
+                    utils.RomData(address="100", data="1"),
+                    utils.RomData(address="101", data="1"),
+                ]
+            },
+            {
+                "datatemplates": [
+                    utils.DataTemplate(address_range="10.", data="0"),
+                    utils.DataTemplate(address_range="10.", data="1"),
+                ],
+                "romdatas": [
+                    utils.RomData(address="100", data="0"),
+                    utils.RomData(address="101", data="0"),
+                    utils.RomData(address="100", data="1"),
+                    utils.RomData(address="101", data="1"),
+                ]
+            },
+        ]
 
-    #     self.assertFalse(utils.bitdefs_overlap(non_overlap_bitdefs))
+        for test_set in test_data:
+            self.assertEqual(
+                utils.datatemplates_to_romdatas(test_set["datatemplates"]),
+                test_set["romdatas"],
+            )
 
-    #     overlap_bitdefs = [
-    #         utils.BitDef(end=3, start=0, value="1111"),
-    #         utils.BitDef(end=7, start=2, value="000000")
-    #     ]
-    #     self.assertTrue(utils.bitdefs_overlap(overlap_bitdefs))
-
-
-    # def test_bitdefs_have_gaps(self):
-    #     non_gap_bitdefs = [
-    #         utils.BitDef(end=3, start=2, value="00"),
-    #         utils.BitDef(end=5, start=4, value="11"),
-    #         utils.BitDef(end=7, start=6, value="XX")
-    #     ]
-
-    #     self.assertFalse(utils.bitdefs_have_gaps(non_gap_bitdefs))
-
-    #     gap_bitdefs = [
-    #         utils.BitDef(end=2, start=0, value="111"),
-    #         utils.BitDef(end=7, start=4, value="0000")
-    #     ]
-
-    #     self.assertTrue(utils.bitdefs_have_gaps(gap_bitdefs))
-
-
-    # def test_join_bitdefs(self):
-    #     bitdefs = [
-    #         utils.BitDef(end=3, start=2, value="00"),
-    #         utils.BitDef(end=5, start=4, value="11"),
-    #         utils.BitDef(end=7, start=6, value="XX")
-    #     ]
-
-    #     self.assertEqual(
-    #         utils.join_bitdefs(bitdefs),
-    #         utils.BitDef(end=7, start=2, value="XX1100")
-    #     )
-
-    # def test_resize_bitdef(self):
-    #     orig = utils.BitDef(end=2, start=0, value="01X")
-    #     new = utils.BitDef(end=2, start=0, value="01X")
-    #     self.assertEqual(
-    #         new,
-    #         utils.resize_bitdef(orig, 2, 0, fill_value="X")
-    #     )
-
-    #     orig = utils.BitDef(end=2, start=0, value="01X")
-    #     new = utils.BitDef(end=4, start=3, value="11")
-    #     self.assertEqual(
-    #         new,
-    #         utils.resize_bitdef(orig, 4, 3, fill_value="1")
-    #     )
-
-    #     orig = utils.BitDef(end=3, start=2, value="01")
-    #     new = utils.BitDef(end=1, start=0, value="XX")
-    #     self.assertEqual(
-    #         new,
-    #         utils.resize_bitdef(orig, 1, 0, fill_value="X")
-    #     )
-
-    #     orig = utils.BitDef(end=3, start=0, value="101X")
-    #     new = utils.BitDef(end=5, start=2, value="XX10")
-    #     self.assertEqual(
-    #         new,
-    #         utils.resize_bitdef(orig, 5, 2, fill_value="X")
-    #     )
-
-
-    # def test_bitdefs_have_different_absolutes(self):
-    #     non_overlapping_tests = [
-    #         [
-    #             utils.BitDef(end=3, start=0, value="1XXX"),
-    #             utils.BitDef(end=3, start=0, value="X0XX"),
-    #             utils.BitDef(end=3, start=0, value="XX1X"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=3, start=0, value="1XXX"),
-    #             utils.BitDef(end=4, start=4, value="1"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=1, start=0, value="XX"),
-    #             utils.BitDef(end=1, start=0, value="11"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=1, start=0, value="1X"),
-    #             utils.BitDef(end=1, start=0, value="11"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=1, start=0, value="1X"),
-    #             utils.BitDef(end=1, start=0, value="X0"),
-    #         ],
-    #     ]
-
-    #     for non_overlapping in non_overlapping_tests:
-    #         self.assertFalse(
-    #             utils.bitdefs_have_different_absolutes(non_overlapping)
-    #         )
-
-    #     overlapping_tests = [
-    #         [
-    #             utils.BitDef(end=1, start=0, value="1X"),
-    #             utils.BitDef(end=1, start=0, value="00"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=2, start=0, value="1XX"),
-    #             utils.BitDef(end=4, start=2, value="XX0"),
-    #         ],
-    #         [
-    #             utils.BitDef(end=3, start=0, value="1100"),
-    #             utils.BitDef(end=3, start=0, value="1010"),
-    #         ],
-    #     ]
-
-    #     for overlapping in overlapping_tests:
-    #         self.assertTrue(
-    #             utils.bitdefs_have_different_absolutes(overlapping)
-    #         )
 
 if __name__ == '__main__':
     unittest.main()
