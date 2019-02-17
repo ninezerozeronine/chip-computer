@@ -168,7 +168,7 @@ MODULE_CONTROL = {
 }
 
 EMPTY_ADDRESS = rw("........ .... ...")
-EMPTY_DATA = rw("........ ........ ........ ........")
+MODULE_CONTROLS_DEFAULT = rw("00000000 00000000 00000000 00000000")
 
 # TESTS = {
 #     "ZERO":   "000",

@@ -3,6 +3,7 @@ Create and export roms for the computer
 """
 
 from .language import copy, load
+from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from . import utils
 
 from collections import namedtuple
@@ -65,6 +66,7 @@ def get_all_romdata():
     """
     Get a list of the pieces of data to write into the rom
     """
+
     templates = collect_operation_datatemplates()
     romdatas = datatemplates_to_romdatas(templates)
     if romdatas_have_duplicate_addresses(romdatas):
@@ -76,15 +78,28 @@ def populate_empty_addresses(romdatas):
     """
 
     """
-    pass
 
-def find_spare_instructions(romdatas):
+    all_addresses = utils.collapse_bitdef(EMPTY_ADDRESS)
+    filled_addresses = {romdata.address:romdata.data for romdata in romdatas}
+    complete_rom = []
+    for address in all_addresses:
+        if address in filled_addresses:
+            complete_rom.append(
+                RomData(address=address, data=filled_addresses[address])
+            )
+        else:
+            complete_rom.append(
+                RomData(address=address, data=MODULE_CONTROLS_DEFAULT)
+            )
+    return complete_rom
+
+
+def get_rom_data_slice(romdatas, end, start):
     """
 
     """
+
     pass
-
-
 
 
 
