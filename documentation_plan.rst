@@ -15,11 +15,18 @@ Modules:
 Hardware details
     HCT vs. LS
     Fanout
-    Materials
+    Materials (Breadboards, Wire, components)
     Tools
+    Buffer registers
+    Edge Detection
+    Debouncing
+
+Programming
+    Machine Code
+    Assembly
 
 Usage
-    Setting up
+    Setup
     Inputting programs
     Running and Resetting
 

@@ -1,8 +1,11 @@
 Input Sigs
 ==========
 Opcode (8 bits)
-Microcode Step (3 bits)
 ALU Flags (4 bits) (Zero, Carry/compare, Equality, Negative)
+Microcode Step (3 bits)
+
+Opcode    Flags  Microcode Step
+00000000  0000   000
 
 15 in total
 
@@ -17,7 +20,7 @@ C_OUT
 D_IN
 D_OUT
 
-ALU_STORE
+ALU_STORE_RESULT
 ALU_OUT
 ALU_S0
 ALU_S1
@@ -26,8 +29,8 @@ ALU_S3
 ALU_CIN
 ALU_M
 
-ALU_FLAGS_STORE
-ALU_INPUT_SEL
+ALU_STORE_FLAGS
+ALU_A_FROM_BUS
 RAM_ADDR_IN
 RAM_IN
 RAM_OUT
@@ -151,6 +154,7 @@ CALL (A, B, C, D, SP, PC, #)
 
 RETURN
     Set the program counter to the value on top of the stack, then pop the value off the stack
+    An alias for Popping into PC
 
 PROGRAM_LOAD SRC
 PROGRAM_LOAD [A, B, C, D, SP, PC, #)]
@@ -170,10 +174,20 @@ HALT
 
 
 
+00 SSS DDD - Copy instructions - Copy SSS to DDD
+01 [SSS] DDD - Load instructions - Load memory contents at SSS into DDD
+10 SSS [DDD] - Store instructions - Store SSS into memory at DDD
+11 WWWW ZZ - ALU instructions - Do WWWW using ZZ (and sometimes B), and store the result in ZZ
 
-
-
-
+SSS/DDD - Source / Destination
+000 = A
+001 = B
+010 = C
+011 = D
+100 = SP
+101 = PC
+110 = SP+/-
+111 = Immediate
 
 COPY - Copy SSS into DDD
     00 SSS DDD
@@ -187,7 +201,10 @@ POP - Decrement SP and copy the memory at SP into DDD
 PUSH - Copy SSS into memory at SP and increment SP
     Actually a store with the destination set to [SP+/-]
     10 SSS [110]
-DATA - Set a DDD to a specific value
+PEEK
+
+POKE
+SET - Set a DDD to a specific value
     Actually a copy from an immediate value to DDD
     00 111 DDD
 JUMP - Set the program counter to a value.
@@ -195,16 +212,27 @@ JUMP - Set the program counter to a value.
     00 SSS 101
 JUMP_IF_TEST_RESULT - Conditionally jump to an immediate value based on a check (CCC) of the result of a test using the ALU
     00 110 TTT
+    Uses the invalid copy from SP+/- 
 JUMP_IF_FLAG - Conditionally jump to an immediate value based on the state of an ALU flag
-    11 110 FFF
+    00 FFF FFF
+    Uses some of the invalid copy to self opcodes
+JUMP_IF_ZERO
+    00 SSS 110
+    Uses the invalid copy to SP+/-
+JUMP_IF_NEGATIVE
+    00 SSS 111
+    Uses the invalid copy to immediate
+JUMP_IF_EQUAL_TO_ACC
+    10 110 [XXX]
+    Uses the invalid store to SP+/-
 ALU - Perform the WWWW operation with the ALU where ZZ is a source, destination or both
     11 WWWW ZZ
 CALL - Push the program counter, then set the program counter to a value. LLL has the same meaning as SSS/DDD
     Actually a load where the destination is SP+/-
-    01 110 LLL
+    01 [110] LLL
 RETURN - Set the program counter to the value pointed at by the stack pointer, then increment the stack pointer
     Actually a POP into the PC which is actually a load from [SP+/-] to PC
-    10 101 110
+    01 [110] 101
 PROGRAM_LOAD - Load the contents of program memory at PPP into the D register. PPP has the same meaning as SSS/DDD
     01 [PPP] 111
 PROGRAM_STORE - Store the D register into program memory at PPP.  PPP has the same meaning as SSS/DDD
@@ -327,23 +355,23 @@ Copying a register to itelf is meaningless
 A copy from SP+/- doesn't make sense, it only has a meaning when doing load or stores
 00 110 XXX - Used by jump if test result
 
-Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
-10 110 [XXX] -
-
 A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
-00 XXX 110 - 
+00 XXX 110 - Used by jump if zero
 
 A copy to an immediate value doesnt make sense, you can't write to an immediate value
-00 XXX 111 - 
+00 XXX 111 - Used by jump if negative
 
 Loading into SP - Not very useful. Can be achieved with a load to a reg then a copy anyway.
-01 [XXX] 100 - 
+01 [XXX] 100
 
 Loading into SP+/- doesn't make sense, SP+/- isn't somewhere you can store data
 01 [XXX] 110 - Used by CALL
 
 Loading into an immediate doeasn't make sense, you cant write to immediate values
 01 [XXX] 111 - Used by PROGRAM_LOAD
+
+Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
+10 110 [XXX] - Used by jump if equal to ACC
 
 Storing SP - Not very useful - that's what SP is there for. Can be achieved with a load to a reg then a copy anyway.
 10 100 [XXX] - 
@@ -353,3 +381,57 @@ Storing immediate values - Simply not possible as a value needs be copied from o
 
 
 
+00 SSS DDD - Copy instructions - Copy SSS to DDD
+01 [SSS] DDD - Load instructions - Load memory contents at SSS into DDD
+10 SSS [DDD] - Store instructions - Store SSS into memory at DDD
+11 WWWW ZZ - ALU instructions - Do WWWW using ZZ (and sometimes B), and store the result in ZZ
+
+SSS/DDD - Source / Destination
+000 = A
+001 = B
+010 = C
+011 = D
+100 = SP
+101 = PC
+110 = SP+/-
+111 = Immediate
+
+00 000 101
+    COPY A PC
+    JUMP A
+
+00 111 101
+    COPY IMM PC
+    JUMP #
+
+01 [110] 000
+    LOAD [SP+/-] A
+    POP A
+
+00 111 000
+    COPY IMM A
+    SET A #
+
+Machine language categories
+
+Copy
+Load
+Store
+ALU
+Jump
+Jump if flag
+Jump if test result
+Jump if zero
+Jump if equal
+Jump if less than
+Jump if greater than
+Jump if Negative
+Call
+Return
+Program Load
+Program Store
+Halt
+Noop
+
+
+........010X0010..

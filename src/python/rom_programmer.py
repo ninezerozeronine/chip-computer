@@ -34,15 +34,34 @@ Attributes:
 
 def value_to_binary_string(value, width=-1):
     """
+    Convert positive integer to a binary string of a given width.
 
+    Args:
+        value (int): The value to convert
+        width (int): Desired width of the output string. Must be >= 0.
+    Returns:
+        str: The converted value
     """
     binary_string = None
+
+    # Check value is >= 0
+    if value < 0:
+        msg = "Value to convert ({value}) is not >= 0".format(value=value)
+        raise ValueError(msg)
 
     if width < 0:
         binary_string = bin(value)[2:]
     elif width == 0:
         binary_string = ""
     else:
+        if bit_width(value) > width:
+            msg = (
+                "Value to convert ({value}) has a binary representation"
+                " ({binary_rep}) which is wider than the desired width "
+                "of {width}."
+            )
+            msg = msg.format(value=value, binary_rep=raw_conversion, width=width)
+            raise ValueError(msg)
         binary_string = "{0:0{width}b}".format(value, width=width)
 
     return binary_string
@@ -63,13 +82,19 @@ def binary_string_to_value(binary_string):
 
 def bit_width(value):
     """
-    Determine how many bits are needed to store this vaule
+    Determine how many bits are needed to store this value.
 
     Args:
-        value (int): The value to see how many bits we need to store it
+        value (int): The value to see how many bits we need to store it.
+            Must be an integer >= 0.
     Returns:
-        (int): The number of bits needed to store this value
+        int: The number of bits needed to store this value
     """
+
+    # Check value is >= 0
+    if value < 0:
+        msg = "Value to convert ({value}) is not >= 0".format(value=value)
+        raise ValueError(msg)
 
     return len(bin(value)) - 2
 
