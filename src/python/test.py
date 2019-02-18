@@ -1,6 +1,7 @@
 import unittest
 
-from eight_bit_computer import utils
+from eight_bit_computer import utils, rom
+
 
 class TestUtils(unittest.TestCase):
 
@@ -22,10 +23,8 @@ class TestUtils(unittest.TestCase):
             ]
         ]
 
-
         for bitdefs in true_tests:
             self.assertTrue(utils.bitdefs_same_length(bitdefs))
-
 
         false_tests = [
             [
@@ -45,10 +44,8 @@ class TestUtils(unittest.TestCase):
             ],
         ]
 
-
         for bitdefs in false_tests:
             self.assertFalse(utils.bitdefs_same_length(bitdefs))
-
 
     def test_bitdef_length(self):
         test_data = [
@@ -60,7 +57,6 @@ class TestUtils(unittest.TestCase):
 
         for bitdef, length in test_data:
             self.assertEqual(utils.bitdef_length(bitdef), length)
-
 
     def test_bitdefs_have_overlapping_bits(self):
         true_tests = [
@@ -115,7 +111,6 @@ class TestUtils(unittest.TestCase):
                 "...",
             ],
         ]
-
 
         for bitdefs in false_tests:
             self.assertFalse(utils.bitdefs_have_overlapping_bits(bitdefs))
@@ -260,16 +255,78 @@ class TestUtils(unittest.TestCase):
         for bitdef, result, fill_value in test_data:
             self.assertEqual(utils.fill_bitdef(bitdef, fill_value), result)
 
+    def test_extract_bits(self):
+        test_data = [
+            {
+                "bitdef": "001010.",
+                "start": 0,
+                "end": 6,
+                "result": "001010.",
+            },
+            {
+                "bitdef": "11..11",
+                "start": 3,
+                "end": 5,
+                "result": "11.",
+            },
+            {
+                "bitdef": "..01.010",
+                "start": 1,
+                "end": 1,
+                "result": "1",
+            },
+        ]
 
-    def test_datatemplates_to_romdatas(self):
+        for test_set in test_data:
+            self.assertEqual(
+                utils.extract_bits(
+                    test_set["end"], test_set["start"], test_set["bitdef"]
+                ),
+                test_set["result"],
+            )
+
+    def test_reverse_index(self):
+        test_data = [
+            {
+                "index": 0,
+                "length": 6,
+                "result": 5,
+            },
+            {
+                "index": 0,
+                "length": 1,
+                "result": 0,
+            },
+            {
+                "index": 1,
+                "length": 4,
+                "result": 2,
+            },
+            {
+                "index": 3,
+                "length": 4,
+                "result": 0,
+            },
+        ]
+
+        for test_set in test_data:
+            self.assertEqual(
+                utils.reverse_index(test_set["index"], test_set["length"]),
+                test_set["result"]
+            )
+
+
+class TestRom(unittest.TestCase):
+
+    def test_collapse_datatemplates_to_romdatas(self):
         test_data = [
             {
                 "datatemplates": [
                     utils.DataTemplate(address_range="00.", data="00"),
                 ],
                 "romdatas": [
-                    utils.RomData(address="000", data="00"),
-                    utils.RomData(address="001", data="00"),
+                    rom.RomData(address="000", data="00"),
+                    rom.RomData(address="001", data="00"),
                 ]
             },
             {
@@ -277,8 +334,8 @@ class TestUtils(unittest.TestCase):
                     utils.DataTemplate(address_range=".", data="10"),
                 ],
                 "romdatas": [
-                    utils.RomData(address="0", data="10"),
-                    utils.RomData(address="1", data="10"),
+                    rom.RomData(address="0", data="10"),
+                    rom.RomData(address="1", data="10"),
                 ]
             },
             {
@@ -286,7 +343,7 @@ class TestUtils(unittest.TestCase):
                     utils.DataTemplate(address_range="0", data="10"),
                 ],
                 "romdatas": [
-                    utils.RomData(address="0", data="10"),
+                    rom.RomData(address="0", data="10"),
                 ]
             },
             {
@@ -295,10 +352,10 @@ class TestUtils(unittest.TestCase):
                     utils.DataTemplate(address_range="10.", data="1"),
                 ],
                 "romdatas": [
-                    utils.RomData(address="010", data="0"),
-                    utils.RomData(address="011", data="0"),
-                    utils.RomData(address="100", data="1"),
-                    utils.RomData(address="101", data="1"),
+                    rom.RomData(address="010", data="0"),
+                    rom.RomData(address="011", data="0"),
+                    rom.RomData(address="100", data="1"),
+                    rom.RomData(address="101", data="1"),
                 ]
             },
             {
@@ -307,19 +364,22 @@ class TestUtils(unittest.TestCase):
                     utils.DataTemplate(address_range="10.", data="1"),
                 ],
                 "romdatas": [
-                    utils.RomData(address="100", data="0"),
-                    utils.RomData(address="101", data="0"),
-                    utils.RomData(address="100", data="1"),
-                    utils.RomData(address="101", data="1"),
+                    rom.RomData(address="100", data="0"),
+                    rom.RomData(address="101", data="0"),
+                    rom.RomData(address="100", data="1"),
+                    rom.RomData(address="101", data="1"),
                 ]
             },
         ]
 
         for test_set in test_data:
             self.assertEqual(
-                utils.datatemplates_to_romdatas(test_set["datatemplates"]),
+                rom.collapse_datatemplates_to_romdatas(test_set["datatemplates"]),
                 test_set["romdatas"],
             )
+
+    def test_get_romdata_slice(self):
+        pass
 
 
 if __name__ == '__main__':
