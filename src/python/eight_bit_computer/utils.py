@@ -152,7 +152,7 @@ def fill_bitdef(bitdef, value):
     return output
 
 
-def extract_bits(end, start, bitdef):
+def extract_bits(bitdef, end, start):
     """
     Extract a region from the bitdef.
 
@@ -179,4 +179,25 @@ def extract_bits(end, start, bitdef):
 
 
 def reverse_index(index, length):
+    """
+
+    """
+
     return length - index - 1
+
+def byte_bitstring_to_hex_string(bitstring):
+    """
+
+    """
+
+    return "{0:02X}".format(int(bitstring, 2))
+
+def chunker(seq, chunk_size):
+    """
+
+    """
+    return (
+        seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
+    )
+
+
