@@ -4,7 +4,7 @@ Create and export roms for the computer
 
 import os
 
-from .language import copy, load
+from .language import copy, load, fetch
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from . import utils
 
@@ -20,6 +20,7 @@ Attributes:
     data (int): The data to be stored at the given address.
 """
 
+
 def get_rom():
     """
     Get complete representation of the rom.
@@ -28,8 +29,8 @@ def get_rom():
         list(RomData): All the defined microcode.
     """
 
-    templates = collect_operation_datatemplates()
-    romdatas = collapse_datatemplates_to_romdatas(templates)
+    language_templates = collect_language_datatemplates()
+    romdatas = collapse_datatemplates_to_romdatas(language_templates)
     full_rom = populate_empty_addresses(romdatas)
     if romdatas_have_duplicate_addresses(full_rom):
         raise ValueError("Romdata set has duplicate addresses")
@@ -37,7 +38,7 @@ def get_rom():
     return full_rom
 
 
-def collect_operation_datatemplates():
+def collect_language_datatemplates():
     """
     Get all the datatemplates from all the defined operations.
 
@@ -49,6 +50,7 @@ def collect_operation_datatemplates():
     operations = [
         copy,
         load,
+        fetch,
     ]
 
     templates = []

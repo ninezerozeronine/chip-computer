@@ -17,8 +17,8 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     instruction_bitdef = utils.merge_bitdefs(instruction_bitdefs)
     flags_bitdef = utils.merge_bitdefs(flags_bitdefs)
 
-    templates.append(fetch0(instruction_bitdef, flags_bitdef))
-    templates.append(fetch1(instruction_bitdef, flags_bitdef))
+    # templates.append(fetch0(instruction_bitdef, flags_bitdef))
+    # templates.append(fetch1(instruction_bitdef, flags_bitdef))
 
     for index, current_step_controls in enumerate(control_steps, start=2):
         step_bitdef = STEPS[index]
@@ -32,7 +32,7 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
         )
 
         # If this is the last step, add a step reset
-        if index == num_steps + 2:
+        if index == num_steps + 1:
             current_step_controls.append(MODULE_CONTROL["CU"]["STEP_RESET"])
 
         control_bitdef = utils.merge_bitdefs(current_step_controls)
@@ -45,60 +45,3 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
         templates.append(template)
 
     return templates
-
-def fetch0(instruction_bitdef, flags_bitdef):
-    """
-    Create template for the first fetch step
-    """
-    templates = []
-
-    address_bitdef = utils.merge_bitdefs(
-        [
-            instruction_bitdef,
-            flags_bitdef,
-            STEPS[0],
-        ]
-    )
-
-    control_bitdef = utils.merge_bitdefs(
-        [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
-        ]
-    )
-    control_bitdef = utils.fill_bitdef(control_bitdef, "0")
-
-    return utils.DataTemplate(
-        address_range=address_bitdef, data=control_bitdef
-    )
-    
-def fetch1(instruction_bitdef, flags_bitdef):
-    """
-    Create template for the second fetch step
-    """
-    address_bitdef = utils.merge_bitdefs(
-        [
-            instruction_bitdef,
-            flags_bitdef,
-            STEPS[1],
-        ]
-    )
-
-    control_bitdef = utils.merge_bitdefs(
-        [
-            MODULE_CONTROL["PC"]["COUNT"],
-            MODULE_CONTROL["RAM"]["OUT"],
-            MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-            MODULE_CONTROL["IR"]["IN"],
-        ]
-    )
-    control_bitdef = utils.fill_bitdef(control_bitdef, "0")
-    return utils.DataTemplate(
-        address_range=address_bitdef, data=control_bitdef
-    )
-
-
-
-
-
-
