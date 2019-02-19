@@ -4,7 +4,7 @@ Create and export roms for the computer
 
 import os
 
-from .language import copy, load, fetch
+from .language import copy, load, fetch, set_op
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from . import utils
 
@@ -51,6 +51,7 @@ def collect_language_datatemplates():
         copy,
         load,
         fetch,
+        set_op,
     ]
 
     templates = []

@@ -9,7 +9,7 @@ from .. import utils as common_utils
 
 def generate_microcode_templates():
     """
-    Gernerate datatemplates for all the fetch steps.
+    Generate datatemplates for all the fetch steps.
     """
 
     return [fetch_step_0(), fetch_step_1()]

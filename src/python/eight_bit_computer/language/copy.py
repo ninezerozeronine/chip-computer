@@ -10,7 +10,7 @@ from . import utils
 
 def generate_microcode_templates():
     """
-    Gernerate datatemplates for all the copy operations.
+    Generate datatemplates for all the copy operations.
     """
 
     sources = ["ACC", "A", "B", "C", "PC", "SP"]
