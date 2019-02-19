@@ -485,7 +485,6 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="facing" val="east"/>
       <a name="label" val="DATA_CLOCK"/>
     </comp>
-    <comp lib="0" loc="(3420,3460)" name="Constant"/>
     <comp lib="0" loc="(200,660)" name="Probe">
       <a name="facing" val="west"/>
     </comp>
