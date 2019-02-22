@@ -1,22 +1,20 @@
-8-bit 74 Series Computer
-========================
+.. Eight Bit Computer documentation master file, created by
+   sphinx-quickstart on Thu Feb 21 20:59:03 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-Welcome to the documentation for my 8-bit 74 Series Computer project! 
-
-I have to start by saying a huge thank you to the people, sortware and websites that informed and inspired this project. See the :doc:`resources` page for a full listing.
-
-If you would like to get the most out of this documentation please see the :doc:`resources` page for links to the resources I used (especially the videos by Ben Eater and James Bates). I've tried to only document things not covered elsewhere and point to the existing resources were available.
-
-The source for any code used (and these docs) is available in the `GitHub repository`_.
+Welcome to Eight Bit Computer's documentation!
+==============================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   design
-   hardware
-   resources
 
 
+Indices and tables
+==================
 
-.. _GitHub Repository: https://github.com/ninezerozeronine/8bit-74-series-computer
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

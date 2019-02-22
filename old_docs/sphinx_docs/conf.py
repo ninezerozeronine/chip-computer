@@ -4,7 +4,7 @@
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/master/config
+# http://www.sphinx-doc.org/en/stable/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -20,14 +20,14 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = u'Eight Bit Computer'
-copyright = u'2019, Andy Palmer'
+project = u'8-bit 74 Series Computer'
+copyright = u'2018, Andy Palmer'
 author = u'Andy Palmer'
 
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u''
+release = u'1.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -43,7 +43,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -67,11 +66,11 @@ language = None
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-# This pattern also affects html_static_path and html_extra_path.
+# This pattern also affects html_static_path and html_extra_path .
 exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = None
+pygments_style = 'sphinx'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -107,7 +106,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'EightBitComputerdoc'
+htmlhelp_basename = '8-bit74SeriesComputerdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -134,7 +133,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'EightBitComputer.tex', u'Eight Bit Computer Documentation',
+    (master_doc, '8-bit74SeriesComputer.tex', u'8-bit 74 Series Computer Documentation',
      u'Andy Palmer', 'manual'),
 ]
 
@@ -144,7 +143,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'eightbitcomputer', u'Eight Bit Computer Documentation',
+    (master_doc, '8-bit74serieslscomputer', u'8-bit 74 Series Computer Documentation',
      [author], 1)
 ]
 
@@ -155,28 +154,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'EightBitComputer', u'Eight Bit Computer Documentation',
-     author, 'EightBitComputer', 'One line description of project.',
+    (master_doc, '8-bit74SeriesComputer', u'8-bit 74 Series Computer Documentation',
+     author, '8-bit74SeriesComputer', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-# -- Options for Epub output -------------------------------------------------
-
-# Bibliographic Dublin Core info.
-epub_title = project
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#
-# epub_identifier = ''
-
-# A unique identification for the text.
-#
-# epub_uid = ''
-
-# A list of files that should not be packed into the epub file.
-epub_exclude_files = ['search.html']
 
 
 # -- Extension configuration -------------------------------------------------
