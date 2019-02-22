@@ -6,11 +6,13 @@
 Welcome to Eight Bit Computer's documentation!
 ==============================================
 
+hello
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   source
 
 Indices and tables
 ==================
