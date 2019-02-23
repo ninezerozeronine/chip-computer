@@ -2,12 +2,15 @@
 
 from itertools import product
 
-from .definitions import OPCODE_GROUPS, SRC_REGISTERS, DEST_REGISTERS, MODULE_CONTROL, FLAGS
+from .definitions import (
+    OPCODE_GROUPS, SRC_REGISTERS, DEST_REGISTERS, MODULE_CONTROL, FLAGS
+)
 from . import utils
+
 
 def generate_microcode_templates():
     """
-    Gernerate datatemplates for all the copy operations.
+    Generate datatemplates for all the copy operations.
     """
 
     sources = ["ACC", "A", "B", "C", "PC", "SP"]
@@ -21,6 +24,7 @@ def generate_microcode_templates():
             data_templates.extend(templates)
 
     return data_templates
+
 
 def generate_instruction(src, dest):
     """

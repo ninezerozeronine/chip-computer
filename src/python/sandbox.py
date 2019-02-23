@@ -5,6 +5,12 @@ def sandbox():
     # rom_path = r"E:\dev\8bit-74-series-computer\logisim\roms"
     # rom.write_logisim_roms(rom_path)
 
+    # romdatas = rom.get_rom()
+    # print romdatas[0]
+    # print romdatas[1]
+    # print romdatas[2]
+    # print romdatas[3]
+    # print romdatas[4]
 
     romdatas = rom.get_rom()
     slices = rom.slice_rom(romdatas)
