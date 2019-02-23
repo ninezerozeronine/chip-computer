@@ -12,16 +12,16 @@ Modules:
     Control Unit
     ALU
 
-Hardware details
+Hardware
     HCT vs. LS
     Fanout
     Materials (Breadboards, Wire, components)
     Tools
-    Buffer registers
+    Mirror registers
     Edge Detection
     Debouncing
 
-Programming
+Language
     Machine Code
     Assembly
 
