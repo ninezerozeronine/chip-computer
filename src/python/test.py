@@ -280,7 +280,7 @@ class TestUtils(unittest.TestCase):
         for test_set in test_data:
             self.assertEqual(
                 utils.extract_bits(
-                    test_set["end"], test_set["start"], test_set["bitdef"]
+                    test_set["bitdef"], test_set["end"], test_set["start"]
                 ),
                 test_set["result"],
             )
