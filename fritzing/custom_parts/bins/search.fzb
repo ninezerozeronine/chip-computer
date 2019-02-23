@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module fritzingVersion="0.9.3b.04.19.5c895d327c44a3114e5fcc9d8260daf0cbb52806" icon="Search.png" search="seg">
+    <title>Search</title>
+    <instances>
+        <instance moduleIdRef="SparkFun-DigitalIC-MAX7219-DIP" modelIndex="6887" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-digitalic-max7219-dip.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-4DIGIT-FOR_POGOBED_ONLY" modelIndex="6889" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-4digit-for_pogobed_only.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="c8994c24e2a6d9182a55c653b6bbefed" modelIndex="6891" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/16-segment_display.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-4DIGIT-" modelIndex="6893" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-4digit-.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-4DIGIT-YOUNGSUN-LONGPADS" modelIndex="6895" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-4digit-youngsun-longpads.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment56,9cat" modelIndex="6897" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_56,9_cat.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-4DIGIT-YOUNGSUN-" modelIndex="6899" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-4digit-youngsun-.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-DISPLAY-1_-RED-" modelIndex="6901" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-display-1_-red-.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment100cat" modelIndex="6903" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_100_cat.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="grove_4digit_display" modelIndex="6905" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/seeed_grove_4digit_display.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment13an" modelIndex="6907" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_13_an.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-LED-LED_BARGRAPH_10-" modelIndex="6909" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-led-led_bargraph_10-.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment56,9an" modelIndex="6911" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_56,9_an.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment20an" modelIndex="6913" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_20,32_an.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-LED-LED_RING-" modelIndex="6915" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-led-led_ring-.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-ALPHANUMERIC-PTH" modelIndex="6917" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-alphanumeric-pth.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment10cat" modelIndex="6919" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_9,9_cat.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment10an" modelIndex="6921" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_9,9_an.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-DigitalIC-HEF4543-PTH" modelIndex="6922" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-digitalic-hef4543-pth.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Connectors-WATN001002BF-" modelIndex="6924" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-connectors-watn001002bf-.fzp" flippedSMD="true">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment13cat" modelIndex="6926" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_13_cat.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-DISPLAY-PTH" modelIndex="6928" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-display-pth.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment20cat" modelIndex="6930" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_20,32_cat.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="f2341c24e2a6d9182a55c653b6bbefed" modelIndex="6932" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7-segment_display.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="SparkFun-Displays-7-SEGMENT-4DIGIT-PTH" modelIndex="6934" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/sparkfun-displays-7-segment-4digit-pth.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="7segment100an" modelIndex="6936" path="C:/Users/Andy/Desktop/fritzing.0.9.3b.64.pc/fritzing-parts/core/7segment_100_an.fzp">
+            <views/>
+        </instance>
+    </instances>
+</module>

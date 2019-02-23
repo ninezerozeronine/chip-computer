@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eight_bit_computer.utils module &mdash; Eight Bit Computer  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Development Tools" href="../../development_tools.html" />
+    <link rel="prev" title="eight_bit_computer.rom_programmer module" href="eight_bit_computer.rom_programmer.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Eight Bit Computer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../language/index.html">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Software</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="eight_bit_computer.html">eight_bit_computer package</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.html#subpackages">Subpackages</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="eight_bit_computer.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.microcode.html">eight_bit_computer.microcode module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.rom.html">eight_bit_computer.rom module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.rom_programmer.html">eight_bit_computer.rom_programmer module</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">eight_bit_computer.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.html#module-eight_bit_computer">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Eight Bit Computer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Software</a> &raquo;</li>
+        
+          <li><a href="eight_bit_computer.html">eight_bit_computer package</a> &raquo;</li>
+        
+      <li>eight_bit_computer.utils module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/software/source/eight_bit_computer.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-eight_bit_computer.utils">
+<span id="eight-bit-computer-utils-module"></span><h1>eight_bit_computer.utils module<a class="headerlink" href="#module-eight_bit_computer.utils" title="Permalink to this headline">¶</a></h1>
+<p>Functions to help working with bits</p>
+<dl class="class">
+<dt id="eight_bit_computer.utils.DataTemplate">
+<em class="property">class </em><code class="descclassname">eight_bit_computer.utils.</code><code class="descname">DataTemplate</code><span class="sig-paren">(</span><em>address_range</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#eight_bit_computer.utils.DataTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Some data and a range of addresses to store that data in</p>
+<dl class="attribute">
+<dt id="eight_bit_computer.utils.DataTemplate.address_range">
+<code class="descname">address_range</code><a class="headerlink" href="#eight_bit_computer.utils.DataTemplate.address_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>The range of addresses to store the data in.
+0 and 1 are absolute values, X is either a 0 or 1 and the
+expectation is that the data will expand out to the parts of the
+address marked with an X. and example could be “0010XX001”.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="eight_bit_computer.utils.DataTemplate.data">
+<code class="descname">data</code><a class="headerlink" href="#eight_bit_computer.utils.DataTemplate.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data to be stored at the given addreses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">address_range</code></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="descname">data</code></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.bitdef_length">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">bitdef_length</code><span class="sig-paren">(</span><em>bitdef</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#bitdef_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.bitdef_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate length of a bitdef.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bitdef</strong> (<em>str</em>) – The bitdef to find the length of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The length of the bitdef.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.bitdefs_have_overlapping_bits">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">bitdefs_have_overlapping_bits</code><span class="sig-paren">(</span><em>bitdefs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#bitdefs_have_overlapping_bits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.bitdefs_have_overlapping_bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the bitdefs have any bits set in the same position.</p>
+<dl class="docutils">
+<dt>Example with overlap (bits at index 6 overlap:</dt>
+<dd>0…101.
+11……</dd>
+<dt>Example with no overlap:</dt>
+<dd>11010…
+……11</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>bitdefs</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – Bitdefs to check for overlaps</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Whether or not there were overlaps.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.bitdefs_same_length">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">bitdefs_same_length</code><span class="sig-paren">(</span><em>bitdefs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#bitdefs_same_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.bitdefs_same_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the passed in bitdefs are all the same length.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list</strong> (<em>bitdefs</em>) – Bitdefs to check length of.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>True if all the bitdefs are the same length, False</dt>
+<dd>otherwise</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.byte_bitstring_to_hex_string">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">byte_bitstring_to_hex_string</code><span class="sig-paren">(</span><em>bitstring</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#byte_bitstring_to_hex_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.byte_bitstring_to_hex_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.chunker">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">chunker</code><span class="sig-paren">(</span><em>seq</em>, <em>chunk_size</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.chunker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.collapse_bitdef">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">collapse_bitdef</code><span class="sig-paren">(</span><em>bitdef</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#collapse_bitdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.collapse_bitdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse undefined bits into real bits to make new bitdefs.</p>
+<dl class="docutils">
+<dt>For example, 10.0. becomes:</dt>
+<dd>10000
+10001
+10100
+10101</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.extract_bits">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">extract_bits</code><span class="sig-paren">(</span><em>bitdef</em>, <em>end</em>, <em>start</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#extract_bits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.extract_bits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract a region from the bitdef.</p>
+<p>end and start are indecies starting at the rightmost (least
+significant) bit, starting at 0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.fill_bitdef">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">fill_bitdef</code><span class="sig-paren">(</span><em>bitdef</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#fill_bitdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.fill_bitdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill undefined bits with a value</p>
+<p>E.g. 1..0100.1 becomes 111010011 when filled with 1s</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.merge_bitdefs">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">merge_bitdefs</code><span class="sig-paren">(</span><em>bitdefs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#merge_bitdefs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.merge_bitdefs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge the bitdefs to a single bitdef</p>
+<p>Bitdefs must
+- All be the same length
+- Not have any bits defined in the same position</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.remove_whitespace">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">remove_whitespace</code><span class="sig-paren">(</span><em>input_string</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#remove_whitespace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.remove_whitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the whitespace from a string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.utils.reverse_index">
+<code class="descclassname">eight_bit_computer.utils.</code><code class="descname">reverse_index</code><span class="sig-paren">(</span><em>index</em>, <em>length</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/utils.html#reverse_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.utils.reverse_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../development_tools.html" class="btn btn-neutral float-right" title="Development Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="eight_bit_computer.rom_programmer.html" class="btn btn-neutral" title="eight_bit_computer.rom_programmer module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Andy Palmer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

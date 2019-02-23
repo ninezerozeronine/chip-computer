@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Fanout &mdash; 8-bit 74LS Computer 1.0 documentation</title>
+  <title>Fanout &mdash; Eight Bit Computer  documentation</title>
   
 
   
@@ -24,28 +24,19 @@
 
   
 
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="8-bit 74LS Computer 1.0 documentation" href="../index.html"/>
-        <link rel="up" title="Hardware" href="../hardware.html"/>
-        <link rel="next" title="LED Outputs" href="led-outputs.html"/>
-        <link rel="prev" title="Component List" href="component-list.html"/> 
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Materials and Tools" href="materials_and_tools.html" />
+    <link rel="prev" title="HCT vs. LS" href="hct_vs_ls.html" /> 
 
   
   <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
@@ -57,7 +48,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> 8-bit 74LS Computer
+            <a href="../index.html" class="icon icon-home"> Eight Bit Computer
           
 
           
@@ -89,14 +80,22 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../design.html">Design</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../hardware.html">Hardware</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="modules.html">Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="component-list.html">Component List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language/index.html">Language</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Hardware</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hct_vs_ls.html">HCT vs. LS</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Fanout</a></li>
-<li class="toctree-l2"><a class="reference internal" href="led-outputs.html">LED Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="materials_and_tools.html">Materials and Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="edge_detection.html">Edge Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debouncing.html">Debouncing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eeprom_programmer.html">EEPROM Programmer</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
 </ul>
 
             
@@ -108,17 +107,18 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">8-bit 74LS Computer</a>
+          <a href="../index.html">Eight Bit Computer</a>
         
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -141,7 +141,7 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../hardware.html">Hardware</a> &raquo;</li>
+          <li><a href="index.html">Hardware</a> &raquo;</li>
         
       <li>Fanout</li>
     
@@ -168,18 +168,16 @@
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="led-outputs.html" class="btn btn-neutral float-right" title="LED Outputs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="materials_and_tools.html" class="btn btn-neutral float-right" title="Materials and Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="component-list.html" class="btn btn-neutral" title="Component List" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="hct_vs_ls.html" class="btn btn-neutral" title="HCT vs. LS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -188,11 +186,11 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Andy Palmer.
+        &copy; Copyright 2019, Andy Palmer
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -207,35 +205,24 @@
 
   
 
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'1.0',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
 
   
 
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-   
+  </script> 
 
 </body>
 </html>

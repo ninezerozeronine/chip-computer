@@ -1,0 +1,891 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eight_bit_computer.rom_programmer &mdash; Eight Bit Computer  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Eight Bit Computer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../language/index.html">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Eight Bit Computer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>eight_bit_computer.rom_programmer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for eight_bit_computer.rom_programmer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Helps programming EEPROMS for my 74 series computer project</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">DataTemplate</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;DataTemplate&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;address_range&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Some data and a range of addresses to store that data in</span>
+
+<span class="sd">Attributes:</span>
+<span class="sd">    address_range (str): The range of addresses to store the data in.</span>
+<span class="sd">        0 and 1 are absolute values, X is either a 0 or 1 and the</span>
+<span class="sd">        expectation is that the data will expand out to the parts of the</span>
+<span class="sd">        address marked with an X. and example could be &quot;0010XX001&quot;.</span>
+<span class="sd">    data (int): The data to be stored at the given addreses.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">BitDef</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;BitDef&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">])</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Define a range of bits with a given value</span>
+
+<span class="sd">Attributes:</span>
+<span class="sd">    start (int): The index of the bit that this definition starts at.</span>
+<span class="sd">        The first index is 0 and is the at the rightmost (least</span>
+<span class="sd">        significant) bit.</span>
+<span class="sd">    end (int): The index of the bit that this definition ends at. The </span>
+<span class="sd">        first index is 0 and is the at the rightmost (least significant)</span>
+<span class="sd">        bit.</span>
+<span class="sd">    value (int): The unsigned integer value of the value in that bit range</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="value_to_binary_string"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.value_to_binary_string">[docs]</a><span class="k">def</span> <span class="nf">value_to_binary_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert positive integer to a binary string of a given width.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (int): The value to convert</span>
+<span class="sd">        width (int): Desired width of the output string. Must be &gt;= 0.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The converted value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">binary_string</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Check value is &gt;= 0</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Value to convert (</span><span class="si">{value}</span><span class="s2">) is not &gt;= 0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">width</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">binary_string</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">value</span><span class="p">)[</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="k">elif</span> <span class="n">width</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">binary_string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">bit_width</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;Value to convert (</span><span class="si">{value}</span><span class="s2">) has a binary representation&quot;</span>
+                <span class="s2">&quot; (</span><span class="si">{binary_rep}</span><span class="s2">) which is wider than the desired width &quot;</span>
+                <span class="s2">&quot;of </span><span class="si">{width}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">binary_rep</span><span class="o">=</span><span class="n">raw_conversion</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">binary_string</span> <span class="o">=</span> <span class="s2">&quot;{0:0</span><span class="si">{width}</span><span class="s2">b}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">binary_string</span></div>
+
+
+<div class="viewcode-block" id="binary_string_to_value"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.binary_string_to_value">[docs]</a><span class="k">def</span> <span class="nf">binary_string_to_value</span><span class="p">(</span><span class="n">binary_string</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a binary string representing an unsigned int to a value</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        binary_string (str): The string to convert. e.g. &quot;001010010&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): the value of the binary string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">binary_string</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bit_width"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.bit_width">[docs]</a><span class="k">def</span> <span class="nf">bit_width</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine how many bits are needed to store this value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (int): The value to see how many bits we need to store it.</span>
+<span class="sd">            Must be an integer &gt;= 0.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The number of bits needed to store this value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Check value is &gt;= 0</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Value to convert (</span><span class="si">{value}</span><span class="s2">) is not &gt;= 0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">bin</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">-</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="num_bytes_for_value"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.num_bytes_for_value">[docs]</a><span class="k">def</span> <span class="nf">num_bytes_for_value</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate how many bytes &quot;wide&quot; this value is</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (int): The value to be stored as an unsinged int</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): The number of bytes &quot;wide&quot; this value is</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_bits</span> <span class="o">=</span> <span class="n">bit_width</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">whole_bytes</span> <span class="o">=</span> <span class="n">num_bits</span> <span class="o">/</span> <span class="mi">8</span>
+    <span class="n">partial_bytes</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="p">(</span><span class="n">num_bits</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">whole_bytes</span> <span class="o">+</span> <span class="n">partial_bytes</span></div>
+
+
+<div class="viewcode-block" id="get_data_byte_at_index"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.get_data_byte_at_index">[docs]</a><span class="k">def</span> <span class="nf">get_data_byte_at_index</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">byte_index</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the data at a given byte position.</span>
+
+<span class="sd">    Given a data value that may require more than 8 bits to represent in</span>
+<span class="sd">    unsigned binary, return the value of the data in the byte at the </span>
+<span class="sd">    given index. If the data doesn&#39;t extend into the byte index</span>
+<span class="sd">    requested, the space is filled with zeroes. The index starts at 0</span>
+<span class="sd">    and increases from right to left (or least to most signifcant bit).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data (int): The bit pattern of data (as an int) to get 8 bits</span>
+<span class="sd">            (a byte) from</span>
+<span class="sd">        byte_index (int): The index of the byte you want to retrieve.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The bit pattern (as an 8 bit unsigned int) of the byte of</span>
+<span class="sd">        data at the given byte index.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Shift by desired amount and extract least significant byte</span>
+    <span class="n">shifted</span> <span class="o">=</span> <span class="n">data</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">byte_index</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">shifted</span> <span class="o">&amp;</span> <span class="mb">0b11111111</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="get_value_from_bit_range"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.get_value_from_bit_range">[docs]</a><span class="k">def</span> <span class="nf">get_value_from_bit_range</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract a value from a range of bits in another value</span>
+
+<span class="sd">    Lets say the value is 001001010011 and we start at 2 and end at 5.</span>
+<span class="sd">    the bit mask we want is 111100. One we and the value and the mask we</span>
+<span class="sd">    get 010000. Next we shift that value over so its as if the least </span>
+<span class="sd">    significant bit was where start was. 010000 &gt;&gt; 2 = 0100 = 4</span>
+
+<span class="sd">    End and start arguments are in &quot;reverse&quot; order to match the</span>
+<span class="sd">    &quot;reverse&quot; indexing of bits from least to most significant bit.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (int): The value to extract information from</span>
+<span class="sd">        end (int): The index of the bit that ends the extraction range.</span>
+<span class="sd">            The index starts at 0 from the rightmost (least significant)</span>
+<span class="sd">            bit.</span>
+<span class="sd">        start (int): The index of the bit that begins the extraction</span>
+<span class="sd">            range. The index starts at 0 from the rightmost (least</span>
+<span class="sd">            significant) bit</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): The extracted value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bit_mask</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span> <span class="o">*</span> <span class="p">((</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;0&quot;</span> <span class="o">*</span> <span class="n">start</span>
+    <span class="n">extraction</span> <span class="o">=</span> <span class="n">value</span> <span class="o">&amp;</span> <span class="n">binary_string_to_value</span><span class="p">(</span><span class="n">bit_mask</span><span class="p">)</span>
+    <span class="n">shifted_extraction</span> <span class="o">=</span> <span class="n">extraction</span> <span class="o">&gt;&gt;</span> <span class="n">start</span>
+    <span class="k">return</span> <span class="n">shifted_extraction</span></div>
+
+
+<div class="viewcode-block" id="width_from_bitdefs"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.width_from_bitdefs">[docs]</a><span class="k">def</span> <span class="nf">width_from_bitdefs</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine how wide an binary value needs to be based on bitdefs used</span>
+<span class="sd">    to define it.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdefs (list(BitDef)): List of bitdefs to find max width of</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): Maximum width</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">max_index</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">bitdef</span><span class="o">.</span><span class="n">end</span> <span class="k">for</span> <span class="n">bitdef</span> <span class="ow">in</span> <span class="n">bitdefs</span><span class="p">])</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">max_index</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">width</span></div>
+
+
+<div class="viewcode-block" id="expand_address_range"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.expand_address_range">[docs]</a><span class="k">def</span> <span class="nf">expand_address_range</span><span class="p">(</span><span class="n">address_range</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expand an address if bits are marked as optional</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        address_range (str): The address to expand</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list(str): A list of addresses this address has been expanded to</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s2">&quot;X&quot;</span> <span class="ow">in</span> <span class="n">address_range</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">expand_address_range</span><span class="p">(</span><span class="n">address_range</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">expand_address_range</span><span class="p">(</span><span class="n">address_range</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">address_range</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="string_addresses_to_ints"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.string_addresses_to_ints">[docs]</a><span class="k">def</span> <span class="nf">string_addresses_to_ints</span><span class="p">(</span><span class="n">addresses</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert string addresses to int addresses</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        addresses (list(str)): List of string addresses in binary. e.g:</span>
+<span class="sd">            [&quot;00100100&quot;, &quot;001010&quot;]</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list(int): Converted addresses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">binary_string_to_value</span><span class="p">(</span><span class="n">address</span><span class="p">)</span> <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">addresses</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="data_template_to_dict"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.data_template_to_dict">[docs]</a><span class="k">def</span> <span class="nf">data_template_to_dict</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a DataTemplate to address-data pairs</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        template (`DataTemplate`): The template to convert to real</span>
+<span class="sd">            address-data pairs.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict(int:int): dictionary of address keys and data values (both</span>
+<span class="sd">            as ints).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">string_addresses</span> <span class="o">=</span> <span class="n">expand_address_range</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">address_range</span><span class="p">)</span>
+    <span class="n">addresses</span> <span class="o">=</span> <span class="n">string_addresses_to_ints</span><span class="p">(</span><span class="n">string_addresses</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">addresses</span><span class="p">:</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="data_templates_to_dict"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.data_templates_to_dict">[docs]</a><span class="k">def</span> <span class="nf">data_templates_to_dict</span><span class="p">(</span><span class="n">templates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a list of templates to a single dictionary</span>
+
+<span class="sd">    For each template, expand it and add it to a dictionary. Check for</span>
+<span class="sd">    address clashes with each expanded step of each template.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        templates list(`DataTemplate`)): A list of data templates</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict(int:int): A dictionary of addresses and data values</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        RuntimeError: If there&#39;s a clash of addresses once they&#39;ve been </span>
+<span class="sd">            expanded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">resolved</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">:</span>
+        <span class="n">template_dict</span> <span class="o">=</span> <span class="n">data_template_to_dict</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">address</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">template_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">resolved</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Address </span><span class="si">{0}</span><span class="s2"> (</span><span class="si">{1}</span><span class="s2">) already has data&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">bin</span><span class="p">(</span><span class="n">address</span><span class="p">),</span> <span class="n">address</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">resolved</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">resolved</span></div>
+
+
+<div class="viewcode-block" id="num_bytes_needed_for_data"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.num_bytes_needed_for_data">[docs]</a><span class="k">def</span> <span class="nf">num_bytes_needed_for_data</span><span class="p">(</span><span class="n">rom_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the number of bytes to store the largest data in the rom.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rom_dict (dict(int:int)): Dictionary of address and data values</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): Number of bytes needed for largest piece of data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">largest_data</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rom_dict</span><span class="o">.</span><span class="n">itervalues</span><span class="p">())</span>
+    <span class="n">num_bytes</span> <span class="o">=</span> <span class="n">num_bytes_for_value</span><span class="p">(</span><span class="n">largest_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num_bytes</span></div>
+
+
+<div class="viewcode-block" id="rom_to_parallel_byte_roms"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.rom_to_parallel_byte_roms">[docs]</a><span class="k">def</span> <span class="nf">rom_to_parallel_byte_roms</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a rom dictionary to parallel byte romss</span>
+
+<span class="sd">    The data in the rom is split into 8 bit wide chunks - hence the</span>
+<span class="sd">    parallel roms.</span>
+<span class="sd">    The returned roms are in order from least signficant byte to most.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rom (dict(int:int)): The rom dictionary of addresses and data</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (list(dict(int:int))): Parallel roms</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_data_bytes</span> <span class="o">=</span> <span class="n">num_bytes_needed_for_data</span><span class="p">(</span><span class="n">rom</span><span class="p">)</span>
+
+    <span class="n">byte_roms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">byte_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_data_bytes</span><span class="p">):</span>
+        <span class="n">byte_rom</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">rom</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">get_data_byte_at_index</span><span class="p">(</span><span class="n">rom</span><span class="p">[</span><span class="n">address</span><span class="p">],</span> <span class="n">byte_index</span><span class="p">)</span>
+            <span class="n">byte_rom</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">byte_roms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">byte_rom</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">byte_roms</span></div>
+
+
+<div class="viewcode-block" id="rom_to_list"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.rom_to_list">[docs]</a><span class="k">def</span> <span class="nf">rom_to_list</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a rom dictionary to a list</span>
+
+<span class="sd">    The address of the data in the rom is converted to the index of that</span>
+<span class="sd">    piece of data in the list.</span>
+<span class="sd">    If nothing is specified for the rom at a given address, 0 is used</span>
+<span class="sd">    as the data value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rom (dict(int:int)): The rom dictionary of addresses and data</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (list(int)): Rom data converted to list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_address_bits</span> <span class="o">=</span> <span class="n">bit_width</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">rom</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="n">byte_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="n">num_address_bits</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rom</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">byte_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">byte_list</span></div>
+
+
+<div class="viewcode-block" id="rom_to_parallel_byte_lists"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.rom_to_parallel_byte_lists">[docs]</a><span class="k">def</span> <span class="nf">rom_to_parallel_byte_lists</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a rom dictionary to parallel byte lists</span>
+
+<span class="sd">    Converts a rom to parallel lists of bytes. The address of the data </span>
+<span class="sd">    in the rom is converted to the index of that piece of data in the</span>
+<span class="sd">    list.</span>
+<span class="sd">    The data is split into 8 bit wide chunks - hence the parallel lists.</span>
+<span class="sd">    The returned lists are in order from least signficant byte to most.</span>
+<span class="sd">    If nothing is specified for the rom at a given address, 0 is used</span>
+<span class="sd">    as the data value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        rom (dict(int:int)): The rom dictionary of addresses and data</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (list(list(int))): Parallel lists of the data split into bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="n">parallel_roms</span> <span class="o">=</span> <span class="n">rom_to_parallel_byte_roms</span><span class="p">(</span><span class="n">rom</span><span class="p">)</span>
+    <span class="n">byte_lists</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">parallel_rom</span> <span class="ow">in</span> <span class="n">parallel_roms</span><span class="p">:</span>
+        <span class="n">byte_lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rom_to_list</span><span class="p">(</span><span class="n">parallel_rom</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">byte_lists</span></div>
+
+
+<div class="viewcode-block" id="byte_list_to_hex_string_list"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.byte_list_to_hex_string_list">[docs]</a><span class="k">def</span> <span class="nf">byte_list_to_hex_string_list</span><span class="p">(</span><span class="n">byte_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">hex_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">byte_value</span> <span class="ow">in</span> <span class="n">byte_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">byte_value</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Invalid byte value: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">byte_val</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">hex_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0:02X}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">byte_value</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">hex_list</span></div>
+
+
+<div class="viewcode-block" id="rom_to_logisim"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.rom_to_logisim">[docs]</a><span class="k">def</span> <span class="nf">rom_to_logisim</span><span class="p">(</span><span class="n">rom</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename_base</span><span class="o">=</span><span class="s2">&quot;rom&quot;</span><span class="p">,</span> <span class="n">bytes_per_line</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">bytes_per_chunk</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">byte_lists</span> <span class="o">=</span> <span class="n">rom_to_parallel_byte_lists</span><span class="p">(</span><span class="n">rom</span><span class="p">)</span>
+    <span class="n">rom_strings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">byte_list</span> <span class="ow">in</span> <span class="n">byte_lists</span><span class="p">:</span>
+        <span class="n">hex_lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">hex_bytes</span> <span class="o">=</span> <span class="n">byte_list_to_hex_string_list</span><span class="p">(</span><span class="n">byte_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">index_start</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">byte_list</span><span class="p">),</span> <span class="n">bytes_per_line</span><span class="p">):</span>
+            <span class="n">hex_line_vals</span> <span class="o">=</span> <span class="n">hex_bytes</span><span class="p">[</span><span class="n">index_start</span> <span class="p">:</span> <span class="n">index_start</span> <span class="o">+</span> <span class="n">bytes_per_line</span><span class="p">]</span>
+            <span class="n">hex_chunks</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">chunk_index_start</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytes_per_line</span><span class="p">,</span> <span class="n">bytes_per_chunk</span><span class="p">):</span>
+                <span class="n">hex_chunk_vals</span> <span class="o">=</span> <span class="n">hex_line_vals</span><span class="p">[</span><span class="n">chunk_index_start</span> <span class="p">:</span> <span class="n">chunk_index_start</span> <span class="o">+</span> <span class="n">bytes_per_chunk</span><span class="p">]</span>
+                <span class="n">hex_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hex_chunk_vals</span><span class="p">))</span>
+            <span class="n">hex_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hex_chunks</span><span class="p">))</span>
+        <span class="n">rom_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hex_lines</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">rom_string</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rom_strings</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="s2">&quot;ROM </span><span class="si">{0}</span><span class="s2"> - Length: </span><span class="si">{1}</span><span class="s2">, Address bit width: </span><span class="si">{2}</span><span class="se">\n</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> 
+            <span class="nb">len</span><span class="p">(</span><span class="n">rom</span><span class="p">),</span>
+            <span class="n">bit_width</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">rom</span><span class="o">.</span><span class="n">keys</span><span class="p">())),</span>
+            <span class="n">rom_string</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">romname</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename_base</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">romname</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">romfile</span><span class="p">:</span>
+                <span class="n">romfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;v2.0 raw</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">romfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rom_string</span><span class="p">)</span>
+                <span class="n">romfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="prune_zero_values"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.prune_zero_values">[docs]</a><span class="k">def</span> <span class="nf">prune_zero_values</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">addresses</span> <span class="o">=</span> <span class="n">rom</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">addresses</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rom</span><span class="p">[</span><span class="n">address</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">rom</span><span class="p">[</span><span class="n">address</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="rom_to_arduino"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.rom_to_arduino">[docs]</a><span class="k">def</span> <span class="nf">rom_to_arduino</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">parallel_roms</span> <span class="o">=</span> <span class="n">rom_to_parallel_byte_roms</span><span class="p">(</span><span class="n">rom</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">parallel_rom</span> <span class="ow">in</span> <span class="n">parallel_roms</span><span class="p">:</span>
+        <span class="n">prune_zero_values</span><span class="p">(</span><span class="n">parallel_rom</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">parallel_rom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parallel_roms</span><span class="p">):</span>
+        <span class="nb">print</span> <span class="s2">&quot;ROM </span><span class="si">{0}</span><span class="s2"> (length </span><span class="si">{1}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">parallel_rom</span><span class="p">))</span>
+        <span class="n">pprint</span><span class="p">(</span><span class="n">parallel_rom</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="combine_address_components"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.combine_address_components">[docs]</a><span class="k">def</span> <span class="nf">combine_address_components</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create address template from address components</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        components (list(BitDef)): The components that will make up the</span>
+<span class="sd">        address</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (str): The address template</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">bitdefs_overlap</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Overlapping address components passed&quot;</span><span class="p">)</span>
+
+    <span class="n">address_width</span> <span class="o">=</span> <span class="n">width_from_bitdefs</span><span class="p">(</span><span class="n">components</span><span class="p">)</span>
+
+    <span class="n">template</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># Iterate over indexes backwards due to string construction direction</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">address_width</span><span class="p">)):</span>
+        <span class="n">bit</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+        <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">component</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">component</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+                <span class="n">component_width</span> <span class="o">=</span> <span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">end</span> <span class="o">-</span> <span class="n">component</span><span class="o">.</span><span class="n">start</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">value_in_position</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="n">component</span><span class="o">.</span><span class="n">start</span>
+                <span class="n">binary_string</span> <span class="o">=</span> <span class="n">value_to_binary_string</span><span class="p">(</span><span class="n">value_in_position</span><span class="p">,</span> <span class="n">address_width</span><span class="p">)</span>
+                <span class="n">bit_index</span> <span class="o">=</span> <span class="n">address_width</span> <span class="o">-</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">bit</span> <span class="o">=</span> <span class="n">binary_string</span><span class="p">[</span><span class="n">bit_index</span><span class="p">]</span>
+        <span class="n">template</span> <span class="o">+=</span> <span class="n">bit</span>
+
+    <span class="k">return</span> <span class="n">template</span></div>
+
+
+<div class="viewcode-block" id="combine_data_components"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.combine_data_components">[docs]</a><span class="k">def</span> <span class="nf">combine_data_components</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">bitdefs_overlap</span><span class="p">(</span><span class="n">components</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Overlapping data components passed&quot;</span><span class="p">)</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">ret</span> <span class="o">|</span> <span class="n">component</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="n">component</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="bitdefs_overlap"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.bitdefs_overlap">[docs]</a><span class="k">def</span> <span class="nf">bitdefs_overlap</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if bitdefs overlap</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdefs (list(BitDef)): List of BitDefs to check for overlaps.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (bool): Whether or not the BitDefs overlap</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">address_width</span> <span class="o">=</span> <span class="n">width_from_bitdefs</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">)</span>
+
+    <span class="n">overlap</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># This is a very brute force approach...</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">address_width</span><span class="p">):</span>
+        <span class="n">index_match</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">overlap</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">bitdef</span> <span class="ow">in</span> <span class="n">bitdefs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bitdef</span><span class="o">.</span><span class="n">end</span> <span class="o">&gt;=</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">bitdef</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">index_match</span><span class="p">:</span>
+                    <span class="n">overlap</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">index_match</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">overlap</span></div>
+
+
+<div class="viewcode-block" id="decompose_address"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.decompose_address">[docs]</a><span class="k">def</span> <span class="nf">decompose_address</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">component_dicts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decompose an address into named components.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        adddress (int): The address to decode</span>
+<span class="sd">        component_dicts (dict(str:(dict(str:BitDef)))): A dictionary of</span>
+<span class="sd">            names of component groups to the component groups</span>
+<span class="sd">            themselves.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (dict(str:str)): Dictionary of names of component groups to </span>
+<span class="sd">            matches of named components.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">component_dict</span> <span class="ow">in</span> <span class="n">component_dicts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">ret</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">extract_bitdefs</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">component_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="extract_bitdefs"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.extract_bitdefs">[docs]</a><span class="k">def</span> <span class="nf">extract_bitdefs</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">bitdef_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">bitdef_names</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">bitdef</span> <span class="ow">in</span> <span class="n">bitdef_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">extraction</span> <span class="o">=</span> <span class="n">get_value_from_bit_range</span><span class="p">(</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">bitdef</span><span class="o">.</span><span class="n">end</span><span class="p">,</span>
+            <span class="n">bitdef</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">extraction</span> <span class="o">==</span> <span class="n">bitdef</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="n">bitdef_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;----&quot;</span>
+    <span class="k">if</span> <span class="n">bitdef_names</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">bitdef_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">bitdef_name</span> <span class="ow">in</span> <span class="n">bitdef_names</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="address_width_from_data_templates"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom_programmer.html#eight_bit_computer.rom_programmer.address_width_from_data_templates">[docs]</a><span class="k">def</span> <span class="nf">address_width_from_data_templates</span><span class="p">(</span><span class="n">templates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the number of bits needed to address all the templates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        templates (list(DataTemplate)): The data templates to be</span>
+<span class="sd">            addressed.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (int): The width in bits of the largest address</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">address_range</span><span class="p">)</span> <span class="k">for</span> <span class="n">template</span> <span class="ow">in</span> <span class="n">templates</span><span class="p">])</span></div>
+
+
+<span class="c1"># 547 = 1000100011</span>
+<span class="c1"># pprint (extract_bitdefs(</span>
+<span class="c1">#     547,</span>
+<span class="c1">#     {</span>
+<span class="c1">#         &quot;ONES&quot;:BitDef(start=0, end=0, value=1),</span>
+<span class="c1">#         &quot;TWOS&quot;:BitDef(start=1, end=1, value=1),</span>
+<span class="c1">#         &quot;FOURS&quot;:BitDef(start=2, end=2, value=1)</span>
+<span class="c1">#     }</span>
+<span class="c1">#     ))</span>
+
+
+<span class="c1"># pprint(</span>
+<span class="c1">#     combine_address_components([</span>
+<span class="c1">#         BitDef(start=5, end=9, value=1),</span>
+<span class="c1">#         BitDef(start=2, end=4, value=7)</span>
+<span class="c1">#         ])</span>
+<span class="c1">#     )</span>
+
+<span class="c1"># pprint(</span>
+<span class="c1">#     width_from_bitdefs([</span>
+<span class="c1">#         BitDef(start=5, end=9, value=1),</span>
+<span class="c1">#         BitDef(start=2, end=4, value=0)</span>
+<span class="c1">#         ])</span>
+<span class="c1">#     )</span>
+
+
+<span class="c1"># pprint(</span>
+<span class="c1">#     bitdefs_overlap([</span>
+<span class="c1">#         BitDef(start=5, end=9, value=1),</span>
+<span class="c1">#         BitDef(start=2, end=4, value=0)</span>
+<span class="c1">#         ])</span>
+<span class="c1">#     )</span>
+
+<span class="c1"># def decompose_address_old(address):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     opcode_defs = gen_opcode_addr_component_dict()</span>
+<span class="c1">#     mc_step_defs = gen_microcode_step_addr_component_dict()</span>
+<span class="c1">#     input_sig_defs = gen_input_signal_addr_component_dict()</span>
+
+<span class="c1">#     opcode = extract_bitdefs(address, opcode_defs)</span>
+<span class="c1">#     step = extract_bitdefs(address, mc_step_defs)</span>
+<span class="c1">#     input_sig = extract_bitdefs(address, input_sig_defs)</span>
+
+<span class="c1">#     return {</span>
+<span class="c1">#         &quot;opcode&quot;:opcode,</span>
+<span class="c1">#         &quot;step&quot;:step,</span>
+<span class="c1">#         &quot;input_signal&quot;:input_sig</span>
+<span class="c1">#     }</span>
+
+
+<span class="c1"># def extract_unique_component(address, component_dict):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     component_name = None</span>
+<span class="c1">#     for name, component in component_dict.items():</span>
+<span class="c1">#         bits = address[component.start : component.end + 1]</span>
+<span class="c1">#         if int(bits, 2) == component.value:</span>
+<span class="c1">#             component_name = name</span>
+<span class="c1">#             break</span>
+
+<span class="c1">#     return component_name</span>
+
+
+
+<span class="c1"># def decompose_data(value):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     signals = []</span>
+<span class="c1">#     control_signals = gen_control_signal_dict()</span>
+<span class="c1">#     for name, active_bit in control_signals.items():</span>
+<span class="c1">#         if value &amp; active_bit:</span>
+<span class="c1">#             signals.append(name)</span>
+
+<span class="c1">#     ret = &quot;----&quot;</span>
+<span class="c1">#     if signals:</span>
+<span class="c1">#         ret = &quot; | &quot;.join(signals)</span>
+
+<span class="c1">#     return ret</span>
+
+<span class="c1"># def rom_to_parallel_byte_lists(rom):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Convert a rom dictionary to parallel byte lists</span>
+
+<span class="c1">#     Converts a rom to parallel lists of bytes. The address of the data </span>
+<span class="c1">#     in the rom is converted to the index of that piece of data in the</span>
+<span class="c1">#     list.</span>
+<span class="c1">#     The data is split into 8 bit wide chunks - hence the parallel lists.</span>
+<span class="c1">#     The returned lists are in order from least signficant byte to most.</span>
+<span class="c1">#     If nothing is specified for the rom at a given address, 0 is used</span>
+<span class="c1">#     as the data value.</span>
+
+<span class="c1">#     Args:</span>
+<span class="c1">#         rom (dict(int:int)): The rom dictionary of addresses and data</span>
+<span class="c1">#     Returns:</span>
+<span class="c1">#         (list(list(int))): Parallel lists of the data split into bytes</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+
+<span class="c1">#     num_data_bytes = num_bytes_needed_for_data(rom)</span>
+<span class="c1">#     num_address_bits = bit_width(max(rom.keys()))</span>
+
+<span class="c1">#     byte_lists = []</span>
+<span class="c1">#     for byte_index in range(num_data_bytes):</span>
+<span class="c1">#         byte_list = []</span>
+<span class="c1">#         for address in range(2 ** num_address_bits):</span>
+<span class="c1">#             data = get_data_byte_at_index(rom.get(address, 0), byte_index)</span>
+<span class="c1">#             byte_list.append(data)</span>
+<span class="c1">#         byte_lists.append(byte_list)</span>
+
+<span class="c1">#     return byte_lists</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Andy Palmer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
