@@ -631,17 +631,17 @@ def print_microcode_rom(rom):
 # pprint(HALT())
 # pprint(NOOP())
 
-rom = create_microcode_rom()
-print len(rom)
-pprint(rom)
-# print_microcode_rom(rom)
+# rom = create_microcode_rom()
+# print len(rom)
+# pprint(rom)
+# # print_microcode_rom(rom)
 
-rom_programmer.rom_to_logisim(
-    rom, 
-    directory="/Users/andy/Documents/74_series_computer/logisim_roms",
-    filename_base="microcode",
-    bytes_per_line=16)
-rom_programmer.rom_to_arduino(rom)
+# rom_programmer.rom_to_logisim(
+#     rom, 
+#     directory="/Users/andy/Documents/74_series_computer/logisim_roms",
+#     filename_base="microcode",
+#     bytes_per_line=16)
+# rom_programmer.rom_to_arduino(rom)
 
 
 # steps = gen_microcode_step_addr_component_dict()
