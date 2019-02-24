@@ -6,7 +6,12 @@ connected to the bus and can read a value from the bus or assert a value
 onto the bus. They also provide an output which is the currently stored
 value.
 
-Operation and Interface
+As well as the data oriented ACC, A, B and C registers, the instruction
+register, stack pointer and memory address register are all just
+registers. The memory address register only needs to read from the bus
+and not assert values onto it so it's slightly simpler.
+
+Interface and Operation
 -----------------------
 
 This is the interface of a register:

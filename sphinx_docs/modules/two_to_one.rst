@@ -3,7 +3,7 @@
 
 The 2:1 selector outputs one of two 8 bit inputs. Also known as a multiplexer.
 
-Operation and Interface
+Interface and Operation
 -----------------------
 
 This is the interface of a 2:1 selector:
