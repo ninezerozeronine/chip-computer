@@ -12,25 +12,25 @@ Interface and Operation
   
 This is the interface to the clock:
 
-.. image:: images/clock_block.png
+.. image:: images/clock/clock_block.png
 
 And this is how it operates:
 
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| Name          | Bit width | Description                                                                                                               |
-+===============+===========+===========================================================================================================================+
-| auto/manual   | 1         | When low, the clock signals are advanced manually with manual_input. When high, clock singals are advanced automatically. |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| manual_input  | 1         | High/low transitions here will advance the clock signals.                                                                 |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| halt          | 1         | While high, bring both of the clock signals low and stop them advancing.                                                  |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| reset         | 1         | While high, bring both of the clock signals low and stop them advancing.                                                  |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| data_clock    | 1         | Alternates between high and low, driving the data transitions in the computer.                                            |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
-| control_clock | 1         | Alternates between high and low, driving the control signal transitions in the computer.                                  |
-+---------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| Name               | Bit width | Description                                                                                                               |
++====================+===========+===========================================================================================================================+
+| auto/manual        | 1         | When low, the clock signals are advanced manually with manual_input. When high, clock singals are advanced automatically. |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| manual_clock_input | 1         | High/low transitions here will advance the clock signals.                                                                 |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| halt               | 1         | While high, bring both of the clock signals low and stop them advancing.                                                  |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| reset              | 1         | While high, bring both of the clock signals low and stop them advancing.                                                  |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| data_clock         | 1         | Alternates between high and low, driving the data transitions in the computer.                                            |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
+| control_clock      | 1         | Alternates between high and low, driving the control signal transitions in the computer.                                  |
++--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
 
 Control and Data Clocks
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,7 +38,7 @@ Control and Data Clocks
 Typically the clocks in other computers invert the data_clock to create
 the control_clock, like this:
 
-.. image:: images/inverted_data_clock.png
+.. image:: images/clock/inverted_data_clock.png
 
 This is not suitable for this computer due to a couple of notes in the
 74HCT161 datasheet::
@@ -53,32 +53,77 @@ control_clock) would occur after data_clock had gone low. The delay is
 introduced by the EEPROMS settling after a new instruction/flag/micro-step 
 value goes onto thier address lines. This demonstares the problem:
 
-.. image:: images/inverted_clock_problem.png
+.. image:: images/clock/inverted_data_clock_problem.png
 
-The clock signals change in the following cycle:
+To satisfy this constraint, the two clock signals proceed like this:
 
-+---------------+-------------+
-| Clock         | Transition  |
-+===============+=============+
-| data_clock    | low -> high |
-+---------------+-------------+
-| control_clock | low -> high |
-+---------------+-------------+
-| data_clock    | high -> low |
-+---------------+-------------+
-| control_clock | high -> low |
-+---------------+-------------+
+.. image:: images/clock/offset_clock_signals.png
 
-Or like this:
+This means data_clock is still high when PE/count_enable changes:
 
-.. image:: images/clock_signal_waveforms.png
+.. image:: images/clock/offset_clock_signals_fix.png
 
-Once halt and reset go low again after either becomes high, data clock should
-be the first to go high and the then sequence continues. Like this:
-
-.. image:: images/clock_halt_reset_behaviour.png
+Once halt or reset go high, both data_clock and control_clock
+immediately go low. Once halt and reset go low again after either becomes
+high, data clock should be the first to go high and the then sequence
+continues.
 
 Even duty cycle
 ^^^^^^^^^^^^^^^
 
-blah
+The 555 astable circuit used does not always output a signal with an
+even duty cycle. To fix this, the output from the 555 is fed into the
+clock of a JK flip flop configured to toggle. This halves the frequency
+of the astable output but guaranatees it's at a 50% duty cycle.
+
+Implementation
+--------------
+
+Logically the clock is implemented as follows:
+
+.. image:: images/clock/clock_schematic_ideal.png
+    :width: 100%
+
+From left to right:
+
+- Manual and 555 clock signals.
+- Feed the 555 into a JK flip flop configured to toggle to achieve even
+  duty cycle.
+- Multiplex to choose the manual or auto clock.
+- Halt and reset signals.
+- Safe clock gate. Makes sure that when reset is released, only the
+  next rising clock edge is passed on. If only an and gate was used,
+  a rising edge would pass through if the clock was already high, and
+  (an inverted) reset signal went low.
+- Two JK flip flops configured to toggle, one fed with the inverse of the
+  gated clock signal to be the delayed signal for the control clock.
+
+However, in reality the layout is equvalent, but a little more complex
+due to implementation details in the other chips (active low imputs) and
+trying to make the best use of space:
+
+.. image:: images/clock/clock_schematic_reality.png
+    :width: 100%
+
+There is also some debouncing that happens on the clock for the manual
+signals.
+
+The following electronics are used:
+
+- A 555 and accompanyting resistors and capacitors to generate the auto
+  clock signal.
+- A 74HCT109 to get an even duty cycle from the 555.
+- A 74HCT14 and accompanying resistors and capacitors to debounce the
+  manual inputs.
+- A 74HCT00 to create a multiplexer to select between the manual and
+  auto clock signals.
+- A 74HCT02 and 74HCT00 to create the safe clock gate and some
+  additional signal inverting.
+- Another 74HCT109 to provide the last 2 toggles for the clocks.
+
+The components are laid out on the breadboard like so:
+
+.. image:: images/clock/clock_bb.png
+    :width: 100%
+
+The clock module is the first in the list to be redesigned :).

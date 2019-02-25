@@ -8,7 +8,7 @@ Interface and Operation
 
 This is the interface of a 2:1 selector:
 
-.. image:: images/two_to_one_block.png
+.. image:: images/two_to_one/two_to_one_block.png
 
 This is how it operates:
 
@@ -35,12 +35,12 @@ the layout on the breadboard of A, B and out sometimes need to differ.
 
 This is the `A B out` layout:
 
-.. image:: images/two_to_one_A_B_O_bb.png
+.. image:: images/two_to_one/two_to_one_A_B_O_bb.png
     :width: 100%
 
 This is the `out A B` layout:
 
-.. image:: images/two_to_one_O_A_B_bb.png
+.. image:: images/two_to_one/two_to_one_O_A_B_bb.png
     :width: 100%
 
 Different coloured wires are used in Fritzing to help track the A, B and

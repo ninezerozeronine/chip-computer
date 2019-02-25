@@ -14,7 +14,7 @@ Interface and Operation
   
 This is the interface to the program counter:
 
-.. image:: images/program_counter_block.png
+.. image:: images/program_counter/program_counter_block.png
 
 This is how it operates:
 
@@ -48,5 +48,5 @@ Implementation
 
 The electronics are laid out on the breadboard like so:
 
-.. image:: images/program_counter_bb.png
+.. image:: images/program_counter/program_counter_bb.png
     :width: 100%

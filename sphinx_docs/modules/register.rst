@@ -16,7 +16,7 @@ Interface and Operation
 
 This is the interface of a register:
 
-.. image:: images/register_block.png
+.. image:: images/register/register_block.png
 
 This is how it operates:
 
@@ -47,11 +47,11 @@ Implementation
 
 The electronics are laid out on the breadboard like so:
 
-.. image:: images/register_bus_left_bb.png
+.. image:: images/register/register_bus_left_bb.png
     :width: 100%
 
 Due to the central bus in the layout of the computer it's convenient to
 also have a version where the connection to the bus is on the right:
 
-.. image:: images/register_bus_right_bb.png
+.. image:: images/register/register_bus_right_bb.png
     :width: 100%
