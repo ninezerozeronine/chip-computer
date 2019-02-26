@@ -41,10 +41,15 @@ the control_clock, like this:
 .. image:: images/clock/inverted_data_clock.png
 
 This is not suitable for this computer due to a couple of notes in the
-74HCT161 datasheet::
+74HCT161 datasheet:
 
-    2. The High-to-Low transition of PE or TE on the ’HC/HCT161 and the ’HC/HCT163 should only occur while CP is HIGH for conventional operation.
-    3. The Low-to-High transition of SPE on the ’HC/HCT161 and SPE or MR on the ’HC/HCT163 should only occur while CP is HIGH for conventional operation.
+.. note::
+    2. The High-to-Low transition of PE or TE on the ’HC/HCT161 and the
+       ’HC/HCT163 should only occur while CP is HIGH for conventional
+       operation.
+    3. The Low-to-High transition of SPE on the ’HC/HCT161 and SPE or MR
+       on the ’HC/HCT163 should only occur while CP is HIGH for
+       conventional operation.
 
 Control signal changes must happen while data_clock is high. The
 inverted clock method doesn't satisfy this constraint as control signal
@@ -92,7 +97,7 @@ From left to right:
 - Multiplex to choose the manual or auto clock.
 - Halt and reset signals.
 - Safe clock gate. Makes sure that when reset is released, only the
-  next rising clock edge is passed on. If only an and gate was used,
+  next rising clock edge is passed on. If only an AND gate was used,
   a rising edge would pass through if the clock was already high, and
   (an inverted) reset signal went low.
 - Two JK flip flops configured to toggle, one fed with the inverse of the
