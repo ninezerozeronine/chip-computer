@@ -108,11 +108,11 @@ From left to right:
 - The capacitor, resistor and inverting schmitt trigger on the bottom
   form the edge detector.
 - The three inverting schmitt triggers on top serve to delay the signal
-  (using propogation delay).
+  (using propagation delay).
 - The two OR gates ensure that once the low pulse from the detected
   rising edge finishes, both control signals go high at the same time.
 
-The propogation delay of the inverting schmitt triggers (inside a
+The propagation delay of the inverting schmitt triggers (inside a
 74HCT14) is approximately 20ns, to a maximum of approximately 40ns. With
 the 3 schmitt triggers on top, the inversion of the now positive clock
 is delayed between 60ns and 120ns.
@@ -120,10 +120,21 @@ is delayed between 60ns and 120ns.
 The resitor and capacitor values are chosen so that the time from the
 voltage between the capacitor and the resistor going high, to the
 voltage going below the negative going threshold of the schmitt trigger
-is at least 132ns. That is:
+is at least 112ns. That is:
 
 - 120ns for the longest possible delay for the top three schmitt triggers.
+- Subtract 20ns for the shortest propogation delay from the edge detect schmitt trigger.
 - 12ns to satisfy tDW
 
 The 7ns required for tWHZ is amply catered for by the chained schmitt
 triggers.
+
+The final control signals look like this:
+
+.. image:: images/ram/ram_write_signals.png
+    :width: 100%
+
+
+Setup Mode
+^^^^^^^^^^
+
