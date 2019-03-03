@@ -1,11 +1,13 @@
+.. _clock_module:
+
 Clock
 =====
 
-The clock produces signals that synchronise the operation of all the
-other modules in the computer.
+The clock produces signals that synchronise the operation of all the other
+modules in the computer.
 
-It can drive the operation of the computer step by step for debugging or
-at an arbitrary speed.
+It can drive the operation of the computer step by step for debugging or at an
+arbitrary speed.
 
 Interface and Operation
 -----------------------
@@ -35,13 +37,13 @@ And this is how it operates:
 Control and Data Clocks
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Typically the clocks in other computers invert the data_clock to create
-the control_clock, like this:
+Typically the clocks in other computers invert the data_clock to create the
+control_clock, like this:
 
 .. image:: images/clock/inverted_data_clock.png
 
-This is not suitable for this computer due to a couple of notes in the
-74HCT161 datasheet:
+This is not suitable for this computer due to a couple of notes in the 74HCT161
+datasheet:
 
 .. note::
     2. The High-to-Low transition of PE or TE on the ’HC/HCT161 and the
@@ -51,12 +53,12 @@ This is not suitable for this computer due to a couple of notes in the
        on the ’HC/HCT163 should only occur while CP is HIGH for
        conventional operation.
 
-Control signal changes must happen while data_clock is high. The
-inverted clock method doesn't satisfy this constraint as control signal
-changes (which happen a short delay after the rising edge of
-control_clock) would occur after data_clock had gone low. The delay is
-introduced by the EEPROMS settling after a new instruction/flag/micro-step 
-value goes onto thier address lines. This demonstares the problem:
+Control signal changes must happen while data_clock is high. The inverted clock
+method doesn't satisfy this constraint as control signal changes (which happen a
+short delay after the rising edge of control_clock) would occur after data_clock
+had gone low. The delay is introduced by the EEPROMS settling after a new
+instruction/flag/micro-step  value goes onto thier address lines. This
+demonstares the problem:
 
 .. image:: images/clock/inverted_data_clock_problem.png
 
@@ -68,18 +70,17 @@ This means data_clock is still high when PE/count_enable changes:
 
 .. image:: images/clock/offset_clock_signals_fix.png
 
-Once halt or reset go high, both data_clock and control_clock
-immediately go low. Once halt and reset go low again after either becomes
-high, data clock should be the first to go high and the then sequence
-continues.
+Once halt or reset go high, both data_clock and control_clock immediately go
+low. Once halt and reset go low again after either becomes high, data clock
+should be the first to go high and the then sequence continues.
 
 Even duty cycle
 ^^^^^^^^^^^^^^^
 
-The 555 astable circuit used does not always output a signal with an
-even duty cycle. To fix this, the output from the 555 is fed into the
-clock of a JK flip flop configured to toggle. This halves the frequency
-of the astable output but guaranatees it's at a 50% duty cycle.
+The 555 astable circuit used does not always output a signal with an even duty
+cycle. To fix this, the output from the 555 is fed into the clock of a JK flip
+flop configured to toggle. This halves the frequency of the astable output but
+guaranatees it's at a 50% duty cycle.
 
 Implementation
 --------------
@@ -92,26 +93,23 @@ Logically the clock is implemented as follows:
 From left to right:
 
 - Manual and 555 clock signals.
-- Feed the 555 into a JK flip flop configured to toggle to achieve even
-  duty cycle.
+- Feed the 555 into a JK flip flop configured to toggle to achieve even duty
+  cycle.
 - Multiplex to choose the manual or auto clock.
 - Halt and reset signals.
-- Safe clock gate. Makes sure that when reset is released, only the
-  next rising clock edge is passed on. If only an AND gate was used,
-  a rising edge would pass through if the clock was already high, and
-  (an inverted) reset signal went low.
+- :ref:`safe_clock_enable`. This ensures correct timing of the clock after
+  reset is released.
 - Two JK flip flops configured to toggle, one fed with the inverse of the
   gated clock signal to be the delayed signal for the control clock.
 
-However, in reality the layout is equvalent, but a little more complex
-due to implementation details in the other chips (active low imputs) and
-trying to make the best use of space:
+However, in reality the layout is equvalent, but a little more complex due to
+implementation details in the other chips (active low imputs) and trying to make
+the best use of space:
 
 .. image:: images/clock/clock_schematic_reality.png
     :width: 100%
 
-There is also some debouncing that happens on the clock for the manual
-signals.
+There is also some debouncing that happens on the clock for the manual signals.
 
 The following electronics are used:
 

@@ -11,3 +11,4 @@ Hardware
    edge_detection
    debouncing
    eeprom_programmer
+   safe_clock_enable

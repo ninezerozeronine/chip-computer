@@ -1,3 +1,5 @@
+.. _two_to_one:
+
 2:1 Selector
 ============
 
