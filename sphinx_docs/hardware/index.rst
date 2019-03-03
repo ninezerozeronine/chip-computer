@@ -1,6 +1,9 @@
 Hardware
 ========
 
+Open Collector Output
+---------------------
+
 .. toctree::
    :maxdepth: 2
    :caption: Hardware:

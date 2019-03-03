@@ -1883,6 +1883,7 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="clocked carryborrow out"/>
       <a name="labelloc" val="east"/>
     </comp>
+    <comp loc="(630,650)" name="74LS181"/>
     <comp lib="1" loc="(1140,740)" name="AND Gate">
       <a name="size" val="30"/>
       <a name="inputs" val="2"/>
@@ -1898,7 +1899,6 @@ This file is intended to be loaded by Logisim (http://www.cburch.com/logisim/).
       <a name="label" val="clocked result"/>
       <a name="labelloc" val="south"/>
     </comp>
-    <comp loc="(630,650)" name="74LS181"/>
     <comp lib="0" loc="(1720,610)" name="Pin">
       <a name="facing" val="west"/>
       <a name="output" val="true"/>

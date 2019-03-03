@@ -33,7 +33,7 @@ This is how it operates:
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
 | output_stored_result | 1         | Assert the value of the stored result onto the result_stored connection.                                               |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
-| clock                | 1         | A rising edge triggers result and flag storage.                                                                        |
+| clock                | 1         | A rising edge triggers result and flag storage if enabled.                                                                        |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
 | A                    | 8         | The A input to the operation.                                                                                          |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
@@ -48,9 +48,16 @@ This is how it operates:
 | flags_stored         | 4         | The value of the stored result while output_stored_result is high, not connected otherwise.                            |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
 
-``carry_in``, ``M``, and ``S0-3`` are used in the following way (from the datasheet_).:
+``carry_in``, ``M``, and ``S0-3`` are used to select from the available operations (from the datasheet_).:
 
 .. _datasheet: http://www.ti.com/lit/ds/symlink/sn54ls181.pdf
 
 .. image:: images/alu/operation_select.jpg
     :width: 100%
+
+Implementation
+--------------
+
+A :ref:`safe_clock_enable` circuit is not required as it's natively implemented
+in the 74HCT377 and 74HCT171.
+

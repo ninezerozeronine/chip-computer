@@ -74,6 +74,9 @@ Once halt or reset go high, both data_clock and control_clock immediately go
 low. Once halt and reset go low again after either becomes high, data clock
 should be the first to go high and the then sequence continues.
 
+Implementation
+--------------
+
 Even duty cycle
 ^^^^^^^^^^^^^^^
 
@@ -82,8 +85,8 @@ cycle. To fix this, the output from the 555 is fed into the clock of a JK flip
 flop configured to toggle. This halves the frequency of the astable output but
 guaranatees it's at a 50% duty cycle.
 
-Implementation
---------------
+Block diagram
+^^^^^^^^^^^^^
 
 Logically the clock is implemented as follows:
 
@@ -108,6 +111,9 @@ the best use of space:
 
 .. image:: images/clock/clock_schematic_reality.png
     :width: 100%
+
+Hardware
+^^^^^^^^
 
 There is also some debouncing that happens on the clock for the manual signals.
 
