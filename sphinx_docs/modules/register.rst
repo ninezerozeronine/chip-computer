@@ -38,7 +38,7 @@ Implementation
 --------------
 
 - A 74HCT377 is used to store the contents of the register.
-- A 74HCT245 is used to provide a tri state output to allow asserting
+- A 74HCT245 is used to provide a tri-state output to allow asserting
   values onto the bus, or not.
 - LEDs with current limiting resistors are used to display the current
   contents.

@@ -58,18 +58,18 @@ input is used to control switching between read and write mode (output enable
 (active low) is available as well).
 
 It takes time for the chip to switch modes and the pins to change from output to
-input. This time is referred to as tWHZ in the datasheet and the following note
+input. This time is referred to as tWHZ in the data-sheet and the following note
 applies:
 
 .. note::
     4. During this period, the I/O pins are in the output state and the
        input signals must not be applied.
 
-According to the datasheet tWHZ is at most 7ns for the 6116SA15 being used.
+According to the data-sheet tWHZ is at most 7ns for the 6116SA15 being used.
 
 As well as the time taken for the pins to change state, we need to ensure that
 the overall write pulse width is a certain length due to another note in the
-datasheet (which applies because _OE will be low):
+data-sheet (which applies because _OE will indeed be low):
 
 .. note::
     7. _OE is continuously HIGH. If _OE is LOW during a _WE controlled
@@ -101,30 +101,34 @@ are active low so the final circuit looks like this:
 
 .. image:: images/ram/write_signal_timing.png
 
+(This can be seen in :ref:`falstad` by loading the
+:download:`saved session <ram_write_signal.txt>`)
+
 From left to right:
 
-- The capacitor, resistor and inverting schmitt trigger on the bottom
-  form the edge detector.
-- The three inverting schmitt triggers on top serve to delay the signal
-  (using propagation delay).
+- The capacitor, resistor and inverting Schmitt trigger on the bottom
+  form the edge detector that produces a low pulse when a rising edge is
+  detected.
+- The three inverting Schmitt triggers on top serve to delay and invert the
+  clock signal (using propagation delay).
 - The two OR gates ensure that once the low pulse from the detected
   rising edge finishes, both control signals go high at the same time.
 
-The propagation delay of the inverting schmitt triggers (inside a 74HCT14) is
-approximately 20ns, to a maximum of approximately 40ns. With the 3 schmitt
+The propagation delay of the inverting Schmitt triggers (inside a 74HCT14) is
+approximately 20ns, to a maximum of approximately 40ns. With the 3 Schmitt
 triggers on top, the inversion of the now positive clock is delayed between 60ns
 and 120ns.
 
-The resitor and capacitor values are chosen so that the time from the voltage
+The resistor and capacitor values are chosen so that the time from the voltage
 between the capacitor and the resistor going high, to the voltage going below
-the negative going threshold of the schmitt trigger is at least 112ns. That is:
+the negative going threshold of the Schmitt trigger is at least 112ns. That is:
 
-- 120ns for the longest possible delay for the top three schmitt triggers.
-- Subtract 20ns for the shortest propogation delay from the edge detect schmitt
+- 120ns for the longest possible delay for the top three Schmitt triggers.
+- Subtract 20ns for the shortest propagation delay from the edge detect Schmitt
   trigger.
 - 12ns to satisfy tDW
 
-The 7ns required for tWHZ is amply catered for by the chained schmitt triggers.
+The 7ns required for tWHZ is amply catered for by the chained Schmitt triggers.
 
 The final control signals look like this:
 
@@ -134,7 +138,7 @@ The final control signals look like this:
 Run/Setup Mode
 ^^^^^^^^^^^^^^
 
-The RAM needs to accesed by the computer while running (run mode) and by the
+The RAM needs to accessed by the computer while running (run mode) and by the
 user during setup (setup mode). To achieve this, the inputs to:
 
  - ``input_enable``
@@ -147,19 +151,19 @@ all need to be driven by either the computer itself, or the user. A master
 run/setup switch decides which input will be fed to the RAM.
 
 ``data_in`` and ``address`` are connected to :ref:`two_to_one` s.
-``input_enable``, ``prog_data_mem_select`` and ``clock`` are all
-connected to a 74HCT157 Quad 2 to 1 line data selector.
 
-Logically, the setup looks like this.
+The remaining ``input_enable``, ``prog_data_mem_select`` and ``clock`` are all
+connected to a 74HCT157 Quad 2 to 1 line data selector. They are set up as
+follows:
 
-.. image:: images/ram/ram_write_signals.png
+.. image:: images/ram/run_setup_mode.png
     :width: 100%
 
 From left to right:
 
  - Multiplexers to select between run and setup control signals
  - :ref:`safe_clock_enable`
- - Ouputs to the rest of the RAM.
+ - Outputs to the rest of the RAM.
 
 When in run mode:
 
@@ -169,4 +173,25 @@ When in run mode:
  - ``data_in`` - connected to the bus.
  - ``address`` connected to the output of the memory address register.
 
-When in setup mode, all of the above are connected to switched that the user controls.
+When in setup mode, all of the above are connected to switches that the user
+controls, apart from ``input_enable`` which is held high.
+
+Hardware
+^^^^^^^^
+
+The following electronics are used:
+
+ - 6166SA RAM chip
+ - 2 x 74HCT245 for controlling input and output to and from the RAMs IO pins.
+ - A 74HCT157 to choose between the inputs in run and setup mode.
+ - A 74HCT02 containing NOR gates to build the :ref:`safe_clock_enable`.
+ - A 74HCT08 containing AND gates to build the :ref:`safe_clock_enable` and
+   isolate the resistor and capacitor circuit from the other logic gates.
+ - A 74HCT14 containing Schmitt triggers to edge detect and delay the clock.
+ - A 74HCT32 for the OR gates that are used in the edge detection and delay
+   circuit.
+
+They are laid out on the breadboards as follows:
+
+.. image:: images/ram/ram_bb.png
+    :width: 100%

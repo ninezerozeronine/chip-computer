@@ -57,8 +57,8 @@ Control signal changes must happen while data_clock is high. The inverted clock
 method doesn't satisfy this constraint as control signal changes (which happen a
 short delay after the rising edge of control_clock) would occur after data_clock
 had gone low. The delay is introduced by the EEPROMS settling after a new
-instruction/flag/micro-step  value goes onto thier address lines. This
-demonstares the problem:
+instruction/flag/micro-step  value goes onto their address lines. This
+demonstrates the problem:
 
 .. image:: images/clock/inverted_data_clock_problem.png
 
@@ -83,7 +83,7 @@ Even duty cycle
 The 555 astable circuit used does not always output a signal with an even duty
 cycle. To fix this, the output from the 555 is fed into the clock of a JK flip
 flop configured to toggle. This halves the frequency of the astable output but
-guaranatees it's at a 50% duty cycle.
+guarantees it's at a 50% duty cycle.
 
 Block diagram
 ^^^^^^^^^^^^^
@@ -105,8 +105,8 @@ From left to right:
 - Two JK flip flops configured to toggle, one fed with the inverse of the
   gated clock signal to be the delayed signal for the control clock.
 
-However, in reality the layout is equvalent, but a little more complex due to
-implementation details in the other chips (active low imputs) and trying to make
+However, in reality the layout is equivalent, but a little more complex due to
+implementation details in the other chips (active low inputs) and trying to make
 the best use of space:
 
 .. image:: images/clock/clock_schematic_reality.png
@@ -119,7 +119,7 @@ There is also some debouncing that happens on the clock for the manual signals.
 
 The following electronics are used:
 
-- A 555 and accompanyting resistors and capacitors to generate the auto
+- A 555 and accompanying resistors and capacitors to generate the auto
   clock signal.
 - A 74HCT109 to get an even duty cycle from the 555.
 - A 74HCT14 and accompanying resistors and capacitors to debounce the

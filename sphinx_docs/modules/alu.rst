@@ -33,7 +33,7 @@ This is how it operates:
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
 | output_stored_result | 1         | Assert the value of the stored result onto the result_stored connection.                                               |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
-| clock                | 1         | A rising edge triggers result and flag storage if enabled.                                                                        |
+| clock                | 1         | A rising edge triggers result and flag storage if enabled.                                                             |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
 | A                    | 8         | The A input to the operation.                                                                                          |
 +----------------------+-----------+------------------------------------------------------------------------------------------------------------------------+
@@ -58,6 +58,33 @@ This is how it operates:
 Implementation
 --------------
 
-A :ref:`safe_clock_enable` circuit is not required as it's natively implemented
-in the 74HCT377 and 74HCT171.
+The logical arrangement of the ALU is like this:
 
+.. image:: images/alu/alu_logic_layout.png
+    :width: 100%
+
+A :ref:`safe_clock_enable` circuit is only required in the :ref:`logisim`
+version. It's natively implemented in the 74HCT377 and 74HCT173 chips.
+
+The following electronics are used:
+
+ - 2 x 74LS181 are used for the arithmetic and logic operations.
+ - A 74CHT00 is used to AND the two A=B outputs and invert ``carry_borrow_out``.
+ - A 74HCT173 is used to store the flags.
+ - 2 x 74HCT32s are used to OR all the bits to check if it's zero.
+ - A 74HCT04 is used to invert the result of the OR zero check, the store_flags
+   control signal and the carry_borrow input signal.
+ - A 74HCT245 is used to provide tri-state buffering for ``result_stored`` to go
+   onto the bus.
+ - A 74HCT377 stores the result of the operation from ``result_live``.
+ - Another 74HCT04 is used to invert the ``store_result`` and
+   ``output_stored_result`` signals as this inputs are active low.
+
+The ALU resides on three breadboards. From top to bottom:
+
+ - ALU's
+ - Zero checking and flag storage
+ - Result storage and output
+
+.. image:: images/alu/alu_bb.png
+    :width: 100%

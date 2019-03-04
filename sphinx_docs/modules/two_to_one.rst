@@ -45,5 +45,6 @@ This is the `out A B` layout:
 .. image:: images/two_to_one/two_to_one_O_A_B_bb.png
     :width: 100%
 
-Different coloured wires are used in Fritzing to help track the A, B and
-out bits. When creating the computer I only had green wire available :(.
+Different coloured wires are used in the :ref:`fritzing` images above to help
+track the A, B and out bits. When creating the computer only green wire was
+available :(.

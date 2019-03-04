@@ -1,9 +1,6 @@
 Hardware
 ========
 
-Open Collector Output
----------------------
-
 .. toctree::
    :maxdepth: 2
    :caption: Hardware:
@@ -15,3 +12,4 @@ Open Collector Output
    debouncing
    eeprom_programmer
    safe_clock_enable
+   open_collector

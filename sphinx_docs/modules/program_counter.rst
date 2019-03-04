@@ -38,7 +38,7 @@ Implementation
 --------------
 
 - Two 74HCT161s are used to store, increment and clear the 8 bit value.
-- A 74HCT245 is used to provide a tri state output to allow asserting
+- A 74HCT245 is used to provide a tri-state output to allow asserting
   values onto the bus, or not.
 - A 74HCT04 is used to invert the incoming input_enable, output_enable
   and count signals to drive the active low inputs on the 74HCT161s and
