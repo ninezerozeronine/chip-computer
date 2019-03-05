@@ -37,7 +37,7 @@ And this is how it operates:
 Control and Data Clocks
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Typically the clocks in other computers invert the data_clock to create the
+Typically the clocks in other computers invert data_clock to create
 control_clock, like this:
 
 .. image:: images/clock/inverted_data_clock.png
@@ -55,10 +55,10 @@ datasheet:
 
 Control signal changes must happen while data_clock is high. The inverted clock
 method doesn't satisfy this constraint as control signal changes (which happen a
-short delay after the rising edge of control_clock) would occur after data_clock
-had gone low. The delay is introduced by the EEPROMS settling after a new
-instruction/flag/micro-step  value goes onto their address lines. This
-demonstrates the problem:
+short delay after the rising edge of control_clock would occur after data_clock
+had gone low. The delay is introduced by the EEPROMs in the :ref:`control_unit`
+settling after a new instruction/flag/micro-step value goes onto their address
+lines. This demonstrates the problem:
 
 .. image:: images/clock/inverted_data_clock_problem.png
 
@@ -71,7 +71,7 @@ This means data_clock is still high when PE/count_enable changes:
 .. image:: images/clock/offset_clock_signals_fix.png
 
 Once halt or reset go high, both data_clock and control_clock immediately go
-low. Once halt and reset go low again after either becomes high, data clock
+low. Once halt and reset go low again after either becomes high, data_clock
 should be the first to go high and the then sequence continues.
 
 Implementation
