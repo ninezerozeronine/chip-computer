@@ -360,14 +360,14 @@ class TestRom(unittest.TestCase):
             },
             {
                 "datatemplates": [
-                    utils.DataTemplate(address_range="10.", data="0"),
-                    utils.DataTemplate(address_range="10.", data="1"),
+                    utils.DataTemplate(address_range="00.", data="0"),
+                    utils.DataTemplate(address_range="11.", data="1"),
                 ],
                 "romdatas": [
-                    rom.RomData(address="100", data="0"),
-                    rom.RomData(address="101", data="0"),
-                    rom.RomData(address="100", data="1"),
-                    rom.RomData(address="101", data="1"),
+                    rom.RomData(address="000", data="0"),
+                    rom.RomData(address="001", data="0"),
+                    rom.RomData(address="110", data="1"),
+                    rom.RomData(address="111", data="1"),
                 ]
             },
         ]

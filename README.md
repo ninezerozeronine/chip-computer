@@ -15,7 +15,6 @@ and any code used is licensed under the [MIT license](http://opensource.org/lice
 
 To build the docs on mac run:
 
-
     sphinx-apidoc --force --separate --no-toc -o software/source/ ../src/python/eight_bit_computer/
     make clean
     make html

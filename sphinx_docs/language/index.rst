@@ -1,3 +1,5 @@
+.. _language:
+
 Language
 ========
 
@@ -5,5 +7,6 @@ Language
    :maxdepth: 2
    :caption: Language:
 
-   machine_code
    assembly
+   machine_code
+   micro_code
