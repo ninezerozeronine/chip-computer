@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="eight_bit_computer.utils module" href="eight_bit_computer.utils.html" />
-    <link rel="prev" title="eight_bit_computer.language.utils module" href="eight_bit_computer.language.utils.html" /> 
+    <link rel="next" title="Development Tools" href="../../development_tools.html" />
+    <link rel="prev" title="eight_bit_computer.datatemplate module" href="eight_bit_computer.datatemplate.html" /> 
 
   
   <script src="../../_static/js/modernizr.min.js"></script>
@@ -89,8 +89,9 @@
 <li class="toctree-l2 current"><a class="reference internal" href="eight_bit_computer.html">eight_bit_computer package</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.html#subpackages">Subpackages</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="eight_bit_computer.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.bitdef.html">eight_bit_computer.bitdef module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.datatemplate.html">eight_bit_computer.datatemplate module</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">eight_bit_computer.rom module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.utils.html">eight_bit_computer.utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.html#module-eight_bit_computer">Module contents</a></li>
@@ -219,21 +220,16 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="eight_bit_computer.rom.collapse_datatemplates_to_romdatas">
-<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">collapse_datatemplates_to_romdatas</code><span class="sig-paren">(</span><em>datatemplates</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#collapse_datatemplates_to_romdatas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.collapse_datatemplates_to_romdatas" title="Permalink to this definition">¶</a></dt>
-<dd><p>Collapse any addresses in datatemplates to real values.</p>
-<p>If an address does need collapsing the original data is copied out
-to all the collapsed addresses.</p>
+<dt id="eight_bit_computer.rom.get_rom">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">get_rom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#get_rom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.get_rom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get complete representation of the rom.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list</strong> (<em>datatemplates</em>) – A list of templates to
-collapse.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">All the defined microcode.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The expanded datatemplates</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -253,50 +249,28 @@ collapse.</td>
 </dl>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="eight_bit_computer.utils.html#eight_bit_computer.utils.DataTemplate" title="eight_bit_computer.utils.DataTemplate">DataTemplate</a>)</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="eight_bit_computer.datatemplate.html#eight_bit_computer.datatemplate.DataTemplate" title="eight_bit_computer.datatemplate.DataTemplate">DataTemplate</a>)</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="eight_bit_computer.rom.get_rom">
-<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">get_rom</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#get_rom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.get_rom" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get complete representation of the rom.</p>
+<dt id="eight_bit_computer.rom.collapse_datatemplates_to_romdatas">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">collapse_datatemplates_to_romdatas</code><span class="sig-paren">(</span><em>datatemplates</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#collapse_datatemplates_to_romdatas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.collapse_datatemplates_to_romdatas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collapse any addresses in datatemplates to real values.</p>
+<p>If an address does need collapsing the original data is copied out
+to all the collapsed addresses.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">All the defined microcode.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>list</strong> (<em>datatemplates</em>) – A list of templates to
+collapse.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The expanded datatemplates</td>
 </tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="eight_bit_computer.rom.get_romdata_slice">
-<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">get_romdata_slice</code><span class="sig-paren">(</span><em>romdatas</em>, <em>end</em>, <em>start</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#get_romdata_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.get_romdata_slice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get a slice of the data in the romdatas.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>romdatas</strong> (<em>list</em><em>(</em><a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData"><em>RomData</em></a><em>)</em>) – The romdatas to get a slice from</li>
-<li><strong>end</strong> (<em>int</em>) – The index for the end of the slice. Starts at zero at
-the rightmost (least significant) bit.</li>
-<li><strong>start</strong> (<em>int</em>) – The index for the start of the slice. Starts at
-zero at the rightmost (least significant) bit.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The sliced list of romdatas</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -326,11 +300,6 @@ instructions.</td>
 </dd></dl>
 
 <dl class="function">
-<dt id="eight_bit_computer.rom.rom_slice_to_logisim_string">
-<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">rom_slice_to_logisim_string</code><span class="sig-paren">(</span><em>rom_slice</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#rom_slice_to_logisim_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.rom_slice_to_logisim_string" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="eight_bit_computer.rom.romdatas_have_duplicate_addresses">
 <code class="descclassname">eight_bit_computer.rom.</code><code class="descname">romdatas_have_duplicate_addresses</code><span class="sig-paren">(</span><em>romdatas</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#romdatas_have_duplicate_addresses"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.romdatas_have_duplicate_addresses" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if any of the romdatas have duplicate addresses.</p>
@@ -347,6 +316,11 @@ instructions.</td>
 </tbody>
 </table>
 </dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.rom.write_logisim_roms">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">write_logisim_roms</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#write_logisim_roms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.write_logisim_roms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
 <dt id="eight_bit_computer.rom.slice_rom">
@@ -403,8 +377,45 @@ data=”10101010”</div></blockquote>
 </dd></dl>
 
 <dl class="function">
-<dt id="eight_bit_computer.rom.write_logisim_roms">
-<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">write_logisim_roms</code><span class="sig-paren">(</span><em>directory</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#write_logisim_roms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.write_logisim_roms" title="Permalink to this definition">¶</a></dt>
+<dt id="eight_bit_computer.rom.get_romdata_slice">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">get_romdata_slice</code><span class="sig-paren">(</span><em>romdatas</em>, <em>end</em>, <em>start</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#get_romdata_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.get_romdata_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a slice of the data in the romdatas.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>romdatas</strong> (<em>list</em><em>(</em><a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData"><em>RomData</em></a><em>)</em>) – The romdatas to get a slice from</li>
+<li><strong>end</strong> (<em>int</em>) – The index for the end of the slice. Starts at zero at
+the rightmost (least significant) bit.</li>
+<li><strong>start</strong> (<em>int</em>) – The index for the start of the slice. Starts at
+zero at the rightmost (least significant) bit.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The sliced list of romdatas</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list(<a class="reference internal" href="#eight_bit_computer.rom.RomData" title="eight_bit_computer.rom.RomData">RomData</a>)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.rom.rom_slice_to_logisim_string">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">rom_slice_to_logisim_string</code><span class="sig-paren">(</span><em>rom_slice</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#rom_slice_to_logisim_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.rom_slice_to_logisim_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.rom.byte_bitstring_to_hex_string">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">byte_bitstring_to_hex_string</code><span class="sig-paren">(</span><em>bitstring</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#byte_bitstring_to_hex_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.byte_bitstring_to_hex_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="eight_bit_computer.rom.chunker">
+<code class="descclassname">eight_bit_computer.rom.</code><code class="descname">chunker</code><span class="sig-paren">(</span><em>seq</em>, <em>chunk_size</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/eight_bit_computer/rom.html#chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#eight_bit_computer.rom.chunker" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -417,10 +428,10 @@ data=”10101010”</div></blockquote>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="eight_bit_computer.utils.html" class="btn btn-neutral float-right" title="eight_bit_computer.utils module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../../development_tools.html" class="btn btn-neutral float-right" title="Development Tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="eight_bit_computer.language.utils.html" class="btn btn-neutral" title="eight_bit_computer.language.utils module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="eight_bit_computer.datatemplate.html" class="btn btn-neutral" title="eight_bit_computer.datatemplate module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

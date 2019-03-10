@@ -285,9 +285,6 @@ class TestBitdef(unittest.TestCase):
         for test, result in test_data:
             self.assertEqual(bitdef.remove_whitespace(test), result)
 
-
-class TestUtils(unittest.TestCase):
-
     def test_reverse_index(self):
         test_data = [
             {
@@ -314,7 +311,7 @@ class TestUtils(unittest.TestCase):
 
         for test_set in test_data:
             self.assertEqual(
-                utils.reverse_index(test_set["index"], test_set["length"]),
+                bitdef.reverse_index(test_set["index"], test_set["length"]),
                 test_set["result"]
             )
 

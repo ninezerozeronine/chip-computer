@@ -153,8 +153,15 @@
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
 
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="n">OPCODE_GROUPS</span><span class="p">,</span> <span class="n">SRC_REGISTERS</span><span class="p">,</span> <span class="n">DEST_REGISTERS</span><span class="p">,</span> <span class="n">MODULE_CONTROL</span><span class="p">,</span> <span class="n">FLAGS</span>
+<span class="kn">from</span> <span class="nn">.definitions</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">OPCODE_GROUPS</span><span class="p">,</span>
+    <span class="n">SRC_REGISTERS</span><span class="p">,</span>
+    <span class="n">DEST_REGISTERS</span><span class="p">,</span>
+    <span class="n">MODULE_CONTROL</span><span class="p">,</span>
+    <span class="n">FLAGS</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">utils</span>
+
 
 <div class="viewcode-block" id="generate_microcode_templates"><a class="viewcode-back" href="../../../software/source/eight_bit_computer.language.load.html#eight_bit_computer.language.load.generate_microcode_templates">[docs]</a><span class="k">def</span> <span class="nf">generate_microcode_templates</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -188,7 +195,6 @@
         <span class="n">DEST_REGISTERS</span><span class="p">[</span><span class="n">dest</span><span class="p">],</span>
     <span class="p">]</span>
 
-
     <span class="n">flags_bitdefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">FLAGS</span><span class="p">[</span><span class="s2">&quot;ANY&quot;</span><span class="p">]]</span>
 
     <span class="n">control_steps</span> <span class="o">=</span> <span class="p">[</span>
@@ -205,6 +211,7 @@
     <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">assemble_instruction</span><span class="p">(</span>
         <span class="n">instruction_bitdefs</span><span class="p">,</span> <span class="n">flags_bitdefs</span><span class="p">,</span> <span class="n">control_steps</span><span class="p">)</span></div>
 
+
 <div class="viewcode-block" id="generate_immediate_instruction"><a class="viewcode-back" href="../../../software/source/eight_bit_computer.language.load.html#eight_bit_computer.language.load.generate_immediate_instruction">[docs]</a><span class="k">def</span> <span class="nf">generate_immediate_instruction</span><span class="p">(</span><span class="n">dest</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Define a load from an immediate address in memory into dest</span>
@@ -215,7 +222,6 @@
         <span class="n">SRC_REGISTERS</span><span class="p">[</span><span class="s2">&quot;IMM&quot;</span><span class="p">],</span>
         <span class="n">DEST_REGISTERS</span><span class="p">[</span><span class="n">dest</span><span class="p">],</span>
     <span class="p">]</span>
-
 
     <span class="n">flags_bitdefs</span> <span class="o">=</span> <span class="p">[</span><span class="n">FLAGS</span><span class="p">[</span><span class="s2">&quot;ANY&quot;</span><span class="p">]]</span>
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>eight_bit_computer.utils &mdash; Eight Bit Computer  documentation</title>
+  <title>eight_bit_computer.bitdef &mdash; Eight Bit Computer  documentation</title>
   
 
   
@@ -133,7 +133,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>eight_bit_computer.utils</li>
+      <li>eight_bit_computer.bitdef</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,27 +148,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for eight_bit_computer.utils</h1><div class="highlight"><pre>
+  <h1>Source code for eight_bit_computer.bitdef</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Functions to help working with bits</span>
+<span class="sd">The bitdef and associated functions.</span>
+
+<span class="sd">A bitdef is a string made up of ``.``\ s, ``0``\ s, and ``1``\ s.</span>
+
+<span class="sd"> - ``.`` means that the bit at this position could be a 0 or a 1.</span>
+<span class="sd"> - ``0`` means that the bit at this position is a 0.</span>
+<span class="sd"> - ``1`` means that the bit at this position is a 1.</span>
+
+<span class="sd">When indexing into a bitdef, indexes start at 0 and begin at the right</span>
+<span class="sd">hand side or least significant bit of the value. E.g.::</span>
+
+<span class="sd">    Index:  76543210</span>
+<span class="sd">    Bitdef: 010.1..1</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
 
-<span class="n">DataTemplate</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;DataTemplate&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;address_range&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">])</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Some data and a range of addresses to store that data in</span>
-
-<span class="sd">Attributes:</span>
-<span class="sd">    address_range (str): The range of addresses to store the data in.</span>
-<span class="sd">        0 and 1 are absolute values, X is either a 0 or 1 and the</span>
-<span class="sd">        expectation is that the data will expand out to the parts of the</span>
-<span class="sd">        address marked with an X. and example could be &quot;0010XX001&quot;.</span>
-<span class="sd">    data (int): The data to be stored at the given addresses.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<div class="viewcode-block" id="bitdefs_same_length"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.bitdefs_same_length">[docs]</a><span class="k">def</span> <span class="nf">bitdefs_same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+<div class="viewcode-block" id="same_length"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.same_length">[docs]</a><span class="k">def</span> <span class="nf">same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the passed in bitdefs are all the same length.</span>
 
@@ -176,20 +175,20 @@
 <span class="sd">        bitdefs list(str): Bitdefs to check length of.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if all the bitdefs are the same length, False</span>
-<span class="sd">            otherwise</span>
+<span class="sd">        otherwise</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">all_same</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">first_length</span> <span class="o">=</span> <span class="n">bitdef_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">first_length</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">other_bitdef</span> <span class="ow">in</span> <span class="n">bitdefs</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-        <span class="n">other_length</span> <span class="o">=</span> <span class="n">bitdef_length</span><span class="p">(</span><span class="n">other_bitdef</span><span class="p">)</span>
+        <span class="n">other_length</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">other_bitdef</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">first_length</span> <span class="o">!=</span> <span class="n">other_length</span><span class="p">:</span>
             <span class="n">all_same</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">break</span>
     <span class="k">return</span> <span class="n">all_same</span></div>
 
 
-<div class="viewcode-block" id="bitdef_length"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.bitdef_length">[docs]</a><span class="k">def</span> <span class="nf">bitdef_length</span><span class="p">(</span><span class="n">bitdef</span><span class="p">):</span>
+<div class="viewcode-block" id="length"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.length">[docs]</a><span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="n">bitdef</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate length of a bitdef.</span>
 
@@ -202,24 +201,27 @@
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">bitdef</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="bitdefs_have_overlapping_bits"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.bitdefs_have_overlapping_bits">[docs]</a><span class="k">def</span> <span class="nf">bitdefs_have_overlapping_bits</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+<div class="viewcode-block" id="have_overlapping_bits"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.have_overlapping_bits">[docs]</a><span class="k">def</span> <span class="nf">have_overlapping_bits</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if the bitdefs have any bits set in the same position.</span>
 
-<span class="sd">    Example with overlap (bits at index 6 overlap:</span>
-<span class="sd">        0...101.</span>
-<span class="sd">        11......</span>
+<span class="sd">    Example with overlap (bits at index 2 and 6 overlap):</span>
+
+<span class="sd">    - ``0...101.``</span>
+<span class="sd">    - ``11...1..``</span>
+
 <span class="sd">    Example with no overlap:</span>
-<span class="sd">        11010...</span>
-<span class="sd">        ......11</span>
+
+<span class="sd">    - ``11010...``</span>
+<span class="sd">    - ``......11``</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        bitdefs (list(str)): Bitdefs to check for overlaps</span>
+<span class="sd">        bitdefs (list(str)): Bitdefs to check for overlaps.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: Whether or not there were overlaps.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">bitdefs_same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bitdefs are not all the same length.&quot;</span><span class="p">)</span>
 
     <span class="n">different_bits</span> <span class="o">=</span> <span class="kc">False</span>
@@ -233,29 +235,31 @@
     <span class="k">return</span> <span class="n">different_bits</span></div>
 
 
-<div class="viewcode-block" id="remove_whitespace"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.remove_whitespace">[docs]</a><span class="k">def</span> <span class="nf">remove_whitespace</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
+<div class="viewcode-block" id="merge"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.merge">[docs]</a><span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Remove the whitespace from a string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
-
-
-<div class="viewcode-block" id="merge_bitdefs"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.merge_bitdefs">[docs]</a><span class="k">def</span> <span class="nf">merge_bitdefs</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Merge the bitdefs to a single bitdef</span>
+<span class="sd">    Merge the bitdefs to a single bitdef.</span>
 
 <span class="sd">    Bitdefs must</span>
-<span class="sd">    - All be the same length</span>
-<span class="sd">    - Not have any bits defined in the same position</span>
+
+<span class="sd">    - All be the same length.</span>
+<span class="sd">    - Not have any bits defined in the same position.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdefs (list(str)): Bitdefs to merge.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The merged bitdef.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the bitdefs are not all the same length or have</span>
+<span class="sd">        overlapping bits.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">bitdefs_same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">same_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bitdefs are not all the same length.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">bitdefs_have_overlapping_bits</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">have_overlapping_bits</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bitdefs have overlapping bits.&quot;</span><span class="p">)</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bitdef_length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">bitdefs</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
         <span class="k">for</span> <span class="n">bitdef</span> <span class="ow">in</span> <span class="n">bitdefs</span><span class="p">:</span>
             <span class="n">bit</span> <span class="o">=</span> <span class="n">bitdef</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">bit</span> <span class="o">!=</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>
@@ -267,31 +271,47 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-<div class="viewcode-block" id="collapse_bitdef"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.collapse_bitdef">[docs]</a><span class="k">def</span> <span class="nf">collapse_bitdef</span><span class="p">(</span><span class="n">bitdef</span><span class="p">):</span>
+<div class="viewcode-block" id="collapse"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.collapse">[docs]</a><span class="k">def</span> <span class="nf">collapse</span><span class="p">(</span><span class="n">bitdef</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collapse undefined bits into real bits to make new bitdefs.</span>
 
-<span class="sd">    For example, 10.0. becomes:</span>
-<span class="sd">        10000</span>
-<span class="sd">        10001</span>
-<span class="sd">        10100</span>
-<span class="sd">        10101</span>
+<span class="sd">    The undefined bits are expanded in order, from left to right, with 0</span>
+<span class="sd">    first, then 1.</span>
+
+<span class="sd">    For example, ``10.0.`` becomes:</span>
+
+<span class="sd">    - ``10000``</span>
+<span class="sd">    - ``10001``</span>
+<span class="sd">    - ``10100``</span>
+<span class="sd">    - ``10101``</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdef(str): The bitdef to collapse.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list(str): The list of bitdefs the original bitdef has collapsed</span>
+<span class="sd">        to.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">bitdef</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">collapse_bitdef</span><span class="p">(</span><span class="n">bitdef</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collapse_bitdef</span><span class="p">(</span><span class="n">bitdef</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">collapse</span><span class="p">(</span><span class="n">bitdef</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">collapse</span><span class="p">(</span><span class="n">bitdef</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">bitdef</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">res</span></div>
 
 
-<div class="viewcode-block" id="fill_bitdef"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.fill_bitdef">[docs]</a><span class="k">def</span> <span class="nf">fill_bitdef</span><span class="p">(</span><span class="n">bitdef</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="fill"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.fill">[docs]</a><span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="n">bitdef</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Fill undefined bits with a value</span>
+<span class="sd">    Fill undefined bits with a value.</span>
 
-<span class="sd">    E.g. 1..0100.1 becomes 111010011 when filled with 1s</span>
+<span class="sd">    For example ``1..0100.1`` becomes ``111010011`` when filled with 1s.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdef (str): The bitdef to fill.</span>
+<span class="sd">        value (str): The value to fill with, &quot;0&quot; or &quot;1&quot;.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The filled bitdef.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">output</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -303,16 +323,38 @@
     <span class="k">return</span> <span class="n">output</span></div>
 
 
-<div class="viewcode-block" id="extract_bits"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.extract_bits">[docs]</a><span class="k">def</span> <span class="nf">extract_bits</span><span class="p">(</span><span class="n">bitdef</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_bits"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.extract_bits">[docs]</a><span class="k">def</span> <span class="nf">extract_bits</span><span class="p">(</span><span class="n">bitdef</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract a region from the bitdef.</span>
 
-<span class="sd">    end and start are indecies starting at the rightmost (least</span>
-<span class="sd">    significant) bit, starting at 0</span>
+<span class="sd">    Indexes for start and end start at zero from the right or least</span>
+<span class="sd">    significant bit.</span>
+
+<span class="sd">    For example, if the bitdef was ``00101011`` and the extraction end</span>
+<span class="sd">    was 4 and start was 1 the result would be ``0101``::</span>
+
+<span class="sd">        Extracted bits:      xxxx</span>
+<span class="sd">        Index:            76543210</span>
+<span class="sd">        Bitdef:           00101011</span>
+<span class="sd">        Result:              0101</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitdef (str): The bitdef to extract bits from.</span>
+<span class="sd">        end (int): Index of the leftmost bit of the portion to extract.</span>
+<span class="sd">        start (int): Index of the rightmost bit of the portion to</span>
+<span class="sd">            extract.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The extracted portion of the bitdef.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If:</span>
+
+<span class="sd">            - Extraction region is larger than bitdef.</span>
+<span class="sd">            - Extraction end index is before extraction start index.</span>
+<span class="sd">            - Extraction start index is less than 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">length</span> <span class="o">=</span> <span class="n">bitdef_length</span><span class="p">(</span><span class="n">bitdef</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">length</span><span class="p">:</span>
+    <span class="n">bitdef_length</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">bitdef</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">bitdef_length</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Extraction region is larger than bitdef.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;</span> <span class="n">start</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -320,38 +362,53 @@
         <span class="p">)</span>
     <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Extraction start index is less than 0.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">bitdef_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">bitdef</span>
 
-    <span class="n">reverse_end</span> <span class="o">=</span> <span class="n">reverse_index</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-    <span class="n">reverse_start</span> <span class="o">=</span> <span class="n">reverse_index</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="n">reverse_end</span> <span class="o">=</span> <span class="n">reverse_index</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">bitdef_length</span><span class="p">)</span>
+    <span class="n">reverse_start</span> <span class="o">=</span> <span class="n">reverse_index</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">bitdef_length</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">bitdef</span><span class="p">[</span><span class="n">reverse_end</span><span class="p">:</span><span class="n">reverse_start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="reverse_index"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.reverse_index">[docs]</a><span class="k">def</span> <span class="nf">reverse_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_whitespace"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.remove_whitespace">[docs]</a><span class="k">def</span> <span class="nf">remove_whitespace</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove the whitespace from a string.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        input_string (str): The string to remove whitespace from.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The string with the whitespace removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">input_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="reverse_index"><a class="viewcode-back" href="../../software/source/eight_bit_computer.bitdef.html#eight_bit_computer.bitdef.reverse_index">[docs]</a><span class="k">def</span> <span class="nf">reverse_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reverse the passed in index as if the index direction was flipped.</span>
+
+<span class="sd">    If we take the string &quot;hello&quot; as an example the regular indexes for</span>
+<span class="sd">    each letter would be::</span>
+
+<span class="sd">        01234</span>
+<span class="sd">        hello</span>
+
+<span class="sd">    If we reversed the indexes we would have::</span>
+
+<span class="sd">        43210</span>
+<span class="sd">        hello</span>
+
+<span class="sd">    This is useful when we need to index into a bitdef on bitdef</span>
+<span class="sd">    indexing terms.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        index (int): The index position to reverse.</span>
+<span class="sd">        length (int): The length of the array being indexed into.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The reversed index.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">length</span> <span class="o">-</span> <span class="n">index</span> <span class="o">-</span> <span class="mi">1</span></div>
-
-<div class="viewcode-block" id="byte_bitstring_to_hex_string"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.byte_bitstring_to_hex_string">[docs]</a><span class="k">def</span> <span class="nf">byte_bitstring_to_hex_string</span><span class="p">(</span><span class="n">bitstring</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0:02X}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div>
-
-<div class="viewcode-block" id="chunker"><a class="viewcode-back" href="../../software/source/eight_bit_computer.utils.html#eight_bit_computer.utils.chunker">[docs]</a><span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">seq</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">)</span>
-    <span class="p">)</span></div>
-
-
 </pre></div>
 
            </div>

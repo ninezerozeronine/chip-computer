@@ -10,8 +10,8 @@ A bitdef is a string made up of ``.``\ s, ``0``\ s, and ``1``\ s.
 When indexing into a bitdef, indexes start at 0 and begin at the right
 hand side or least significant bit of the value. E.g.::
 
-    76543210
-    010.1..1
+    Index:  76543210
+    Bitdef: 010.1..1
 
 """
 
@@ -182,11 +182,10 @@ def extract_bits(bitdef, end, start):
     For example, if the bitdef was ``00101011`` and the extraction end
     was 4 and start was 1 the result would be ``0101``::
 
-           vvvv
-        76543210
-        00101011
-        --------
-           0101
+        Extracted bits:      xxxx
+        Index:            76543210
+        Bitdef:           00101011
+        Result:              0101
 
     Args:
         bitdef (str): The bitdef to extract bits from.

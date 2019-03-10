@@ -1,4 +1,5 @@
-from .. import utils, bitdef
+from .. import bitdef
+from ..datatemplate import DataTemplate
 from .definitions import MODULE_CONTROL, STEPS
 
 
@@ -20,9 +21,6 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     instruction_bitdef = bitdef.merge(instruction_bitdefs)
     flags_bitdef = bitdef.merge(flags_bitdefs)
 
-    # templates.append(fetch0(instruction_bitdef, flags_bitdef))
-    # templates.append(fetch1(instruction_bitdef, flags_bitdef))
-
     for index, current_step_controls in enumerate(control_steps, start=2):
         step_bitdef = STEPS[index]
 
@@ -41,7 +39,7 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
         control_bitdef = bitdef.merge(current_step_controls)
         control_bitdef = bitdef.fill(control_bitdef, "0")
 
-        template = utils.DataTemplate(
+        template = DataTemplate(
             address_range=address_bitdef, data=control_bitdef
         )
 
