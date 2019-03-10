@@ -6,10 +6,10 @@ connected to the bus and can read a value from the bus or assert a value
 onto the bus. They also provide an output which is the currently stored
 value.
 
-As well as the data oriented ACC, A, B and C registers, the instruction
-register, stack pointer and memory address register are all just
-registers. The memory address register only needs to read from the bus
-and not assert values onto it so it's slightly simpler.
+As well as the data oriented ACC, A, B and C registers, the control oriented
+instruction register, stack pointer and memory address register are all just
+registers. The memory address register only needs to read from the bus and not
+assert values onto it so it's slightly simpler.
 
 Interface and Operation
 -----------------------
@@ -54,4 +54,9 @@ Due to the central bus in the layout of the computer it's convenient to
 also have a version where the connection to the bus is on the right:
 
 .. image:: images/register/register_bus_right_bb.png
+    :width: 100%
+
+An input only register like the memory address register is simpler:
+
+.. image:: images/register/register_input_only_right_bb.png
     :width: 100%

@@ -7,7 +7,7 @@ current position/instruction in program memory.
 It's similar to a regular register but has some extra functionality:
 
 - It can add one to it's current value.
-- It's value can be reset to 0.
+- It's value can be asynchronously reset to 0.
 
 Interface and Operation
 -----------------------

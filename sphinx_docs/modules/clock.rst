@@ -58,7 +58,7 @@ method doesn't satisfy this constraint as control signal changes (which happen a
 short delay after the rising edge of control_clock would occur after data_clock
 had gone low. The delay is introduced by the EEPROMs in the :ref:`control_unit`
 settling after a new instruction/flag/micro-step value goes onto their address
-lines. This demonstrates the problem:
+lines. This demonstrates the problem using the PE control (_SPE is the same):
 
 .. image:: images/clock/inverted_data_clock_problem.png
 
@@ -72,7 +72,8 @@ This means data_clock is still high when PE/count_enable changes:
 
 Once halt or reset go high, both data_clock and control_clock immediately go
 low. Once halt and reset go low again after either becomes high, data_clock
-should be the first to go high and the then sequence continues.
+should be the first to go high and the then sequence continues. This is to
+ensure correct timing gaps are left when operation of the computer resumes.
 
 Implementation
 --------------
@@ -107,7 +108,7 @@ From left to right:
 
 However, in reality the layout is equivalent, but a little more complex due to
 implementation details in the other chips (active low inputs) and trying to make
-the best use of space:
+the best use of space and gates available on chips:
 
 .. image:: images/clock/clock_schematic_reality.png
     :width: 100%

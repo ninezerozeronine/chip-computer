@@ -13,23 +13,30 @@ This is the interface of the RAM:
 
 This is how it operates:
 
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| Name                 | Bit width | Description                                                                                               |
-+======================+===========+===========================================================================================================+
-| data_in              | 8         | Data to be stored is read from here.                                                                      |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| data_out             | 8         | Data at current address is output here.                                                                   |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| address              | 8         | Index in memory to read from or write to.                                                                 |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| input_enable         | 1         | While high, the data on data_in will be stored at the currently seleceted address on a rising clock egde. |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| output_enable        | 1         | While high, the RAM asserts the data at the currently selected address onto data_out.                     |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| prog_data_mem_select | 1         | When low, address operations are in program memory, when high - data memory.                              |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
-| clock                | 1         | Data is written on a rising clock edge when input_enable is high.                                         |
-+----------------------+-----------+-----------------------------------------------------------------------------------------------------------+
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| Name                            | Bit width | Description                                                                                              |
++=================================+===========+==========================================================================================================+
+| input_enable                    | 1         | While high, the data on data_in will be stored at the currently selected address on a rising clock edge. |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| output_enable                   | 1         | While high, the RAM asserts the data at the currently selected address onto data_out.                    |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| data_clock                      | 1         | Clock signal from the clock module (data_clock).                                                         |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| setup_clock                     | 1         | Clock signal from the manual setup switch.                                                               |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| run_setup                       | 1         | When low, the RAM is in setup mode, when high, run mode.                                                 |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| control_unit_select_data_memory | 1         | Program/data memory selection switch from the control unit.                                              |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| setup_select_data_memory        | 1         | Program/data memory selection switch from the manual setup switch.                                       |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| data_in                         | 8         | Data to be stored is read from here.                                                                     |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| data_out                        | 8         | Data at current address is output here.                                                                  |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+| address                         | 8         | Index in memory to read from or write to.                                                                |
++---------------------------------+-----------+----------------------------------------------------------------------------------------------------------+
+
 
 Implementation
 --------------
@@ -37,12 +44,14 @@ Implementation
 Combined Input/Output pins
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Unlike the 74LS189 chip that :ref:`ben_eater` uses for his RAM, the 6116SA used
-in this computer has combined input and output pins. This means that care is
-required not to apply signals to those pins at incorrect times. A tri state
+Unlike the `74LS189 chip`_ that :ref:`ben_eater` uses for his RAM, the 6116SA
+used in this computer has combined input and output pins. This means that care
+is required not to apply signals to those pins at incorrect times. A tri state
 buffer is used on the input to achieve this. The connections from the
 input/output pins on the RAM chip and the 74HCT245 tri state buffers are
 arranged like this:
+
+.. _74LS189 chip: https://www.youtube.com/watch?v=FnxPIZR1ybs&t=614
 
 .. image:: images/ram/input_output_buffers.png
 
@@ -54,8 +63,8 @@ Most of the time the RAM chip is in read mode. This means that the chip is
 asserting the data stored in the address currently specified on the address pins
 to the input/output pins. When it's time to write, the chip needs to switch to
 write mode. To simplify control circuitry, only the write enable (active low)
-input is used to control switching between read and write mode (output enable
-(active low) is available as well).
+input on the 6116SA is used to control switching between read and write mode
+(output enable (active low) is available on the chip as well).
 
 It takes time for the chip to switch modes and the pins to change from output to
 input. This time is referred to as tWHZ in the data-sheet and the following note
@@ -86,7 +95,7 @@ write pulse needs to be at least that long.
 The chip is also not edge triggered - it will write data to the specified
 address as long as it is in write mode. This means that we need to do our own
 edge detection and keep the write pulse as short as possible. See the
-:ref:`edge_detection` section for more details on that process.
+:ref:`edge_detection` section for more details.
 
 Once the write is finished, the chip can go instantly back into read mode (as
 tDH is 0ns).
@@ -139,20 +148,20 @@ Run/Setup Mode
 ^^^^^^^^^^^^^^
 
 The RAM needs to accessed by the computer while running (run mode) and by the
-user during setup (setup mode). To achieve this, the inputs to:
+user during setup (setup mode). To achieve this, the follwing inputs to the RAM
+all need to be driven by either the computer itself, or the user:
 
- - ``input_enable``
- - ``prog_data_select``
- - ``clock``
- - ``data_in``
- - ``address``
+ - data_in
+ - address
+ - input_enable
+ - select_data_memory
+ - clock
 
-all need to be driven by either the computer itself, or the user. A master
-run/setup switch decides which input will be fed to the RAM.
+The run_setup switch decides which input will be fed to the RAM.
 
-``data_in`` and ``address`` are connected to :ref:`two_to_one` s.
+data_in and address are connected to :ref:`two_to_one` s.
 
-The remaining ``input_enable``, ``prog_data_mem_select`` and ``clock`` are all
+The remaining input_enable, prog_data_mem_select and clock are all
 connected to a 74HCT157 Quad 2 to 1 line data selector. They are set up as
 follows:
 
@@ -167,21 +176,21 @@ From left to right:
 
 When in run mode:
 
- - ``input_enable`` - connected to ``RAM_IN`` from the :ref:`control_unit`.
- - ``prog_data_select`` - connected to ``RAM_SEL_DATA_MEM`` from the :ref:`control_unit`.
- - ``clock`` - connected to ``data_clock`` from the :ref:`clock_module`.
- - ``data_in`` - connected to the bus.
- - ``address`` connected to the output of the memory address register.
+ - data_in - connected to the bus.
+ - address - connected to the output of the memory address register.
+ - input_enable - connected to ram_in from the :ref:`control_unit`.
+ - select_data_memory - connected to ram_sel_data_mem from the :ref:`control_unit`.
+ - clock - connected to data_clock from the :ref:`clock_module`.
 
 When in setup mode, all of the above are connected to switches that the user
-controls, apart from ``input_enable`` which is held high.
+controls, apart from input_enable which is held high.
 
 Hardware
 ^^^^^^^^
 
 The following electronics are used:
 
- - 6166SA RAM chip
+ - A 6166SA15 RAM chip to hold all the data.
  - 2 x 74HCT245 for controlling input and output to and from the RAMs IO pins.
  - A 74HCT157 to choose between the inputs in run and setup mode.
  - A 74HCT02 containing NOR gates to build the :ref:`safe_clock_enable`.
