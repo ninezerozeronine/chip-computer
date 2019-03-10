@@ -13,9 +13,7 @@ Submodules
 
 .. toctree::
 
-   eight_bit_computer.microcode
    eight_bit_computer.rom
-   eight_bit_computer.rom_programmer
    eight_bit_computer.utils
 
 Module contents

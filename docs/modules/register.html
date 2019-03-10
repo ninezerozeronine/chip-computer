@@ -83,7 +83,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Modules</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Register</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Register</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#interface-and-operation">Interface and Operation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implementation">Implementation</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="two_to_one.html">2:1 Selector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="program_counter.html">Program Counter</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clock.html">Clock</a></li>
@@ -165,6 +169,74 @@
             
   <div class="section" id="register">
 <h1>Register<a class="headerlink" href="#register" title="Permalink to this headline">¶</a></h1>
+<p>A register stores an 8 bit number. In the computer registers are
+connected to the bus and can read a value from the bus or assert a value
+onto the bus. They also provide an output which is the currently stored
+value.</p>
+<p>As well as the data oriented ACC, A, B and C registers, the control oriented
+instruction register, stack pointer and memory address register are all just
+registers. The memory address register only needs to read from the bus and not
+assert values onto it so it’s slightly simpler.</p>
+<div class="section" id="interface-and-operation">
+<h2>Interface and Operation<a class="headerlink" href="#interface-and-operation" title="Permalink to this headline">¶</a></h2>
+<p>This is the interface of a register:</p>
+<img alt="../_images/register_block.png" src="../_images/register_block.png" />
+<p>This is how it operates:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="11%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Bit width</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>data</td>
+<td>8</td>
+<td>Reads bits from, or asserts bits onto this connection</td>
+</tr>
+<tr class="row-odd"><td>contents</td>
+<td>8</td>
+<td>Always outputs the current value held in the register</td>
+</tr>
+<tr class="row-even"><td>clock</td>
+<td>1</td>
+<td>Clock signal from the clock module</td>
+</tr>
+<tr class="row-odd"><td>input_enable</td>
+<td>1</td>
+<td>While high, the register stores the value on data on a rising clock edge</td>
+</tr>
+<tr class="row-even"><td>output_enable</td>
+<td>1</td>
+<td>While high, the register asserts it’s content onto data</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>A 74HCT377 is used to store the contents of the register.</li>
+<li>A 74HCT245 is used to provide a tri-state output to allow asserting
+values onto the bus, or not.</li>
+<li>LEDs with current limiting resistors are used to display the current
+contents.</li>
+<li>A 74HCT04 is used to invert the incoming input_enable and output_enable
+signals to drive the active low inputs on the 74HCT377 and 74HCT245.</li>
+</ul>
+<p>The electronics are laid out on the breadboard like so:</p>
+<a class="reference internal image-reference" href="../_images/register_bus_left_bb.png"><img alt="../_images/register_bus_left_bb.png" src="../_images/register_bus_left_bb.png" style="width: 100%;" /></a>
+<p>Due to the central bus in the layout of the computer it’s convenient to
+also have a version where the connection to the bus is on the right:</p>
+<a class="reference internal image-reference" href="../_images/register_bus_right_bb.png"><img alt="../_images/register_bus_right_bb.png" src="../_images/register_bus_right_bb.png" style="width: 100%;" /></a>
+<p>An input only register like the memory address register is simpler:</p>
+<a class="reference internal image-reference" href="../_images/register_input_only_right_bb.png"><img alt="../_images/register_input_only_right_bb.png" src="../_images/register_input_only_right_bb.png" style="width: 100%;" /></a>
+</div>
 </div>
 
 
