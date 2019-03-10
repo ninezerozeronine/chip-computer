@@ -6,7 +6,7 @@ import os
 
 from .language import copy, load, fetch, set_op
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
-from . import utils
+from . import utils, bitdef
 
 from collections import namedtuple
 
@@ -76,7 +76,7 @@ def collapse_datatemplates_to_romdatas(datatemplates):
 
     romdatas = []
     for datatemplate in datatemplates:
-        addresses = utils.collapse_bitdef(datatemplate.address_range)
+        addresses = bitdef.collapse(datatemplate.address_range)
         for address in addresses:
             romdatas.append(
                 RomData(address=address, data=datatemplate.data)
@@ -96,7 +96,7 @@ def populate_empty_addresses(romdatas):
             rom
     """
 
-    all_addresses = utils.collapse_bitdef(EMPTY_ADDRESS)
+    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
     filled_addresses = {romdata.address: romdata.data for romdata in romdatas}
     complete_rom = []
     for address in all_addresses:
@@ -211,7 +211,7 @@ def get_romdata_slice(romdatas, end, start):
 
     sliced_romdatas = []
     for romdata in romdatas:
-        data_slice = utils.extract_bits(romdata.data, end, start)
+        data_slice = bitdef.extract_bits(romdata.data, end, start)
         sliced_romdata = RomData(address=romdata.address, data=data_slice)
         sliced_romdatas.append(sliced_romdata)
     return sliced_romdatas
