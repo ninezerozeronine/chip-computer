@@ -13,8 +13,9 @@ Submodules
 
 .. toctree::
 
+   eight_bit_computer.bitdef
+   eight_bit_computer.datatemplate
    eight_bit_computer.rom
-   eight_bit_computer.utils
 
 Module contents
 ---------------

@@ -2,8 +2,15 @@
 
 from itertools import product
 
-from .definitions import OPCODE_GROUPS, SRC_REGISTERS, DEST_REGISTERS, MODULE_CONTROL, FLAGS
+from .definitions import (
+    OPCODE_GROUPS,
+    SRC_REGISTERS,
+    DEST_REGISTERS,
+    MODULE_CONTROL,
+    FLAGS,
+)
 from . import utils
+
 
 def generate_microcode_templates():
     """
@@ -37,7 +44,6 @@ def generate_instruction(src, dest):
         DEST_REGISTERS[dest],
     ]
 
-
     flags_bitdefs = [FLAGS["ANY"]]
 
     control_steps = [
@@ -54,6 +60,7 @@ def generate_instruction(src, dest):
     return utils.assemble_instruction(
         instruction_bitdefs, flags_bitdefs, control_steps)
 
+
 def generate_immediate_instruction(dest):
     """
     Define a load from an immediate address in memory into dest
@@ -64,7 +71,6 @@ def generate_immediate_instruction(dest):
         SRC_REGISTERS["IMM"],
         DEST_REGISTERS[dest],
     ]
-
 
     flags_bitdefs = [FLAGS["ANY"]]
 
