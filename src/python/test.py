@@ -1,11 +1,11 @@
 import unittest
 
-from eight_bit_computer import utils, rom
+from eight_bit_computer import bitdef, rom, utils
 
 
-class TestUtils(unittest.TestCase):
+class TestBitdef(unittest.TestCase):
 
-    def test_bitdefs_same_length(self):
+    def test_same_length(self):
         true_tests = [
             [
                 ".",
@@ -24,7 +24,7 @@ class TestUtils(unittest.TestCase):
         ]
 
         for bitdefs in true_tests:
-            self.assertTrue(utils.bitdefs_same_length(bitdefs))
+            self.assertTrue(bitdef.same_length(bitdefs))
 
         false_tests = [
             [
@@ -45,9 +45,9 @@ class TestUtils(unittest.TestCase):
         ]
 
         for bitdefs in false_tests:
-            self.assertFalse(utils.bitdefs_same_length(bitdefs))
+            self.assertFalse(bitdef.same_length(bitdefs))
 
-    def test_bitdef_length(self):
+    def test_length(self):
         test_data = [
             ("00010", 5),
             ("", 0),
@@ -55,10 +55,10 @@ class TestUtils(unittest.TestCase):
             ("01.100", 6),
         ]
 
-        for bitdef, length in test_data:
-            self.assertEqual(utils.bitdef_length(bitdef), length)
+        for test_bitdef, length in test_data:
+            self.assertEqual(bitdef.length(test_bitdef), length)
 
-    def test_bitdefs_have_overlapping_bits(self):
+    def test_have_overlapping_bits(self):
         true_tests = [
             [
                 "0",
@@ -84,7 +84,7 @@ class TestUtils(unittest.TestCase):
         ]
 
         for bitdefs in true_tests:
-            self.assertTrue(utils.bitdefs_have_overlapping_bits(bitdefs))
+            self.assertTrue(bitdef.have_overlapping_bits(bitdefs))
 
         false_tests = [
             [
@@ -113,7 +113,7 @@ class TestUtils(unittest.TestCase):
         ]
 
         for bitdefs in false_tests:
-            self.assertFalse(utils.bitdefs_have_overlapping_bits(bitdefs))
+            self.assertFalse(bitdef.have_overlapping_bits(bitdefs))
 
         raises_tests = [
             [
@@ -128,20 +128,9 @@ class TestUtils(unittest.TestCase):
 
         for bitdefs in raises_tests:
             with self.assertRaises(ValueError):
-                utils.bitdefs_have_overlapping_bits(bitdefs)
+                bitdef.have_overlapping_bits(bitdefs)
 
-    def test_remove_whitespace(self):
-        test_data = [
-            ("", ""),
-            ("0", "0"),
-            ("00 01", "0001"),
-            ("  ..  00  1  ", "..001"),
-        ]
-
-        for test, result in test_data:
-            self.assertEqual(utils.remove_whitespace(test), result)
-
-    def test_merge_bitdefs(self):
+    def test_merge(self):
         test_data = [
             {
                 "bitdefs": [
@@ -183,7 +172,7 @@ class TestUtils(unittest.TestCase):
         ]
 
         for test_set in test_data:
-            self.assertEqual(utils.merge_bitdefs(test_set["bitdefs"]), test_set["result"])
+            self.assertEqual(bitdef.merge(test_set["bitdefs"]), test_set["result"])
 
         raises_tests = [
             [
@@ -202,9 +191,9 @@ class TestUtils(unittest.TestCase):
 
         for bitdefs in raises_tests:
             with self.assertRaises(ValueError):
-                utils.merge_bitdefs(bitdefs)
+                bitdef.merge(bitdefs)
 
-    def test_collapse_bitdef(self):
+    def test_collapse(self):
         test_data = [
             {
                 "bitdef": "",
@@ -241,7 +230,7 @@ class TestUtils(unittest.TestCase):
 
         for test_set in test_data:
             self.assertEqual(
-                set(utils.collapse_bitdef(test_set["bitdef"])), test_set["result"]
+                set(bitdef.collapse(test_set["bitdef"])), test_set["result"]
             )
 
     def test_fill_bitdef(self):
@@ -252,8 +241,8 @@ class TestUtils(unittest.TestCase):
             ("1010", "1010", "0"),
         ]
 
-        for bitdef, result, fill_value in test_data:
-            self.assertEqual(utils.fill_bitdef(bitdef, fill_value), result)
+        for test_bitdef, result, fill_value in test_data:
+            self.assertEqual(bitdef.fill(test_bitdef, fill_value), result)
 
     def test_extract_bits(self):
         test_data = [
@@ -279,11 +268,22 @@ class TestUtils(unittest.TestCase):
 
         for test_set in test_data:
             self.assertEqual(
-                utils.extract_bits(
+                bitdef.extract_bits(
                     test_set["bitdef"], test_set["end"], test_set["start"]
                 ),
                 test_set["result"],
             )
+
+    def test_remove_whitespace(self):
+        test_data = [
+            ("", ""),
+            ("0", "0"),
+            ("00 01", "0001"),
+            ("  ..  00  1  ", "..001"),
+        ]
+
+        for test, result in test_data:
+            self.assertEqual(bitdef.remove_whitespace(test), result)
 
     def test_reverse_index(self):
         test_data = [
@@ -311,7 +311,7 @@ class TestUtils(unittest.TestCase):
 
         for test_set in test_data:
             self.assertEqual(
-                utils.reverse_index(test_set["index"], test_set["length"]),
+                bitdef.reverse_index(test_set["index"], test_set["length"]),
                 test_set["result"]
             )
 

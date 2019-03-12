@@ -3,8 +3,8 @@ The fetch steps
 """
 
 from .definitions import MODULE_CONTROL, STEPS, EMPTY_ADDRESS
-from .. import utils as language_utils
-from .. import utils as common_utils
+from .. import bitdef
+from ..datatemplate import DataTemplate
 
 
 def generate_microcode_templates():
@@ -20,38 +20,36 @@ def fetch_step_0():
     Create template for the first fetch step
     """
 
-    address_bitdef = common_utils.merge_bitdefs(
+    address_bitdef = bitdef.merge(
         [
             EMPTY_ADDRESS,
             STEPS[0],
         ]
     )
 
-    control_bitdef = common_utils.merge_bitdefs(
+    control_bitdef = bitdef.merge(
         [
             MODULE_CONTROL["PC"]["OUT"],
             MODULE_CONTROL["MAR"]["IN"],
         ]
     )
-    control_bitdef = common_utils.fill_bitdef(control_bitdef, "0")
+    control_bitdef = bitdef.fill(control_bitdef, "0")
 
-    return language_utils.DataTemplate(
-        address_range=address_bitdef, data=control_bitdef
-    )
+    return DataTemplate(address_range=address_bitdef, data=control_bitdef)
 
 
 def fetch_step_1():
     """
     Create template for the second fetch step
     """
-    address_bitdef = common_utils.merge_bitdefs(
+    address_bitdef = bitdef.merge(
         [
             EMPTY_ADDRESS,
             STEPS[1],
         ]
     )
 
-    control_bitdef = common_utils.merge_bitdefs(
+    control_bitdef = bitdef.merge(
         [
             MODULE_CONTROL["PC"]["COUNT"],
             MODULE_CONTROL["RAM"]["OUT"],
@@ -59,7 +57,5 @@ def fetch_step_1():
             MODULE_CONTROL["IR"]["IN"],
         ]
     )
-    control_bitdef = common_utils.fill_bitdef(control_bitdef, "0")
-    return language_utils.DataTemplate(
-        address_range=address_bitdef, data=control_bitdef
-    )
+    control_bitdef = bitdef.fill(control_bitdef, "0")
+    return DataTemplate(address_range=address_bitdef, data=control_bitdef)

@@ -6,7 +6,7 @@ import os
 
 from .language import copy, load, fetch, set_op
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
-from . import utils
+from . import bitdef
 
 from collections import namedtuple
 
@@ -76,7 +76,7 @@ def collapse_datatemplates_to_romdatas(datatemplates):
 
     romdatas = []
     for datatemplate in datatemplates:
-        addresses = utils.collapse_bitdef(datatemplate.address_range)
+        addresses = bitdef.collapse(datatemplate.address_range)
         for address in addresses:
             romdatas.append(
                 RomData(address=address, data=datatemplate.data)
@@ -96,7 +96,7 @@ def populate_empty_addresses(romdatas):
             rom
     """
 
-    all_addresses = utils.collapse_bitdef(EMPTY_ADDRESS)
+    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
     filled_addresses = {romdata.address: romdata.data for romdata in romdatas}
     complete_rom = []
     for address in all_addresses:
@@ -211,7 +211,7 @@ def get_romdata_slice(romdatas, end, start):
 
     sliced_romdatas = []
     for romdata in romdatas:
-        data_slice = utils.extract_bits(romdata.data, end, start)
+        data_slice = bitdef.extract_bits(romdata.data, end, start)
         sliced_romdata = RomData(address=romdata.address, data=data_slice)
         sliced_romdatas.append(sliced_romdata)
     return sliced_romdatas
@@ -223,16 +223,16 @@ def rom_slice_to_logisim_string(rom_slice):
     """
 
     rom_lines = ["v2.0 raw"]
-    for line_romdatas in utils.chunker(rom_slice, 16):
+    for line_romdatas in chunker(rom_slice, 16):
         line_parts = []
-        for line_chunk_romdatas in utils.chunker(line_romdatas, 4):
+        for line_chunk_romdatas in chunker(line_romdatas, 4):
             bit_strings = [
                 romdata.data
                 for romdata
                 in line_chunk_romdatas
             ]
             hex_strings = [
-                utils.byte_bitstring_to_hex_string(bit_string)
+                byte_bitstring_to_hex_string(bit_string)
                 for bit_string
                 in bit_strings
             ]
@@ -242,3 +242,20 @@ def rom_slice_to_logisim_string(rom_slice):
         rom_lines.append(line)
     rom_string = "\n".join(rom_lines)
     return rom_string
+
+
+def byte_bitstring_to_hex_string(bitstring):
+    """
+
+    """
+
+    return "{0:02X}".format(int(bitstring, 2))
+
+
+def chunker(seq, chunk_size):
+    """
+
+    """
+    return (
+        seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
+    )

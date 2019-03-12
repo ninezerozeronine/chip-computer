@@ -159,7 +159,7 @@ all need to be driven by either the computer itself, or the user:
 
 The run_setup switch decides which input will be fed to the RAM.
 
-data_in and address are connected to :ref:`two_to_one` s.
+data_in and address are connected to :ref:`two_to_one`\ s.
 
 The remaining input_enable, prog_data_mem_select and clock are all
 connected to a 74HCT157 Quad 2 to 1 line data selector. They are set up as

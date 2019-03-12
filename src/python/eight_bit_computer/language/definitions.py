@@ -1,6 +1,6 @@
 """Defnitions of named items"""
 
-from ..utils import remove_whitespace as rw
+from ..bitdef import remove_whitespace as rw
 
 OPCODE_GROUPS = {
     "COPY":  rw("00...... .... ..."),
