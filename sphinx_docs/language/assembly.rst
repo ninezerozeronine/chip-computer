@@ -5,7 +5,7 @@ Some example assembly::
 
     % This is a comment
 
-        LOAD [15] ACC
+        LOAD [#15] ACC
         SET B 15
 
     @label1
@@ -17,8 +17,112 @@ Some example assembly::
 
     % Another comment
     @label2
-        SET SP 255
+        SET SP #255
         JUMP @label1
+
+
+Handling Immediates
+-------------------
+
+If the assembler finds an @label, $variable or #number within an instruction
+then when looking for a match in all the instructions it informs it that an
+immediate value has been passed, and what the value is. e.g.::
+
+    LOAD [$variable] A
+
+    called as:
+    for instruction in instructions:
+        instruction.parse_line_with_constant(line, "$variable")
+
+If there's no constant it's just a normal parse::
+
+    LOAD [ACC] A
+
+    called as:
+    for instruction in instructions:
+        instruction.parse_line(line)
+
+Validating numbers
+------------------
+
+#numbers in the assembly are first attempted to be cast to ints. Thay can be
+specified in the same way integers are specified in python, e.g.:
+
+- 123
+- 0xff
+- 0b100101
+- 0o77
+  
+If a number is greater than 255 or less than 128 it's an assembly error.
+
+Assembly errors
+---------------
+
+The user needs to know which line of the assembly file an error occurred on.
+
+Should these be execptions?
+
+Assembly steps
+--------------
+
+Can raise assembly errors and parsing errors?
+
+Go through every line and extract the following info
+
+{
+    "line_no": 34,
+    "raw_line": "  COPY   ACC   A",
+    "cleaned_line": "COPY ACC A",
+    "is_label": True
+    "label": "@label1",
+    "assigned_labels": [],
+    
+    "variables": [],
+    "numbers": [],
+    "constants": [],
+}         
+
+Get machine code for the line from the instruction, add it to the dict. Parser is passed list of constants. Catch
+Parsing error and re raise as assembly error.
+
+Check numbers are valid - Raise assembly error if there's a bad number
+
+Check for references to labels that haven't been declared. Raise assembly error
+if something goes wrong.
+
+Warn about unused labels
+
+Aggregate labels onto real instructions
+
+Warn about multiple labels on single instruction
+
+
+
+
+
+
+.. code-block:: python
+    assembly_lines = []
+    labels = []
+    for line in file:
+        cleaned = clean_line(line)
+
+        label = get_label_def(cleaned)
+        used_label = get_used_label()
+        assembly_lines.append({
+            "input_line_no": 34,
+            "input_line": "  COPY   ACC   A",
+            "cleaned_input_line": "COPY ACC A",
+            "labels": None,
+            "label_ref"
+            "number"
+            "variable"
+        })
+
+
+    def 
+
+
 
 
 Have a layer of indirection between the assembly and the instructions.
@@ -116,6 +220,47 @@ Perhaps $variables, @labels and #numbers get converted to IMM by the assembler?
 The brackets can just be in the assembly side as a reminder when programming?
 
 Instructions only need to be able to deal with ACC, A, B, C, SP, PC, IMM?
+
+Given ``LOAD [$variable] A`` the assembler should only replace $variable to
+arrive at: ``LOAD [IMM] A``.
+
+A user shouldn't be able to write things like:
+
+- ``LOAD [IMM] A``
+- ``LOAD [SP+/-] A``
+- ``LOAD [SP+/-] IMM``
+- ``JUMP SP+/-``
+  
+The assembler won't end up being able to replace that with a real value later.
+It would also trick the instruction matcher as the assembler is meant to pass
+IMM to designate an immediate value.
+
+An instruction should be responsible for determining if the line is valid.
+
+Should the assembler inform the instruction if it's being passed a
+placeholder/immediate value?
+
+ Could do:
+
+- A list of allowed tokens in assembly files
+- A special function that the assembler calls if it's passing through a
+  placeholder
+
+We need to be able to point the user back at at line in the assembly file to:
+
+- Warn if a line has multiple labels
+- Warn if a label is unused
+- Error if you try to jump to an undefined label
+  
+Does this mean resole @labels while parsing the raw lines?
+
+Constants start with a # but could be int, binary or hex. #i #b #h and it
+defaults to int? Use python notation and then ``int(value_string, 0)`` e.g.
+
+- #123
+- #0x4f
+- #0o77
+- #0b1001010
 
 Tests!
 
