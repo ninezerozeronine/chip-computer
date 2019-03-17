@@ -104,7 +104,7 @@ Could raise exceptions to handle assembly errors?
 
 These get raised by the language parsers:
 
-- ParseError
+- InstructionParsingError
 
   - ConstantsError
   - ArgumentsError
@@ -116,10 +116,11 @@ These get raised during assembly:
   - InstructionBytesError
   - UndeclaredLabelError
   - GlobalVariablesError
-  - InvalidLiteralError
+  - IncorrectNumberError
   - IncorrectLabelNameError
   - IncorrectVariableNameError
   - ParsingError
+  - UnmatchedInstructionError
 
 .. code-block:: python
     try:
@@ -127,14 +128,47 @@ These get raised during assembly:
     except AssemblyError:
         print AssemblyError
 
-    def assemble(filepath):
-        for line in filepath:
-            machine_code = None
-            for instruction in instructions:
-                try:
-                    instruction.parse_line(line)
-                except ParseError as e:
-                    raise e
+    def assemble(file):
+        lines = [line for line in file]
+
+        assembly_lines = []
+        for line in lines:
+            assembly_lines.append(preprocess_line(line))
+
+        check_undelcared_labels(assembly_lines)
+        check_num_global_variables(assembly_lines)
+
+        for assembly_line in assembly_lines:
+            clean_line = assembly_line["clean"]
+            assembly_line["machine_code"].extend(get_machine_code(clean_line))
+
+        check_num_instruction_bytes(assembly_lines)
+
+
+    def preprocess_line(line):
+        pass
+
+
+    def get_machine_code(line):
+        if not line:
+            return []
+        machine_code = None
+        for instruction in instructions:
+            try:
+                machine_code = instruction.parse_line(line)
+            except InstructionParsingError as e:
+                raise ParsingError(e)
+        if machine_code is None:
+            raise UnmatchedInstructionError()
+        return machine_code
+
+    def assembly_lines_to_machine_code(assembly_lines):
+        variables = index_variables(assembly_lines)
+        labels = index_labels(assembly_lines)
+
+
+
+
 
 
 
