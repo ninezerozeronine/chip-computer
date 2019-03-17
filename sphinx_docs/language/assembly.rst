@@ -119,6 +119,29 @@ These get raised during assembly:
   - InvalidLiteralError
   - IncorrectLabelNameError
   - IncorrectVariableNameError
+  - ParsingError
+
+.. code-block:: python
+    try:
+        machine_code = assemble(filepath)
+    except AssemblyError:
+        print AssemblyError
+
+    def assemble(filepath):
+        for line in filepath:
+            machine_code = None
+            for instruction in instructions:
+                try:
+                    instruction.parse_line(line)
+                except ParseError as e:
+                    raise e
+
+
+
+
+
+
+
 
 
 .. code-block:: python
