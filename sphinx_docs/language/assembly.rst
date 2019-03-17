@@ -21,18 +21,18 @@ Some example assembly::
         JUMP @label1
 
 
-Handling Immediates
+Handling Constants
 -------------------
 
 If the assembler finds an @label, $variable or #number within an instruction
 then when looking for a match in all the instructions it informs it that an
-immediate value has been passed, and what the value is. e.g.::
+constant value has been passed, and what the value is. e.g.::
 
     LOAD [$variable] A
 
     called as:
     for instruction in instructions:
-        instruction.parse_line_with_constant(line, "$variable")
+        instruction.parse_line(line, constants=["$variable"])
 
 If there's no constant it's just a normal parse::
 
@@ -67,23 +67,23 @@ Assembly steps
 
 Can raise assembly errors and parsing errors?
 
-Go through every line and extract the following info
+Go through every line and extract the following info::
 
-{
-    "line_no": 34,
-    "raw_line": "  COPY   ACC   A",
-    "cleaned_line": "COPY ACC A",
-    "is_label": True
-    "label": "@label1",
-    "assigned_labels": [],
-    
-    "variables": [],
-    "numbers": [],
-    "constants": [],
-}         
+    {
+        "line_no": 34,
+        "raw_line": "  COPY   ACC   A",
+        "cleaned_line": "COPY ACC A",
+        "is_label": True
+        "label": "@label1",
+        "assigned_labels": [],
+        
+        "variables": [],
+        "numbers": [],
+        "constants": [],
+    }         
 
-Get machine code for the line from the instruction, add it to the dict. Parser is passed list of constants. Catch
-Parsing error and re raise as assembly error.
+Get machine code for the line from the instruction, add it to the dict. Parser
+is passed list of constants. Catch Parsing error and re raise as assembly error.
 
 Check numbers are valid - Raise assembly error if there's a bad number
 
@@ -97,8 +97,28 @@ Aggregate labels onto real instructions
 Warn about multiple labels on single instruction
 
 
+Exceptions
+----------
 
+Could raise exceptions to handle assembly errors?
 
+These get raised by the language parsers:
+
+- ParseError
+
+  - ConstantsError
+  - ArgumentsError
+
+These get raised during assembly:
+
+- AssemblyError
+
+  - InstructionBytesError
+  - UndeclaredLabelError
+  - GlobalVariablesError
+  - InvalidLiteralError
+  - IncorrectLabelNameError
+  - IncorrectVariableNameError
 
 
 .. code-block:: python
