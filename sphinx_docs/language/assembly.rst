@@ -42,6 +42,33 @@ If there's no constant it's just a normal parse::
     for instruction in instructions:
         instruction.parse_line(line)
 
+Good Constants
+^^^^^^^^^^^^^^
+
+$$X_POS = [#14, #13]
+
+$$BALL_Y_VALUES[10]
+
+LOAD [$X_POS] A
+SET A #14
+STORE A [$y_pos]
+
+LOAD [$xpos] A
+
+JUMP @LOOP_START
+JUMP $STRANGE_USE
+
+Bad Constants
+^^^^^^^^^^^^^
+
+$$$BLAH
+
+LOAD [#@$WORLD] B
+JUMP
+
+
+
+
 Validating numbers
 ------------------
 
@@ -122,6 +149,19 @@ These get raised during assembly:
   - ParsingError
   - UnmatchedInstructionError
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 .. code-block:: python
     try:
         machine_code = assemble(filepath)
@@ -131,25 +171,34 @@ These get raised during assembly:
     def assemble(file):
         lines = [line for line in file]
 
-        assembly_lines = []
-        for line in lines:
-            assembly_lines.append(preprocess_line(line))
 
+        assembly_lines = []
+        for line_no, line in enumerate(lines):
+            line_info = {}
+            line_info["line_number"] = line_no
+            line_info["raw_line"] = line
+
+            
+
+
+        aggre
         check_undelcared_labels(assembly_lines)
         check_num_global_variables(assembly_lines)
 
         for assembly_line in assembly_lines:
-            clean_line = assembly_line["clean"]
-            assembly_line["machine_code"].extend(get_machine_code(clean_line))
+            machine_code = machine_code_from_line(assembly_line["clean"])
+            assembly_line["machine_code"].extend(machine_code)
 
         check_num_instruction_bytes(assembly_lines)
 
 
     def preprocess_line(line):
-        pass
+            cleaned_line = clean_line(line)
+            line_info["cleaned_line"] = cleaned_line
+            line_info["defined_label"] = get_defined_label(cleaned_line)
 
 
-    def get_machine_code(line):
+    def machine_code_from_line(line):
         if not line:
             return []
         machine_code = None
@@ -235,8 +284,8 @@ What happens if there's some assembly like this::
         COPY A B
         COPY B C
 
-Do @label2, 3 and 4 all mean the COPY SP C line? I guess so! Labels can be
-accumulated until a real line is hit, then they get attached to that real line.
+Do @label2, 3 and 4 all mean the COPY SP C line? No, this is invalid. the
+assembly will fail
 
 Here's some example data structures::
 
