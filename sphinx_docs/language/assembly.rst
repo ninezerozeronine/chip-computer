@@ -42,6 +42,19 @@ If there's no constant it's just a normal parse::
     for instruction in instructions:
         instruction.parse_line(line)
 
+Or... keep it simple! Pass the line to the instruction parser. Anything
+that isn't a token that the instruction expects is assumed to be a constant and
+is returned back in the machine code list.
+
+If the assembler can't resolve a constant in the machine_code list or it's
+incorrectly specified, that's an error.
+
+The machine code returned should be a list of dictionaries with type and value
+keys. if the type is a constant it needs to be resolved.
+
+Constants can be labels, variables or numbers
+
+
 Good Constants
 ^^^^^^^^^^^^^^
 
