@@ -197,40 +197,40 @@ class TestBitdef(unittest.TestCase):
         test_data = [
             {
                 "bitdef": "",
-                "result": set([
+                "result": [
                     "",
-                ])
+                ]
             },
             {
                 "bitdef": ".",
-                "result": set([
+                "result": [
                     "0",
                     "1"
-                ])
+                ]
             },
             {
                 "bitdef": "..",
-                "result": set([
+                "result": [
                     "00",
                     "01",
                     "10",
                     "11",
-                ])
+                ]
             },
             {
                 "bitdef": "1..0",
-                "result": set([
+                "result": [
                     "1000",
                     "1010",
                     "1100",
                     "1110",
-                ])
+                ]
             }
         ]
 
         for test_set in test_data:
             self.assertEqual(
-                set(bitdef.collapse(test_set["bitdef"])), test_set["result"]
+                bitdef.collapse(test_set["bitdef"]), test_set["result"]
             )
 
     def test_fill_bitdef(self):
@@ -360,12 +360,14 @@ class TestRom(unittest.TestCase):
             },
             {
                 "datatemplates": [
-                    utils.DataTemplate(address_range="00.", data="0"),
+                    utils.DataTemplate(address_range="0..", data="0"),
                     utils.DataTemplate(address_range="11.", data="1"),
                 ],
                 "romdatas": [
                     rom.RomData(address="000", data="0"),
                     rom.RomData(address="001", data="0"),
+                    rom.RomData(address="010", data="0"),
+                    rom.RomData(address="011", data="0"),
                     rom.RomData(address="110", data="1"),
                     rom.RomData(address="111", data="1"),
                 ]

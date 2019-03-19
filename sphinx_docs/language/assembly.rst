@@ -3,19 +3,18 @@ Assembly
 
 Some example assembly::
 
-    % This is a comment
+    // This is a comment
 
         LOAD [#15] ACC
-        SET B 15
+        SET B #0b11010101
 
     @label1
         COPY ACC A
         COPY A B
         COPY B C
+        STORE C [$variable]
 
-
-
-    % Another comment
+    // Another comment
     @label2
         SET SP #255
         JUMP @label1
@@ -24,62 +23,27 @@ Some example assembly::
 Handling Constants
 -------------------
 
-If the assembler finds an @label, $variable or #number within an instruction
-then when looking for a match in all the instructions it informs it that an
-constant value has been passed, and what the value is. e.g.::
+It's mostly the job of the instruction to identify what it thinks might be a
+constant then return this back to the assembler. It can also identify if a
+constant (unexpected token) has been given and raise an error.
 
-    LOAD [$variable] A
+An instruction will return something like::
 
-    called as:
-    for instruction in instructions:
-        instruction.parse_line(line, constants=["$variable"])
+    [
+        {
+            "machine_code": "01101100"
+            "constant": ""
+        },
+        {
+            "machine_code": ""
+            "constant": "@label"
+        }
+    ]
 
-If there's no constant it's just a normal parse::
+The constants are then checked by the assembler to see if they conform to
+standards. 
 
-    LOAD [ACC] A
-
-    called as:
-    for instruction in instructions:
-        instruction.parse_line(line)
-
-Or... keep it simple! Pass the line to the instruction parser. Anything
-that isn't a token that the instruction expects is assumed to be a constant and
-is returned back in the machine code list.
-
-If the assembler can't resolve a constant in the machine_code list or it's
-incorrectly specified, that's an error.
-
-The machine code returned should be a list of dictionaries with type and value
-keys. if the type is a constant it needs to be resolved.
-
-Constants can be labels, variables or numbers
-
-
-Good Constants
-^^^^^^^^^^^^^^
-
-$$X_POS = [#14, #13]
-
-$$BALL_Y_VALUES[10]
-
-LOAD [$X_POS] A
-SET A #14
-STORE A [$y_pos]
-
-LOAD [$xpos] A
-
-JUMP @LOOP_START
-JUMP $STRANGE_USE
-
-Bad Constants
-^^^^^^^^^^^^^
-
-$$$BLAH
-
-LOAD [#@$WORLD] B
-JUMP
-
-
+Constants can be @labels, $variables or #numbers
 
 
 Validating numbers
@@ -146,8 +110,18 @@ These get raised by the language parsers:
 
 - InstructionParsingError
 
-  - ConstantsError
-  - ArgumentsError
+  - Constant passed when it wasn't expected
+  - Too many arguments passed
+
+These get raised during line processing
+
+- LineProcessingError
+
+  - Invalid label definition
+  - Invalid variable definition
+  - Invalid label used
+  - Invalid variable used
+  - 
 
 These get raised during assembly:
 
@@ -161,106 +135,6 @@ These get raised during assembly:
   - IncorrectVariableNameError
   - ParsingError
   - UnmatchedInstructionError
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.. code-block:: python
-    try:
-        machine_code = assemble(filepath)
-    except AssemblyError:
-        print AssemblyError
-
-    def assemble(file):
-        lines = [line for line in file]
-
-
-        assembly_lines = []
-        for line_no, line in enumerate(lines):
-            line_info = {}
-            line_info["line_number"] = line_no
-            line_info["raw_line"] = line
-
-            
-
-
-        aggre
-        check_undelcared_labels(assembly_lines)
-        check_num_global_variables(assembly_lines)
-
-        for assembly_line in assembly_lines:
-            machine_code = machine_code_from_line(assembly_line["clean"])
-            assembly_line["machine_code"].extend(machine_code)
-
-        check_num_instruction_bytes(assembly_lines)
-
-
-    def preprocess_line(line):
-            cleaned_line = clean_line(line)
-            line_info["cleaned_line"] = cleaned_line
-            line_info["defined_label"] = get_defined_label(cleaned_line)
-
-
-    def machine_code_from_line(line):
-        if not line:
-            return []
-        machine_code = None
-        for instruction in instructions:
-            try:
-                machine_code = instruction.parse_line(line)
-            except InstructionParsingError as e:
-                raise ParsingError(e)
-        if machine_code is None:
-            raise UnmatchedInstructionError()
-        return machine_code
-
-    def assembly_lines_to_machine_code(assembly_lines):
-        variables = index_variables(assembly_lines)
-        labels = index_labels(assembly_lines)
-
-
-
-
-
-
-
-
-
-
-
-
-
-.. code-block:: python
-    assembly_lines = []
-    labels = []
-    for line in file:
-        cleaned = clean_line(line)
-
-        label = get_label_def(cleaned)
-        used_label = get_used_label()
-        assembly_lines.append({
-            "input_line_no": 34,
-            "input_line": "  COPY   ACC   A",
-            "cleaned_input_line": "COPY ACC A",
-            "labels": None,
-            "label_ref"
-            "number"
-            "variable"
-        })
-
-
-    def 
-
 
 
 
@@ -407,3 +281,4 @@ Tests!
 - What happens when you do LOAD [[#123]] A
 - Assembly files with only comments
 - assembly files with only empty lines
+- Passing nothing into a LOAD, e.g LOAD [] A

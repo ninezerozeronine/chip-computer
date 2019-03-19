@@ -48,3 +48,10 @@ def generate_instruction(src, dest):
     return utils.assemble_instruction(
         instruction_bitdefs, flags_bitdefs, control_steps
     )
+
+
+def parse_line(line):
+    """
+
+    """
+    pass
