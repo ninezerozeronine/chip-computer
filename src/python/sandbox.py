@@ -1,5 +1,15 @@
 from eight_bit_computer import rom, utils
 
+
+def file_test():
+    with open("test.py") as file:
+        lines = file.read().splitlines()
+
+    for line in lines[:10]:
+        print line
+        # print line.endswith("\n")
+
+
 def sandbox():
 
     # rom_path = r"E:\dev\8bit-74-series-computer\logisim\roms"
@@ -33,12 +43,13 @@ def sandbox():
     logisim_string = rom.rom_slice_to_logisim_string(slices[slice_index])
     print logisim_string
 
-
     # romdatas = rom.get_defined_romdata()
     # full_rom = rom.populate_empty_addresses(romdatas)
     # for romdata in full_rom:
     #     print romdata
     # print len(full_rom)
 
+
 if __name__ == "__main__":
-    sandbox()
+    # sandbox()
+    file_test()
