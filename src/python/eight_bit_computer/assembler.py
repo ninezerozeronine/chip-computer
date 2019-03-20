@@ -216,7 +216,7 @@ def remove_comments(line):
     comment_index = line.find("//")
     comments_removed = line
     if comment_index >= 0:
-        comments_removed = line[comment_index + 2:]
+        comments_removed = line[:comment_index]
     return comments_removed
 
 

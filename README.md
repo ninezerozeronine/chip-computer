@@ -19,12 +19,21 @@ To build the docs on mac run:
     make clean
     make html
 
+in `sphinx_docs`.
+
 To build the docs in windows run:
 
     sphinx-apidoc --force --separate --no-toc -o software/source/ ../src/python/eight_bit_computer/
     sphinx-build.exe . _build
 
-in sphinx_docs
+in `sphinx_docs`.
 
 Then copy `sphinx_docs/_build/html/*` into `docs` so that github pages can see them.
 
+# Tests
+
+To run the tests, run:
+
+    python -m unittest discover -v
+
+in `src/python`
