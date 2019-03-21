@@ -1,6 +1,6 @@
 import unittest
 
-from eight_bit_computer import assembler
+from eight_bit_computer.assembler import assembler
 
 
 class TestAssembler(unittest.TestCase):

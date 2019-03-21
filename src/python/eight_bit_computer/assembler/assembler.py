@@ -1,0 +1,409 @@
+"""
+Process assembly code and output machine code.
+
+Attributes:
+    LINE_INFO_TEMPLATE (dict): Template for a dictionary that contains
+        information about this line of assembly code. The keys have the
+        following meanings:
+
+        - line_no: The line in the assembly file that this line was on.
+        - raw: The line as it was in the assembly file.
+        - clean: The cleaned up line, ready for parsing.
+        - defined_label: The label that this line defined. Empty string
+          if the line is not a label definition.
+        - asinged_label: The label that has been assigned to the first
+          line of the machine code generated for this line. Empty string
+          if the line has no label.
+        - defined_variable: The variable that this line defined. Empty
+          string if the line is not a variable definition.
+        - machine_code: List of machine code bytes (with constant
+          expansion information) for this line. Empty list if no machine
+          code is required for this line. e.g. a comment.
+"""
+
+import copy
+
+from .validity import check_structure_validity
+
+LINE_INFO_TEMPLATE = {
+    "line_no": 0,
+    "raw": "",
+    "clean": "",
+
+    "defined_label": "",
+    "assigned_label": ""
+
+    "defined_variable" "",
+
+    "machine_code": [],
+}
+
+
+def assemble(input_path, output_path=None, variable_start_offset=0):
+    """
+    Read an assembly file and write out equivalent machine code.
+
+    Args:
+        input_path (str): The location of the assembly file.
+        output_path (str) (optional): The location to write out the
+            machine code. If nothing is passed, the output path will be
+            the input path with the extension changed to mc or have mc
+            added if no extension was present.
+        variable_start_offset (int) (optional): How far to offset the
+            first variable in data memory from 0.
+    """
+
+    lines = filepath_to_lines(input_path)
+
+    try:
+        machine_code = lines_to_machine_code(
+            lines, variable_start_offset=variable_start_offset
+        )
+    except AssemblyError:
+        print AssemblyError
+
+    if output_path is None:
+        output_path = basename(input_path) + ".mc"
+
+    write_machine_code(machine_code, output_path)
+
+
+def filepath_to_lines(input_path):
+    """
+    Take a filepath and get all the lines of the file.
+
+    The lines returned have the newline stripped.
+
+    Args:
+        input_path (str): Path to the file of disk to read.
+    Returns:
+        list(str): Lines of the file.
+    """
+    with open(input_path) as file:
+        lines = file.read().splitlines()
+    return lines
+
+
+def write_machine_code(machine_code, output_path):
+    """
+    Write machine code to a file
+
+    Args:
+        machine_code (list(str)): List of the machine code values.
+        output_path (str): Path of the file to write to.
+    """
+    pass
+
+
+def lines_to_machine_code(lines, variable_start_offset=0):
+    """
+    Convert assembly lines to machine code lines.
+
+    Args:
+        lines (list(str)): The lines that made up the assembly file to
+            be assembled.
+        variable_start_offset (int) (optional): How far to offset the
+            first variable in data memory from 0.
+    Returns:
+        list(str): The assembly file converted to an equivalent list of
+        machine code bytes as 8 bit binary strings.
+    Raises:
+        AssemblyError: If there was an error assembling the machine
+            code.
+    """
+
+    assembly_lines = []
+    for line_no, line in enumerate(lines, start=1):
+        try:
+            assembly_line = process_line(line)
+        except LineProcessingError as e:
+            raise AssemblyError(e)
+        assembly_line["line_no"] = line_no
+        assembly_lines.append(assembly_line)
+
+    check_structure_validity(assembly_lines)
+    assign_labels(assembly_lines)
+    resolve_labels(assembly_lines)
+    resolve_numbers(assembly_lines)
+    resolve_variables(
+        assembly_lines, variable_start_offset=variable_start_offset
+    )
+    machine_code = extract_machine_code(assembly_lines)
+
+    return machine_code
+
+
+def process_line(line):
+    """
+    Process a single line of assembly.
+
+    Args:
+        line (str): The line of assembly to process. This line has
+            already been cleaned (excess whitespace and comments
+            removed).
+    Returns:
+        dict: A dictionary of information about this line. See the
+        :data:`~LINE_INFO_TEMPLATE` documentation for more information
+        about what is in the dictionary.
+    """
+    line_info = copy.deepcopy(LINE_INFO_TEMPLATE)
+    line_info["raw"] = line
+    cleaned_line = clean_line(line)
+    line_info["clean"] = cleaned_line
+    if is_label(cleaned_line):
+        line_info["defined_label"] = cleaned_line
+    if is_variable(cleaned_line):
+        line_info["defined_variable"] = cleaned_line
+    if not line_info["defined_label"] or line_info["defined_label"]:
+        machine_code = machine_code_from_line(cleaned_line)
+        if machine_code:
+            validate_and_identify_constants(machine_code)
+            line_info["machine_code"] = machine_code
+    return line_info
+
+
+def clean_line(line):
+    """
+    Clean a line of assembly ready for further processing.
+
+    Removes leading and trailing whitespace, comments, and excess
+    whitespace between tokens.
+
+    Args:
+        line (str): The line to clean.
+    Returns:
+        str: The cleaned line.
+    """
+    no_comments = remove_comments(line)
+    no_excess_whitespace = remove_excess_whitespace(no_comments)
+    return no_excess_whitespace
+
+
+def remove_comments(line):
+    """
+    Remove comments from a line.
+
+    A comment is anything on the line after and including an occurrence
+    of ``//``.
+
+    Args:
+        line (str): line to remove comments from.
+    Returns:
+        str: The line with comments removed.
+    """
+    comment_index = line.find("//")
+    comments_removed = line
+    if comment_index >= 0:
+        comments_removed = line[:comment_index]
+    return comments_removed
+
+
+def remove_excess_whitespace(line):
+    """
+    Remove excess whitespace from a line
+
+    Args:
+        line (str): line to remove excess whitespace from.
+    Returns:
+        str: The line with excess whitespace removed.
+    """
+    return " ".join(line.strip().split())
+
+
+def is_label(test_string):
+    """
+    Test if a string is a valid label.
+
+    Args:
+        test_string (str): The string to test
+    Returns:
+        bool: True if the string is a valid label, false otherwise.
+    """
+    pass
+
+
+def is_variable(test_string):
+    """
+    Test if a string is a valid variable.
+
+    Args:
+        test_string (str): The string to test
+    Returns:
+        bool: True if the string is a valid variable, false otherwise.
+    """
+    pass
+
+
+def machine_code_from_line(line):
+    """
+    Get the machine code that this assembly line is equivalent to.
+
+    Uses all the defined instructions and defers the work of parsing to
+    them. See XXX for information on machine code dictionaries from
+    instructions.
+
+    Args:
+        line (str): Line to parse
+    Returns:
+        list(dict): Machine code byte information dictionaries or an
+        empty list if no machine code should be generated from this
+        line.
+    Raises:
+        LineProcessingError: Failure to extract machine code.
+    """
+    if not line:
+        return []
+    machine_code = None
+    for instruction in instructions:
+        try:
+            machine_code = instruction.parse_line(line)
+        except InstructionParsingError as e:
+            raise LineProcessingError(e)
+    if machine_code is None:
+        raise LineProcessingError("Unable to match line")
+    return machine_code
+
+
+def validate_and_identify_constants(machine_code):
+    """
+    Validate and identify constants from instruction machine code.
+
+    Assumed constants are returned from the instruction parsers. This
+    function then validates them to make sure they are correct and
+    determines what kind of constant they are.
+
+    See XXX for information on machine code dictionaries from
+    instructions.
+
+    This function modifies the passed in machine code list in place
+
+    Args:
+        machine_code (list(dict)): The machine code bytes as returned by
+            an instruction line parser.
+    Raises:
+        LineProcessingError: Invalid constants were specified.
+    """
+
+    for instruction_byte in machine_code:
+        constant = instruction_byte["constant"]
+        if not constant:
+            continue
+
+        constant_is_label = is_label(constant)
+        constant_is_variable = is_variable(constant)
+        constant_is_number = is_number(constant)
+
+        constants = [
+            constant_is_label, constant_is_variable, constant_is_number
+        ]
+
+        if not any(constants):
+            raise LineProcessingError()
+
+        num_constants = sum([1 for _constant in constants if _constant])
+        if num_constants > 1:
+            raise LineProcessingError()
+
+        if constant_is_label:
+            constant_type = "label"
+        elif constant_is_variable:
+            constant_type = "variable"
+        else:
+            constant_type = "number"
+            value = number_value(constant)
+            if not (number_is_within_limits(value)):
+                raise LineProcessingError()
+            instruction_byte["number_value"] = value
+
+        instruction_byte["constant_type"] = constant_type
+
+
+def is_number(test_string):
+    """
+    Test if a string is a valid number.
+
+    Args:
+        test_string (str): The string to test
+    Returns:
+        bool: True if the string is a valid number, false otherwise.
+    """
+    pass
+
+
+def number_value(number_constant):
+    """
+    Get the value that a number constant represents.
+
+    Args:
+        number_constant (str): The constant to extract the value from.
+    Returns:
+        int: The value of the constant.
+    """
+
+    return int(number_constant[1:], 0)
+
+
+def number_is_within_limits(number):
+    """
+    Check if a number is within limits for the computer.
+
+    The number needs to be representable as 8 bit 2's compliment binary.
+
+    Args:
+        number (int): The number to check
+    Returns:
+        bool: True if within limits, False if not.
+    """
+
+    return -127 <= number <= 255
+
+
+def assign_labels(assembly_lines):
+    """
+    Assign labels to the lines for later reference
+
+    This modifies the passed in list of assembly lines, adding data to
+    it.
+
+    Args:
+        assembly_lines (list(dict)): Lines of assembly to add label
+        information to.
+    """
+
+    label = None
+    for assembly_line in assembly_lines:
+        if label is None:
+            label = assembly_line["defined_label"] or None
+        if assembly_line["machine_code"] and label is not None:
+            assembly_line["assigned_label"] = label
+            label = None
+        else:
+            assembly_line["assigned_label"] = []
+
+
+def resolve_labels(assembly_lines):
+    """
+
+    """
+    pass
+
+
+def resolve_numbers(assembly_lines):
+    """
+
+    """
+    pass
+
+
+def resolve_variables(assembly_lines, variable_start_offset=0):
+    """
+
+    """
+    pass
+
+
+def assembly_lines_to_machine_code(assembly_lines):
+    """
+
+    """
+    pass

@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from eight_bit_computer import rom, utils
 
 
@@ -8,6 +10,25 @@ def file_test():
     for line in lines[:10]:
         print line
         # print line.endswith("\n")
+
+
+def modify(my_list):
+    my_list[0]["new"] = "foo"
+    my_list[1]["existing"].append("bar")
+
+
+def dict_ref_test():
+    a = [
+        {
+            "hello": 1
+        },
+        {
+            "existing": ["baz"]
+        },
+    ]
+    pprint(a)
+    modify(a)
+    pprint(a)
 
 
 def sandbox():
@@ -52,4 +73,5 @@ def sandbox():
 
 if __name__ == "__main__":
     # sandbox()
-    file_test()
+    # file_test()
+    dict_ref_test()
