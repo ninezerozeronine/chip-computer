@@ -2,35 +2,6 @@ from pprint import pprint
 
 from eight_bit_computer import rom, utils
 
-
-def file_test():
-    with open("test.py") as file:
-        lines = file.read().splitlines()
-
-    for line in lines[:10]:
-        print line
-        # print line.endswith("\n")
-
-
-def modify(my_list):
-    my_list[0]["new"] = "foo"
-    my_list[1]["existing"].append("bar")
-
-
-def dict_ref_test():
-    a = [
-        {
-            "hello": 1
-        },
-        {
-            "existing": ["baz"]
-        },
-    ]
-    pprint(a)
-    modify(a)
-    pprint(a)
-
-
 def sandbox():
 
     # rom_path = r"E:\dev\8bit-74-series-computer\logisim\roms"
@@ -70,8 +41,48 @@ def sandbox():
     #     print romdata
     # print len(full_rom)
 
+def file_test():
+    with open("test.py") as file:
+        lines = file.read().splitlines()
+
+    for line in lines[:10]:
+        print line
+        # print line.endswith("\n")
+
+
+def modify(my_list):
+    my_list[0]["new"] = "foo"
+    my_list[1]["existing"].append("bar")
+
+
+def dict_ref_test():
+    a = [
+        {
+            "hello": 1
+        },
+        {
+            "existing": ["baz"]
+        },
+    ]
+    pprint(a)
+    modify(a)
+    pprint(a)
+
+
+def get_dict():
+    return {"a":1, "b":2}
+
+def dict_ref_test_2():
+    a = get_dict()
+    a["a"] = "foo"
+    print a
+    b = get_dict()
+    b["a"] = "bar"
+    print a
+    print b
 
 if __name__ == "__main__":
     # sandbox()
     # file_test()
-    dict_ref_test()
+    # dict_ref_test()
+    dict_ref_test_2()

@@ -25,19 +25,9 @@ import copy
 import re
 
 from .validity import check_structure_validity
-
-LINE_INFO_TEMPLATE = {
-    "line_no": 0,
-    "raw": "",
-    "clean": "",
-
-    "defined_label": "",
-    "assigned_label": ""
-
-    "defined_variable" "",
-
-    "machine_code": [],
-}
+from ..language.operations import get_all_operations
+from ..exceptions import LineProcessingError, InstructionParsingError
+from .. import numbers
 
 
 def assemble(input_path, output_path=None, variable_start_offset=0):
@@ -147,20 +137,47 @@ def process_line(line):
         :data:`~LINE_INFO_TEMPLATE` documentation for more information
         about what is in the dictionary.
     """
-    line_info = copy.deepcopy(LINE_INFO_TEMPLATE)
+    line_info = get_line_info_template()
     line_info["raw"] = line
+
     cleaned_line = clean_line(line)
+    if not cleaned_line:
+        return line_info
     line_info["clean"] = cleaned_line
-    if is_label(cleaned_line):
+
+    line_is_label = is_label(cleaned_line)
+    if line_is_label:
         line_info["defined_label"] = cleaned_line
-    if is_variable(cleaned_line):
+
+    line_is_variable = is_variable(cleaned_line)
+    if line_is_variable:
         line_info["defined_variable"] = cleaned_line
-    if not line_info["defined_label"] or line_info["defined_label"]:
+
+    if not (line_is_variable or line_is_label):
         machine_code = machine_code_from_line(cleaned_line)
-        if machine_code:
-            validate_and_identify_constants(machine_code)
-            line_info["machine_code"] = machine_code
+        validate_and_identify_constants(machine_code)
+        line_info["machine_code"] = machine_code
+
     return line_info
+
+
+def get_line_info_template():
+    """
+    Get a template for the assembly line information template.
+    """
+
+    return {
+        "line_no": -1,
+        "raw": "",
+        "clean": "",
+
+        "defined_label": "",
+        "assigned_label": ""
+
+        "defined_variable" "",
+
+        "machine_code": [],
+    }
 
 
 def clean_line(line):
@@ -251,26 +268,33 @@ def machine_code_from_line(line):
     them. See XXX for information on machine code dictionaries from
     instructions.
 
+    Expects the passed in line to be a valid line of machine code. That
+    is, the passed in line should be translatable to valid machine code.
+
     Args:
-        line (str): Line to parse
+        line (str): Line to parse.
     Returns:
-        list(dict): Machine code byte information dictionaries or an
-        empty list if no machine code should be generated from this
-        line.
+        list(dict): Machine code byte information dictionaries.
     Raises:
-        LineProcessingError: Failure to extract machine code.
+        LineProcessingError: Failure to extract machine code or matching
+        multiple operations.
     """
-    if not line:
-        return []
-    machine_code = None
-    for operation in all_operations:
+    operation_matches = []
+    for operation in get_all_operations():
         try:
-            machine_code = instruction.parse_line(line)
+            machine_code = operation.parse_line(line)
         except InstructionParsingError as e:
             raise LineProcessingError(e)
-    if machine_code is None:
+        if machine_code:
+            operation_matches.append(machine_code)
+
+    num_matches = len(operation_matches)
+    if num_matches == 0:
         raise LineProcessingError("Unable to match line")
-    return machine_code
+    if num_matches > 1:
+        raise LineProcessingError("Line matched multiple operations")
+
+    return operation_matches[0]
 
 
 def validate_and_identify_constants(machine_code):
@@ -320,7 +344,7 @@ def validate_and_identify_constants(machine_code):
         else:
             constant_type = "number"
             value = number_constant_value(constant)
-            if not (number_is_within_bit_limit(value, bits=8)):
+            if not (numbers.number_is_within_bit_limit(value, bits=8)):
                 raise LineProcessingError()
             instruction_byte["number_value"] = value
 
@@ -490,6 +514,16 @@ def create_variable_map(assembly_lines, variable_start_offset=0):
     variable_map = {}
     variable_index = variable_start_offset
     for assembly_line in assembly_lines:
+
+        # Check for defined variable
+        variable = assembly_line["defined_variable"]
+        if variable:
+            if variable in variable_map:
+                continue
+            variable_map[variable] = number_to_bitstring(variable_index)
+            continue
+
+        # Check for variable in machine code
         for instruction_byte in assembly_line["machine_code"]:
             constant = instruction_byte["constant"]
             if not constant:

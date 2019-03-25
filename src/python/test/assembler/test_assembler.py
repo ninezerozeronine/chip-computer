@@ -6,6 +6,61 @@ from eight_bit_computer.exceptions import LineProcessingError
 
 class TestAssembler(unittest.TestCase):
 
+    def test_lines_to_machine_code(lines, variable_start_offset=0):
+
+
+
+    def test_process_line(self):
+        tests = []
+        test_input = ""
+        test_output = assembler.get_line_info_template()
+        tests.append({"input": test_input, "output": test_output})
+
+        test_input = "// comment"
+        test_output = assembler.get_line_info_template()
+        test_output["raw"] = "// comment"
+        tests.append({"input": test_input, "output": test_output})
+
+        test_input = "@label"
+        test_output = assembler.get_line_info_template()
+        test_output["raw"] = "@label"
+        test_output["clean"] = "@label"
+        test_output["defined_label"] = "@label"
+        tests.append({"input": test_input, "output": test_output})
+
+        test_input = "$variable"
+        test_output = assembler.get_line_info_template()
+        test_output["raw"] = "$variable"
+        test_output["clean"] = "$variable"
+        test_output["defined_variable"] = "$variable"
+        tests.append({"input": test_input, "output": test_output})
+
+        test_input = "    @label // comment"
+        test_output = assembler.get_line_info_template()
+        test_output["raw"] = "    @label // comment"
+        test_output["clean"] = "@label"
+        test_output["defined_label"] = "@label"
+        tests.append({"input": test_input, "output": test_output})
+
+        test_input = "    $variable // comment"
+        test_output = assembler.get_line_info_template()
+        test_output["raw"] = "    $variable // comment"
+        test_output["clean"] = "$variable"
+        test_output["defined_variable"] = "$variable"
+        tests.append({"input": test_input, "output": test_output})
+
+        for test in tests:
+            self.assertEqual(assembler.process_line(
+                test["input"]), test["output"]
+            )
+
+        raises_tests = [
+            "fwgfkwghfkjhwgekjhgwkejg"
+        ]
+        for test in raises_tests:
+            with self.assertRaises(LineProcessingError):
+                assembler.process_line(test)
+
     def test_remove_comments(self):
         tests = [
             {
@@ -35,7 +90,9 @@ class TestAssembler(unittest.TestCase):
         ]
 
         for test in tests:
-            self.assertEqual(assembler.remove_comments(test["input"]), test["output"])
+            self.assertEqual(assembler.remove_comments(
+                test["input"]), test["output"]
+            )
 
     def test_remove_excess_whitespace(self):
         tests = [
@@ -152,20 +209,10 @@ class TestAssembler(unittest.TestCase):
             )
 
     def test_machine_code_from_line(self):
-        tests = [
-            {
-                "input": "",
-                "output": [],
-            },
-        ]
-        for test in tests:
-            self.assertEqual(assembler.machine_code_from_line(
-                test["input"]), test["output"]
-            )
-
         raises_tests = [
             "fwgfgwkhgfkwjgfkg"
         ]
+
         for test in raises_tests:
             with self.assertRaises(LineProcessingError):
                 assembler.machine_code_from_line(test)

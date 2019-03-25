@@ -4,7 +4,8 @@ Create and export roms for the computer
 
 import os
 
-from .language import copy, load, fetch, set_op
+from .language.operations import get_all_operations
+from .language import fetch
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from . import bitdef
 
@@ -47,12 +48,8 @@ def collect_language_datatemplates():
             operations
     """
 
-    operations = [
-        copy,
-        load,
-        fetch,
-        set_op,
-    ]
+    operations = get_all_operations()
+    operations.append(fetch)
 
     templates = []
     for operation in operations:

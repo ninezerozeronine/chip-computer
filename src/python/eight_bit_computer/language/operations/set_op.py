@@ -1,9 +1,9 @@
 """The set operation"""
 
-from .definitions import (
+from ..definitions import (
     OPCODE_GROUPS, SRC_REGISTERS, DEST_REGISTERS, MODULE_CONTROL, FLAGS
 )
-from . import utils
+from .. import utils
 
 
 def generate_microcode_templates():
@@ -41,3 +41,11 @@ def generate_microcode_templates():
             )
         )
     return data_templates
+
+
+def parse_line(line):
+    """
+    Parse a line of assembly code to generate machine code.
+    """
+
+    return []
