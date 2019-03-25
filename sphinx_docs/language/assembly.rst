@@ -31,17 +31,39 @@ An instruction will return something like::
 
     [
         {
-            "machine_code": "01101100"
-            "constant": ""
+            "machine_code": "01101100",
+            "constant": "",
         },
         {
-            "machine_code": ""
-            "constant": "@label"
+            "machine_code": "",
+            "constant": "@label",
+        },
+        {
+            "machine_code": "",
+            "constant": "#number",
         }
     ]
 
 The constants are then checked by the assembler to see if they conform to
-standards. 
+standards and identified. The machine code is then updated to::
+
+    [
+        {
+            "machine_code": "01101100",
+            "constant": "",
+        },
+        {
+            "machine_code": "",
+            "constant": "@label",
+            "constant_type": "label",
+        },
+        {
+            "machine_code": "",
+            "constant": "#number",
+            "constant_type": "number",
+            "number_value": 123,
+        }
+    ]
 
 Constants can be @labels, $variables or #numbers
 

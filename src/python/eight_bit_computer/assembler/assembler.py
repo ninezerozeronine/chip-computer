@@ -22,6 +22,7 @@ Attributes:
 """
 
 import copy
+import re
 
 from .validity import check_structure_validity
 
@@ -219,7 +220,11 @@ def is_label(test_string):
     Returns:
         bool: True if the string is a valid label, false otherwise.
     """
-    pass
+    match = re.match(r"@[a-zA-Z_]+\w*$", test_string)
+    if match:
+        return True
+    else:
+        return False
 
 
 def is_variable(test_string):
@@ -231,7 +236,11 @@ def is_variable(test_string):
     Returns:
         bool: True if the string is a valid variable, false otherwise.
     """
-    pass
+    match = re.match(r"\$[a-zA-Z_]+\w*$", test_string)
+    if match:
+        return True
+    else:
+        return False
 
 
 def machine_code_from_line(line):
@@ -254,7 +263,7 @@ def machine_code_from_line(line):
     if not line:
         return []
     machine_code = None
-    for instruction in instructions:
+    for operation in all_operations:
         try:
             machine_code = instruction.parse_line(line)
         except InstructionParsingError as e:
@@ -310,8 +319,8 @@ def validate_and_identify_constants(machine_code):
             constant_type = "variable"
         else:
             constant_type = "number"
-            value = number_value(constant)
-            if not (number_is_within_limits(value)):
+            value = number_constant_value(constant)
+            if not (number_is_within_bit_limit(value, bits=8)):
                 raise LineProcessingError()
             instruction_byte["number_value"] = value
 
@@ -327,10 +336,20 @@ def is_number(test_string):
     Returns:
         bool: True if the string is a valid number, false otherwise.
     """
-    pass
+    if not test_string:
+        return False
+    if test_string[0] == "#":
+        stripped = test_string[0:]
+        if not stripped:
+            return False
+        try:
+            num = int(stripped, 0)
+        except ValueError:
+            return False
+        return True
 
 
-def number_value(number_constant):
+def number_constant_value(number_constant):
     """
     Get the value that a number constant represents.
 
@@ -341,21 +360,6 @@ def number_value(number_constant):
     """
 
     return int(number_constant[1:], 0)
-
-
-def number_is_within_limits(number):
-    """
-    Check if a number is within limits for the computer.
-
-    The number needs to be representable as 8 bit 2's compliment binary.
-
-    Args:
-        number (int): The number to check
-    Returns:
-        bool: True if within limits, False if not.
-    """
-
-    return -127 <= number <= 255
 
 
 def assign_labels(assembly_lines):
@@ -383,27 +387,134 @@ def assign_labels(assembly_lines):
 
 def resolve_labels(assembly_lines):
     """
+    Resolve labels to indexes in the machine code bytes.
 
+    This modifies the passed in list of assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to resolve
+            label references in.
     """
-    pass
+
+    label_map = create_label_map(assembly_lines)
+    for assembly_line in assembly_lines:
+        for instruction_byte in assembly_line["machine_code"]:
+            constant = instruction_byte["constant"]
+            if not constant:
+                continue
+            if instruction_byte["constant_type"] != "label":
+                continue
+            instruction_byte["machine_code"] = label_map[constant]
+
+
+def create_label_map(assembly_lines):
+    """
+    Create a map of labels to machine code byte indexes.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to create a
+            label map for.
+    Returns:
+        dict(str:str): Dictionary of label names to machine code
+        indexes.
+    """
+
+    label_map = {}
+    byte_index = 0
+    for assembly_line in assembly_lines:
+        assigned_label = assembly_line["assigned_label"]
+        if assigned_label:
+            index_bit_string = number_to_bitstring(byte_index)
+            label_map[assigned_label] = index_bit_string
+        machine_code = assembly_line["machine_code"]
+        byte_index += len(machine_code)
+    return label_map
 
 
 def resolve_numbers(assembly_lines):
     """
+    Resolve number constants to machine code byte values.
 
+    This modifies the passed in list of assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to create a
+            label map for.
     """
-    pass
+    for assembly_line in assembly_lines:
+        for instruction_byte in assembly_line["machine_code"]:
+            constant = instruction_byte["constant"]
+            if not constant:
+                continue
+            if instruction_byte["constant_type"] != "number":
+                continue
+            number = instruction_byte["number_value"]
+            instruction_byte["machine_code"] = number_to_bitstring(number)
 
 
 def resolve_variables(assembly_lines, variable_start_offset=0):
     """
+    Resolve variable constants to indexes in data memory.
 
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to resolve
+            variables in.
+        variable_start_offset (int) (optional): An offset into data
+            memory for where to start storing the variables.
     """
-    pass
+    variable_map = create_variable_map(assembly_lines)
+    for assembly_line in assembly_lines:
+        for instruction_byte in assembly_line["machine_code"]:
+            constant = instruction_byte["constant"]
+            if not constant:
+                continue
+            if instruction_byte["constant_type"] != "variable":
+                continue
+            instruction_byte["machine_code"] = variable_map[constant]
 
 
-def assembly_lines_to_machine_code(assembly_lines):
+def create_variable_map(assembly_lines, variable_start_offset=0):
+    """
+    Create a map of variables to indexes in data memory.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to create a
+            variable map for.
+        variable_start_offset (int) (optional): An offset into data
+            memory for where to start storing the variables.
+    Returns:
+        dict(str:str): Dictionary of variable names to machine code
+        indexes.
     """
 
+    variable_map = {}
+    variable_index = variable_start_offset
+    for assembly_line in assembly_lines:
+        for instruction_byte in assembly_line["machine_code"]:
+            constant = instruction_byte["constant"]
+            if not constant:
+                continue
+            if instruction_byte["constant_type"] != "variable":
+                continue
+            if constant in variable_map:
+                continue
+            variable_map[constant] = number_to_bitstring(variable_index)
+            variable_index += 1
+    return variable_map
+
+
+def extract_machine_code(assembly_lines):
     """
-    pass
+    Extract machine code from assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly lines to extract
+            machine code from.
+    Returns:
+        list(str): List of bit strings for the machine code.
+    """
+    machine_code = []
+    for assembly_line in assembly_lines:
+        for instruction_byte in assembly_line["machine_code"]:
+            machine_code.append(instruction_byte["machine_code"])
+    return machine_code
