@@ -1,14 +1,27 @@
 import unittest
 
 from eight_bit_computer.assembler import assembler
-from eight_bit_computer.exceptions import LineProcessingError
+from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
 
 
 class TestAssembler(unittest.TestCase):
 
-    def test_lines_to_machine_code(lines, variable_start_offset=0):
+    def test_lines_to_machine_code(self):
+        raises_tests = [
+            {
+                "lines": [
+                    "fegwkefjghwfjkhgwekjfgh",
+                ],
+                "variable_start_offset": 0
+            }
 
-
+        ]
+        for test in raises_tests:
+            with self.assertRaises(AssemblyError):
+                assembler.lines_to_machine_code(
+                    test["lines"],
+                    variable_start_offset=test["variable_start_offset"]
+                )
 
     def test_process_line(self):
         tests = []

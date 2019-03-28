@@ -26,7 +26,11 @@ import re
 
 from .validity import check_structure_validity
 from ..language.operations import get_all_operations
-from ..exceptions import LineProcessingError, InstructionParsingError
+from ..exceptions import (
+    LineProcessingError,
+    InstructionParsingError,
+    AssemblyError,
+)
 from .. import numbers
 
 
@@ -172,9 +176,9 @@ def get_line_info_template():
         "clean": "",
 
         "defined_label": "",
-        "assigned_label": ""
+        "assigned_label": "",
 
-        "defined_variable" "",
+        "defined_variable": "",
 
         "machine_code": [],
     }
@@ -363,7 +367,7 @@ def is_number(test_string):
     if not test_string:
         return False
     if test_string[0] == "#":
-        stripped = test_string[0:]
+        stripped = test_string[1:]
         if not stripped:
             return False
         try:
@@ -371,6 +375,8 @@ def is_number(test_string):
         except ValueError:
             return False
         return True
+    else:
+        return False
 
 
 def number_constant_value(number_constant):
@@ -406,7 +412,7 @@ def assign_labels(assembly_lines):
             assembly_line["assigned_label"] = label
             label = None
         else:
-            assembly_line["assigned_label"] = []
+            assembly_line["assigned_label"] = ""
 
 
 def resolve_labels(assembly_lines):
@@ -479,6 +485,8 @@ def resolve_numbers(assembly_lines):
 def resolve_variables(assembly_lines, variable_start_offset=0):
     """
     Resolve variable constants to indexes in data memory.
+
+    This modifies the passed in list of assembly line dictionaries.
 
     Args:
         assembly_lines (list(dict)): List of assembly lines to resolve
