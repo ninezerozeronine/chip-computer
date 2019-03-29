@@ -4,11 +4,6 @@ import pytest
 from eight_bit_computer import bitdef
 
 
-@contextmanager
-def does_not_raise():
-    yield
-
-
 @pytest.mark.parametrize("test_input,expected", [
     (
         [

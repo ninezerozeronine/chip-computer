@@ -1,24 +1,5 @@
 """
 Process assembly code and output machine code.
-
-Attributes:
-    LINE_INFO_TEMPLATE (dict): Template for a dictionary that contains
-        information about this line of assembly code. The keys have the
-        following meanings:
-
-        - line_no: The line in the assembly file that this line was on.
-        - raw: The line as it was in the assembly file.
-        - clean: The cleaned up line, ready for parsing.
-        - defined_label: The label that this line defined. Empty string
-          if the line is not a label definition.
-        - asinged_label: The label that has been assigned to the first
-          line of the machine code generated for this line. Empty string
-          if the line has no label.
-        - defined_variable: The variable that this line defined. Empty
-          string if the line is not a variable definition.
-        - machine_code: List of machine code bytes (with constant
-          expansion information) for this line. Empty list if no machine
-          code is required for this line. e.g. a comment.
 """
 
 import copy
@@ -168,6 +149,26 @@ def process_line(line):
 def get_line_info_template():
     """
     Get a template for the assembly line information template.
+
+    Template for a dictionary that contains information about this line
+    of assembly code. The keys have the following meanings:
+
+    - line_no: The line in the assembly file that this line was on.
+    - raw: The line as it was in the assembly file.
+    - clean: The cleaned up line, ready for parsing.
+    - defined_label: The label that this line defined. Empty string
+      if the line is not a label definition.
+    - assigned_label: The label that has been assigned to the first
+      line of the machine code generated for this line. Empty string
+      if the line has no label.
+    - defined_variable: The variable that this line defined. Empty
+      string if the line is not a variable definition.
+    - machine_code: List of machine code bytes (with constant
+      expansion information) for this line. Empty list if no machine
+      code is required for this line. e.g. a comment.
+
+    Returns:
+        dict: Assembly line description template.
     """
 
     return {

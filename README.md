@@ -34,6 +34,6 @@ Then copy `sphinx_docs/_build/html/*` into `docs` so that github pages can see t
 
 To run the tests, run:
 
-    python -m unittest discover -v
+    python -B -m pytest
 
 in `src/python`

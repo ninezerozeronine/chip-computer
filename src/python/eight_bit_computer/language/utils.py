@@ -46,3 +46,35 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
         templates.append(template)
 
     return templates
+
+
+def get_machine_code_byte_template():
+    """
+    Get the template used to describe a machine code byte.
+
+    This is a set of information that describes the byte (of which there
+    could be many) of machine code that an operation (e.g. LOAD
+    [$variable] A) results in.
+
+    The keys have the following meaning:
+
+    - machine_code: A byte bitstring of the final byte that will make up
+      the machine code.
+    - constant: The constant that this byte may optionally need to
+      become. The resolution of the constant to a real machine come byte
+      is done by the assembler.
+    - constant_type: The type of the constant. Could be a label,
+      variable or number.
+    - number_value: The value of the constant as an int if it's a
+      number.
+
+    Returns:
+        dict: Machine code byte description template.
+    """
+
+    return {
+        "machine_code": "",
+        "constant": "",
+        "constant_type": "",
+        "number_value": 0,
+    }
