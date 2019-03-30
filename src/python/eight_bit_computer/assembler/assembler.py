@@ -455,7 +455,7 @@ def create_label_map(assembly_lines):
     for assembly_line in assembly_lines:
         assigned_label = assembly_line["assigned_label"]
         if assigned_label:
-            index_bit_string = number_to_bitstring(byte_index)
+            index_bit_string = numbers.number_to_bitstring(byte_index)
             label_map[assigned_label] = index_bit_string
         machine_code = assembly_line["machine_code"]
         byte_index += len(machine_code)
@@ -480,7 +480,9 @@ def resolve_numbers(assembly_lines):
             if instruction_byte["constant_type"] != "number":
                 continue
             number = instruction_byte["number_value"]
-            instruction_byte["machine_code"] = number_to_bitstring(number)
+            instruction_byte["machine_code"] = numbers.number_to_bitstring(
+                number
+            )
 
 
 def resolve_variables(assembly_lines, variable_start_offset=0):
@@ -495,7 +497,9 @@ def resolve_variables(assembly_lines, variable_start_offset=0):
         variable_start_offset (int) (optional): An offset into data
             memory for where to start storing the variables.
     """
-    variable_map = create_variable_map(assembly_lines)
+    variable_map = create_variable_map(
+        assembly_lines, variable_start_offset=variable_start_offset
+    )
     for assembly_line in assembly_lines:
         for instruction_byte in assembly_line["machine_code"]:
             constant = instruction_byte["constant"]
@@ -529,7 +533,10 @@ def create_variable_map(assembly_lines, variable_start_offset=0):
         if variable:
             if variable in variable_map:
                 continue
-            variable_map[variable] = number_to_bitstring(variable_index)
+            variable_map[variable] = numbers.number_to_bitstring(
+                variable_index
+            )
+            variable_index += 1
             continue
 
         # Check for variable in machine code
@@ -541,7 +548,9 @@ def create_variable_map(assembly_lines, variable_start_offset=0):
                 continue
             if constant in variable_map:
                 continue
-            variable_map[constant] = number_to_bitstring(variable_index)
+            variable_map[constant] = numbers.number_to_bitstring(
+                variable_index
+            )
             variable_index += 1
     return variable_map
 

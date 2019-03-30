@@ -2,8 +2,23 @@ import pytest
 from copy import deepcopy
 
 from eight_bit_computer.assembler import assembler
-from eight_bit_computer.exceptions import LineProcessingError
+from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
 from eight_bit_computer.language.utils import get_machine_code_byte_template
+
+
+@pytest.mark.parametrize("test_input,variable_start_offset", [
+    (
+        [
+            "fegwkefjghwfjkhgwekjfgh",
+        ],
+        0,
+    )
+])
+def test_lines_to_machine_code_raises(test_input, variable_start_offset):
+    with pytest.raises(AssemblyError):
+        assembler.lines_to_machine_code(
+            test_input, variable_start_offset=variable_start_offset
+        )
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -149,103 +164,235 @@ def test_number_constant_value(test_input, expected):
     assert assembler.number_constant_value(test_input) == expected
 
 
-def get_assign_label_input_0():
+def get_processed_assembly_lines():
     """
-    A simple case with a label and a line under it.
+    The result of processing:
+
+    ---
+    $variable0
+    @label1
+        LOAD [$variable1] A
+
+    @label2
+        LOAD [$variable2] A
+        JUMP @label1
+
+        STORE A [#123]
+    @label3
+        LOAD [$variable3] B
+        LOAD [$variable0] C
+    $variable4
+    ---
     """
-    input_line_1 = assembler.get_line_info_template()
-    input_line_1["line_no"] = 1
-    input_line_1["raw"] = "@label1"
-    input_line_1["clean"] = "@label1"
-    input_line_1["defined_label"] = "@label1"
+    lines = []
 
-    input_line_2 = assembler.get_line_info_template()
-    input_line_2["line_no"] = 2
-    input_line_2["raw"] = "LOAD [$variable] A"
-    input_line_2["clean"] = "LOAD [$variable] A"
-    input_line_2_mc_0 = get_machine_code_byte_template()
-    input_line_2_mc_0["machine_code"] = "10101010"
-    input_line_2_mc_1 = get_machine_code_byte_template()
-    input_line_2_mc_1["constant"] = "$variable"
-    input_line_2_mc_1["constant_type"] = "variable"
-    input_line_2["machine_code"] = [input_line_2_mc_0, input_line_2_mc_1]
+    line = assembler.get_line_info_template()
+    line["line_no"] = 1
+    line["raw"] = "$variable0"
+    line["clean"] = "$variable0"
+    line["defined_variable"] = "$variable0"
+    lines.append(line)
 
-    expected_line_1 = deepcopy(input_line_1)
+    line = assembler.get_line_info_template()
+    line["line_no"] = 2
+    line["raw"] = "@label1"
+    line["clean"] = "@label1"
+    line["defined_label"] = "@label1"
+    lines.append(line)
 
-    expected_line_2 = deepcopy(input_line_2)
-    expected_line_2["assigned_label"] = "@label1"
+    line = assembler.get_line_info_template()
+    line["line_no"] = 3
+    line["raw"] = "LOAD [$variable1] A"
+    line["clean"] = "LOAD [$variable1] A"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "$variable1"
+    line_mc_1["constant_type"] = "variable"
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
 
-    return ([input_line_1, input_line_2], [expected_line_1, expected_line_2])
+    line = assembler.get_line_info_template()
+    line["line_no"] = 4
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 5
+    line["raw"] = "@label2"
+    line["clean"] = "@label2"
+    line["defined_label"] = "@label2"
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 6
+    line["raw"] = "LOAD [$variable2] A"
+    line["clean"] = "LOAD [$variable2] A"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "$variable2"
+    line_mc_1["constant_type"] = "variable"
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 7
+    line["raw"] = "JUMP @label1"
+    line["clean"] = "JUMP @label1"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "@label1"
+    line_mc_1["constant_type"] = "label"
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 8
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 9
+    line["raw"] = "STORE A [#123]"
+    line["clean"] = "STORE A [#123]"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "#123"
+    line_mc_1["constant_type"] = "number"
+    line_mc_1["number_value"] = 123
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 10
+    line["raw"] = "@label3"
+    line["clean"] = "@label3"
+    line["defined_label"] = "@label3"
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 11
+    line["raw"] = "LOAD [$variable3] B"
+    line["clean"] = "LOAD [$variable3] A"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "$variable3"
+    line_mc_1["constant_type"] = "variable"
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 12
+    line["raw"] = "LOAD [$variable0] C"
+    line["clean"] = "LOAD [$variable0] A"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["machine_code"] = "99999999"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["constant"] = "$variable0"
+    line_mc_1["constant_type"] = "variable"
+    line["machine_code"] = [line_mc_0, line_mc_1]
+    lines.append(line)
+
+    line = assembler.get_line_info_template()
+    line["line_no"] = 13
+    line["raw"] = "$variable4"
+    line["clean"] = "$variable4"
+    line["defined_variable"] = "$variable4"
+    lines.append(line)
+
+    return lines
 
 
-def get_assign_label_input_1():
-    """
-    A more complicated case with two labels and two lines.
-    """
-    input_line_1 = assembler.get_line_info_template()
-    input_line_1["line_no"] = 1
-    input_line_1["raw"] = "@label1"
-    input_line_1["clean"] = "@label1"
-    input_line_1["defined_label"] = "@label1"
+def test_assign_labels():
+    input_lines = get_processed_assembly_lines()
+    expected_lines = deepcopy(input_lines)
+    expected_lines[2]["assigned_label"] = "@label1"
+    expected_lines[5]["assigned_label"] = "@label2"
+    expected_lines[10]["assigned_label"] = "@label3"
+    assembler.assign_labels(input_lines)
+    assert input_lines == expected_lines
 
-    input_line_2 = assembler.get_line_info_template()
-    input_line_2["line_no"] = 2
-    input_line_2["raw"] = "LOAD [$variable] A"
-    input_line_2["clean"] = "LOAD [$variable] A"
-    input_line_2_mc_0 = get_machine_code_byte_template()
-    input_line_2_mc_0["machine_code"] = "10101010"
-    input_line_2_mc_1 = get_machine_code_byte_template()
-    input_line_2_mc_1["constant"] = "$variable"
-    input_line_2_mc_1["constant_type"] = "variable"
-    input_line_2["machine_code"] = [input_line_2_mc_0, input_line_2_mc_1]
 
-    input_line_3 = assembler.get_line_info_template()
-    input_line_3["line_no"] = 3
-    input_line_3["raw"] = "@label2"
-    input_line_3["clean"] = "@label2"
-    input_line_3["defined_label"] = "@label2"
+def test_resolve_labels():
+    input_lines = get_processed_assembly_lines()
+    input_lines[2]["assigned_label"] = "@label1"
+    input_lines[5]["assigned_label"] = "@label2"
+    input_lines[10]["assigned_label"] = "@label3"
+    expected_lines = deepcopy(input_lines)
+    expected_lines[6]["machine_code"][1]["machine_code"] = "00000000"
+    assembler.resolve_labels(input_lines)
+    assert input_lines == expected_lines
 
-    input_line_4 = assembler.get_line_info_template()
-    input_line_4["line_no"] = 4
-    input_line_4["raw"] = "LOAD [$other_variable] A"
-    input_line_4["clean"] = "LOAD [$other_variable] A"
-    input_line_4_mc_0 = get_machine_code_byte_template()
-    input_line_4_mc_0["machine_code"] = "10101010"
-    input_line_4_mc_1 = get_machine_code_byte_template()
-    input_line_4_mc_1["constant"] = "$other_variable"
-    input_line_4_mc_1["constant_type"] = "variable"
-    input_line_4["machine_code"] = [input_line_2_mc_0, input_line_2_mc_1]
 
-    expected_line_1 = deepcopy(input_line_1)
+def test_label_map():
+    input_lines = get_processed_assembly_lines()
+    input_lines[2]["assigned_label"] = "@label1"
+    input_lines[5]["assigned_label"] = "@label2"
+    input_lines[10]["assigned_label"] = "@label3"
+    expected_label_map = {
+        "@label1": "00000000",
+        "@label2": "00000010",
+        "@label3": "00001000",
+    }
+    label_map = assembler.create_label_map(input_lines)
+    assert label_map == expected_label_map
 
-    expected_line_2 = deepcopy(input_line_2)
-    expected_line_2["assigned_label"] = "@label1"
 
-    expected_line_3 = deepcopy(input_line_3)
+def test_resolve_numbers():
+    input_lines = get_processed_assembly_lines()
+    expected_lines = deepcopy(input_lines)
+    expected_lines[8]["machine_code"][1]["machine_code"] = "01111011"
+    assembler.resolve_numbers(input_lines)
+    assert input_lines == expected_lines
 
-    expected_line_4 = deepcopy(input_line_4)
-    expected_line_4["assigned_label"] = "@label2"
 
-    return (
-        [
-            input_line_1,
-            input_line_2,
-            input_line_3,
-            input_line_4,
-        ],
-        [
-            expected_line_1,
-            expected_line_2,
-            expected_line_3,
-            expected_line_4,
-        ]
+def test_resolve_variables_no_offset():
+    input_lines = get_processed_assembly_lines()
+    expected_lines = deepcopy(input_lines)
+    expected_lines[2]["machine_code"][1]["machine_code"] = "00000001"
+    expected_lines[5]["machine_code"][1]["machine_code"] = "00000010"
+    expected_lines[10]["machine_code"][1]["machine_code"] = "00000011"
+    expected_lines[11]["machine_code"][1]["machine_code"] = "00000000"
+    assembler.resolve_variables(input_lines)
+    assert input_lines == expected_lines
+
+
+def test_resolve_variables_with_offset():
+    input_lines = get_processed_assembly_lines()
+    expected_lines = deepcopy(input_lines)
+    expected_lines[2]["machine_code"][1]["machine_code"] = "00001001"
+    expected_lines[5]["machine_code"][1]["machine_code"] = "00001010"
+    expected_lines[10]["machine_code"][1]["machine_code"] = "00001011"
+    expected_lines[11]["machine_code"][1]["machine_code"] = "00001000"
+    assembler.resolve_variables(input_lines, variable_start_offset=8)
+    assert input_lines == expected_lines
+
+
+def test_create_variable_map_no_offset():
+    input_lines = get_processed_assembly_lines()
+    exected_variable_map = {
+        "$variable0": "00000000",
+        "$variable1": "00000001",
+        "$variable2": "00000010",
+        "$variable3": "00000011",
+        "$variable4": "00000100",
+    }
+    variable_map = assembler.create_variable_map(input_lines)
+    assert variable_map == exected_variable_map
+
+
+def test_create_variable_map_with_offset():
+    input_lines = get_processed_assembly_lines()
+    exected_variable_map = {
+        "$variable0": "00001000",
+        "$variable1": "00001001",
+        "$variable2": "00001010",
+        "$variable3": "00001011",
+        "$variable4": "00001100",
+    }
+    variable_map = assembler.create_variable_map(
+        input_lines, variable_start_offset=8
     )
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    get_assign_label_input_0(),
-    get_assign_label_input_1()
-])
-def test_assign_labels(test_input, expected):
-    assembler.assign_labels(test_input)
-    assert test_input == expected
+    assert variable_map == exected_variable_map

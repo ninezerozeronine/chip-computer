@@ -9,7 +9,7 @@ def number_to_bitstring(number, bit_width=8):
     Raises:
         ValueError: If a negative number doesn't fit in the bit width.
     """
-    pass
+    return "{number:0{bit_width}b}".format(number=number, bit_width=bit_width)
 
 
 def bitstring_to_number(bitstring, twos_compliment=False):
