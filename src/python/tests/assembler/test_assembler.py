@@ -21,6 +21,110 @@ def test_lines_to_machine_code_raises(test_input, variable_start_offset):
         )
 
 
+def get_process_line_test_data():
+    """
+    Test data for the process line test
+    """
+    tests = []
+    test_input = ""
+    test_output = assembler.get_line_info_template()
+    tests.append((test_input, test_output))
+
+    test_input = "// comment"
+    test_output = assembler.get_line_info_template()
+    test_output["raw"] = "// comment"
+    tests.append((test_input, test_output))
+
+    test_input = "@label"
+    test_output = assembler.get_line_info_template()
+    test_output["raw"] = "@label"
+    test_output["clean"] = "@label"
+    test_output["defined_label"] = "@label"
+    tests.append((test_input, test_output))
+
+    test_input = "$variable"
+    test_output = assembler.get_line_info_template()
+    test_output["raw"] = "$variable"
+    test_output["clean"] = "$variable"
+    test_output["defined_variable"] = "$variable"
+    tests.append((test_input, test_output))
+
+    test_input = "    @label // comment"
+    test_output = assembler.get_line_info_template()
+    test_output["raw"] = "    @label // comment"
+    test_output["clean"] = "@label"
+    test_output["defined_label"] = "@label"
+    tests.append((test_input, test_output))
+
+    test_input = "    $variable // comment"
+    test_output = assembler.get_line_info_template()
+    test_output["raw"] = "    $variable // comment"
+    test_output["clean"] = "$variable"
+    test_output["defined_variable"] = "$variable"
+    tests.append((test_input, test_output))
+
+    return tests
+
+
+@pytest.mark.parametrize("test_input,expected", get_process_line_test_data())
+def test_process_line(test_input, expected):
+    assert assembler.process_line(test_input) == expected
+
+
+@pytest.mark.parametrize("test_input", [
+    "fwgfkwghfkjhwgekjhgwkejg",
+])
+def test_process_line_raises(test_input):
+    with pytest.raises(LineProcessingError):
+        assembler.process_line(test_input)
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        "",
+        "",
+    ),
+    (
+        "//",
+        "",
+    ),
+    (
+        "/hello /world!",
+        "/hello /world!",
+    ),
+    (
+        "blah blah//",
+        "blah blah",
+    ),
+    (
+        "before//after",
+        "before",
+    ),
+    (
+        "   before   //after   ",
+        "   before   ",
+    ),
+])
+def test_remove_comments(test_input, expected):
+    assert assembler.remove_comments(test_input) == expected
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @pytest.mark.parametrize("test_input,expected", [
     (
         [
