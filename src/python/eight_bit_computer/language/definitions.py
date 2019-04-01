@@ -1,6 +1,7 @@
 """Defnitions of named items"""
 
 from ..bitdef import remove_whitespace as rw
+from ..bitdef import merge
 
 OPCODE_GROUPS = {
     "COPY":  rw("00...... .... ..."),
@@ -167,3 +168,21 @@ MODULE_CONTROL = {
 
 EMPTY_ADDRESS = rw("........ .... ...")
 MODULE_CONTROLS_DEFAULT = rw("00000000 00000000 00000000 00000000")
+
+
+def instruction_byte_from_bitdefs(bitdefs):
+    """
+    Extract an instruction byte from the bitdefs that make it up.
+
+    If more than one bitdef is passed it will be merged with the others
+    prior to extraction.
+
+    Args:
+        bitdefs list(str): List of bitdefs to potentially merge and
+            extract
+    Returns:
+        str: Bitstring of the instruction byte
+    """
+
+    merged_bitdefs = merge(bitdefs)
+    return merged_bitdefs[0:8]

@@ -21,7 +21,7 @@ def test_lines_to_machine_code_raises(test_input, variable_start_offset):
         )
 
 
-def get_process_line_test_data():
+def get_test_process_line_data():
     """
     Test data for the process line test
     """
@@ -66,7 +66,7 @@ def get_process_line_test_data():
     return tests
 
 
-@pytest.mark.parametrize("test_input,expected", get_process_line_test_data())
+@pytest.mark.parametrize("test_input,expected", get_test_process_line_data())
 def test_process_line(test_input, expected):
     assert assembler.process_line(test_input) == expected
 
@@ -109,20 +109,131 @@ def test_remove_comments(test_input, expected):
     assert assembler.remove_comments(test_input) == expected
 
 
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        "",
+        "",
+    ),
+    (
+        "      ",
+        "",
+    ),
+    (
+        "LOAD [$foo] A",
+        "LOAD [$foo] A",
+    ),
+    (
+        "     LOAD     [$foo]     A    ",
+        "LOAD [$foo] A",
+    ),
+    (
+        "\tLOAD\t\t[$foo]     A  \t  ",
+        "LOAD [$foo] A",
+    ),
+    (
+        "LOAD [  $foo  ] A",
+        "LOAD [ $foo ] A",
+    ),
+    (
+        "   LOAD [$foo] A",
+        "LOAD [$foo] A",
+    ),
+    (
+        "LOAD [$foo] A   ",
+        "LOAD [$foo] A",
+    ),
+    (
+        "SET A  #14  ",
+        "SET A #14",
+    ),
+])
+def test_remove_excess_whitespace(test_input, expected):
+    assert assembler.remove_excess_whitespace(test_input) == expected
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        "",
+        False,
+    ),
+    (
+        "      ",
+        False,
+    ),
+    (
+        "LOAD [$foo] A",
+        False,
+    ),
+    (
+        "@hello",
+        True,
+    ),
+    (
+        "@hello_123_blah",
+        True,
+    ),
+    (
+        "@hello  world  ",
+        False,
+    ),
+    (
+        "@@monkey",
+        False,
+    ),
+    (
+        "@123",
+        False,
+    ),
+])
+def test_is_label(test_input, expected):
+    assert assembler.is_label(test_input) == expected
 
 
 
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        "",
+        False,
+    ),
+    (
+        "      ",
+        False,
+    ),
+    (
+        "LOAD [$foo] A",
+        False,
+    ),
+    (
+        "$hello",
+        True,
+    ),
+    (
+        "$hello_123_blah",
+        True,
+    ),
+    (
+        "$hello  world  ",
+        False,
+    ),
+    (
+        "$$monkey",
+        False,
+    ),
+    (
+        "$123",
+        False,
+    ),
+])
+def test_is_varaible(test_input, expected):
+    assert assembler.is_variable(test_input) == expected
 
 
-
-
-
-
-
-
-
-
-
+@pytest.mark.parametrize("test_input", [
+    "fwgfkwghfkjhwgekjhgwkejg",
+])
+def test_machine_code_from_line_raises(test_input):
+    with pytest.raises(LineProcessingError):
+        assembler.machine_code_from_line(test_input)
 
 
 @pytest.mark.parametrize("test_input,expected", [
