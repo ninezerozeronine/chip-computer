@@ -1,2 +1,3 @@
 sphinx_docs/_build
 *.pyc
+src/python/.pytest_cache

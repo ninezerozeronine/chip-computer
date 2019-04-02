@@ -14,7 +14,7 @@ from .. import utils
 
 def get_name():
     """
-    The outward facing name for the OPERATION_TEMPLATE operation.
+    Get the outward facing name for the OPERATION_TEMPLATE operation.
 
     Returns:
         str: Name of the OPERATION_TEMPLATE operation.
@@ -37,7 +37,7 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiable a OPERATION_TEMPLATE assembly line,
+    If a line is not identifiably a OPERATION_TEMPLATE assembly line,
     return an empty list instead.
 
     Args:

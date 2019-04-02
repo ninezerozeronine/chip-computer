@@ -2,6 +2,7 @@ import pytest
 
 from eight_bit_computer.language import definitions
 
+
 @pytest.mark.parametrize("test_input,expected", [
     (
         [

@@ -78,3 +78,43 @@ def get_machine_code_byte_template():
         "constant_type": "",
         "number_value": 0,
     }
+
+
+def add_quotes_to_strings(strings):
+    """
+    Add double quotes strings in a list then join with commas.
+    """
+    quote_strings = []
+    for _string in strings:
+        quote_strings.append("(\"{string}\").".format(sring=_string))
+    pretty_strings = ", ".join(pretty_strings)
+    return pretty_strings
+
+
+def not_3_tokens_message(tokens, op_name, followup):
+    """
+    Generate the error message for when not 3 tokens are used specified.
+    """
+    num_tokens = len(tokens)
+    if num_tokens == 1:
+        msg = (
+            "No tokens were specified for the {op_name} "
+            "operation. ".format(op_name)
+        )
+    elif num_tokens == 2:
+        msg = (
+            "Only one token was specified for the {op_name} operation "
+            "(\"{token}\"). ".format(token=tokens[1], op_name=op_name)
+        )
+    else:
+        pretty_tokens = add_quotes_to_strings(line_tokens)
+        msg = (
+            "{num_tokens} tokens were specified for the {op_name} "
+            "operation ({pretty_tokens}). ".format(
+                num_tokens=num_tokens,
+                op_name=op_name,
+                pretty_tokens=pretty_tokens,
+            )
+        )
+    msg += followup
+    return msg
