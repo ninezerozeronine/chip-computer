@@ -83,23 +83,40 @@ def get_machine_code_byte_template():
 def add_quotes_to_strings(strings):
     """
     Add double quotes strings in a list then join with commas.
+
+    Args:
+        strings (list(str)): List of strings to add parentheses to.
+    Returns:
+        str: The strings with quotes added and joined with commas.
     """
     quote_strings = []
     for _string in strings:
-        quote_strings.append("(\"{string}\").".format(sring=_string))
-    pretty_strings = ", ".join(pretty_strings)
+        quote_strings.append("\"{string}\"".format(string=_string))
+    pretty_strings = ", ".join(quote_strings)
     return pretty_strings
 
 
 def not_3_tokens_message(tokens, op_name, followup):
     """
-    Generate the error message for when not 3 tokens are used specified.
+    Generate the error message for when not 3 tokens are specified.
+
+    Convenience function for generating useful error messages when an
+    operator expects 3 tokens (Operator, source, dest) but too few or
+    too many were supplied.
+
+    Args:
+        tokens (list(str)): The tkens on the line being parsed
+        op_name (str): The name of the operators e.g. SET, LOAD
+        followup (str): Extra context and example to make the error more
+            useful.
+    Returns:
+        str: The compiled message.
     """
     num_tokens = len(tokens)
     if num_tokens == 1:
         msg = (
             "No tokens were specified for the {op_name} "
-            "operation. ".format(op_name)
+            "operation. ".format(op_name=op_name)
         )
     elif num_tokens == 2:
         msg = (
@@ -107,7 +124,7 @@ def not_3_tokens_message(tokens, op_name, followup):
             "(\"{token}\"). ".format(token=tokens[1], op_name=op_name)
         )
     else:
-        pretty_tokens = add_quotes_to_strings(line_tokens)
+        pretty_tokens = add_quotes_to_strings(tokens)
         msg = (
             "{num_tokens} tokens were specified for the {op_name} "
             "operation ({pretty_tokens}). ".format(
@@ -118,3 +135,28 @@ def not_3_tokens_message(tokens, op_name, followup):
         )
     msg += followup
     return msg
+
+
+def get_tokens_from_line(line):
+    """
+    Given a line split it into tokens and return them.
+
+    Tokens are runs of characters separated by spaces. If there are no
+    tokens return an empty list.
+
+    Args:
+        line (str): line to convert to tokens
+    Returns:
+        list(str): The tokens
+    """
+
+    # Does line have any content
+    if not line:
+        return []
+
+    # Does the line have any content after splitting it
+    line_tokens = line.split()
+    if not line_tokens:
+        return []
+
+    return line_tokens

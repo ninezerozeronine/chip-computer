@@ -9,6 +9,7 @@ from ..definitions import (
     instruction_byte_from_bitdefs
 )
 from .. import utils
+from ...exceptions import InstructionParsingError
 
 
 def get_name():
@@ -67,16 +68,16 @@ def get_instruction_byte(destination):
     Get the instruction byte for this SET operation.
 
     Args:
-        destination (str): The module having it's value set
+        destination (str): The module having it's value set.
     Returns:
         str: bitstring for the first byte of the SET operation.
     """
 
-    return instruction_byte_from_bitdefs(
+    return instruction_byte_from_bitdefs([
         OPCODE_GROUPS["COPY"],
         SRC_REGISTERS["IMM"],
         DEST_REGISTERS[destination],
-        )
+        ])
 
 
 def parse_line(line):
@@ -96,12 +97,7 @@ def parse_line(line):
             OPERATION_TEMPLATE operation but incorrectly specified.
     """
 
-    # Does line have any content
-    if not line:
-        return []
-
-    # Does the line have any content after splitting it
-    line_tokens = line.split()
+    line_tokens = utils.get_tokens_from_line(line)
     if not line_tokens:
         return []
 
@@ -116,17 +112,18 @@ def parse_line(line):
         followup = (
             "Exactly 2 tokens should be passed to the SET operation. A "
             "module to have it's value set and a constant to set it "
-            "to. E.g. \"SET A #123\"."
+            "to. E.g. \"SET B #123\"."
         )
-        msg = not_3_tokens_message(line_tokens, op_name, followup)
+        msg = utils.not_3_tokens_message(line_tokens, op_name, followup)
         raise InstructionParsingError(msg)
 
     dest = line_tokens[1]
     constant = line_tokens[2]
+
     # Is the second token a valid module name
     destinations = ["ACC", "A", "B", "C", "SP"]
     if dest not in destinations:
-        pretty_destinations = add_quotes_to_strings(destinations)
+        pretty_destinations = utils.add_quotes_to_strings(destinations)
         msg = (
             "Invalid module name used for SET operation (\"{dest}\"). "
             "It must be one of: {pretty_destinations}".format(
