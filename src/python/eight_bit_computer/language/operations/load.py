@@ -7,7 +7,7 @@ Loads a value from data memory into a module.
 from itertools import product
 
 from ..definitions import (
-    OPCODE_GROUPS,
+    INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
     MODULE_CONTROL,
@@ -62,7 +62,7 @@ def generate_instruction(src, dest):
     """
 
     instruction_bitdefs = [
-        OPCODE_GROUPS["LOAD"],
+        INSTRUCTION_GROUPS["LOAD"],
         SRC_REGISTERS[src],
         DEST_REGISTERS[dest],
     ]
@@ -93,7 +93,7 @@ def generate_immediate_instruction(dest):
     """
 
     instruction_bitdefs = [
-        OPCODE_GROUPS["LOAD"],
+        INSTRUCTION_GROUPS["LOAD"],
         SRC_REGISTERS["IMM"],
         DEST_REGISTERS[dest],
     ]
@@ -130,7 +130,7 @@ def get_instruction_byte(source, destination):
     """
 
     return instruction_byte_from_bitdefs([
-        OPCODE_GROUPS["LOAD"],
+        INSTRUCTION_GROUPS["LOAD"],
         SRC_REGISTERS[source],
         DEST_REGISTERS[destination],
         ])

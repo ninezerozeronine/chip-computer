@@ -3,7 +3,7 @@ Example and explanation of required functions for an operation module.
 """
 
 from ..definitions import (
-    OPCODE_GROUPS,
+    INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
     MODULE_CONTROL,

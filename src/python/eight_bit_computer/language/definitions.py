@@ -3,7 +3,7 @@
 from ..bitdef import remove_whitespace as rw
 from ..bitdef import merge
 
-OPCODE_GROUPS = {
+INSTRUCTION_GROUPS = {
     "COPY":  rw("00...... .... ..."),
     "LOAD":  rw("01...... .... ..."),
     "STORE": rw("10...... .... ..."),
@@ -32,7 +32,7 @@ DEST_REGISTERS = {
     "IMM":   rw(".....111 .... ..."),
 }
 
-ALU_OPERATIONS = {
+ALU_MODES = {
     "INCR":           rw("..0000.. .... ..."),
     "DECR":           rw("..0001.. .... ..."),
     "ADD":            rw("..0010.. .... ..."),
@@ -89,7 +89,7 @@ STEPS = {
     7: rw("........ .... 111"),
 }
 
-# ALU_OUTPUT_MODES = {
+# ALU_MODE_FLAGS = {
 #     "A_PLUS_1"                      
 #     "A_PLUS_B"                      
 #     "A_MINUS_B"                     

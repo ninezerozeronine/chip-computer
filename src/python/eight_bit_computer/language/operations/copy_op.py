@@ -7,7 +7,7 @@ Copies a value from one module into another.
 from itertools import product
 
 from ..definitions import (
-    OPCODE_GROUPS,
+    INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
     MODULE_CONTROL,
@@ -57,7 +57,7 @@ def generate_instruction(src, dest):
         list(DataTemplate) : Datatemplates that define this copy.
     """
     instruction_bitdefs = [
-        OPCODE_GROUPS["COPY"],
+        INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS[src],
         DEST_REGISTERS[dest],
     ]
@@ -88,7 +88,7 @@ def get_instruction_byte(source, destination):
     """
 
     return instruction_byte_from_bitdefs([
-        OPCODE_GROUPS["COPY"],
+        INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS[source],
         DEST_REGISTERS[destination],
         ])

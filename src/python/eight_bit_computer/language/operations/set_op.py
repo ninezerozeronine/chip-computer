@@ -5,7 +5,7 @@ Sets a module to a certain value.
 """
 
 from ..definitions import (
-    OPCODE_GROUPS,
+    INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
     MODULE_CONTROL,
@@ -40,7 +40,7 @@ def generate_microcode_templates():
     data_templates = []
     for dest in _DESTINATIONS:
         instruction_bitdefs = [
-            OPCODE_GROUPS["COPY"],
+            INSTRUCTION_GROUPS["COPY"],
             SRC_REGISTERS["IMM"],
             DEST_REGISTERS[dest],
         ]
@@ -79,7 +79,7 @@ def get_instruction_byte(destination):
     """
 
     return instruction_byte_from_bitdefs([
-        OPCODE_GROUPS["COPY"],
+        INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS["IMM"],
         DEST_REGISTERS[destination],
         ])
