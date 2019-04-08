@@ -4,6 +4,7 @@ from eight_bit_computer.language.operations import set_op
 from eight_bit_computer.language.utils import get_machine_code_byte_template
 from eight_bit_computer.exceptions import InstructionParsingError
 
+
 @pytest.mark.parametrize("test_input,expected", [
     (
         "A",
@@ -62,7 +63,7 @@ def test_parse_line(test_input, expected):
     "SET A",
     "SET #123",
     "SET BLAH #123",
-    "SET A #123 FOO"
+    "SET A #123 FOO",
 ])
 def test_parse_line_raises(test_input):
     with pytest.raises(InstructionParsingError):

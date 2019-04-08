@@ -17,13 +17,13 @@ def get_all_operations():
     """
 
     from . import (
-        copy,
+        copy_op,
         load,
         set_op,
     )
 
     return [
-        copy,
+        copy_op,
         load,
         set_op,
     ]

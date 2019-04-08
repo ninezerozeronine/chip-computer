@@ -1,4 +1,8 @@
-"""The set operation"""
+"""
+The set operation.
+
+Sets a module to a certain value.
+"""
 
 from ..definitions import (
     OPCODE_GROUPS,
@@ -11,13 +15,15 @@ from ..definitions import (
 from .. import utils
 from ...exceptions import InstructionParsingError
 
+_DESTINATIONS = ("ACC", "A", "B", "C", "SP")
+
 
 def get_name():
     """
-    Get the outward facing name for the OPERATION_TEMPLATE operation.
+    Get the outward facing name for the SET operation.
 
     Returns:
-        str: Name of the OPERATION_TEMPLATE operation.
+        str: Name of the SET operation.
     """
     return "SET"
 
@@ -31,9 +37,8 @@ def generate_microcode_templates():
         SET operation.
     """
 
-    destinations = ["ACC", "A", "B", "C", "SP"]
     data_templates = []
-    for dest in destinations:
+    for dest in _DESTINATIONS:
         instruction_bitdefs = [
             OPCODE_GROUPS["COPY"],
             SRC_REGISTERS["IMM"],
@@ -94,7 +99,7 @@ def parse_line(line):
         empty list.
     Raises:
         InstructionParsingError: If the line was identifiably a
-            OPERATION_TEMPLATE operation but incorrectly specified.
+            SET operation but incorrectly specified.
     """
 
     line_tokens = utils.get_tokens_from_line(line)
@@ -121,9 +126,8 @@ def parse_line(line):
     constant = line_tokens[2]
 
     # Is the second token a valid module name
-    destinations = ["ACC", "A", "B", "C", "SP"]
-    if dest not in destinations:
-        pretty_destinations = utils.add_quotes_to_strings(destinations)
+    if dest not in _DESTINATIONS:
+        pretty_destinations = utils.add_quotes_to_strings(_DESTINATIONS)
         msg = (
             "Invalid module name used for SET operation (\"{dest}\"). "
             "It must be one of: {pretty_destinations}".format(

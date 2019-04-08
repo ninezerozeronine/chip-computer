@@ -2,6 +2,8 @@ from .. import bitdef
 from ..datatemplate import DataTemplate
 from .definitions import MODULE_CONTROL, STEPS
 
+import re
+
 
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     """
@@ -160,3 +162,25 @@ def get_tokens_from_line(line):
         return []
 
     return line_tokens
+
+
+def extract_memory_position(token):
+    """
+    Extract a memory position from a token.
+
+    A token holding a memory position is a token that starts with "[",
+    ends with "]" and has at least one character in between.
+
+    Args:
+        token (str): The token to extract a memory position from.
+    Returns:
+        str or None: String of the token if one could be extracted, None
+        otherwise.
+    """
+
+    if (token.startswith("[")
+            and token.endswith("]")
+            and len(token) > 2):
+        return token[1:-1]
+    else:
+        return None
