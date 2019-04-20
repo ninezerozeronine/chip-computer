@@ -187,3 +187,137 @@ def extract_memory_position(token):
         return token[1:-1]
     else:
         return None
+
+
+def parse_line(line, opcode, op_args_defs=None):
+    """
+
+    """
+
+    if op_args_defs is None:
+        op_args_defs = []
+
+    line_tokens = get_tokens_from_line(line)
+
+    # Return early if there are no tokens
+    if not line_tokens:
+        return None, []
+
+    # Return early if the opcode doesn't match
+    line_opcode = line_tokens[0]
+    if line_opcode != opcode:
+        return None, []
+
+    # Return early if this op code has no args
+    line_args = line_tokens[1:]
+    if not line_args and not op_args_defs:
+        return line_opcode, []
+
+    matches = []
+    for op_args_def in op_args_defs:
+        match, parsed_args = match_and_parse_args_sets(line_args, op_args_def)
+        if match:
+            matches.append((line_opcode, parsed_args))
+    if 1
+
+
+def match_and_parse_args_sets(line_args, op_args_def):
+    """
+
+    """
+
+    if len(line_args) != len(op_args_def):
+        return False, []
+
+    all_match = True
+    parsed_args = []
+    for line_arg, op_arg_def in zip(line_args, op_args_def):
+        pass
+
+
+def get_arg_template():
+    """
+    Get an argument template for an assembly operation argument.
+
+    This is a set of information that describes an argument used in a
+    line of assembly.
+
+    The keys have the following meaning:
+
+    - arg_type: What kind of argument this is. constant or module
+    - is_memory_location: Whether this argument is referring to a
+      location in memory.
+    - value: The permitted value of the argument if it's a module.
+
+    Returns:
+        dict: Machine code byte description template.
+    """
+
+    return {
+        "arg_type": "",
+        "is_memory_location": False,
+        "value": "",
+    }
+
+
+
+    # # COPY ACC A
+    # # COPY B C
+    # example_op_args_0 = [
+    #     [
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "ACC",
+    #         },
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "A",
+    #         },
+    #     ],
+    #     [
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "B",
+    #         },
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "C",
+    #         },
+    #     ],
+    # ]
+
+    # # LOAD [#123] B
+    # example_op_args_1 = [
+    #     [
+    #         {
+    #             "arg_type": "constant",
+    #             "is_memory_location": True,
+    #             "value": "",
+    #         },
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "B",
+    #         },
+    #     ],
+    # ]
+
+    # # SET B #44
+    # example_op_args_2 = [
+    #     [
+    #         {
+    #             "arg_type": "module",
+    #             "is_memory_location": False,
+    #             "value": "B",
+    #         },
+    #         {
+    #             "arg_type": "constant",
+    #             "is_memory_location": False,
+    #             "value": "",
+    #         },
+    #     ],
+    # ]
