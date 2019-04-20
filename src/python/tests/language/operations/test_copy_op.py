@@ -38,11 +38,13 @@ def generate_parse_line_test_data():
 
     test_input = "COPY A B"
     mc = get_machine_code_byte_template()
+    mc["byte_type"] = "instruction"
     mc["machine_code"] = "00001010"
     ret.append((test_input, [mc]))
 
     test_input = "   COPY  B   A   "
     mc = get_machine_code_byte_template()
+    mc["byte_type"] = "instruction"
     mc["machine_code"] = "00010001"
     ret.append((test_input, [mc]))
 

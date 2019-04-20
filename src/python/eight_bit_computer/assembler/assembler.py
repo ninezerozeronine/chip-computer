@@ -139,9 +139,9 @@ def process_line(line):
         line_info["defined_variable"] = cleaned_line
 
     if not (line_is_variable or line_is_label):
-        machine_code = machine_code_from_line(cleaned_line)
-        validate_and_identify_constants(machine_code)
-        line_info["machine_code"] = machine_code
+        machine_code_templates = machine_code_templates_from_line(cleaned_line)
+        validate_and_identify_constants(machine_code_templates)
+        line_info["machine_code_templates"] = machine_code_templates
 
     return line_info
 
@@ -163,9 +163,9 @@ def get_line_info_template():
       if the line has no label.
     - defined_variable: The variable that this line defined. Empty
       string if the line is not a variable definition.
-    - machine_code: List of machine code bytes (with constant
-      expansion information) for this line. Empty list if no machine
-      code is required for this line. e.g. a comment.
+    - machine_code_templates: List of machine code byte templates (with
+      constant expansion information) for this assembly line. Empty
+      list if no machine code is required for this line. e.g. a comment.
 
     Returns:
         dict: Assembly line description template.
@@ -181,7 +181,7 @@ def get_line_info_template():
 
         "defined_variable": "",
 
-        "machine_code": [],
+        "machine_code_templates": [],
     }
 
 
@@ -265,7 +265,7 @@ def is_variable(test_string):
         return False
 
 
-def machine_code_from_line(line):
+def machine_code_templates_from_line(line):
     """
     Get the machine code that this assembly line is equivalent to.
 
@@ -287,11 +287,11 @@ def machine_code_from_line(line):
     operation_matches = []
     for operation in get_all_operations():
         try:
-            machine_code = operation.parse_line(line)
+            machine_code_templates = operation.parse_line(line)
         except InstructionParsingError as e:
             raise LineProcessingError(e)
-        if machine_code:
-            operation_matches.append(machine_code)
+        if machine_code_templates:
+            operation_matches.append(machine_code_templates)
 
     num_matches = len(operation_matches)
     if num_matches == 0:
@@ -302,9 +302,9 @@ def machine_code_from_line(line):
     return operation_matches[0]
 
 
-def validate_and_identify_constants(machine_code):
+def validate_and_identify_constants(machine_code_templates):
     """
-    Validate and identify constants from instruction machine code.
+    Validate and identify constants from assembly code.
 
     Assumed constants are returned from the instruction parsers. This
     function then validates them to make sure they are correct and
@@ -313,20 +313,21 @@ def validate_and_identify_constants(machine_code):
     See XXX for information on machine code dictionaries from
     instructions.
 
-    This function modifies the passed in machine code list in place
+    This function modifies the passed in machine code templates list
+    in place.
 
     Args:
-        machine_code (list(dict)): The machine code bytes as returned by
-            an instruction line parser.
+        machine_code_templates (list(dict)): The machine code byte
+            templates as returned by an instruction line parser.
     Raises:
         LineProcessingError: Invalid constants were specified.
     """
 
-    for instruction_byte in machine_code:
-        constant = instruction_byte["constant"]
-        if not constant:
+    for mc_byte_template in machine_code_templates:
+        if mc_byte_template["byte_type"] != "constant":
             continue
 
+        constant = mc_byte_template["constant"]
         constant_is_label = is_label(constant)
         constant_is_variable = is_variable(constant)
         constant_is_number = is_number(constant)
@@ -351,9 +352,9 @@ def validate_and_identify_constants(machine_code):
             value = number_constant_value(constant)
             if not (numbers.number_is_within_bit_limit(value, bits=8)):
                 raise LineProcessingError()
-            instruction_byte["number_value"] = value
+            mc_byte_template["number_value"] = value
 
-        instruction_byte["constant_type"] = constant_type
+        mc_byte_template["constant_type"] = constant_type
 
 
 def is_number(test_string):
@@ -409,7 +410,8 @@ def assign_labels(assembly_lines):
     for assembly_line in assembly_lines:
         if label is None:
             label = assembly_line["defined_label"] or None
-        if assembly_line["machine_code"] and label is not None:
+        if assembly_line["machine_code_templates"] and label is not None:
+            print assembly_line
             assembly_line["assigned_label"] = label
             label = None
         else:
@@ -429,13 +431,11 @@ def resolve_labels(assembly_lines):
 
     label_map = create_label_map(assembly_lines)
     for assembly_line in assembly_lines:
-        for instruction_byte in assembly_line["machine_code"]:
-            constant = instruction_byte["constant"]
-            if not constant:
-                continue
-            if instruction_byte["constant_type"] != "label":
-                continue
-            instruction_byte["machine_code"] = label_map[constant]
+        for byte_template in assembly_line["machine_code_templates"]:
+            if (byte_template["byte_type"] == "constant"
+                    and byte_template["constant_type"] == "label"):
+                label = byte_template["constant"]
+                byte_template["machine_code"] = label_map[label]
 
 
 def create_label_map(assembly_lines):
@@ -451,14 +451,13 @@ def create_label_map(assembly_lines):
     """
 
     label_map = {}
-    byte_index = 0
+    mc_byte_index = 0
     for assembly_line in assembly_lines:
         assigned_label = assembly_line["assigned_label"]
         if assigned_label:
-            index_bit_string = numbers.number_to_bitstring(byte_index)
+            index_bit_string = numbers.number_to_bitstring(mc_byte_index)
             label_map[assigned_label] = index_bit_string
-        machine_code = assembly_line["machine_code"]
-        byte_index += len(machine_code)
+        mc_byte_index += len(assembly_line["machine_code_templates"])
     return label_map
 
 
@@ -473,16 +472,13 @@ def resolve_numbers(assembly_lines):
             label map for.
     """
     for assembly_line in assembly_lines:
-        for instruction_byte in assembly_line["machine_code"]:
-            constant = instruction_byte["constant"]
-            if not constant:
-                continue
-            if instruction_byte["constant_type"] != "number":
-                continue
-            number = instruction_byte["number_value"]
-            instruction_byte["machine_code"] = numbers.number_to_bitstring(
-                number
-            )
+        for byte_template in assembly_line["machine_code_templates"]:
+            if (byte_template["byte_type"] == "constant"
+                    and byte_template["constant_type"] == "number"):
+                number = byte_template["number_value"]
+                byte_template["machine_code"] = numbers.number_to_bitstring(
+                    number
+                )
 
 
 def resolve_variables(assembly_lines, variable_start_offset=0):
@@ -501,13 +497,11 @@ def resolve_variables(assembly_lines, variable_start_offset=0):
         assembly_lines, variable_start_offset=variable_start_offset
     )
     for assembly_line in assembly_lines:
-        for instruction_byte in assembly_line["machine_code"]:
-            constant = instruction_byte["constant"]
-            if not constant:
-                continue
-            if instruction_byte["constant_type"] != "variable":
-                continue
-            instruction_byte["machine_code"] = variable_map[constant]
+        for byte_template in assembly_line["machine_code_templates"]:
+            if (byte_template["byte_type"] == "constant"
+                    and byte_template["constant_type"] == "variable"):
+                variable = byte_template["constant"]
+                byte_template["machine_code"] = variable_map[variable]
 
 
 def create_variable_map(assembly_lines, variable_start_offset=0):
@@ -540,15 +534,15 @@ def create_variable_map(assembly_lines, variable_start_offset=0):
             continue
 
         # Check for variable in machine code
-        for instruction_byte in assembly_line["machine_code"]:
-            constant = instruction_byte["constant"]
-            if not constant:
+        for byte_template in assembly_line["machine_code_templates"]:
+            if byte_template["byte_type"] != "constant":
                 continue
-            if instruction_byte["constant_type"] != "variable":
+            if byte_template["constant_type"] != "variable":
                 continue
-            if constant in variable_map:
+            variable = byte_template["constant"]
+            if variable in variable_map:
                 continue
-            variable_map[constant] = numbers.number_to_bitstring(
+            variable_map[variable] = numbers.number_to_bitstring(
                 variable_index
             )
             variable_index += 1
@@ -567,6 +561,6 @@ def extract_machine_code(assembly_lines):
     """
     machine_code = []
     for assembly_line in assembly_lines:
-        for instruction_byte in assembly_line["machine_code"]:
-            machine_code.append(instruction_byte["machine_code"])
+        for byte_template in assembly_line["machine_code_templates"]:
+            machine_code.append(byte_template["machine_code"])
     return machine_code

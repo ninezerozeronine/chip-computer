@@ -138,6 +138,7 @@ def parse_line(line):
 
     instruction_byte = get_instruction_byte(source, destination)
     machine_code = utils.get_machine_code_byte_template()
+    machine_code["byte_type"] = "instruction"
     machine_code["machine_code"] = instruction_byte
     return [machine_code]
 

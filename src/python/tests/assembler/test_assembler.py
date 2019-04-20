@@ -189,7 +189,6 @@ def test_is_label(test_input, expected):
     assert assembler.is_label(test_input) == expected
 
 
-
 @pytest.mark.parametrize("test_input,expected", [
     (
         "",
@@ -231,121 +230,93 @@ def test_is_varaible(test_input, expected):
 @pytest.mark.parametrize("test_input", [
     "fwgfkwghfkjhwgekjhgwkejg",
 ])
-def test_machine_code_from_line_raises(test_input):
+def test_machine_code_templates_from_line_raises(test_input):
     with pytest.raises(LineProcessingError):
-        assembler.machine_code_from_line(test_input)
+        assembler.machine_code_templates_from_line(test_input)
 
 
-@pytest.mark.parametrize("test_input,expected", [
-    (
-        [
-            {
-                "machine_code": "01101100",
-                "constant": "",
-            },
-        ],
-        [
-            {
-                "machine_code": "01101100",
-                "constant": "",
-            },
-        ],
-    ),
-    (
-        [
-            {
-                "machine_code": "",
-                "constant": "@label",
-            },
-        ],
-        [
-            {
-                "machine_code": "",
-                "constant": "@label",
-                "constant_type": "label",
-            },
-        ],
-    ),
-    (
-        [
-            {
-                "machine_code": "",
-                "constant": "$variable",
-            },
-        ],
-        [
-            {
-                "machine_code": "",
-                "constant": "$variable",
-                "constant_type": "variable",
-            },
-        ],
-    ),
-    (
-        [
-            {
-                "machine_code": "",
-                "constant": "#123",
-            },
-        ],
-        [
-            {
-                "machine_code": "",
-                "constant": "#123",
-                "constant_type": "number",
-                "number_value": 123,
-            },
-        ],
-    ),
-    (
-        [
-            {
-                "machine_code": "10101010",
-                "constant": "",
-            },
-            {
-                "machine_code": "",
-                "constant": "@label",
-            },
-        ],
-        [
-            {
-                "machine_code": "10101010",
-                "constant": "",
-            },
-            {
-                "machine_code": "",
-                "constant": "@label",
-                "constant_type": "label",
-            },
-        ],
-    ),
-])
+def gen_test_validate_and_identify_constants_data():
+    ret = []
+
+    test_input = get_machine_code_byte_template()
+    test_input["machine_code"] = "01101100"
+    test_input["byte_type"] = "instruction"
+    expected_output = deepcopy(test_input)
+    ret.append(([test_input], [expected_output]))
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "@label"
+    expected_output = deepcopy(test_input)
+    expected_output["constant_type"] = "label"
+    ret.append(([test_input], [expected_output]))
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "$variable"
+    expected_output = deepcopy(test_input)
+    expected_output["constant_type"] = "variable"
+    ret.append(([test_input], [expected_output]))
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "#123"
+    expected_output = deepcopy(test_input)
+    expected_output["constant_type"] = "number"
+    expected_output["number_value"] = 123
+    ret.append(([test_input], [expected_output]))
+
+    test_input_0 = get_machine_code_byte_template()
+    test_input_0["machine_code"] = "01101100"
+    test_input_0["byte_type"] = "instruction"
+    expected_output_0 = deepcopy(test_input_0)
+    test_input_1 = get_machine_code_byte_template()
+    test_input_1["byte_type"] = "constant"
+    test_input_1["constant"] = "@label"
+    expected_output_1 = deepcopy(test_input_1)
+    expected_output_1["constant_type"] = "label"
+    ret.append(
+        (
+            [test_input_0, test_input_1],
+            [expected_output_0, expected_output_1]
+        )
+    )
+
+    return ret
+
+
+@pytest.mark.parametrize(
+    "test_input,expected", gen_test_validate_and_identify_constants_data()
+)
 def test_validate_and_identify_constants(test_input, expected):
     assembler.validate_and_identify_constants(test_input)
     assert test_input == expected
 
 
-@pytest.mark.parametrize('test_input', [
-    [
-        {
-            "machine_code": "01101100",
-            "constant": "fwgjfgwjfgkjh",
-        },
-    ],
-    [
-        {
-            "machine_code": "01101100",
-            "constant": "@number$variable#123",
-        },
-    ],
-    [
-        {
-            "machine_code": "01101100",
-            "constant": "#9999",
-        },
-    ],
-])
+def gen_validate_and_identify_constants_raises_data():
+    ret = []
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "fwgjfgwjfgkjh"
+    ret.append([test_input])
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "@number$variable#123"
+    ret.append([test_input])
+
+    test_input = get_machine_code_byte_template()
+    test_input["byte_type"] = "constant"
+    test_input["constant"] = "#9999"
+    ret.append([test_input])
+
+    return ret
+
+
+@pytest.mark.parametrize(
+    "test_input", gen_validate_and_identify_constants_raises_data()
+)
 def test_validate_and_identify_constants_raises(test_input):
     with pytest.raises(LineProcessingError):
         assembler.validate_and_identify_constants(test_input)
@@ -420,11 +391,13 @@ def get_processed_assembly_lines():
     line["raw"] = "LOAD [$variable1] A"
     line["clean"] = "LOAD [$variable1] A"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable1"
     line_mc_1["constant_type"] = "variable"
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -443,11 +416,13 @@ def get_processed_assembly_lines():
     line["raw"] = "LOAD [$variable2] A"
     line["clean"] = "LOAD [$variable2] A"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable2"
     line_mc_1["constant_type"] = "variable"
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -455,11 +430,13 @@ def get_processed_assembly_lines():
     line["raw"] = "JUMP @label1"
     line["clean"] = "JUMP @label1"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "@label1"
     line_mc_1["constant_type"] = "label"
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -471,12 +448,14 @@ def get_processed_assembly_lines():
     line["raw"] = "STORE A [#123]"
     line["clean"] = "STORE A [#123]"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "#123"
     line_mc_1["constant_type"] = "number"
     line_mc_1["number_value"] = 123
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -491,11 +470,13 @@ def get_processed_assembly_lines():
     line["raw"] = "LOAD [$variable3] B"
     line["clean"] = "LOAD [$variable3] A"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable3"
     line_mc_1["constant_type"] = "variable"
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -503,11 +484,13 @@ def get_processed_assembly_lines():
     line["raw"] = "LOAD [$variable0] C"
     line["clean"] = "LOAD [$variable0] A"
     line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
     line_mc_0["machine_code"] = "99999999"
     line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable0"
     line_mc_1["constant_type"] = "variable"
-    line["machine_code"] = [line_mc_0, line_mc_1]
+    line["machine_code_templates"] = [line_mc_0, line_mc_1]
     lines.append(line)
 
     line = assembler.get_line_info_template()
@@ -536,7 +519,7 @@ def test_resolve_labels():
     input_lines[5]["assigned_label"] = "@label2"
     input_lines[10]["assigned_label"] = "@label3"
     expected_lines = deepcopy(input_lines)
-    expected_lines[6]["machine_code"][1]["machine_code"] = "00000000"
+    expected_lines[6]["machine_code_templates"][1]["machine_code"] = "00000000"
     assembler.resolve_labels(input_lines)
     assert input_lines == expected_lines
 
@@ -558,7 +541,7 @@ def test_label_map():
 def test_resolve_numbers():
     input_lines = get_processed_assembly_lines()
     expected_lines = deepcopy(input_lines)
-    expected_lines[8]["machine_code"][1]["machine_code"] = "01111011"
+    expected_lines[8]["machine_code_templates"][1]["machine_code"] = "01111011"
     assembler.resolve_numbers(input_lines)
     assert input_lines == expected_lines
 
@@ -566,10 +549,10 @@ def test_resolve_numbers():
 def test_resolve_variables_no_offset():
     input_lines = get_processed_assembly_lines()
     expected_lines = deepcopy(input_lines)
-    expected_lines[2]["machine_code"][1]["machine_code"] = "00000001"
-    expected_lines[5]["machine_code"][1]["machine_code"] = "00000010"
-    expected_lines[10]["machine_code"][1]["machine_code"] = "00000011"
-    expected_lines[11]["machine_code"][1]["machine_code"] = "00000000"
+    expected_lines[2]["machine_code_templates"][1]["machine_code"] = "00000001"
+    expected_lines[5]["machine_code_templates"][1]["machine_code"] = "00000010"
+    expected_lines[10]["machine_code_templates"][1]["machine_code"] = "00000011"
+    expected_lines[11]["machine_code_templates"][1]["machine_code"] = "00000000"
     assembler.resolve_variables(input_lines)
     assert input_lines == expected_lines
 
@@ -577,10 +560,10 @@ def test_resolve_variables_no_offset():
 def test_resolve_variables_with_offset():
     input_lines = get_processed_assembly_lines()
     expected_lines = deepcopy(input_lines)
-    expected_lines[2]["machine_code"][1]["machine_code"] = "00001001"
-    expected_lines[5]["machine_code"][1]["machine_code"] = "00001010"
-    expected_lines[10]["machine_code"][1]["machine_code"] = "00001011"
-    expected_lines[11]["machine_code"][1]["machine_code"] = "00001000"
+    expected_lines[2]["machine_code_templates"][1]["machine_code"] = "00001001"
+    expected_lines[5]["machine_code_templates"][1]["machine_code"] = "00001010"
+    expected_lines[10]["machine_code_templates"][1]["machine_code"] = "00001011"
+    expected_lines[11]["machine_code_templates"][1]["machine_code"] = "00001000"
     assembler.resolve_variables(input_lines, variable_start_offset=8)
     assert input_lines == expected_lines
 

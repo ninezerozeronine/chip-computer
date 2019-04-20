@@ -138,8 +138,10 @@ def parse_line(line):
         raise InstructionParsingError(msg)
 
     instruction_byte = get_instruction_byte(dest)
-    mc_byte_0 = utils.get_machine_code_byte_template()
-    mc_byte_0["machine_code"] = instruction_byte
-    mc_byte_1 = utils.get_machine_code_byte_template()
-    mc_byte_1["constant"] = constant
-    return [mc_byte_0, mc_byte_1]
+    byte_template_0 = utils.get_machine_code_byte_template()
+    byte_template_0["byte_type"] = "instruction"
+    byte_template_0["machine_code"] = instruction_byte
+    byte_template_1 = utils.get_machine_code_byte_template()
+    byte_template_1["byte_type"] = "constant"
+    byte_template_1["constant"] = constant
+    return [byte_template_0, byte_template_1]

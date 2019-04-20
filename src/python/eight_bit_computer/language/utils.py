@@ -62,11 +62,13 @@ def get_machine_code_byte_template():
 
     - machine_code: A byte bitstring of the final byte that will make up
       the machine code.
-    - constant: The constant that this byte may optionally need to
-      become. The resolution of the constant to a real machine come byte
-      is done by the assembler.
+    - byte_type: The type of machine code byte. Will be instruction or
+      constant.
     - constant_type: The type of the constant. Could be a label,
       variable or number.
+    - constant: The constant that this byte will need to become. The
+      resolution of the constant to a real machine code byte is done by
+      the assembler.
     - number_value: The value of the constant as an int if it's a
       number.
 
@@ -76,8 +78,9 @@ def get_machine_code_byte_template():
 
     return {
         "machine_code": "",
-        "constant": "",
+        "byte_type": "",
         "constant_type": "",
+        "constant": "",
         "number_value": 0,
     }
 

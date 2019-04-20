@@ -231,23 +231,27 @@ def generate_machine_code_templates(source_token, dest_token):
     """
 
     memory_position = utils.extract_memory_position(source_token)
-    machine_code = []
+    machine_code_templates = []
     # If the source is a normal module
     if memory_position in _SOURCES:
         instruction_byte = get_instruction_byte(memory_position, dest_token)
-        mc_0 = utils.get_machine_code_byte_template()
-        mc_0["machine_code"] = instruction_byte
-        machine_code.append(mc_0)
+        byte_template = utils.get_machine_code_byte_template()
+        byte_template["byte_type"] = "instruction"
+        byte_template["machine_code"] = instruction_byte
+
+        machine_code_templates.append(byte_template)
 
     # Else the source is a constant
     else:
         instruction_byte = get_instruction_byte("IMM", dest_token)
-        mc_0 = utils.get_machine_code_byte_template()
-        mc_0["machine_code"] = instruction_byte
-        machine_code.append(mc_0)
+        byte_template_0 = utils.get_machine_code_byte_template()
+        byte_template_0["byte_type"] = "instruction"
+        byte_template_0["machine_code"] = instruction_byte
+        machine_code_templates.append(byte_template_0)
 
-        mc_1 = utils.get_machine_code_byte_template()
-        mc_1["constant"] = memory_position
-        machine_code.append(mc_1)
+        byte_template_1 = utils.get_machine_code_byte_template()
+        byte_template_1["byte_type"] = "constant"
+        byte_template_1["constant"] = memory_position
+        machine_code_templates.append(byte_template_1)
 
-    return machine_code
+    return machine_code_templates

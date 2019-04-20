@@ -38,13 +38,16 @@ def generate_parse_line_test_data():
 
     test_input = "LOAD [C] A"
     mc = get_machine_code_byte_template()
+    mc["byte_type"] = "instruction"
     mc["machine_code"] = "01011001"
     ret.append((test_input, [mc]))
 
     test_input = "   LOAD  [$variable]   ACC   "
     mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
     mc_0["machine_code"] = "01111000"
     mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
     mc_1["constant"] = "$variable"
     ret.append((test_input, [mc_0, mc_1]))
 

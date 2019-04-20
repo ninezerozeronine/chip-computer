@@ -36,15 +36,19 @@ def generate_parse_line_test_data():
 
     test_input = "SET A #123"
     mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
     mc_0["machine_code"] = "00111001"
     mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
     mc_1["constant"] = "#123"
     ret.append((test_input, [mc_0, mc_1]))
 
     test_input = "   SET  B   monkey   "
     mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
     mc_0["machine_code"] = "00111010"
     mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
     mc_1["constant"] = "monkey"
     ret.append((test_input, [mc_0, mc_1]))
 
