@@ -125,7 +125,7 @@ def parse_line(line):
     dest = line_tokens[1]
     constant = line_tokens[2]
 
-    # Is the second token a valid module name
+    # Is the destination token a valid module name
     if dest not in _DESTINATIONS:
         pretty_destinations = utils.add_quotes_to_strings(_DESTINATIONS)
         msg = (

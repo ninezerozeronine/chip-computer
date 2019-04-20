@@ -18,8 +18,8 @@ from .. import utils
 from ...exceptions import InstructionParsingError
 
 
-_SOURCES = ("ACC", "A", "B", "C", "PC")
-_DESTINATIONS = ("ACC", "A", "B", "C", "SP")
+_SOURCES = ("ACC", "A", "B", "C", "PC", "SP")
+_DESTINATIONS = ("ACC", "A", "B", "C")
 
 
 def get_name():
