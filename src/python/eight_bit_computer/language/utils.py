@@ -3,6 +3,7 @@ from ..datatemplate import DataTemplate
 from .definitions import MODULE_CONTROL, STEPS
 
 import re
+from copy import deepcopy
 
 
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
@@ -177,19 +178,25 @@ def extract_memory_position(token):
     Args:
         token (str): The token to extract a memory position from.
     Returns:
-        str or None: String of the token if one could be extracted, None
-        otherwise.
+        str: The location in memory being referenced.
     """
 
+    return token[1:-1]
+
+
+def is_memory_index(token):
+    """
+
+    """
     if (token.startswith("[")
             and token.endswith("]")
             and len(token) > 2):
-        return token[1:-1]
+        return True
     else:
-        return None
+        return False
 
 
-def parse_line(line, opcode, op_args_defs=None):
+def match_and_parse_line(line, opcode, op_args_defs=None):
     """
 
     """
@@ -201,27 +208,42 @@ def parse_line(line, opcode, op_args_defs=None):
 
     # Return early if there are no tokens
     if not line_tokens:
-        return None, []
+        return False, []
 
     # Return early if the opcode doesn't match
     line_opcode = line_tokens[0]
     if line_opcode != opcode:
-        return None, []
+        return False, []
 
     # Return early if this op code has no args
     line_args = line_tokens[1:]
     if not line_args and not op_args_defs:
-        return line_opcode, []
+        return True, []
 
-    matches = []
+    match = False
     for op_args_def in op_args_defs:
-        match, parsed_args = match_and_parse_args_sets(line_args, op_args_def)
-        if match:
-            matches.append((line_opcode, parsed_args))
-    if 1
+        args_are_correct, parsed_args = match_and_parse_args(
+            line_args, op_args_def
+        )
+        if args_are_correct:
+            if match:
+                msg = (
+                    "Args matched multiple arg possibilities."
+                )
+                raise InstructionParsingError(msg)
+            else:
+                match = True
+
+    if not match:
+        msg = (
+            "Incorrect args for op. Possible args are:"
+        )
+        raise InstructionParsingError(msg)
+
+    return True, parsed_args
 
 
-def match_and_parse_args_sets(line_args, op_args_def):
+def match_and_parse_args(line_args, op_args_def):
     """
 
     """
@@ -229,22 +251,77 @@ def match_and_parse_args_sets(line_args, op_args_def):
     if len(line_args) != len(op_args_def):
         return False, []
 
-    all_match = True
     parsed_args = []
     for line_arg, op_arg_def in zip(line_args, op_args_def):
-        pass
+        num_matches = 0
+        # If the argument is a plain module name
+        if (op_arg_def["value_type"] == "module_name"
+                and not op_arg_def["is_memory_location"]
+                and not is_memory_index(line_arg)
+                and line_arg == op_arg_def["value"]):
+            parsed_arg = deepcopy(op_args_def)
+            parsed_args.append(parsed_arg)
+            num_matches += 1
+
+        # If the argument is a module name indexing memory
+        if (op_arg_def["value_type"] == "module_name"
+                and op_arg_def["is_memory_location"]
+                and is_memory_index(line_arg)):
+            memory_position = extract_memory_position(line_arg)
+            if memory_position == op_arg_def["value"]:
+                parsed_arg = deepcopy(op_args_def)
+                parsed_args.append(parsed_arg)
+                num_matches += 1
+
+        # If the argument is a plain constant
+        if (op_arg_def["value_type"] == "constant"
+                and not op_arg_def["is_memory_location"]
+                and not is_memory_index(line_arg)):
+            parsed_arg = deepcopy(op_args_def)
+            parsed_arg["value"] = line_arg
+            parsed_args.append(parsed_arg)
+            num_matches += 1
+
+        # If the argument is a constant indexing memory
+        if (op_arg_def["value_type"] == "constant"
+                and op_arg_def["is_memory_location"]
+                and is_memory_index(line_arg)):
+            memory_position = extract_memory_position(line_arg)
+            parsed_arg = deepcopy(op_args_def)
+            parsed_arg["value"] = memory_position
+            parsed_args.append(parsed_arg)
+            num_matches += 1
+
+        # If this argument didn't match, then these args don't match the
+        # defs
+        if num_matches == 0:
+            return False, []
+
+        # If there was more than one match something strange has
+        # happened, bail.
+        if num_matches > 1:
+            msg = (
+                "The argument '{line_arg} matched more than one "
+                "argument type".format(line_arg=line_arg)
+            )
+            raise InstructionParsingError(msg)
+
+    # If the for loop completes successfully, we've matched all the
+    # args.
+    return True, parsed_args
 
 
-def get_arg_template():
+def get_arg_def_template():
     """
-    Get an argument template for an assembly operation argument.
+    Get an argument definition template for an assembly operation argument.
 
     This is a set of information that describes an argument used in a
     line of assembly.
 
     The keys have the following meaning:
 
-    - arg_type: What kind of argument this is. constant or module
+    - value_type: What kind of argument this is. constant or
+      module_name.
     - is_memory_location: Whether this argument is referring to a
       location in memory.
     - value: The permitted value of the argument if it's a module.
@@ -254,12 +331,10 @@ def get_arg_template():
     """
 
     return {
-        "arg_type": "",
+        "value_type": "",
         "is_memory_location": False,
         "value": "",
     }
-
-
 
     # # COPY ACC A
     # # COPY B C
