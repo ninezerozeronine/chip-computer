@@ -149,33 +149,33 @@ def slice_rom(rom):
 
     This is to prepare the data to write into the roms. To take a single
     RomData as an example, if it looked like this (spaces added for
-    clarity):
+    clarity)::
 
-    RomData(
-        address="0000000 0000 000",
-        data="10101010 111111111 00000000 11001100"
-    )
-
-    We would end up with:
-
-    {
-        0: RomData(
+        RomData(
             address="0000000 0000 000",
-            data="11001100"
-        ),
-        1: RomData(
-            address="0000000 0000 000",
-            data="00000000"
-        ),
-        2: RomData(
-            address="0000000 0000 000",
-            data="11111111"
-        ),
-        3: RomData(
-            address="0000000 0000 000",
-            data="10101010"
+            data="10101010 111111111 00000000 11001100"
         )
-    }
+
+    We would end up with::
+
+        {
+            0: RomData(
+                address="0000000 0000 000",
+                data="11001100"
+            ),
+            1: RomData(
+                address="0000000 0000 000",
+                data="00000000"
+            ),
+            2: RomData(
+                address="0000000 0000 000",
+                data="11111111"
+            ),
+            3: RomData(
+                address="0000000 0000 000",
+                data="10101010"
+            )
+        }
 
     Args:
         rom (list(RomData)): The complete ROM

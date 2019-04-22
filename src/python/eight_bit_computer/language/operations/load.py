@@ -195,8 +195,7 @@ def validate_source_and_dest_tokens(source, destination):
     """
 
     # Is the memory location valid
-    memory_position = utils.extract_memory_position(source)
-    if memory_position is None:
+    if not utils.is_memory_index(source):
         msg = (
             "A memory position (e.g. [A], [#123], [$variable]) must be "
             "specified as the first operand for the LOAD operation. "

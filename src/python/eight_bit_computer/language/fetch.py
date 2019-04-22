@@ -1,5 +1,5 @@
 """
-The fetch steps
+The fetch steps added to the start of all operations.
 """
 
 from .definitions import MODULE_CONTROL, STEPS, EMPTY_ADDRESS

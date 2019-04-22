@@ -27,8 +27,12 @@ def number_is_within_bit_limit(number, bits=8):
 
     Args:
         number (int): The number to check.
+        bits (int, optional): The number of bits available.
     Returns:
         bool: True if within limits, False if not.
     """
 
-    return -127 <= number <= 255
+    min_val = ((2**bits / 2) - 1) * -1
+    max_val = 2**bits - 1
+
+    return min_val <= number <= max_val

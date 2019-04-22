@@ -267,7 +267,7 @@ def is_variable(test_string):
 
 def machine_code_templates_from_line(line):
     """
-    Get the machine code that this assembly line is equivalent to.
+    Get machine code templates that describe this line.
 
     Uses all the defined instructions and defers the work of parsing to
     them. See XXX for information on machine code dictionaries from

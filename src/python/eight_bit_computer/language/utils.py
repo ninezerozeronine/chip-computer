@@ -1,9 +1,10 @@
-from .. import bitdef
-from ..datatemplate import DataTemplate
-from .definitions import MODULE_CONTROL, STEPS
-
 import re
 from copy import deepcopy
+
+from .definitions import MODULE_CONTROL, STEPS
+from ..datatemplate import DataTemplate
+from ..exceptions import InstructionParsingError
+from .. import bitdef
 
 
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
@@ -168,37 +169,75 @@ def get_tokens_from_line(line):
     return line_tokens
 
 
-def extract_memory_position(token):
+def extract_memory_position(argument):
     """
-    Extract a memory position from a token.
+    Extract a memory position from a memory index argument.
 
-    A token holding a memory position is a token that starts with "[",
-    ends with "]" and has at least one character in between.
+    See :func:~`is_memory_index` for details of what a memory index is.
 
     Args:
-        token (str): The token to extract a memory position from.
+        argument (str): The argument to extract a memory position from.
     Returns:
         str: The location in memory being referenced.
     """
 
-    return token[1:-1]
+    return argument[1:-1]
 
 
-def is_memory_index(token):
+def is_memory_index(argument):
     """
+    Determine whether this argument is a memory index.
+
+    Memory indexes can be module names or constants with a ``[`` at the start
+    and a ``]`` at the end. e.g.:
+
+    - ``[A]``
+    - ``[#42]``
+    - ``[$variable]``
+
+    Args:
+        argument (str): The argument being used for the assembly
+            operation.
+    Returns:
+        bool: True if the argument is a memory index, false if not.
 
     """
-    if (token.startswith("[")
-            and token.endswith("]")
-            and len(token) > 2):
+    if (argument.startswith("[")
+            and argument.endswith("]")
+            and len(argument) > 2):
         return True
     else:
         return False
 
 
-def match_and_parse_line(line, opcode, op_args_defs=None):
+def represent_as_memory_index(argument):
     """
 
+    """
+    return "[{argument}]".format(argument=argument)
+
+
+def match_and_parse_line(line, opcode, op_args_defs=None):
+    """
+    Examine assembly code to see if it is valid and parse the arguments.
+
+    This is a common function used by most of the assembly operations.
+
+    Args:
+        line (str): The line of assembly code.
+        opcode (str): The opcode this line is being tested to match.
+        op_args_defs (list(list(dict)), optional): Data structure that
+            defines the different combinations of arguments. See
+            :func:`~get_arg_def_template` for more details.
+
+    Returns:
+        (bool, list(dict)): Whether or not the line matched, and if it
+        did, the parsed arguments.
+
+    Raises:
+        InstructionParsingError: If multiple op_args defs matched. Or
+        if no op_args defs matched if the opcode matched (i.e. the
+        arguments weren't valid for that assembly operation).
     """
 
     if op_args_defs is None:
@@ -235,17 +274,66 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
                 match = True
 
     if not match:
+        poss_args_list = generate_possible_arg_list(op_args_defs)
+        poss_args_quotes_list = [
+            add_quotes_to_strings(poss_args) for poss_args in poss_args_list
+        ]
+        pretty_possible_args = "\n".join(poss_args_quotes_list)
         msg = (
-            "Incorrect args for op. Possible args are:"
+            "Incorrect arguments specified for the {opcode} "
+            "operation:\n\n{pretty_args}\n\n. The possible arguments "
+            "are:\n\n{pretty_possible_args}.".format(
+                opcode=opcode,
+                pretty_args=add_quotes_to_strings(line_args),
+                pretty_possible_args=pretty_possible_args,
+            )
         )
         raise InstructionParsingError(msg)
 
     return True, parsed_args
 
 
-def match_and_parse_args(line_args, op_args_def):
+def generate_possible_arg_list(op_args_defs):
+    """
+    
     """
 
+    arg_possibilities = []
+    for op_args_def in op_args_defs:
+        for op_arg_def in op_args_def:
+            args = []
+            arg = ""
+            if op_arg_def["value_type"] == "module_name":
+                arg = op_arg_def["value"]
+            if op_arg_def["value_type"] == "constant":
+                arg = "<constant>"
+            if op_arg_def["is_memory_location"]:
+                arg = represent_as_memory_index(arg)
+            args.append(arg)
+        arg_possibilities.append(args)
+    return arg_possibilities
+
+
+def match_and_parse_args(line_args, op_args_def):
+    """
+    Parse assembly operation args if they match the definition.
+
+    Take arguments supplied for the assembly operation and see if they
+    match this arguments definition.
+
+    Args:
+        line_args: (list(str)): The arguments supplied for this assembly
+            operation.
+        op_args_def (list(dict)): Definition of a set of arguments. See
+            :func:`~get_arg_def_template` for more details.
+
+    Returns:
+        (bool, list(dict)): Whether or not the arguments matched, and if
+        they did, the parsed values.
+
+    Raises:
+        InstructionParsingError: If a single argument managed to match
+            different kinds of argument definitions.
     """
 
     if len(line_args) != len(op_args_def):
@@ -259,7 +347,7 @@ def match_and_parse_args(line_args, op_args_def):
                 and not op_arg_def["is_memory_location"]
                 and not is_memory_index(line_arg)
                 and line_arg == op_arg_def["value"]):
-            parsed_arg = deepcopy(op_args_def)
+            parsed_arg = deepcopy(op_arg_def)
             parsed_args.append(parsed_arg)
             num_matches += 1
 
@@ -269,7 +357,7 @@ def match_and_parse_args(line_args, op_args_def):
                 and is_memory_index(line_arg)):
             memory_position = extract_memory_position(line_arg)
             if memory_position == op_arg_def["value"]:
-                parsed_arg = deepcopy(op_args_def)
+                parsed_arg = deepcopy(op_arg_def)
                 parsed_args.append(parsed_arg)
                 num_matches += 1
 
@@ -277,7 +365,7 @@ def match_and_parse_args(line_args, op_args_def):
         if (op_arg_def["value_type"] == "constant"
                 and not op_arg_def["is_memory_location"]
                 and not is_memory_index(line_arg)):
-            parsed_arg = deepcopy(op_args_def)
+            parsed_arg = deepcopy(op_arg_def)
             parsed_arg["value"] = line_arg
             parsed_args.append(parsed_arg)
             num_matches += 1
@@ -287,7 +375,7 @@ def match_and_parse_args(line_args, op_args_def):
                 and op_arg_def["is_memory_location"]
                 and is_memory_index(line_arg)):
             memory_position = extract_memory_position(line_arg)
-            parsed_arg = deepcopy(op_args_def)
+            parsed_arg = deepcopy(op_arg_def)
             parsed_arg["value"] = memory_position
             parsed_args.append(parsed_arg)
             num_matches += 1
@@ -313,18 +401,67 @@ def match_and_parse_args(line_args, op_args_def):
 
 def get_arg_def_template():
     """
-    Get an argument definition template for an assembly operation argument.
+    Get a definition template for an assembly operation argument.
 
     This is a set of information that describes an argument used in a
     line of assembly.
 
     The keys have the following meaning:
 
-    - value_type: What kind of argument this is. constant or
-      module_name.
+    - value_type: What kind of argument this is. ``constant`` or
+      ``module_name``.
     - is_memory_location: Whether this argument is referring to a
       location in memory.
     - value: The permitted value of the argument if it's a module.
+
+    These dictionaries will be grouped in a list of lists that describe
+    the possible arguments for an assembly operation. E.g. if the
+    possible arguments for an assembly operation were:
+
+    - ``ACC`` ``A``
+    - ``B`` ``C``
+    - ``A`` ``[#123]``
+
+    The data structure would be as follows::
+
+        [
+            [
+                {
+                    "value_type": "module_name",
+                    "is_memory_location": False,
+                    "value": "ACC",
+                },
+                {
+                    "value_type": "module_name",
+                    "is_memory_location": False,
+                    "value": "A",
+                },
+            ],
+            [
+                {
+                    "value_type": "module_name",
+                    "is_memory_location": False,
+                    "value": "B",
+                },
+                {
+                    "value_type": "module_name",
+                    "is_memory_location": True,
+                    "value": "C",
+                },
+            ],
+            [
+                {
+                    "value_type": "module_name",
+                    "is_memory_location": False,
+                    "value": "A",
+                },
+                {
+                    "value_type": "constant",
+                    "is_memory_location": True,
+                    "value": "",
+                },
+            ],
+        ]
 
     Returns:
         dict: Machine code byte description template.
@@ -335,64 +472,3 @@ def get_arg_def_template():
         "is_memory_location": False,
         "value": "",
     }
-
-    # # COPY ACC A
-    # # COPY B C
-    # example_op_args_0 = [
-    #     [
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "ACC",
-    #         },
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "A",
-    #         },
-    #     ],
-    #     [
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "B",
-    #         },
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "C",
-    #         },
-    #     ],
-    # ]
-
-    # # LOAD [#123] B
-    # example_op_args_1 = [
-    #     [
-    #         {
-    #             "arg_type": "constant",
-    #             "is_memory_location": True,
-    #             "value": "",
-    #         },
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "B",
-    #         },
-    #     ],
-    # ]
-
-    # # SET B #44
-    # example_op_args_2 = [
-    #     [
-    #         {
-    #             "arg_type": "module",
-    #             "is_memory_location": False,
-    #             "value": "B",
-    #         },
-    #         {
-    #             "arg_type": "constant",
-    #             "is_memory_location": False,
-    #             "value": "",
-    #         },
-    #     ],
-    # ]

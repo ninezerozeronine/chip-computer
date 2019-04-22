@@ -22,7 +22,8 @@ def check_structure_validity(assembly_lines):
 
 def check_multiple_label_defs(assembly_lines):
     """
-    Has the same label been defines more than once
+    Has the same label been defines more than once.
+
     Args:
         assembly_lines (list(dict)): List of dictionaries (that conform
             to the :data:`~LINE_INFO_TEMPLATE` dictionary) with

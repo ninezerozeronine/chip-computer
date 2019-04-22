@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    eight_bit_computer.assembler
     eight_bit_computer.language
 
 Submodules
@@ -13,10 +14,10 @@ Submodules
 
 .. toctree::
 
-   eight_bit_computer.assembler
    eight_bit_computer.bitdef
    eight_bit_computer.datatemplate
    eight_bit_computer.exceptions
+   eight_bit_computer.numbers
    eight_bit_computer.rom
 
 Module contents
