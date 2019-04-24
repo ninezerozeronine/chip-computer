@@ -236,19 +236,18 @@ def reverse_index(index, length):
     """
     Reverse the passed in index as if the index direction was flipped.
 
-    If we take the string "hello" as an example the regular indexes for
-    each letter would be::
+    Taking the string "hello" as an example the regular indexes for
+    each letter are::
 
         01234
         hello
 
-    If we reversed the indexes we would have::
+    Reversing the indexes yields::
 
         43210
         hello
 
-    This is useful when we need to index into a bitdef on bitdef
-    indexing terms.
+    This allows easily indexing into a bitdef on bitdef indexing terms.
 
     Args:
         index (int): The index position to reverse.

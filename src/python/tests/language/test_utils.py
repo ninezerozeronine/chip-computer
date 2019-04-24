@@ -113,10 +113,11 @@ def test_is_memory_index(test_input, expected):
     assert utils.is_memory_index(test_input) == expected
 
 
-def gen_test_match_and_parse_args_input():
-    tests = []
+def gen_test_match_and_parse_args_input_0():
+    """
+    Single module arg
+    """
 
-    # Single module arg
     line_args = ["A"]
 
     op_args_def = []
@@ -131,9 +132,14 @@ def gen_test_match_and_parse_args_input():
     expected_match = True
     expected_args = deepcopy(op_args_def)
 
-    tests.append((line_args, op_args_def, expected_match, expected_args))
+    return (line_args, op_args_def, expected_match, expected_args)
 
-    # All kinds
+
+def gen_test_match_and_parse_args_input_1():
+    """
+    All kinds
+    """
+
     line_args = ["A", "[B]", "#123", "[#123]"]
 
     op_args_def = []
@@ -171,9 +177,14 @@ def gen_test_match_and_parse_args_input():
     expected_args[2]["value"] = "#123"
     expected_args[3]["value"] = "#123"
 
-    tests.append((line_args, op_args_def, expected_match, expected_args))
+    return (line_args, op_args_def, expected_match, expected_args)
 
-    # Not module memref
+
+def gen_test_match_and_parse_args_input_2():
+    """
+    Not module memref
+    """
+
     line_args = ["A"]
 
     op_args_def = []
@@ -188,9 +199,14 @@ def gen_test_match_and_parse_args_input():
     expected_match = False
     expected_args = []
 
-    tests.append((line_args, op_args_def, expected_match, expected_args))
+    return (line_args, op_args_def, expected_match, expected_args)
 
-    # Not constant memref
+
+def gen_test_match_and_parse_args_input_3():
+    """
+    Not constant memref
+    """
+
     line_args = ["#123"]
 
     op_args_def = []
@@ -205,9 +221,14 @@ def gen_test_match_and_parse_args_input():
     expected_match = False
     expected_args = []
 
-    tests.append((line_args, op_args_def, expected_match, expected_args))
+    return (line_args, op_args_def, expected_match, expected_args)
 
-    # Arg length mismatch
+
+def gen_test_match_and_parse_args_input_4():
+    """
+    Arg length mismatch
+    """
+
     line_args = ["A", "B"]
 
     op_args_def = []
@@ -222,14 +243,18 @@ def gen_test_match_and_parse_args_input():
     expected_match = False
     expected_args = []
 
-    tests.append((line_args, op_args_def, expected_match, expected_args))
-
-    return tests
+    return (line_args, op_args_def, expected_match, expected_args)
 
 
 @pytest.mark.parametrize(
     "line_args,op_args_def,expected_match,expected_args",
-    gen_test_match_and_parse_args_input()
+    [
+        gen_test_match_and_parse_args_input_0(),
+        gen_test_match_and_parse_args_input_1(),
+        gen_test_match_and_parse_args_input_2(),
+        gen_test_match_and_parse_args_input_3(),
+        gen_test_match_and_parse_args_input_4(),
+    ]
 )
 def test_match_and_parse_args(
     line_args, op_args_def, expected_match, expected_args
@@ -239,12 +264,11 @@ def test_match_and_parse_args(
     assert parsed_args == expected_args
 
 
-def gen_test_match_and_parse_line_input():
-    tests = []
+def gen_test_match_and_parse_line_input_0():
+    """
+    Match second args def
+    """
 
-    ##########
-    # Test 0 #
-    ##########
     line = "COPY A B"
     opcode = "COPY"
 
@@ -291,11 +315,13 @@ def gen_test_match_and_parse_line_input():
     expected_match = True
     expected_args = deepcopy(op_args_defs[1])
 
-    tests.append((line, opcode, op_args_defs, expected_match, expected_args))
+    return (line, opcode, op_args_defs, expected_match, expected_args)
 
-    ##########
-    # Test 1 #
-    ##########
+
+def gen_test_match_and_parse_line_input_1():
+    """
+    No args
+    """
     line = "NOOP"
     opcode = "NOOP"
 
@@ -304,13 +330,16 @@ def gen_test_match_and_parse_line_input():
     expected_match = True
     expected_args = []
 
-    tests.append((line, opcode, op_args_defs, expected_match, expected_args))
+    return (line, opcode, op_args_defs, expected_match, expected_args)
 
-    ##########
-    # Test 2 #
-    ##########
-    line = "SET A"
-    opcode = "LOAD"
+
+def gen_test_match_and_parse_line_input_2():
+    """
+    Module mem ref
+    """
+
+    line = "JUMP [A]"
+    opcode = "JUMP"
 
     op_args_defs = []
 
@@ -319,31 +348,87 @@ def gen_test_match_and_parse_line_input():
 
     op_arg_def = utils.get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
-    op_arg_def["is_memory_location"] = False
+    op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = "A"
-
-    op_args_def.append(op_arg_def)
-
-    op_arg_def = utils.get_arg_def_template()
-    op_arg_def["value_type"] = "module_name"
-    op_arg_def["is_memory_location"] = False
-    op_arg_def["value"] = "B"
 
     op_args_def.append(op_arg_def)
 
     op_args_defs.append(op_args_def)
 
-    expected_match = False
-    expected_args = []
+    expected_match = True
+    expected_args = deepcopy(op_args_defs[0])
 
-    tests.append((line, opcode, op_args_defs, expected_match, expected_args))
+    return (line, opcode, op_args_defs, expected_match, expected_args)
 
-    return tests
+
+def gen_test_match_and_parse_line_input_3():
+    """
+    constant mem ref
+    """
+
+    line = "JUMP [$variable]"
+    opcode = "JUMP"
+
+    op_args_defs = []
+
+    # Def 0
+    op_args_def = []
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "constant"
+    op_arg_def["is_memory_location"] = True
+    op_arg_def["value"] = ""
+
+    op_args_def.append(op_arg_def)
+
+    op_args_defs.append(op_args_def)
+
+    expected_match = True
+    expected_args = deepcopy(op_args_defs[0])
+    expected_args[0]["value"] = "$variable"
+
+    return (line, opcode, op_args_defs, expected_match, expected_args)
+
+
+def gen_test_match_and_parse_line_input_4():
+    """
+    constant
+    """
+
+    line = "JUMP @label"
+    opcode = "JUMP"
+
+    op_args_defs = []
+
+    # Def 0
+    op_args_def = []
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "constant"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = ""
+
+    op_args_def.append(op_arg_def)
+
+    op_args_defs.append(op_args_def)
+
+    expected_match = True
+    expected_args = deepcopy(op_args_defs[0])
+    expected_args[0]["value"] = "@label"
+
+    return (line, opcode, op_args_defs, expected_match, expected_args)
 
 
 @pytest.mark.parametrize(
     "line,opcode,op_args_defs,expected_match,expected_args",
-    gen_test_match_and_parse_line_input()
+    [
+        gen_test_match_and_parse_line_input_0(),
+        gen_test_match_and_parse_line_input_1(),
+        gen_test_match_and_parse_line_input_2(),
+        gen_test_match_and_parse_line_input_3(),
+        gen_test_match_and_parse_line_input_4(),
+
+    ]
 )
 def test_match_and_parse_line(
     line, opcode, op_args_defs, expected_match, expected_args
@@ -353,3 +438,39 @@ def test_match_and_parse_line(
     )
     assert match == expected_match
     assert parsed_args == expected_args
+
+
+
+    # ##########
+    # # Test 2 #
+    # ##########
+    # line = "SET A"
+    # opcode = "LOAD"
+
+    # op_args_defs = []
+
+    # # Def 0
+    # op_args_def = []
+
+    # op_arg_def = utils.get_arg_def_template()
+    # op_arg_def["value_type"] = "module_name"
+    # op_arg_def["is_memory_location"] = False
+    # op_arg_def["value"] = "A"
+
+    # op_args_def.append(op_arg_def)
+
+    # op_arg_def = utils.get_arg_def_template()
+    # op_arg_def["value_type"] = "module_name"
+    # op_arg_def["is_memory_location"] = False
+    # op_arg_def["value"] = "B"
+
+    # op_args_def.append(op_arg_def)
+
+    # op_args_defs.append(op_args_def)
+
+    # expected_match = False
+    # expected_args = []
+
+    # tests.append((line, opcode, op_args_defs, expected_match, expected_args))
+
+    # return tests

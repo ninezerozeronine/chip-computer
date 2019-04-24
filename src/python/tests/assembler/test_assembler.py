@@ -354,7 +354,6 @@ def get_processed_assembly_lines():
     """
     The result of processing:
 
-    ---
     $variable0
     @label1
         LOAD [$variable1] A
@@ -368,7 +367,6 @@ def get_processed_assembly_lines():
         LOAD [$variable3] B
         LOAD [$variable0] C
     $variable4
-    ---
     """
     lines = []
 

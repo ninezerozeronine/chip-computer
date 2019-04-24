@@ -73,6 +73,7 @@ def get_machine_code_byte_template():
       the assembler.
     - number_value: The value of the constant as an int if it's a
       number.
+    - index: The index of this byte in program data.
 
     Returns:
         dict: Machine code byte description template.
@@ -84,6 +85,7 @@ def get_machine_code_byte_template():
         "constant_type": "",
         "constant": "",
         "number_value": 0,
+        "index": -1,
     }
 
 
