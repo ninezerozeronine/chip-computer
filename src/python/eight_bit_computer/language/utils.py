@@ -214,7 +214,14 @@ def is_memory_index(argument):
 
 def represent_as_memory_index(argument):
     """
+    Format the argument so it appears as a memory index.
 
+    See :func:~`is_memory_index` for details on what a memory index is.
+
+    Args:
+        argument (str): The argument to represent as a memory index.
+    Returns:
+        str: The formatted argument.
     """
     return "[{argument}]".format(argument=argument)
 
@@ -297,13 +304,20 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
 
 def generate_possible_arg_list(op_args_defs):
     """
-    
+    Create a readable list of all possible argument combinations.
+
+    Args:
+        op_args_defs (list(list(dict))): Data structure that defines
+            the different combinations of arguments. See
+            :func:`~get_arg_def_template` for more details.
+    Returns:
+        list(str): All possible argument combinations.
     """
 
     arg_possibilities = []
     for op_args_def in op_args_defs:
+        args = []
         for op_arg_def in op_args_def:
-            args = []
             arg = ""
             if op_arg_def["value_type"] == "module_name":
                 arg = op_arg_def["value"]

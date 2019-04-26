@@ -3,6 +3,7 @@ from copy import deepcopy
 import pytest
 
 from eight_bit_computer.language import utils
+from eight_bit_computer.exceptions import InstructionParsingError
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -440,37 +441,175 @@ def test_match_and_parse_line(
     assert parsed_args == expected_args
 
 
+@pytest.mark.parametrize("test_input,expected", [
+    ("A", "[A]"),
+    ("$variable", "[$variable]"),
+])
+def test_represent_as_memory_index(test_input, expected):
+    assert utils.represent_as_memory_index(test_input) == expected
 
-    # ##########
-    # # Test 2 #
-    # ##########
-    # line = "SET A"
-    # opcode = "LOAD"
 
-    # op_args_defs = []
+def gen_test_match_and_parse_line_raises_input_0():
+    """
+    Incorrect args specified
+    """
 
-    # # Def 0
-    # op_args_def = []
+    line = "LOAD A C"
+    opcode = "LOAD"
 
-    # op_arg_def = utils.get_arg_def_template()
-    # op_arg_def["value_type"] = "module_name"
-    # op_arg_def["is_memory_location"] = False
-    # op_arg_def["value"] = "A"
+    op_args_defs = []
 
-    # op_args_def.append(op_arg_def)
+    # Def 0
+    op_args_def = []
 
-    # op_arg_def = utils.get_arg_def_template()
-    # op_arg_def["value_type"] = "module_name"
-    # op_arg_def["is_memory_location"] = False
-    # op_arg_def["value"] = "B"
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "A"
 
-    # op_args_def.append(op_arg_def)
+    op_args_def.append(op_arg_def)
 
-    # op_args_defs.append(op_args_def)
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "B"
 
-    # expected_match = False
-    # expected_args = []
+    op_args_def.append(op_arg_def)
 
-    # tests.append((line, opcode, op_args_defs, expected_match, expected_args))
+    op_args_defs.append(op_args_def)
 
-    # return tests
+    return (line, opcode, op_args_defs)
+
+
+def gen_test_match_and_parse_line_raises_input_1():
+    """
+    Matches multiple arg possibilities
+    """
+
+    line = "LOAD A B"
+    opcode = "LOAD"
+
+    op_args_defs = []
+
+    # Def 0
+    op_args_def = []
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "A"
+
+    op_args_def.append(op_arg_def)
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "B"
+
+    op_args_def.append(op_arg_def)
+
+    op_args_defs.append(op_args_def)
+
+    # Def 1
+    op_args_def = []
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "A"
+
+    op_args_def.append(op_arg_def)
+
+    op_arg_def = utils.get_arg_def_template()
+    op_arg_def["value_type"] = "module_name"
+    op_arg_def["is_memory_location"] = False
+    op_arg_def["value"] = "B"
+
+    op_args_def.append(op_arg_def)
+
+    op_args_defs.append(op_args_def)
+
+    return (line, opcode, op_args_defs)
+
+
+@pytest.mark.parametrize(
+    "line,opcode,op_args_defs",
+    [
+        gen_test_match_and_parse_line_raises_input_0(),
+        gen_test_match_and_parse_line_raises_input_1(),
+    ]
+)
+def test_match_and_parse_line_raises(line, opcode, op_args_defs):
+    with pytest.raises(InstructionParsingError):
+        utils.match_and_parse_line(line, opcode, op_args_defs)
+
+
+def test_generate_possible_arg_list():
+    test_input = [
+        [
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "A",
+            },
+        ],
+        [
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "A",
+            },
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "B",
+            },
+        ],
+        [
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "A",
+            },
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "B",
+            },
+            {
+                "value_type": "module_name",
+                "is_memory_location": False,
+                "value": "C",
+            },
+        ],
+        [
+            {
+                "value_type": "module_name",
+                "is_memory_location": True,
+                "value": "A",
+            },
+        ],
+        [
+            {
+                "value_type": "constant",
+                "is_memory_location": False,
+                "value": "",
+            },
+        ],
+        [
+            {
+                "value_type": "constant",
+                "is_memory_location": True,
+                "value": "",
+            },
+        ],
+    ]
+    expected = [
+        ["A"],
+        ["A", "B"],
+        ["A", "B", "C"],
+        ["[A]"],
+        ["<constant>"],
+        ["[<constant>]"],
+    ]
+    assert utils.generate_possible_arg_list(test_input) == expected
