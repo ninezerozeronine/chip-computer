@@ -145,7 +145,7 @@ def generate_assembly_summary(asm_line_infos):
             mc_byte_hex=mc_byte_hex,
             widest_mc_byte_hex=widest_values["mc_byte_hex"]
             mc_byte_constant=mc_byte_constant,
-        )
+        ).rstrip()
     formatted_summary_lines.append(formatted_line)
 
     return "\n".join(formatted_summary_lines)

@@ -224,7 +224,7 @@ def remove_comments(line):
 
 def remove_excess_whitespace(line):
     """
-    Remove excess whitespace from a line
+    Remove excess whitespace from a line.
 
     Args:
         line (str): line to remove excess whitespace from.
