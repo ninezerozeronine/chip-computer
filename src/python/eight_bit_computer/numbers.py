@@ -16,7 +16,7 @@ def bitstring_to_number(bitstring, twos_compliment=False):
     """
 
     """
-    pass
+    return int(bitstring, 2)
 
 
 def number_is_within_bit_limit(number, bits=8):

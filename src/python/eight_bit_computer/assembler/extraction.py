@@ -3,7 +3,7 @@ Extract information from a list of assembly line info dictionaries.
 """
 from copy import deepcopy
 
-from ..numbers import number_to_bitstring
+from .. import numbers
 
 
 def get_assembly_summary_data(asm_line_infos):
@@ -66,22 +66,32 @@ def get_summary_entry_template():
     }
 
 
-def generate_assembly_summary(asm_line_infos):
+def generate_assembly_summary_lines(asm_line_infos):
     """
 
-    The end result is a print out like this::
+    The end result is a set of lines that could be printed like this::
 
-        10 @label1            |
-        11     LOAD [$var] 11 | 15 0F 00001111 - @label1 01010101 55
-                              | 16 10 00010000 -         11001001 C9 $var
-        12     // comment     |
-        13     SET A #123     | 17 11 00010001 -         00101010 2A
-                              | 18 12 00010010 -         01111011 7B #123
-        15                    |
-        16 @label2            |
-        17     JUMP @label1   | 19 13 00010011 - @label2 01111100 7C
-                              | 20 14 00010100 -         00001111 0F @label1
-        18     // comment     |
+         1 $variable0              |
+         2 @label1                 |
+         3     LOAD [$variable1] A |  0 00 00000000 - @label1 255 FF 11111111
+                                   |  1 01 00000001 -           1 01 00000001 $variable1
+         4                         |
+         5 @label2                 |
+         6     LOAD [$variable2] A |  2 02 00000010 - @label2 255 FF 11111111
+                                   |  3 03 00000011 -           2 02 00000010 $variable2
+         7     JUMP @label1        |  4 04 00000100 -         255 FF 11111111
+                                   |  5 05 00000101 -           0 00 00000000 @label1
+         8                         |
+         9     STORE A [#123]      |  6 06 00000110 -         255 FF 11111111
+                                   |  7 07 00000111 -         123 7B 01111011 #123
+        10 @label3                 |
+        11     LOAD [$variable3] B |  8 08 00001000 - @label3 255 FF 11111111
+                                   |  9 09 00001001 -           3 03 00000011 $variable3
+        12     LOAD [$variable0] C | 10 0A 00001010 -         255 FF 11111111
+                                   | 11 0B 00001011 -           0 00 00000000 $variable0
+        13 $variable4              |
+        14 // comment              |
+
     """
 
     summary_data = get_assembly_summary_data(asm_line_infos)
@@ -95,8 +105,9 @@ def generate_assembly_summary(asm_line_infos):
         "{mc_index_bitstring} "
         "{mc_byte_sep} "
         "{mc_label: <{widest_mc_label}} "
-        "{mc_byte_bitstring} "
+        "{mc_byte_decimal: >{widest_mc_byte_decimal}} "
         "{mc_byte_hex:} "
+        "{mc_byte_bitstring} "
         "{mc_byte_constant}"
     )
     formatted_summary_lines = []
@@ -115,12 +126,13 @@ def generate_assembly_summary(asm_line_infos):
             mc_index_hex = "{index:02X}".format(
                 index=mc_byte_info["index"],
                 )
-            mc_index_bitstring = number_to_bitstring((mc_byte_info["index"]))
+            mc_index_bitstring = numbers.number_to_bitstring((mc_byte_info["index"]))
             mc_byte_sep = "-"
             if summary_line["machine_code_byte"]["has_label"]:
                 mc_label = summary_line["machine_code_byte"]["label"]
             else:
                 mc_label = ""
+            mc_byte_decimal = str(numbers.bitstring_to_number(mc_byte_info["machine_code"]))
             mc_byte_bitstring = mc_byte_info["machine_code"]
             mc_byte_hex = "{mc_byte:02X}".format(
                 mc_byte=int(mc_byte_info["machine_code"], 2),
@@ -135,25 +147,10 @@ def generate_assembly_summary(asm_line_infos):
             mc_index_bitstring = ""
             mc_byte_sep = ""
             mc_label = ""
+            mc_byte_decimal = ""
             mc_byte_bitstring = ""
             mc_byte_hex = ""
             mc_byte_constant = ""
-
-        # print "------------"
-        # print asm_line_no
-        # print widest_values["asm_line_no"]
-        # print raw_assembly_line
-        # print widest_values["asm_line"]
-        # print mc_index_decimal
-        # print widest_values["mc_index_decimal"]
-        # print mc_index_hex
-        # print mc_index_bitstring
-        # print mc_byte_sep
-        # print mc_label
-        # print widest_values["mc_label"]
-        # print mc_byte_bitstring
-        # print mc_byte_hex
-        # print mc_byte_constant
 
         formatted_line = summary_line_template.format(
             asm_line_no=asm_line_no,
@@ -167,13 +164,15 @@ def generate_assembly_summary(asm_line_infos):
             mc_byte_sep=mc_byte_sep,
             mc_label=mc_label,
             widest_mc_label=widest_values["mc_label"],
+            mc_byte_decimal=mc_byte_decimal,
+            widest_mc_byte_decimal=widest_values["mc_byte_decimal"],
             mc_byte_bitstring=mc_byte_bitstring,
             mc_byte_hex=mc_byte_hex,
             mc_byte_constant=mc_byte_constant,
         ).rstrip()
         formatted_summary_lines.append(formatted_line)
 
-    return "\n".join(formatted_summary_lines)
+    return formatted_summary_lines
 
 
 def get_widest_column_values(assembly_summary_data):
@@ -185,6 +184,7 @@ def get_widest_column_values(assembly_summary_data):
         "asm_line_no": 0,
         "asm_line": 0,
         "mc_index_decimal": 0,
+        "mc_byte_decimal": 0,
         "mc_label": 0,
     }
 
@@ -202,16 +202,27 @@ def get_widest_column_values(assembly_summary_data):
 
         if entry["has_machine_code_byte"]:
             # Decimal byte index width
-            mc_index_decimal_width = len(
+            mcb_index_decimal_width = len(
                 str(entry["machine_code_byte"]["info"]["index"])
             )
-            if mc_index_decimal_width > widest_values["mc_index_decimal"]:
-                widest_values["mc_index_decimal"] = mc_index_decimal_width
+            if mcb_index_decimal_width > widest_values["mc_index_decimal"]:
+                widest_values["mc_index_decimal"] = mcb_index_decimal_width
+
+            # Decimal byte index width
+            mc_byte_decimal_width = len(
+                str(
+                    numbers.bitstring_to_number(
+                        entry["machine_code_byte"]["info"]["machine_code"]
+                    )
+                )
+            )
+            if mc_byte_decimal_width > widest_values["mc_byte_decimal"]:
+                widest_values["mc_byte_decimal"] = mc_byte_decimal_width
 
             # Label width
             if entry["machine_code_byte"]["has_label"]:
-                mc_label_width = len(entry["machine_code_byte"]["label"])
-                if mc_label_width > widest_values["mc_label"]:
-                    widest_values["mc_label"] = mc_label_width
+                mcb_label_width = len(entry["machine_code_byte"]["label"])
+                if mcb_label_width > widest_values["mc_label"]:
+                    widest_values["mc_label"] = mcb_label_width
 
     return widest_values
