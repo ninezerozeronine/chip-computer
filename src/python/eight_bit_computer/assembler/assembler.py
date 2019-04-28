@@ -412,7 +412,6 @@ def assign_labels(assembly_lines):
         if label is None:
             label = assembly_line["defined_label"] or None
         if assembly_line["machine_code_templates"] and label is not None:
-            print assembly_line
             assembly_line["assigned_label"] = label
             label = None
         else:

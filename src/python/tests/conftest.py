@@ -1,8 +1,9 @@
 import textwrap
+from copy import deepcopy
 
 import pytest
 
-from eight_bit_computer.assembler import assembler
+from eight_bit_computer.assembler import assembler, extraction
 from eight_bit_computer.language.utils import get_machine_code_byte_template
 
 
@@ -23,14 +24,19 @@ def assembly_lines():
             LOAD [$variable3] B
             LOAD [$variable0] C
         $variable4
+        // comment
         """
     ).splitlines()
 
 
 @pytest.fixture
 def processed_assembly_lines():
+    return gen_processed_assembly_lines_data()
+
+
+def gen_processed_assembly_lines_data():
     """
-    The result of processing each line of assembly_lines above:
+    The result of processing each line returned by assembly_lines above.
     """
 
     lines = []
@@ -51,11 +57,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 3
-    line["raw"] = "LOAD [$variable1] A"
+    line["raw"] = "    LOAD [$variable1] A"
     line["clean"] = "LOAD [$variable1] A"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable1"
@@ -76,11 +82,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 6
-    line["raw"] = "LOAD [$variable2] A"
+    line["raw"] = "    LOAD [$variable2] A"
     line["clean"] = "LOAD [$variable2] A"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable2"
@@ -90,11 +96,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 7
-    line["raw"] = "JUMP @label1"
+    line["raw"] = "    JUMP @label1"
     line["clean"] = "JUMP @label1"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "@label1"
@@ -108,11 +114,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 9
-    line["raw"] = "STORE A [#123]"
+    line["raw"] = "    STORE A [#123]"
     line["clean"] = "STORE A [#123]"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "#123"
@@ -130,11 +136,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 11
-    line["raw"] = "LOAD [$variable3] B"
-    line["clean"] = "LOAD [$variable3] A"
+    line["raw"] = "    LOAD [$variable3] B"
+    line["clean"] = "LOAD [$variable3] B"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable3"
@@ -144,11 +150,11 @@ def processed_assembly_lines():
 
     line = assembler.get_line_info_template()
     line["line_no"] = 12
-    line["raw"] = "LOAD [$variable0] C"
-    line["clean"] = "LOAD [$variable0] A"
+    line["raw"] = "    LOAD [$variable0] C"
+    line["clean"] = "LOAD [$variable0] C"
     line_mc_0 = get_machine_code_byte_template()
     line_mc_0["byte_type"] = "instruction"
-    line_mc_0["machine_code"] = "99999999"
+    line_mc_0["machine_code"] = "11111111"
     line_mc_1 = get_machine_code_byte_template()
     line_mc_1["byte_type"] = "constant"
     line_mc_1["constant"] = "$variable0"
@@ -163,4 +169,213 @@ def processed_assembly_lines():
     line["defined_variable"] = "$variable4"
     lines.append(line)
 
+    line = assembler.get_line_info_template()
+    line["line_no"] = 14
+    line["raw"] = "// comment"
+    line["clean"] = ""
+    lines.append(line)
+
     return lines
+
+
+@pytest.fixture
+def assembly_line_infos():
+    return gen_assembly_line_infos_data()
+
+
+def gen_assembly_line_infos_data():
+    """
+    The result of fully parsing and evaulating the lines returned by
+    assembly_lines above.
+    """
+
+    full_line_info = gen_processed_assembly_lines_data()
+
+    # LOAD [$variable1] A
+    full_line_info[2]["assigned_label"] = "@label1"
+    full_line_info[2]["machine_code_templates"][0]["index"] = 0
+    full_line_info[2]["machine_code_templates"][1]["machine_code"] = "00000001"
+    full_line_info[2]["machine_code_templates"][1]["index"] = 1
+
+    # LOAD [$variable2] A
+    full_line_info[5]["assigned_label"] = "@label2"
+    full_line_info[5]["machine_code_templates"][0]["index"] = 2
+    full_line_info[5]["machine_code_templates"][1]["machine_code"] = "00000010"
+    full_line_info[5]["machine_code_templates"][1]["index"] = 3
+
+    # JUMP @label1
+    full_line_info[6]["machine_code_templates"][0]["index"] = 4
+    full_line_info[6]["machine_code_templates"][1]["machine_code"] = "00000000"
+    full_line_info[6]["machine_code_templates"][1]["index"] = 5
+
+    # STORE A [#123]
+    full_line_info[8]["machine_code_templates"][0]["index"] = 6
+    full_line_info[8]["machine_code_templates"][1]["machine_code"] = "01111011"
+    full_line_info[8]["machine_code_templates"][1]["index"] = 7
+
+    # LOAD [$variable3] B
+    full_line_info[10]["assigned_label"] = "@label3"
+    full_line_info[10]["machine_code_templates"][0]["index"] = 8
+    full_line_info[10]["machine_code_templates"][1]["machine_code"] = "00000011"
+    full_line_info[10]["machine_code_templates"][1]["index"] = 9
+
+    # LOAD [$variable0] C
+    full_line_info[11]["machine_code_templates"][0]["index"] = 10
+    full_line_info[11]["machine_code_templates"][1]["machine_code"] = "00000000"
+    full_line_info[11]["machine_code_templates"][1]["index"] = 11
+
+    return full_line_info
+
+
+@pytest.fixture
+def assembly_summary_data():
+
+    asm_line_infos = gen_assembly_line_infos_data()
+
+    summary_lines = []
+
+    # $variable0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[0])
+    summary_lines.append(summary_line)
+
+    # @label1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[1])
+    summary_lines.append(summary_line)
+
+    # LOAD [$variable1] A
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[2]["machine_code_templates"][0])
+    summary_line["machine_code_byte"]["has_label"] = True
+    summary_line["machine_code_byte"]["label"] = "@label1"
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[2])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[2]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    #
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[3])
+    summary_lines.append(summary_line)
+
+    # @label2
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[4])
+    summary_lines.append(summary_line)
+
+    # LOAD [$variable2] A
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[5]["machine_code_templates"][0])
+    summary_line["machine_code_byte"]["has_label"] = True
+    summary_line["machine_code_byte"]["label"] = "@label2"
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[5])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[5]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    # JUMP @label1
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[6]["machine_code_templates"][0])
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[6])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[6]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    #
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[7])
+    summary_lines.append(summary_line)
+
+    # STORE A [#123]
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[8]["machine_code_templates"][0])
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[8])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[8]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    # @label3
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[9])
+    summary_lines.append(summary_line)
+
+    # LOAD [$variable3] B
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[10]["machine_code_templates"][0])
+    summary_line["machine_code_byte"]["has_label"] = True
+    summary_line["machine_code_byte"]["label"] = "@label3"
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[10])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[10]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    # LOAD [$variable0] C
+    # byte0
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[11]["machine_code_templates"][0])
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[11])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_machine_code_byte"] = True
+    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[11]["machine_code_templates"][1])
+    summary_lines.append(summary_line)
+
+    # $variable4
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[12])
+    summary_lines.append(summary_line)
+
+    # // comment
+    summary_line = extraction.get_summary_entry_template()
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[13])
+    summary_lines.append(summary_line)
+
+    return summary_lines
