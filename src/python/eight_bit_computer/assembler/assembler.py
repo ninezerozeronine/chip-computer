@@ -98,7 +98,7 @@ def lines_to_machine_code(lines, variable_start_offset=0):
         assembly_lines.append(assembly_line)
 
     assign_machine_code_byte_indexes(assembly_lines)
-    check_structure_validity(assembly_lines)
+    check_structure_validity(assembly_lines, variable_start_offset)
     assign_labels(assembly_lines)
     resolve_labels(assembly_lines)
     resolve_numbers(assembly_lines)
