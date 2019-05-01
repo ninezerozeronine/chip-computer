@@ -183,6 +183,22 @@ def get_line_info_template():
         "defined_variable": "",
 
         "machine_code_templates": [],
+
+        # "line_no": -1,
+        # "raw": "",
+        # "clean": "",
+
+        # "defines_label": False,
+        # "defined_label": "",
+
+        # "has_label_assigned": False,
+        # "assigned_label": "",
+
+        # "defines_variable": False,
+        # "defined_variable": "",
+
+        # "has_machine_code": False,
+        # "mc_byte_infos": [],
     }
 
 

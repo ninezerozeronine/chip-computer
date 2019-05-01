@@ -2,6 +2,7 @@ from pprint import pprint
 
 from eight_bit_computer import rom, utils
 
+
 def sandbox():
 
     # rom_path = r"E:\dev\8bit-74-series-computer\logisim\roms"
@@ -41,6 +42,7 @@ def sandbox():
     #     print romdata
     # print len(full_rom)
 
+
 def file_test():
     with open("test.py") as file:
         lines = file.read().splitlines()
@@ -70,7 +72,8 @@ def dict_ref_test():
 
 
 def get_dict():
-    return {"a":1, "b":2}
+    return {"a": 1, "b": 2}
+
 
 def dict_ref_test_2():
     a = get_dict()
@@ -80,6 +83,7 @@ def dict_ref_test_2():
     b["a"] = "bar"
     print a
     print b
+
 
 if __name__ == "__main__":
     # sandbox()

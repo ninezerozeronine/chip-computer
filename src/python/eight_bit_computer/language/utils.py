@@ -86,6 +86,13 @@ def get_machine_code_byte_template():
         "constant": "",
         "number_value": 0,
         "index": -1,
+
+        # "bitstring": "",
+        # "byte_type": "",
+        # "constant_type": "",
+        # "constant": "",
+        # "number_value": 0,
+        # "index": -1,
     }
 
 
