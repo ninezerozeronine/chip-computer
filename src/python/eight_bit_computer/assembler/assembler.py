@@ -97,8 +97,8 @@ def lines_to_machine_code(lines, variable_start_offset=0):
         assembly_line["line_no"] = line_no
         assembly_lines.append(assembly_line)
 
+    check_structure_validity(assembly_lines, variable_start_offset)
     assign_machine_code_byte_indexes(assembly_lines)
-    # check_structure_validity(assembly_lines, variable_start_offset)
     assign_labels(assembly_lines)
     resolve_labels(assembly_lines)
     resolve_numbers(assembly_lines)
@@ -400,6 +400,26 @@ def number_constant_value(number_constant):
     """
 
     return int(number_constant[1:], 0)
+
+
+def assign_machine_code_byte_indexes(assembly_lines):
+    """
+    Assign indexes to the machine code bytes.
+
+    This modifies the passed in list of assembly lines, adding data to
+    it.
+
+    Args:
+        assembly_lines (list(dict)): Lines of assembly to add label
+        information to.
+    """
+
+    mc_byte_index = 0
+    for assembly_line in assembly_lines:
+        if assembly_line["has_machine_code"]:
+            for mc_byte in assembly_line["mc_bytes"]:
+                mc_byte["index"] = mc_byte_index
+                mc_byte_index += 1
 
 
 def assign_labels(assembly_lines):

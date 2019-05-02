@@ -114,8 +114,8 @@ def check_undefined_label_ref(asm_line_infos):
             labels.append(asm_line_info["defined_label"])
 
     for asm_line_info in asm_line_infos:
-        if assembly_line["has_machine_code"]:
-            for mc_byte_info in assembly_line["mc_byte_infos"]:
+        if asm_line_info["has_machine_code"]:
+            for mc_byte_info in asm_line_info["mc_byte_infos"]:
                 if (mc_byte_info["byte_type"] == "constant"
                         and mc_byte_info["constant_type"] == "label"
                         and mc_byte_info["constant"] not in labels):
@@ -197,8 +197,8 @@ def check_num_variables(asm_line_infos, variable_start_offset):
                     break
 
         # Check for used variables
-        if assembly_line["has_machine_code"]:
-            for mc_byte_info in assembly_line["mc_byte_infos"]:
+        if asm_line_info["has_machine_code"]:
+            for mc_byte_info in asm_line_info["mc_byte_infos"]:
                 if (mc_byte_info["byte_type"] == "constant"
                         and mc_byte_info["constant_type"] == "variable"
                         and mc_byte_info["constant"] not in variables):
@@ -225,13 +225,35 @@ def check_num_variables(asm_line_infos, variable_start_offset):
 
 def check_num_instruction_bytes(assembly_lines):
     """
-    Check there aren't more instruction bytes that will fit in prog mem
+    Check there aren't too many instruction_bytes.
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
             :func:~`get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
-        AssemblyError: If
+        AssemblyError: If there are more instruction bytes than will
+            fit in program memory.
     """
-    pass
+    bad_line_no = -1
+    num_mc_bytes = 0
+    for assembly_line in assembly_lines:
+        if assembly_line["has_machine_code"]:
+            for mc_byte in assembly_line["mc_bytes"]:
+                num_mc_bytes += 1
+                if num_mc_bytes > 255 and bad_line_no < 0:
+                    bad_line_no = assembly_line["line_no"]
+
+    if num_mc_bytes > 255:
+        details = (
+            "This operation has brought the total number of machine "
+            "code bytes above 255. The complete assembly code has "
+            "resulted in {num_mc_bytes} bytes of machine code.".format(
+                num_mc_bytes=num_mc_bytes,
+            )
+        )
+        msg = ERROR_TEMPLATE.format(
+            line_no=bad_line_no,
+            details=details,
+        )
+        raise AssemblyError(msg)
