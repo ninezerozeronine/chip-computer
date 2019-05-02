@@ -20,19 +20,19 @@ def get_assembly_summary_data(asm_line_infos):
     assembly_summary = []
 
     for asm_line_info in asm_line_infos:
-        if asm_line_info["machine_code_templates"]:
+        if asm_line_info["has_machine_code"]:
             dual_entry = get_summary_entry_template()
             dual_entry["has_assembly"] = True
             dual_entry["assembly"]["info"] = deepcopy(asm_line_info)
 
             dual_entry["has_machine_code_byte"] = True
-            dual_entry["machine_code_byte"]["info"] = deepcopy(asm_line_info["machine_code_templates"][0])
-            if asm_line_info["assigned_label"]:
+            dual_entry["machine_code_byte"]["info"] = deepcopy(asm_line_info["mc_bytes"][0])
+            if asm_line_info["has_label_assigned"]:
                 dual_entry["machine_code_byte"]["has_label"] = True
                 dual_entry["machine_code_byte"]["label"] = asm_line_info["assigned_label"]
             assembly_summary.append(dual_entry)
 
-            for mc_byte_info in asm_line_info["machine_code_templates"][1:]:
+            for mc_byte_info in asm_line_info["mc_bytes"][1:]:
                 byte_only_entry = get_summary_entry_template()
                 byte_only_entry["has_machine_code_byte"] = True
                 byte_only_entry["machine_code_byte"]["info"] = deepcopy(mc_byte_info)
@@ -132,10 +132,10 @@ def generate_assembly_summary_lines(asm_line_infos):
                 mc_label = summary_line["machine_code_byte"]["label"]
             else:
                 mc_label = ""
-            mc_byte_decimal = str(numbers.bitstring_to_number(mc_byte_info["machine_code"]))
-            mc_byte_bitstring = mc_byte_info["machine_code"]
+            mc_byte_decimal = str(numbers.bitstring_to_number(mc_byte_info["bitstring"]))
+            mc_byte_bitstring = mc_byte_info["bitstring"]
             mc_byte_hex = "{mc_byte:02X}".format(
-                mc_byte=int(mc_byte_info["machine_code"], 2),
+                mc_byte=int(mc_byte_info["bitstring"], 2),
             )
             if mc_byte_info["byte_type"] == "constant":
                 mc_byte_constant = mc_byte_info["constant"]
@@ -212,7 +212,7 @@ def get_widest_column_values(assembly_summary_data):
             mc_byte_decimal_width = len(
                 str(
                     numbers.bitstring_to_number(
-                        entry["machine_code_byte"]["info"]["machine_code"]
+                        entry["machine_code_byte"]["info"]["bitstring"]
                     )
                 )
             )

@@ -52,7 +52,7 @@ def check_multiple_label_defs(asm_line_infos):
                     line_no=asm_line_info["line_no"],
                     details=details,
                 )
-                Raise AssemblyError(msg)
+                raise AssemblyError(msg)
             else:
                 labels.add(label)
                 label_lines[label] = asm_line_info["line_no"]
@@ -85,7 +85,7 @@ def check_multiple_label_assignment(asm_line_infos):
                 line_no=asm_line_info["line_no"],
                 details=details,
             )
-            Raise AssemblyError(msg)
+            raise AssemblyError(msg)
 
         if asm_line_info["defines_label"]:
             label_queued = True
@@ -129,7 +129,7 @@ def check_undefined_label_ref(asm_line_infos):
                         line_no=asm_line_info["line_no"],
                         details=details,
                     )
-                    Raise AssemblyError(msg)
+                    raise AssemblyError(msg)
 
 
 def check_multiple_variable_def(asm_line_infos):
@@ -160,7 +160,7 @@ def check_multiple_variable_def(asm_line_infos):
                     line_no=asm_line_info["line_no"],
                     details=details,
                 )
-                Raise AssemblyError(msg)
+                raise AssemblyError(msg)
             else:
                 variables.add(variable)
                 variable_lines[variable] = asm_line_info["line_no"]
@@ -220,7 +220,7 @@ def check_num_variables(asm_line_infos, variable_start_offset):
             line_no=asm_line_info["line_no"],
             details=details,
         )
-        Raise AssemblyError(msg)
+        raise AssemblyError(msg)
 
 
 def check_num_instruction_bytes(assembly_lines):

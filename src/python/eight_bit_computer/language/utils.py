@@ -62,7 +62,7 @@ def get_machine_code_byte_template():
 
     The keys have the following meaning:
 
-    - machine_code: A byte bitstring of the final byte that will make up
+    - bitstring: A byte bitstring of the final byte that will make up
       the machine code.
     - byte_type: The type of machine code byte. Will be instruction or
       constant.
@@ -80,19 +80,12 @@ def get_machine_code_byte_template():
     """
 
     return {
-        "machine_code": "",
+        "bitstring": "",
         "byte_type": "",
         "constant_type": "",
         "constant": "",
         "number_value": 0,
         "index": -1,
-
-        # "bitstring": "",
-        # "byte_type": "",
-        # "constant_type": "",
-        # "constant": "",
-        # "number_value": 0,
-        # "index": -1,
     }
 
 
