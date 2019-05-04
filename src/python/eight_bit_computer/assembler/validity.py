@@ -2,6 +2,8 @@
 Validity checks on the processed assembly lines
 """
 
+from ..exceptions import AssemblyError
+
 ERROR_TEMPLATE = "Error on line {line_no}:\n\n{details}"
 
 
@@ -89,9 +91,9 @@ def check_multiple_label_assignment(asm_line_infos):
 
         if asm_line_info["defines_label"]:
             label_queued = True
-            last_label = asm_line_info["label"]
+            last_label = asm_line_info["defined_label"]
 
-        if assembly_line["has_machine_code"] and label_queued:
+        if asm_line_info["has_machine_code"] and label_queued:
             label_queued = False
 
 
@@ -115,7 +117,7 @@ def check_undefined_label_ref(asm_line_infos):
 
     for asm_line_info in asm_line_infos:
         if asm_line_info["has_machine_code"]:
-            for mc_byte_info in asm_line_info["mc_byte_infos"]:
+            for mc_byte_info in asm_line_info["mc_bytes"]:
                 if (mc_byte_info["byte_type"] == "constant"
                         and mc_byte_info["constant_type"] == "label"
                         and mc_byte_info["constant"] not in labels):
@@ -198,7 +200,7 @@ def check_num_variables(asm_line_infos, variable_start_offset):
 
         # Check for used variables
         if asm_line_info["has_machine_code"]:
-            for mc_byte_info in asm_line_info["mc_byte_infos"]:
+            for mc_byte_info in asm_line_info["mc_bytes"]:
                 if (mc_byte_info["byte_type"] == "constant"
                         and mc_byte_info["constant_type"] == "variable"
                         and mc_byte_info["constant"] not in variables):
