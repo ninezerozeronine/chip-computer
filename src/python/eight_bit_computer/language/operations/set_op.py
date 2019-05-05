@@ -15,17 +15,35 @@ from ..definitions import (
 from .. import utils
 from ...exceptions import InstructionParsingError
 
-_DESTINATIONS = ("ACC", "A", "B", "C", "SP")
+_NAME = "SET"
 
 
-def get_name():
+def gen_op_args_defs():
     """
-    Get the outward facing name for the SET operation.
+    Generate the definitions of all possible arguments passable.
 
     Returns:
-        str: Name of the SET operation.
+        list(list(dict)): All possible arguments. See
+        :func:~`get_arg_def_template for more information.
     """
-    return "SET"
+
+    args_defs = []
+    destinations = ("ACC", "A", "B", "C", "SP")
+    for dest in destinations:
+        args_def = []
+
+        arg0_def = utils.get_arg_def_template()
+        arg0_def["value_type"] = "module_name"
+        arg0_def["value"] = dest
+        args_def.append(arg0_def)
+
+        arg1_def = utils.get_arg_def_template()
+        arg1_def["value_type"] = "constant"
+        args_def.append(arg1_def)
+
+        args_defs.append(args_def)
+
+    return args_defs
 
 
 def generate_microcode_templates():
@@ -38,12 +56,13 @@ def generate_microcode_templates():
     """
 
     data_templates = []
-    for dest in _DESTINATIONS:
-        instruction_bitdefs = [
-            INSTRUCTION_GROUPS["COPY"],
-            SRC_REGISTERS["IMM"],
-            DEST_REGISTERS[dest],
-        ]
+
+    op_args_defs = gen_op_args_defs()
+    for op_args_def in op_args_defs:
+
+        instruction_byte_bitdefs = generate_instruction_byte_bitdefs(
+            op_args_def
+        )
 
         flags_bitdefs = [FLAGS["ANY"]]
 
@@ -56,33 +75,36 @@ def generate_microcode_templates():
                 MODULE_CONTROL["PC"]["COUNT"],
                 MODULE_CONTROL["RAM"]["OUT"],
                 MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-                MODULE_CONTROL[dest]["IN"],
+                MODULE_CONTROL[op_args_def[0]["value"]]["IN"],
             ],
         ]
 
         data_templates.extend(
             utils.assemble_instruction(
-                instruction_bitdefs, flags_bitdefs, control_steps
+                instruction_byte_bitdefs, flags_bitdefs, control_steps
             )
         )
+
     return data_templates
 
 
-def get_instruction_byte(destination):
+def generate_instruction_byte_bitdefs(op_args_def):
     """
-    Get the instruction byte for this SET operation.
+    Generate bitdefs to specify the instruction byte for these args.
 
     Args:
-        destination (str): The module having it's value set.
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular set operation to generate
+            the instruction byte bitdefs for.
     Returns:
-        str: bitstring for the first byte of the SET operation.
+        list(str): Bitdefs that make up the instruction byte.
     """
 
-    return instruction_byte_from_bitdefs([
+    return [
         INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS["IMM"],
-        DEST_REGISTERS[destination],
-        ])
+        DEST_REGISTERS[op_args_def[0]["value"]],
+    ]
 
 
 def parse_line(line):
@@ -102,46 +124,23 @@ def parse_line(line):
             SET operation but incorrectly specified.
     """
 
-    line_tokens = utils.get_tokens_from_line(line)
-    if not line_tokens:
+    match, op_args_def = utils.match_and_parse_line(
+        line, _NAME, gen_op_args_defs()
+    )
+
+    if not match:
         return []
 
-    # Is the first token not "SET"
-    if line_tokens[0] != "SET":
-        return []
+    instruction_byte = instruction_byte_from_bitdefs(
+        generate_instruction_byte_bitdefs(op_args_def)
+    )
 
-    # Are there exactly 3 tokens
-    num_tokens = len(line_tokens)
-    if num_tokens != 3:
-        op_name = "SET"
-        followup = (
-            "Exactly 2 tokens should be passed to the SET operation. A "
-            "module to have it's value set and a constant to set it "
-            "to. E.g. \"SET B #123\"."
-        )
-        msg = utils.not_3_tokens_message(line_tokens, op_name, followup)
-        raise InstructionParsingError(msg)
+    mc_byte_0 = utils.get_machine_code_byte_template()
+    mc_byte_0["byte_type"] = "instruction"
+    mc_byte_0["bitstring"] = instruction_byte
 
-    dest = line_tokens[1]
-    constant = line_tokens[2]
+    mc_byte_1 = utils.get_machine_code_byte_template()
+    mc_byte_1["byte_type"] = "constant"
+    mc_byte_1["constant"] = op_args_def[1]["value"]
 
-    # Is the destination token a valid module name
-    if dest not in _DESTINATIONS:
-        pretty_destinations = utils.add_quotes_to_strings(_DESTINATIONS)
-        msg = (
-            "Invalid module name used for SET operation (\"{dest}\"). "
-            "It must be one of: {pretty_destinations}".format(
-                dest=dest,
-                pretty_destinations=pretty_destinations,
-            )
-        )
-        raise InstructionParsingError(msg)
-
-    instruction_byte = get_instruction_byte(dest)
-    byte_template_0 = utils.get_machine_code_byte_template()
-    byte_template_0["byte_type"] = "instruction"
-    byte_template_0["machine_code"] = instruction_byte
-    byte_template_1 = utils.get_machine_code_byte_template()
-    byte_template_1["byte_type"] = "constant"
-    byte_template_1["constant"] = constant
-    return [byte_template_0, byte_template_1]
+    return [mc_byte_0, mc_byte_1]

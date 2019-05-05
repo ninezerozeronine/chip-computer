@@ -17,81 +17,102 @@ from ..definitions import (
 from .. import utils
 from ...exceptions import InstructionParsingError
 
-_SOURCES = ("ACC", "A", "B", "C", "PC", "SP")
-_DESTINATIONS = ("ACC", "A", "B", "C", "SP")
+_NAME = "COPY"
 
 
-def get_name():
+def gen_op_args_defs():
     """
-    Get the outward facing name for the COPY operation.
+    Generate the definitions of all possible arguments passable.
 
     Returns:
-        str: Name of the COPY operation.
+        list(list(dict)): All possible arguments. See
+        :func:~`get_arg_def_template for more information.
     """
-    return "COPY"
+
+    args_defs = []
+    sources = ("ACC", "A", "B", "C", "PC", "SP")
+    destinations = ("ACC", "A", "B", "C", "SP")
+    for src, dest in product(sources, destinations):
+        if src != dest:
+            args_def = []
+
+            arg0_def = utils.get_arg_def_template()
+            arg0_def["value_type"] = "module_name"
+            arg0_def["value"] = src
+            args_def.append(arg0_def)
+
+            arg1_def = utils.get_arg_def_template()
+            arg1_def["value_type"] = "module_name"
+            arg1_def["value"] = dest
+            args_def.append(arg1_def)
+
+            args_defs.append(args_def)
+
+    return args_defs
 
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the COPY instructions.
+    Generate microcode for all the COPY operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the COPY microcode..
+        list(DataTemplate): DataTemplates for all the COPY microcode.
     """
 
     data_templates = []
 
-    for src, dest in product(_SOURCES, _DESTINATIONS):
-        if src != dest:
-            templates = generate_instruction(src, dest)
-            data_templates.extend(templates)
+    op_args_defs = gen_op_args_defs()
+    for op_args_def in op_args_defs:
+        templates = generate_operation_templates(op_args_def)
+        data_templates.extend(templates)
 
     return data_templates
 
 
-def generate_instruction(src, dest):
+def generate_operation_templates(op_args_def):
     """
-    Create the DataTemplates to define a copy from src to dest.
+    Create the DataTemplates to define a copy with the given args.
 
+    Args:
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular copy operation to generate
+            templates for.
     Returns:
         list(DataTemplate) : Datatemplates that define this copy.
     """
-    instruction_bitdefs = [
-        INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS[src],
-        DEST_REGISTERS[dest],
-    ]
+    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(op_args_def)
 
     flags_bitdefs = [FLAGS["ANY"]]
 
     control_steps = [
         [
-            MODULE_CONTROL[src]["OUT"],
-            MODULE_CONTROL[dest]["IN"],
+            MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
+            MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
         ]
     ]
 
     return utils.assemble_instruction(
-        instruction_bitdefs, flags_bitdefs, control_steps
+        instruction_byte_bitdefs, flags_bitdefs, control_steps
     )
 
 
-def get_instruction_byte(source, destination):
+def generate_instruction_byte_bitdefs(op_args_def):
     """
-    Get the instruction byte for a copy from source to destination.
+    Generate bitdefs to specify the instruction byte for these args.
 
     Args:
-        source (str): The module the value is being copied from.
-        destination (str): The module having it's value set.
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular copy operation to generate
+            the instruction byte bitdefs for.
     Returns:
-        str: bitstring for the first byte of the COPY operation.
+        list(str): Bitdefs that make up the instruction_byte
     """
 
-    return instruction_byte_from_bitdefs([
+    return [
         INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS[source],
-        DEST_REGISTERS[destination],
-        ])
+        SRC_REGISTERS[op_args_def[0]["value"]],
+        DEST_REGISTERS[op_args_def[1]["value"]],
+    ]
 
 
 def parse_line(line):
@@ -106,83 +127,20 @@ def parse_line(line):
     Returns:
         list(dict): List of instruction byte template dictionaries or an
         empty list.
-    Raises:
-        InstructionParsingError: If the line was identifiably a COPY
-            operation but incorrectly specified.
     """
 
-    line_tokens = utils.get_tokens_from_line(line)
-    if not line_tokens:
+    match, op_args_def = utils.match_and_parse_line(
+        line, _NAME, gen_op_args_defs()
+    )
+
+    if not match:
         return []
 
-    # Is the first token not "COPY"
-    if line_tokens[0] != "COPY":
-        return []
-
-    # Are there exactly 3 tokens
-    num_tokens = len(line_tokens)
-    if num_tokens != 3:
-        op_name = "COPY"
-        followup = (
-            "Exactly 2 tokens should be passed to the COPY operation. "
-            "A module to copy the data from and a module to write to. "
-            "E.g. \"COPY A B\"."
-        )
-        msg = utils.not_3_tokens_message(line_tokens, op_name, followup)
-        raise InstructionParsingError(msg)
-
-    source = line_tokens[1]
-    destination = line_tokens[2]
-
-    validate_source_and_dest(source, destination)
-
-    instruction_byte = get_instruction_byte(source, destination)
+    instruction_byte = instruction_byte_from_bitdefs(
+        generate_instruction_byte_bitdefs(op_args_def)
+    )
     machine_code = utils.get_machine_code_byte_template()
     machine_code["byte_type"] = "instruction"
-    machine_code["machine_code"] = instruction_byte
+    machine_code["bitstring"] = instruction_byte
+
     return [machine_code]
-
-
-def validate_source_and_dest(source, destination):
-    """
-    Make sure that the source and destination are valid.
-
-    Args:
-        source (str): The source module.
-        destination (str): The destination module.
-    Raises:
-        InstructionParsingError: If the source/destination pair is
-            invalid.
-    """
-
-    # Is the source valid
-    if source not in _SOURCES:
-        pretty_sources = utils.add_quotes_to_strings(_SOURCES)
-        msg = (
-            "Invalid source for COPY operation (\"{source}\"). "
-            "It must be one of: {pretty_sources}".format(
-                source=source,
-                pretty_sources=pretty_sources,
-            )
-        )
-        raise InstructionParsingError(msg)
-
-    # Is the destination valid
-    if destination not in _DESTINATIONS:
-        pretty_destinations = utils.add_quotes_to_strings(_DESTINATIONS)
-        msg = (
-            "Invalid destination for COPY operation (\"{destination}\"). "
-            "It must be one of: {pretty_destinations}".format(
-                destination=destination,
-                pretty_destinations=pretty_destinations,
-            )
-        )
-        raise InstructionParsingError(msg)
-
-    # Is the destination equal to the source
-    if source == destination:
-        msg = (
-            "Source and destination cannot be the same for a COPY "
-            "operation. \"{source}\" was given.".format(source=source)
-        )
-        raise InstructionParsingError(msg)

@@ -17,19 +17,7 @@ from ..definitions import (
 from .. import utils
 from ...exceptions import InstructionParsingError
 
-
-_SOURCES = ("ACC", "A", "B", "C", "PC", "SP")
-_DESTINATIONS = ("ACC", "A", "B", "C")
-
-
-def get_name():
-    """
-    Get the outward facing name for the LOAD operation.
-
-    Returns:
-        str: Name of the LOAD operation.
-    """
-    return "LOAD"
+_NAME = "LOAD"
 
 
 def generate_microcode_templates():
@@ -42,98 +30,150 @@ def generate_microcode_templates():
 
     data_templates = []
 
-    for src, dest in product(_SOURCES, _DESTINATIONS):
-        templates = generate_instruction(src, dest)
-        data_templates.extend(templates)
-
-    for dest in _DESTINATIONS:
-        templates = generate_immediate_instruction(dest)
+    op_args_defs = gen_op_args_defs()
+    for op_args_def in op_args_defs:
+        templates = generate_operation_templates(op_args_def)
         data_templates.extend(templates)
 
     return data_templates
 
 
-def generate_instruction(src, dest):
+def gen_op_args_defs():
     """
-    Create DataTemplates to define a load from memory at src into dest.
+    Generate the definitions of all possible arguments passable.
 
     Returns:
-        list(DataTemplate) : Datatemplates that define this load.
+        list(list(dict)): All possible arguments. See
+        :func:~`get_arg_def_template for more information.
     """
 
-    instruction_bitdefs = [
-        INSTRUCTION_GROUPS["LOAD"],
-        SRC_REGISTERS[src],
-        DEST_REGISTERS[dest],
-    ]
+    args_defs = []
+    sources = ("ACC", "A", "B", "C", "PC", "SP")
+    destinations = ("ACC", "A", "B", "C")
 
-    flags_bitdefs = [FLAGS["ANY"]]
+    for src, dest in product(sources, destinations):
+        args_def = []
 
-    control_steps = [
-        [
-           MODULE_CONTROL[src]["OUT"],
-           MODULE_CONTROL["MAR"]["IN"],
-        ],
-        [
-           MODULE_CONTROL["RAM"]["OUT"],
-           MODULE_CONTROL[dest]["IN"],
-        ],
-    ]
+        arg0_def = utils.get_arg_def_template()
+        arg0_def["value_type"] = "module_name"
+        arg0_def["is_memory_location"] = True
+        arg0_def["value"] = src
+        args_def.append(arg0_def)
 
-    return utils.assemble_instruction(
-        instruction_bitdefs, flags_bitdefs, control_steps)
+        arg1_def = utils.get_arg_def_template()
+        arg1_def["value_type"] = "module_name"
+        arg1_def["value"] = dest
+        args_def.append(arg1_def)
+
+        args_defs.append(args_def)
+
+    for dest in destinations:
+        args_def = []
+
+        arg0_def = utils.get_arg_def_template()
+        arg0_def["value_type"] = "constant"
+        arg0_def["is_memory_location"] = True
+        args_def.append(arg0_def)
+
+        arg1_def = utils.get_arg_def_template()
+        arg1_def["value_type"] = "module_name"
+        arg1_def["value"] = dest
+        args_def.append(arg1_def)
+
+        args_defs.append(args_def)
+
+    return args_defs
 
 
-def generate_immediate_instruction(dest):
+def generate_operation_templates(op_args_def):
     """
-    Define a load from an immediate address in memory into dest.
-
-    Returns:
-        list(DataTemplate) : Datatemplates that define this load.
-    """
-
-    instruction_bitdefs = [
-        INSTRUCTION_GROUPS["LOAD"],
-        SRC_REGISTERS["IMM"],
-        DEST_REGISTERS[dest],
-    ]
-
-    flags_bitdefs = [FLAGS["ANY"]]
-
-    control_steps = [
-        [
-           MODULE_CONTROL["PC"]["OUT"],
-           MODULE_CONTROL["MAR"]["IN"],
-        ],
-        [
-           MODULE_CONTROL["PC"]["COUNT"],
-           MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-           MODULE_CONTROL["RAM"]["OUT"],
-           MODULE_CONTROL[dest]["IN"],
-        ],
-    ]
-
-    return utils.assemble_instruction(
-        instruction_bitdefs, flags_bitdefs, control_steps)
-
-
-def get_instruction_byte(source, destination):
-    """
-    Get the instruction byte for a load from source to destination.
+    Create the DataTemplates to define a load with the given args.
 
     Args:
-        source (str): The location in memory the value is being read
-            from. If this is a constante, IMM should be subbed in.
-        destination (str): The module having it's value set.
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular load operation to generate
+            templates for.
     Returns:
-        str: bitstring for the first byte of the LOAD operation.
+        list(DataTemplate) : Datatemplates that define this load.
     """
 
-    return instruction_byte_from_bitdefs([
-        INSTRUCTION_GROUPS["LOAD"],
-        SRC_REGISTERS[source],
-        DEST_REGISTERS[destination],
-        ])
+    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(op_args_def)
+
+    flags_bitdefs = [FLAGS["ANY"]]
+
+    control_steps = generate_control_steps(op_args_def)
+
+    return utils.assemble_instruction(
+        instruction_byte_bitdefs, flags_bitdefs, control_steps
+    )
+
+
+def generate_instruction_byte_bitdefs(op_args_def):
+    """
+    Generate bitdefs to specify the instruction byte for these args.
+
+    Args:
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular copy operation to generate
+            the instruction byte bitdefs for.
+    Returns:
+        list(str): Bitdefs that make up the instruction_byte
+    """
+
+    if op_args_def[0]["value_type"] == "constant":
+        instruction_byte_bitdefs = [
+            INSTRUCTION_GROUPS["LOAD"],
+            SRC_REGISTERS["IMM"],
+            DEST_REGISTERS[op_args_def[1]["value"]],
+        ]
+    elif op_args_def[0]["value_type"] == "module_name":
+        instruction_byte_bitdefs = [
+            INSTRUCTION_GROUPS["LOAD"],
+            SRC_REGISTERS[op_args_def[0]["value"]],
+            DEST_REGISTERS[op_args_def[1]["value"]],
+        ]
+
+    return instruction_byte_bitdefs
+
+
+def generate_control_steps(op_args_def):
+    """
+    Generate control steps for these args.
+
+    Args:
+        op_args_def (list(dict)): List of argument definitions that
+            specify which particular load operation to generate the
+            control steps for.
+    Returns:
+        list(list(str)): List of list of bitdefs that specify the
+        control steps.
+    """
+    if op_args_def[0]["value_type"] == "module_name":
+        control_steps = [
+            [
+               MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
+               MODULE_CONTROL["MAR"]["IN"],
+            ],
+            [
+               MODULE_CONTROL["RAM"]["OUT"],
+               MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+            ],
+        ]
+    elif op_args_def[0]["value_type"] == "constant":
+        control_steps = [
+            [
+               MODULE_CONTROL["PC"]["OUT"],
+               MODULE_CONTROL["MAR"]["IN"],
+            ],
+            [
+               MODULE_CONTROL["PC"]["COUNT"],
+               MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+               MODULE_CONTROL["RAM"]["OUT"],
+               MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+            ],
+        ]
+
+    return control_steps
 
 
 def parse_line(line):
@@ -146,111 +186,37 @@ def parse_line(line):
     Args:
         line (str): Assembly line to be parsed.
     Returns:
-        list(dict): List of instruction byte template dictionaries or an
-        empty list.
-    Raises:
-        InstructionParsingError: If the line was identifiably a LOAD
-            operation but incorrectly specified.
+        list(dict): List of machine code byte template dictionaries or
+        an empty list.
     """
 
-    line_tokens = utils.get_tokens_from_line(line)
-    if not line_tokens:
+    match, op_args_def = utils.match_and_parse_line(
+        line, _NAME, gen_op_args_defs()
+    )
+
+    if not match:
         return []
 
-    # Is the first token not "LOAD"
-    if line_tokens[0] != "LOAD":
-        return []
+    instruction_byte = instruction_byte_from_bitdefs(
+        generate_instruction_byte_bitdefs(op_args_def)
+    )
 
-    # Are there exactly 3 tokens
-    num_tokens = len(line_tokens)
-    if num_tokens != 3:
-        op_name = "LOAD"
-        followup = (
-            "Exactly 2 tokens should be passed to the LOAD operation. "
-            "A location in data memory and a module to write the value "
-            "to. E.g. \"LOAD [A] B\" or LOAD [$variable] C."
-        )
-        msg = utils.not_3_tokens_message(line_tokens, op_name, followup)
-        raise InstructionParsingError(msg)
+    mc_bytes = []
+    if op_args_def[0]["value_type"] == "module_name":
+        mc_byte = utils.get_machine_code_byte_template()
+        mc_byte["byte_type"] = "instruction"
+        mc_byte["bitstring"] = instruction_byte
+        mc_bytes.append(mc_byte)
 
-    source_token = line_tokens[1]
-    dest_token = line_tokens[2]
+    elif op_args_def[0]["value_type"] == "constant":
+        mc_byte_0 = utils.get_machine_code_byte_template()
+        mc_byte_0["byte_type"] = "instruction"
+        mc_byte_0["bitstring"] = instruction_byte
+        mc_bytes.append(mc_byte_0)
 
-    validate_source_and_dest_tokens(source_token, dest_token)
+        mc_byte_1 = utils.get_machine_code_byte_template()
+        mc_byte_1["byte_type"] = "constant"
+        mc_byte_1["constant"] = op_args_def[0]["value"]
+        mc_bytes.append(mc_byte_1)
 
-    return generate_machine_code_templates(source_token, dest_token)
-
-
-def validate_source_and_dest_tokens(source, destination):
-    """
-    Make sure that the source and destination tokens are valid.
-
-    Args:
-        source (str): The source location. Could be a module or
-            constant.
-        destination (str): The destination module.
-    Raises:
-        InstructionParsingError: If the source/destination pair is
-            invalid.
-    """
-
-    # Is the memory location valid
-    if not utils.is_memory_index(source):
-        msg = (
-            "A memory position (e.g. [A], [#123], [$variable]) must be "
-            "specified as the first operand for the LOAD operation. "
-            "{source} was given.".format(source=source)
-            )
-        raise InstructionParsingError(msg)
-
-    # Is the destination valid
-    if destination not in _DESTINATIONS:
-        pretty_destinations = utils.add_quotes_to_strings(_DESTINATIONS)
-        msg = (
-            "Invalid destination for LOAD operation "
-            "(\"{destination}\").It must be one of: "
-            "{pretty_destinations}".format(
-                destination=destination,
-                pretty_destinations=pretty_destinations,
-            )
-        )
-        raise InstructionParsingError(msg)
-
-
-def generate_machine_code_templates(source_token, dest_token):
-    """
-    Generate the machine code templates for this load operation.
-
-    Args:
-        source_token (str): The source location. Could be a module or
-            constant.
-        dest_token (str): The destination token.
-    Returns:
-        list(dict): List of machine code templates.
-    """
-
-    memory_position = utils.extract_memory_position(source_token)
-    machine_code_templates = []
-    # If the source is a normal module
-    if memory_position in _SOURCES:
-        instruction_byte = get_instruction_byte(memory_position, dest_token)
-        byte_template = utils.get_machine_code_byte_template()
-        byte_template["byte_type"] = "instruction"
-        byte_template["machine_code"] = instruction_byte
-
-        machine_code_templates.append(byte_template)
-
-    # Else the source is a constant
-    else:
-        instruction_byte = get_instruction_byte("IMM", dest_token)
-        byte_template_0 = utils.get_machine_code_byte_template()
-        byte_template_0["byte_type"] = "instruction"
-        byte_template_0["machine_code"] = instruction_byte
-        machine_code_templates.append(byte_template_0)
-
-        byte_template_1 = utils.get_machine_code_byte_template()
-        byte_template_1["byte_type"] = "constant"
-        byte_template_1["constant"] = memory_position
-        machine_code_templates.append(byte_template_1)
-
-    return machine_code_templates
+    return mc_bytes

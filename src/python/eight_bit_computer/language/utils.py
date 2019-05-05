@@ -4,6 +4,7 @@ from copy import deepcopy
 from .definitions import MODULE_CONTROL, STEPS
 from ..datatemplate import DataTemplate
 from ..exceptions import InstructionParsingError
+from ..assembler.assembler import is_constant
 from .. import bitdef
 
 
@@ -281,6 +282,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
                 raise InstructionParsingError(msg)
             else:
                 match = True
+                ret_args = parsed_args
 
     if not match:
         poss_args_list = generate_possible_arg_list(op_args_defs)
@@ -290,7 +292,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
         pretty_possible_args = "\n".join(poss_args_quotes_list)
         msg = (
             "Incorrect arguments specified for the {opcode} "
-            "operation:\n\n{pretty_args}\n\n. The possible arguments "
+            "operation:\n\n{pretty_args}\n\nThe possible arguments "
             "are:\n\n{pretty_possible_args}.".format(
                 opcode=opcode,
                 pretty_args=add_quotes_to_strings(line_args),
@@ -299,7 +301,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
         )
         raise InstructionParsingError(msg)
 
-    return True, parsed_args
+    return True, ret_args
 
 
 def generate_possible_arg_list(op_args_defs):
@@ -380,7 +382,8 @@ def match_and_parse_args(line_args, op_args_def):
         # If the argument is a plain constant
         if (op_arg_def["value_type"] == "constant"
                 and not op_arg_def["is_memory_location"]
-                and not is_memory_index(line_arg)):
+                and not is_memory_index(line_arg)
+                and is_constant(line_arg)):
             parsed_arg = deepcopy(op_arg_def)
             parsed_arg["value"] = line_arg
             parsed_args.append(parsed_arg)
@@ -391,10 +394,11 @@ def match_and_parse_args(line_args, op_args_def):
                 and op_arg_def["is_memory_location"]
                 and is_memory_index(line_arg)):
             memory_position = extract_memory_position(line_arg)
-            parsed_arg = deepcopy(op_arg_def)
-            parsed_arg["value"] = memory_position
-            parsed_args.append(parsed_arg)
-            num_matches += 1
+            if is_constant(memory_position):
+                parsed_arg = deepcopy(op_arg_def)
+                parsed_arg["value"] = memory_position
+                parsed_args.append(parsed_arg)
+                num_matches += 1
 
         # If this argument didn't match, then these args don't match the
         # defs

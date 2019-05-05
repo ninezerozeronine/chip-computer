@@ -12,16 +12,6 @@ from ..definitions import (
 from .. import utils
 
 
-def get_name():
-    """
-    Get the outward facing name for the OPERATION_TEMPLATE operation.
-
-    Returns:
-        str: Name of the OPERATION_TEMPLATE operation.
-    """
-    pass
-
-
 def generate_microcode_templates():
     """
     Generate datatemplates for all the OPERATION_TEMPLATE operations.

@@ -365,6 +365,15 @@ def validate_and_identify_constants(machine_code_bytes):
             mc_byte["number_value"] = value
 
 
+def is_constant(test_string):
+    if (is_label(test_string)
+            or is_variable(test_string)
+            or is_number(test_string)):
+        return True
+    else:
+        return False
+
+
 def is_number(test_string):
     """
     Test if a string is a valid number.

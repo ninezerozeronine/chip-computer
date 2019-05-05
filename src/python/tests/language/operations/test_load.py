@@ -5,22 +5,6 @@ from eight_bit_computer.language.utils import get_machine_code_byte_template
 from eight_bit_computer.exceptions import InstructionParsingError
 
 
-@pytest.mark.parametrize("test_source,test_dest,expected", [
-    (
-        "A",
-        "B",
-        "01001010",
-    ),
-    (
-        "IMM",
-        "C",
-        "01111011",
-    ),
-])
-def test_get_instruction_byte(test_source, test_dest, expected):
-    assert load.get_instruction_byte(test_source, test_dest) == expected
-
-
 def generate_parse_line_test_data():
     ret = []
 
@@ -39,13 +23,13 @@ def generate_parse_line_test_data():
     test_input = "LOAD [C] A"
     mc = get_machine_code_byte_template()
     mc["byte_type"] = "instruction"
-    mc["machine_code"] = "01011001"
+    mc["bitstring"] = "01011001"
     ret.append((test_input, [mc]))
 
     test_input = "   LOAD  [$variable]   ACC   "
     mc_0 = get_machine_code_byte_template()
     mc_0["byte_type"] = "instruction"
-    mc_0["machine_code"] = "01111000"
+    mc_0["bitstring"] = "01111000"
     mc_1 = get_machine_code_byte_template()
     mc_1["byte_type"] = "constant"
     mc_1["constant"] = "$variable"
@@ -59,19 +43,6 @@ def generate_parse_line_test_data():
 )
 def test_parse_line(test_input, expected):
     assert load.parse_line(test_input) == expected
-
-
-@pytest.mark.parametrize("test_src,test_dest", [
-    ("A", "B"),
-    ("FOO", "A"),
-    ("C", "BAR"),
-    ("[]", "BAR"),
-    ("[#123]", "[C]"),
-    ("[C]", "BAR"),
-])
-def test_validate_source_and_dest_raises(test_src, test_dest):
-    with pytest.raises(InstructionParsingError):
-        load.validate_source_and_dest_tokens(test_src, test_dest)
 
 
 @pytest.mark.parametrize("test_input", [
@@ -88,6 +59,7 @@ def test_validate_source_and_dest_raises(test_src, test_dest):
     "LOAD [A]",
     "LOAD [] A",
     "LOAD [$var] FOO",
+    "LOAD [notvalid] FOO",
     "LOAD [#123 A",
     "LOAD [A] B C",
 ])

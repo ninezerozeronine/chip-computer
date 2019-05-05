@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from eight_bit_computer import rom, utils
+from eight_bit_computer import rom
 
 
 def sandbox():
@@ -16,9 +16,10 @@ def sandbox():
     # print romdatas[4]
 
     romdatas = rom.get_rom()
+    print "done"
     slices = rom.slice_rom(romdatas)
     slice_index = 1
-    romdata_chunks = utils.chunker(slices[slice_index], 16)
+    romdata_chunks = rom.chunker(slices[slice_index], 16)
     count = 0
     for sixteen_index, romdata_chunk in enumerate(romdata_chunks):
         for line_index, romdata in enumerate(romdata_chunk):
@@ -86,7 +87,7 @@ def dict_ref_test_2():
 
 
 if __name__ == "__main__":
-    # sandbox()
+    sandbox()
     # file_test()
     # dict_ref_test()
-    dict_ref_test_2()
+    # dict_ref_test_2()
