@@ -6,7 +6,7 @@ Copies a value from one module into another.
 
 from itertools import product
 
-from ..definitions import (
+from ..language_defs import (
     INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
@@ -14,8 +14,11 @@ from ..definitions import (
     FLAGS,
     instruction_byte_from_bitdefs,
 )
-from .. import utils
-from ...exceptions import InstructionParsingError
+
+from ..operation_utils import assemble_instruction, match_and_parse_line
+from ..data_structures import (
+    get_arg_def_template, get_machine_code_byte_template
+)
 
 _NAME = "COPY"
 
@@ -36,12 +39,12 @@ def gen_op_args_defs():
         if src != dest:
             args_def = []
 
-            arg0_def = utils.get_arg_def_template()
+            arg0_def = get_arg_def_template()
             arg0_def["value_type"] = "module_name"
             arg0_def["value"] = src
             args_def.append(arg0_def)
 
-            arg1_def = utils.get_arg_def_template()
+            arg1_def = get_arg_def_template()
             arg1_def["value_type"] = "module_name"
             arg1_def["value"] = dest
             args_def.append(arg1_def)
@@ -91,7 +94,7 @@ def generate_operation_templates(op_args_def):
         ]
     ]
 
-    return utils.assemble_instruction(
+    return assemble_instruction(
         instruction_byte_bitdefs, flags_bitdefs, control_steps
     )
 
@@ -129,7 +132,7 @@ def parse_line(line):
         empty list.
     """
 
-    match, op_args_def = utils.match_and_parse_line(
+    match, op_args_def = match_and_parse_line(
         line, _NAME, gen_op_args_defs()
     )
 
@@ -139,7 +142,7 @@ def parse_line(line):
     instruction_byte = instruction_byte_from_bitdefs(
         generate_instruction_byte_bitdefs(op_args_def)
     )
-    mc_byte = utils.get_machine_code_byte_template()
+    mc_byte = get_machine_code_byte_template()
     mc_byte["byte_type"] = "instruction"
     mc_byte["bitstring"] = instruction_byte
 

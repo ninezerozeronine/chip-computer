@@ -3,7 +3,8 @@ Extract information from a list of assembly line info dictionaries.
 """
 from copy import deepcopy
 
-from .. import numbers
+from . import number_utils
+from .data_structures import get_summary_entry_template
 
 
 def get_assembly_summary_data(asm_line_infos):
@@ -26,7 +27,9 @@ def get_assembly_summary_data(asm_line_infos):
             dual_entry["assembly"]["info"] = deepcopy(asm_line_info)
 
             dual_entry["has_machine_code_byte"] = True
-            dual_entry["machine_code_byte"]["info"] = deepcopy(asm_line_info["mc_bytes"][0])
+            dual_entry["machine_code_byte"]["info"] = deepcopy(
+                asm_line_info["mc_bytes"][0]
+            )
             if asm_line_info["has_label_assigned"]:
                 dual_entry["machine_code_byte"]["has_label"] = True
                 dual_entry["machine_code_byte"]["label"] = asm_line_info["assigned_label"]
@@ -45,25 +48,6 @@ def get_assembly_summary_data(asm_line_infos):
             assembly_summary.append(assembly_only_entry)
 
     return assembly_summary
-
-
-def get_summary_entry_template():
-    """
-
-    """
-
-    return {
-        "has_assembly": False,
-        "assembly": {
-            "info": {},
-        },
-        "has_machine_code_byte": False,
-        "machine_code_byte": {
-            "info": {},
-            "has_label": False,
-            "label": "",
-        }
-    }
 
 
 def generate_assembly_summary_lines(asm_line_infos):
@@ -126,13 +110,17 @@ def generate_assembly_summary_lines(asm_line_infos):
             mc_index_hex = "{index:02X}".format(
                 index=mc_byte_info["index"],
                 )
-            mc_index_bitstring = numbers.number_to_bitstring((mc_byte_info["index"]))
+            mc_index_bitstring = number_utils.number_to_bitstring(
+                mc_byte_info["index"]
+            )
             mc_byte_sep = "-"
             if summary_line["machine_code_byte"]["has_label"]:
                 mc_label = summary_line["machine_code_byte"]["label"]
             else:
                 mc_label = ""
-            mc_byte_decimal = str(numbers.bitstring_to_number(mc_byte_info["bitstring"]))
+            mc_byte_decimal = str(
+                number_utils.bitstring_to_number(mc_byte_info["bitstring"])
+            )
             mc_byte_bitstring = mc_byte_info["bitstring"]
             mc_byte_hex = "{mc_byte:02X}".format(
                 mc_byte=int(mc_byte_info["bitstring"], 2),
@@ -211,7 +199,7 @@ def get_widest_column_values(assembly_summary_data):
             # Decimal byte index width
             mc_byte_decimal_width = len(
                 str(
-                    numbers.bitstring_to_number(
+                    number_utils.bitstring_to_number(
                         entry["machine_code_byte"]["info"]["bitstring"]
                     )
                 )

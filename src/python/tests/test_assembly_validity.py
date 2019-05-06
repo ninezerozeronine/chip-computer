@@ -1,9 +1,10 @@
 import pytest
 
-from eight_bit_computer.assembler import validity
-from eight_bit_computer.assembler.assembler import get_assembly_line_template
+from eight_bit_computer import assembly_validity
+from eight_bit_computer.data_structures import (
+    get_assembly_line_template, get_machine_code_byte_template
+)
 from eight_bit_computer.exceptions import AssemblyError
-from eight_bit_computer.language.utils import get_machine_code_byte_template
 
 
 def test_check_multiple_label_defs_raises():
@@ -37,11 +38,11 @@ def test_check_multiple_label_defs_raises():
     lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_multiple_label_defs(lines)
+        assembly_validity.check_multiple_label_defs(lines)
 
 
 def test_check_multiple_label_defs_does_not_raise(processed_assembly_lines):
-    validity.check_multiple_label_defs(processed_assembly_lines)
+    assembly_validity.check_multiple_label_defs(processed_assembly_lines)
     assert True
 
 
@@ -92,11 +93,11 @@ def test_check_multiple_label_assignment_raises():
     lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_multiple_label_assignment(lines)
+        assembly_validity.check_multiple_label_assignment(lines)
 
 
 def test_check_multiple_label_assignment_does_not_raise(processed_assembly_lines):
-    validity.check_multiple_label_assignment(processed_assembly_lines)
+    assembly_validity.check_multiple_label_assignment(processed_assembly_lines)
     assert True
 
 
@@ -138,11 +139,11 @@ def test_check_undefined_label_ref_raises():
     lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_undefined_label_ref(lines)
+        assembly_validity.check_undefined_label_ref(lines)
 
 
 def test_check_undefined_label_ref_does_not_raise(processed_assembly_lines):
-    validity.check_undefined_label_ref(processed_assembly_lines)
+    assembly_validity.check_undefined_label_ref(processed_assembly_lines)
     assert True
 
 
@@ -177,11 +178,11 @@ def test_check_multiple_variable_def_raises():
     lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_multiple_variable_def(lines)
+        assembly_validity.check_multiple_variable_def(lines)
 
 
 def test_check_multiple_variable_def_does_not_raise(processed_assembly_lines):
-    validity.check_multiple_variable_def(processed_assembly_lines)
+    assembly_validity.check_multiple_variable_def(processed_assembly_lines)
     assert True
 
 
@@ -198,7 +199,7 @@ def test_check_num_variables_raises():
         lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_num_variables(lines, 0)
+        assembly_validity.check_num_variables(lines, 0)
 
 
 def test_check_num_variables_offset_raises():
@@ -214,11 +215,11 @@ def test_check_num_variables_offset_raises():
         lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_num_variables(lines, 250)
+        assembly_validity.check_num_variables(lines, 250)
 
 
 def test_check_num_variables_does_not_raise(processed_assembly_lines):
-    validity.check_num_variables(processed_assembly_lines, 0)
+    assembly_validity.check_num_variables(processed_assembly_lines, 0)
     assert True
 
 
@@ -253,9 +254,9 @@ def test_check_num_instruction_bytes_raises():
         lines.append(line)
 
     with pytest.raises(AssemblyError):
-        validity.check_num_instruction_bytes(lines)
+        assembly_validity.check_num_instruction_bytes(lines)
 
 
 def test_check_num_instruction_bytes_does_not_raise(processed_assembly_lines):
-    validity.check_num_instruction_bytes(processed_assembly_lines)
+    assembly_validity.check_num_instruction_bytes(processed_assembly_lines)
     assert True

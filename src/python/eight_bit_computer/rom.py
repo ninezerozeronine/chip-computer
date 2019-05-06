@@ -4,22 +4,11 @@ Create and export roms for the computer
 
 import os
 
-from .language.operations import get_all_operations
-from .language import fetch
-from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
+from .operations import get_all_operations, fetch
+from .language_defs import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
+from .data_structures import RomData
 from . import bitdef
-
-from collections import namedtuple
-
-
-RomData = namedtuple("RomData", ["address", "data"])
-"""
-Some data and an address to store it in
-
-Attributes:
-    address (str): The address to store the data in.
-    data (int): The data to be stored at the given address.
-"""
+from . import number_utils
 
 
 def get_rom():
@@ -229,7 +218,7 @@ def rom_slice_to_logisim_string(rom_slice):
                 in line_chunk_romdatas
             ]
             hex_strings = [
-                byte_bitstring_to_hex_string(bit_string)
+                number_utils.bitstring_to_hex_string(bit_string)
                 for bit_string
                 in bit_strings
             ]
@@ -239,14 +228,6 @@ def rom_slice_to_logisim_string(rom_slice):
         rom_lines.append(line)
     rom_string = "\n".join(rom_lines)
     return rom_string
-
-
-def byte_bitstring_to_hex_string(bitstring):
-    """
-
-    """
-
-    return "{0:02X}".format(int(bitstring, 2))
 
 
 def chunker(seq, chunk_size):

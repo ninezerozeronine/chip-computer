@@ -6,7 +6,7 @@ Loads a value from data memory into a module.
 
 from itertools import product
 
-from ..definitions import (
+from ..language_defs import (
     INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
@@ -14,8 +14,11 @@ from ..definitions import (
     FLAGS,
     instruction_byte_from_bitdefs,
 )
-from .. import utils
-from ...exceptions import InstructionParsingError
+from ..operation_utils import assemble_instruction, match_and_parse_line
+from ..data_structures import (
+    get_arg_def_template, get_machine_code_byte_template
+)
+
 
 _NAME = "LOAD"
 
@@ -54,13 +57,13 @@ def gen_op_args_defs():
     for src, dest in product(sources, destinations):
         args_def = []
 
-        arg0_def = utils.get_arg_def_template()
+        arg0_def = get_arg_def_template()
         arg0_def["value_type"] = "module_name"
         arg0_def["is_memory_location"] = True
         arg0_def["value"] = src
         args_def.append(arg0_def)
 
-        arg1_def = utils.get_arg_def_template()
+        arg1_def = get_arg_def_template()
         arg1_def["value_type"] = "module_name"
         arg1_def["value"] = dest
         args_def.append(arg1_def)
@@ -70,12 +73,12 @@ def gen_op_args_defs():
     for dest in destinations:
         args_def = []
 
-        arg0_def = utils.get_arg_def_template()
+        arg0_def = get_arg_def_template()
         arg0_def["value_type"] = "constant"
         arg0_def["is_memory_location"] = True
         args_def.append(arg0_def)
 
-        arg1_def = utils.get_arg_def_template()
+        arg1_def = get_arg_def_template()
         arg1_def["value_type"] = "module_name"
         arg1_def["value"] = dest
         args_def.append(arg1_def)
@@ -103,7 +106,7 @@ def generate_operation_templates(op_args_def):
 
     control_steps = generate_control_steps(op_args_def)
 
-    return utils.assemble_instruction(
+    return assemble_instruction(
         instruction_byte_bitdefs, flags_bitdefs, control_steps
     )
 
@@ -190,7 +193,7 @@ def parse_line(line):
         an empty list.
     """
 
-    match, op_args_def = utils.match_and_parse_line(
+    match, op_args_def = match_and_parse_line(
         line, _NAME, gen_op_args_defs()
     )
 
@@ -203,18 +206,18 @@ def parse_line(line):
 
     mc_bytes = []
     if op_args_def[0]["value_type"] == "module_name":
-        mc_byte = utils.get_machine_code_byte_template()
+        mc_byte = get_machine_code_byte_template()
         mc_byte["byte_type"] = "instruction"
         mc_byte["bitstring"] = instruction_byte
         mc_bytes.append(mc_byte)
 
     elif op_args_def[0]["value_type"] == "constant":
-        mc_byte_0 = utils.get_machine_code_byte_template()
+        mc_byte_0 = get_machine_code_byte_template()
         mc_byte_0["byte_type"] = "instruction"
         mc_byte_0["bitstring"] = instruction_byte
         mc_bytes.append(mc_byte_0)
 
-        mc_byte_1 = utils.get_machine_code_byte_template()
+        mc_byte_1 = get_machine_code_byte_template()
         mc_byte_1["byte_type"] = "constant"
         mc_byte_1["constant"] = op_args_def[0]["value"]
         mc_bytes.append(mc_byte_1)

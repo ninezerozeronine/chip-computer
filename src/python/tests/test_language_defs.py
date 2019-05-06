@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer.language import definitions
+from eight_bit_computer import language_defs
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -26,4 +26,4 @@ from eight_bit_computer.language import definitions
     ),
 ])
 def test_instruction_byte_from_bitdefs(test_input, expected):
-    assert definitions.instruction_byte_from_bitdefs(test_input) == expected
+    assert language_defs.instruction_byte_from_bitdefs(test_input) == expected

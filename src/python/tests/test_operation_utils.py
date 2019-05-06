@@ -2,56 +2,9 @@ from copy import deepcopy
 
 import pytest
 
-from eight_bit_computer.language import utils
+from eight_bit_computer import operation_utils
+from eight_bit_computer.data_structures import get_arg_def_template
 from eight_bit_computer.exceptions import InstructionParsingError
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    (
-        "",
-        [
-        ],
-
-    ),
-    (
-        "    ",
-        [
-        ],
-
-    ),
-    (
-        " \t   ",
-        [
-        ],
-
-    ),
-    (
-        "hello",
-        [
-            "hello",
-        ],
-
-    ),
-    (
-        "he./llo world",
-        [
-            "he./llo",
-            "world",
-        ],
-
-    ),
-    (
-        "foo\tbar    baz    ",
-        [
-            "foo",
-            "bar",
-            "baz",
-        ],
-
-    )
-])
-def test_get_tokens_from_line(test_input, expected):
-    assert utils.get_tokens_from_line(test_input) == expected
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -83,35 +36,7 @@ def test_get_tokens_from_line(test_input, expected):
     ),
 ])
 def test_add_quotes_to_strings(test_input, expected):
-    assert utils.add_quotes_to_strings(test_input) == expected
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    ("[A]", "A"),
-    ("[ACC]", "ACC"),
-    ("[$variable]", "$variable"),
-    ("[@label]", "@label"),
-    ("[#number]", "#number"),
-])
-def test_extract_memory_position(test_input, expected):
-    assert utils.extract_memory_position(test_input) == expected
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    ("[A]", True),
-    ("[ACC]", True),
-    ("[$variable]", True),
-    ("[$variable[10]]", True),
-    ("[@label]", True),
-    ("[#number]", True),
-    ("A", False),
-    ("$hello", False),
-    ("[oops", False),
-    ("oops]", False),
-    ("$variable[10]", False),
-])
-def test_is_memory_index(test_input, expected):
-    assert utils.is_memory_index(test_input) == expected
+    assert operation_utils.add_quotes_to_strings(test_input) == expected
 
 
 def gen_test_match_and_parse_args_input_0():
@@ -123,7 +48,7 @@ def gen_test_match_and_parse_args_input_0():
 
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
@@ -145,28 +70,28 @@ def gen_test_match_and_parse_args_input_1():
 
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = "B"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "constant"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = ""
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "constant"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = ""
@@ -190,7 +115,7 @@ def gen_test_match_and_parse_args_input_2():
 
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = "A"
@@ -212,7 +137,7 @@ def gen_test_match_and_parse_args_input_3():
 
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "constant"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = ""
@@ -234,7 +159,7 @@ def gen_test_match_and_parse_args_input_4():
 
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
@@ -260,7 +185,9 @@ def gen_test_match_and_parse_args_input_4():
 def test_match_and_parse_args(
     line_args, op_args_def, expected_match, expected_args
 ):
-    match, parsed_args = utils.match_and_parse_args(line_args, op_args_def)
+    match, parsed_args = operation_utils.match_and_parse_args(
+        line_args, op_args_def
+    )
     assert match == expected_match
     assert parsed_args == expected_args
 
@@ -278,14 +205,14 @@ def gen_test_match_and_parse_line_input_0():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "C"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "D"
@@ -297,14 +224,14 @@ def gen_test_match_and_parse_line_input_0():
     # Def 1
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "B"
@@ -347,7 +274,7 @@ def gen_test_match_and_parse_line_input_2():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = "A"
@@ -375,7 +302,7 @@ def gen_test_match_and_parse_line_input_3():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "constant"
     op_arg_def["is_memory_location"] = True
     op_arg_def["value"] = ""
@@ -404,7 +331,7 @@ def gen_test_match_and_parse_line_input_4():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "constant"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = ""
@@ -434,19 +361,11 @@ def gen_test_match_and_parse_line_input_4():
 def test_match_and_parse_line(
     line, opcode, op_args_defs, expected_match, expected_args
 ):
-    match, parsed_args = utils.match_and_parse_line(
+    match, parsed_args = operation_utils.match_and_parse_line(
         line, opcode, op_args_defs
     )
     assert match == expected_match
     assert parsed_args == expected_args
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    ("A", "[A]"),
-    ("$variable", "[$variable]"),
-])
-def test_represent_as_memory_index(test_input, expected):
-    assert utils.represent_as_memory_index(test_input) == expected
 
 
 def gen_test_match_and_parse_line_raises_input_0():
@@ -462,14 +381,14 @@ def gen_test_match_and_parse_line_raises_input_0():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "B"
@@ -494,14 +413,14 @@ def gen_test_match_and_parse_line_raises_input_1():
     # Def 0
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "B"
@@ -513,14 +432,14 @@ def gen_test_match_and_parse_line_raises_input_1():
     # Def 1
     op_args_def = []
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "A"
 
     op_args_def.append(op_arg_def)
 
-    op_arg_def = utils.get_arg_def_template()
+    op_arg_def = get_arg_def_template()
     op_arg_def["value_type"] = "module_name"
     op_arg_def["is_memory_location"] = False
     op_arg_def["value"] = "B"
@@ -541,7 +460,7 @@ def gen_test_match_and_parse_line_raises_input_1():
 )
 def test_match_and_parse_line_raises(line, opcode, op_args_defs):
     with pytest.raises(InstructionParsingError):
-        utils.match_and_parse_line(line, opcode, op_args_defs)
+        operation_utils.match_and_parse_line(line, opcode, op_args_defs)
 
 
 def test_generate_possible_arg_list():
@@ -612,4 +531,4 @@ def test_generate_possible_arg_list():
         ["<constant>"],
         ["[<constant>]"],
     ]
-    assert utils.generate_possible_arg_list(test_input) == expected
+    assert operation_utils.generate_possible_arg_list(test_input) == expected

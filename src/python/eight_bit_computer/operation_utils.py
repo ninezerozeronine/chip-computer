@@ -1,11 +1,11 @@
 import re
 from copy import deepcopy
 
-from .definitions import MODULE_CONTROL, STEPS
-from ..datatemplate import DataTemplate
-from ..exceptions import InstructionParsingError
-from ..assembler.assembler import is_constant
-from .. import bitdef
+from .data_structures import DataTemplate
+from .exceptions import InstructionParsingError
+from .language_defs import MODULE_CONTROL, STEPS
+from . import token_utils
+from . import bitdef
 
 
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
@@ -53,43 +53,6 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     return templates
 
 
-def get_machine_code_byte_template():
-    """
-    Get the template used to describe a machine code byte.
-
-    This is a set of information that describes the byte (of which there
-    could be many) of machine code that an operation (e.g. LOAD
-    [$variable] A) results in.
-
-    The keys have the following meaning:
-
-    - bitstring: A byte bitstring of the final byte that will make up
-      the machine code.
-    - byte_type: The type of machine code byte. Will be instruction or
-      constant.
-    - constant_type: The type of the constant. Could be a label,
-      variable or number.
-    - constant: The constant that this byte will need to become. The
-      resolution of the constant to a real machine code byte is done by
-      the assembler.
-    - number_value: The value of the constant as an int if it's a
-      number.
-    - index: The index of this byte in program data.
-
-    Returns:
-        dict: Machine code byte description template.
-    """
-
-    return {
-        "bitstring": "",
-        "byte_type": "",
-        "constant_type": "",
-        "constant": "",
-        "number_value": 0,
-        "index": -1,
-    }
-
-
 def add_quotes_to_strings(strings):
     """
     Add double quotes strings in a list then join with commas.
@@ -104,127 +67,6 @@ def add_quotes_to_strings(strings):
         quote_strings.append("\"{string}\"".format(string=_string))
     pretty_strings = ", ".join(quote_strings)
     return pretty_strings
-
-
-def not_3_tokens_message(tokens, op_name, followup):
-    """
-    Generate the error message for when not 3 tokens are specified.
-
-    Convenience function for generating useful error messages when an
-    operator expects 3 tokens (Operator, source, dest) but too few or
-    too many were supplied.
-
-    Args:
-        tokens (list(str)): The tkens on the line being parsed
-        op_name (str): The name of the operators e.g. SET, LOAD
-        followup (str): Extra context and example to make the error more
-            useful.
-    Returns:
-        str: The compiled message.
-    """
-    num_tokens = len(tokens)
-    if num_tokens == 1:
-        msg = (
-            "No tokens were specified for the {op_name} "
-            "operation. ".format(op_name=op_name)
-        )
-    elif num_tokens == 2:
-        msg = (
-            "Only one token was specified for the {op_name} operation "
-            "(\"{token}\"). ".format(token=tokens[1], op_name=op_name)
-        )
-    else:
-        pretty_tokens = add_quotes_to_strings(tokens)
-        msg = (
-            "{num_tokens} tokens were specified for the {op_name} "
-            "operation ({pretty_tokens}). ".format(
-                num_tokens=num_tokens,
-                op_name=op_name,
-                pretty_tokens=pretty_tokens,
-            )
-        )
-    msg += followup
-    return msg
-
-
-def get_tokens_from_line(line):
-    """
-    Given a line split it into tokens and return them.
-
-    Tokens are runs of characters separated by spaces. If there are no
-    tokens return an empty list.
-
-    Args:
-        line (str): line to convert to tokens
-    Returns:
-        list(str): The tokens
-    """
-
-    # Does line have any content
-    if not line:
-        return []
-
-    # Does the line have any content after splitting it
-    line_tokens = line.split()
-    if not line_tokens:
-        return []
-
-    return line_tokens
-
-
-def extract_memory_position(argument):
-    """
-    Extract a memory position from a memory index argument.
-
-    See :func:~`is_memory_index` for details of what a memory index is.
-
-    Args:
-        argument (str): The argument to extract a memory position from.
-    Returns:
-        str: The location in memory being referenced.
-    """
-
-    return argument[1:-1]
-
-
-def is_memory_index(argument):
-    """
-    Determine whether this argument is a memory index.
-
-    Memory indexes can be module names or constants with a ``[`` at the start
-    and a ``]`` at the end. e.g.:
-
-    - ``[A]``
-    - ``[#42]``
-    - ``[$variable]``
-
-    Args:
-        argument (str): The argument being used for the assembly
-            operation.
-    Returns:
-        bool: True if the argument is a memory index, false if not.
-
-    """
-    if (argument.startswith("[")
-            and argument.endswith("]")
-            and len(argument) > 2):
-        return True
-    else:
-        return False
-
-
-def represent_as_memory_index(argument):
-    """
-    Format the argument so it appears as a memory index.
-
-    See :func:~`is_memory_index` for details on what a memory index is.
-
-    Args:
-        argument (str): The argument to represent as a memory index.
-    Returns:
-        str: The formatted argument.
-    """
-    return "[{argument}]".format(argument=argument)
 
 
 def match_and_parse_line(line, opcode, op_args_defs=None):
@@ -253,7 +95,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
     if op_args_defs is None:
         op_args_defs = []
 
-    line_tokens = get_tokens_from_line(line)
+    line_tokens = token_utils.get_tokens_from_line(line)
 
     # Return early if there are no tokens
     if not line_tokens:
@@ -326,7 +168,7 @@ def generate_possible_arg_list(op_args_defs):
             if op_arg_def["value_type"] == "constant":
                 arg = "<constant>"
             if op_arg_def["is_memory_location"]:
-                arg = represent_as_memory_index(arg)
+                arg = token_utils.represent_as_memory_index(arg)
             args.append(arg)
         arg_possibilities.append(args)
     return arg_possibilities
@@ -363,7 +205,7 @@ def match_and_parse_args(line_args, op_args_def):
         # If the argument is a plain module name
         if (op_arg_def["value_type"] == "module_name"
                 and not op_arg_def["is_memory_location"]
-                and not is_memory_index(line_arg)
+                and not token_utils.is_memory_index(line_arg)
                 and line_arg == op_arg_def["value"]):
             parsed_arg = deepcopy(op_arg_def)
             parsed_args.append(parsed_arg)
@@ -372,8 +214,8 @@ def match_and_parse_args(line_args, op_args_def):
         # If the argument is a module name indexing memory
         if (op_arg_def["value_type"] == "module_name"
                 and op_arg_def["is_memory_location"]
-                and is_memory_index(line_arg)):
-            memory_position = extract_memory_position(line_arg)
+                and token_utils.is_memory_index(line_arg)):
+            memory_position = token_utils.extract_memory_position(line_arg)
             if memory_position == op_arg_def["value"]:
                 parsed_arg = deepcopy(op_arg_def)
                 parsed_args.append(parsed_arg)
@@ -382,8 +224,8 @@ def match_and_parse_args(line_args, op_args_def):
         # If the argument is a plain constant
         if (op_arg_def["value_type"] == "constant"
                 and not op_arg_def["is_memory_location"]
-                and not is_memory_index(line_arg)
-                and is_constant(line_arg)):
+                and not token_utils.is_memory_index(line_arg)
+                and token_utils.is_constant(line_arg)):
             parsed_arg = deepcopy(op_arg_def)
             parsed_arg["value"] = line_arg
             parsed_args.append(parsed_arg)
@@ -392,9 +234,9 @@ def match_and_parse_args(line_args, op_args_def):
         # If the argument is a constant indexing memory
         if (op_arg_def["value_type"] == "constant"
                 and op_arg_def["is_memory_location"]
-                and is_memory_index(line_arg)):
-            memory_position = extract_memory_position(line_arg)
-            if is_constant(memory_position):
+                and token_utils.is_memory_index(line_arg)):
+            memory_position = token_utils.extract_memory_position(line_arg)
+            if token_utils.is_constant(memory_position):
                 parsed_arg = deepcopy(op_arg_def)
                 parsed_arg["value"] = memory_position
                 parsed_args.append(parsed_arg)
@@ -417,78 +259,3 @@ def match_and_parse_args(line_args, op_args_def):
     # If the for loop completes successfully, we've matched all the
     # args.
     return True, parsed_args
-
-
-def get_arg_def_template():
-    """
-    Get a definition template for an assembly operation argument.
-
-    This is a set of information that describes an argument used in a
-    line of assembly.
-
-    The keys have the following meaning:
-
-    - value_type: What kind of argument this is. ``constant`` or
-      ``module_name``.
-    - is_memory_location: Whether this argument is referring to a
-      location in memory.
-    - value: The permitted value of the argument if it's a module.
-
-    These dictionaries will be grouped in a list of lists that describe
-    the possible arguments for an assembly operation. E.g. if the
-    possible arguments for an assembly operation were:
-
-    - ``ACC`` ``A``
-    - ``B`` ``C``
-    - ``A`` ``[#123]``
-
-    The data structure would be as follows::
-
-        [
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "ACC",
-                },
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "A",
-                },
-            ],
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "B",
-                },
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": True,
-                    "value": "C",
-                },
-            ],
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "A",
-                },
-                {
-                    "value_type": "constant",
-                    "is_memory_location": True,
-                    "value": "",
-                },
-            ],
-        ]
-
-    Returns:
-        dict: Machine code byte description template.
-    """
-
-    return {
-        "value_type": "",
-        "is_memory_location": False,
-        "value": "",
-    }

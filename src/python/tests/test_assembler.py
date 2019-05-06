@@ -1,9 +1,11 @@
 import pytest
 from copy import deepcopy
 
-from eight_bit_computer.assembler import assembler
+from eight_bit_computer import assembler
+from eight_bit_computer.data_structures import (
+    get_assembly_line_template, get_machine_code_byte_template
+)
 from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
-from eight_bit_computer.language.utils import get_machine_code_byte_template
 
 
 @pytest.mark.parametrize("test_input,variable_start_offset", [
@@ -27,16 +29,16 @@ def get_test_process_line_data():
     """
     tests = []
     test_input = ""
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     tests.append((test_input, test_output))
 
     test_input = "// comment"
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     test_output["raw"] = "// comment"
     tests.append((test_input, test_output))
 
     test_input = "@label"
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     test_output["raw"] = "@label"
     test_output["clean"] = "@label"
     test_output["defined_label"] = "@label"
@@ -44,7 +46,7 @@ def get_test_process_line_data():
     tests.append((test_input, test_output))
 
     test_input = "$variable"
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     test_output["raw"] = "$variable"
     test_output["clean"] = "$variable"
     test_output["defined_variable"] = "$variable"
@@ -52,7 +54,7 @@ def get_test_process_line_data():
     tests.append((test_input, test_output))
 
     test_input = "    @label // comment"
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     test_output["raw"] = "    @label // comment"
     test_output["clean"] = "@label"
     test_output["defined_label"] = "@label"
@@ -60,7 +62,7 @@ def get_test_process_line_data():
     tests.append((test_input, test_output))
 
     test_input = "    $variable // comment"
-    test_output = assembler.get_assembly_line_template()
+    test_output = get_assembly_line_template()
     test_output["raw"] = "    $variable // comment"
     test_output["clean"] = "$variable"
     test_output["defined_variable"] = "$variable"
@@ -159,82 +161,6 @@ def test_remove_excess_whitespace(test_input, expected):
     assert assembler.remove_excess_whitespace(test_input) == expected
 
 
-@pytest.mark.parametrize("test_input,expected", [
-    (
-        "",
-        False,
-    ),
-    (
-        "      ",
-        False,
-    ),
-    (
-        "LOAD [$foo] A",
-        False,
-    ),
-    (
-        "@hello",
-        True,
-    ),
-    (
-        "@hello_123_blah",
-        True,
-    ),
-    (
-        "@hello  world  ",
-        False,
-    ),
-    (
-        "@@monkey",
-        False,
-    ),
-    (
-        "@123",
-        False,
-    ),
-])
-def test_is_label(test_input, expected):
-    assert assembler.is_label(test_input) == expected
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    (
-        "",
-        False,
-    ),
-    (
-        "      ",
-        False,
-    ),
-    (
-        "LOAD [$foo] A",
-        False,
-    ),
-    (
-        "$hello",
-        True,
-    ),
-    (
-        "$hello_123_blah",
-        True,
-    ),
-    (
-        "$hello  world  ",
-        False,
-    ),
-    (
-        "$$monkey",
-        False,
-    ),
-    (
-        "$123",
-        False,
-    ),
-])
-def test_is_variable(test_input, expected):
-    assert assembler.is_variable(test_input) == expected
-
-
 @pytest.mark.parametrize("test_input", [
     "fwgfkwghfkjhwgekjhgwkejg",
 ])
@@ -328,34 +254,6 @@ def gen_validate_and_identify_constants_raises_data():
 def test_validate_and_identify_constants_raises(test_input):
     with pytest.raises(LineProcessingError):
         assembler.validate_and_identify_constants(test_input)
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    ("#123", True),
-    ("#0xFF", True),
-    ("#0o22", True),
-    ("#0b101", True),
-    ("##", False),
-    ("", False),
-    ("#0q12", False),
-    ("#0b10#g", False),
-    ("blah", False),
-])
-def test_is_number(test_input, expected):
-    assert assembler.is_number(test_input) == expected
-
-
-@pytest.mark.parametrize("test_input,expected", [
-    (["#123", 123]),
-    (["#0", 0]),
-    (["#-12", -12]),
-    (["#0xFF", 255]),
-    (["#0xff", 255]),
-    (["#0o10", 8]),
-    (["#0b101", 5]),
-])
-def test_number_constant_value(test_input, expected):
-    assert assembler.number_constant_value(test_input) == expected
 
 
 def test_assign_labels(processed_assembly_lines):

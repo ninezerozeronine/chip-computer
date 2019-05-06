@@ -2,17 +2,16 @@
 Process assembly code and output machine code.
 """
 
-import copy
-import re
-
-from .validity import check_structure_validity
-from ..language.operations import get_all_operations
-from ..exceptions import (
+from .exceptions import (
     LineProcessingError,
     InstructionParsingError,
     AssemblyError,
 )
-from .. import numbers
+from .data_structures import get_assembly_line_template
+from .assembly_validity import check_structure_validity
+from .operations import get_all_operations
+from . import number_utils
+from . import token_utils
 
 
 def assemble(input_path, output_path=None, variable_start_offset=0):
@@ -129,12 +128,12 @@ def process_line(line):
         return assembly_line
     assembly_line["clean"] = cleaned_line
 
-    line_is_label = is_label(cleaned_line)
+    line_is_label = token_utils.is_label(cleaned_line)
     if line_is_label:
         assembly_line["defines_label"] = True
         assembly_line["defined_label"] = cleaned_line
 
-    line_is_variable = is_variable(cleaned_line)
+    line_is_variable = token_utils.is_variable(cleaned_line)
     if line_is_variable:
         assembly_line["defines_variable"] = True
         assembly_line["defined_variable"] = cleaned_line
@@ -146,53 +145,6 @@ def process_line(line):
         assembly_line["has_machine_code"] = True
 
     return assembly_line
-
-
-def get_assembly_line_template():
-    """
-    Get a template for the assembly line information bundle.
-
-    Template for a dictionary that contains information about this line
-    of assembly code. The keys have the following meanings:
-
-    - line_no: The line in the assembly file that this line was on.
-    - raw: The line as it was in the assembly file.
-    - clean: The cleaned up line, ready for parsing.
-    - defines_label: Whether or not this line is a label definition.
-    - defined_label: The label that this line defined.
-    - has_label_assigned: Whether or not this line has a label assigned
-      to it.
-    - assigned_label: The label that has been assigned to the first
-      line of the machine code generated for this line.
-    - defines_variable: Whether or not this line is a variable
-      definition.
-    - defined_variable: The variable that this line defines.
-    - has_machine_code: Whether or not this line results in machine
-      code. E.g. a comment has no machine code.
-    - mc_bytes: List of machine code byte templates (with
-      constant expansion information) for this assembly line.
-
-    Returns:
-        dict: Assembly line description template.
-    """
-
-    return {
-        "line_no": -1,
-        "raw": "",
-        "clean": "",
-
-        "defines_label": False,
-        "defined_label": "",
-
-        "has_label_assigned": False,
-        "assigned_label": "",
-
-        "defines_variable": False,
-        "defined_variable": "",
-
-        "has_machine_code": False,
-        "mc_bytes": [],
-    }
 
 
 def clean_line(line):
@@ -241,38 +193,6 @@ def remove_excess_whitespace(line):
         str: The line with excess whitespace removed.
     """
     return " ".join(line.strip().split())
-
-
-def is_label(test_string):
-    """
-    Test if a string is a valid label.
-
-    Args:
-        test_string (str): The string to test
-    Returns:
-        bool: True if the string is a valid label, false otherwise.
-    """
-    match = re.match(r"@[a-zA-Z_]+\w*$", test_string)
-    if match:
-        return True
-    else:
-        return False
-
-
-def is_variable(test_string):
-    """
-    Test if a string is a valid variable.
-
-    Args:
-        test_string (str): The string to test
-    Returns:
-        bool: True if the string is a valid variable, false otherwise.
-    """
-    match = re.match(r"\$[a-zA-Z_]+\w*$", test_string)
-    if match:
-        return True
-    else:
-        return False
 
 
 def machine_code_bytes_from_line(line):
@@ -338,16 +258,17 @@ def validate_and_identify_constants(machine_code_bytes):
             continue
 
         constant = mc_byte["constant"]
-        constant_is_label = is_label(constant)
-        constant_is_variable = is_variable(constant)
-        constant_is_number = is_number(constant)
+
+        if not token_utils.is_constant(constant):
+            raise LineProcessingError("Not a valid constant")
+
+        constant_is_label = token_utils.is_label(constant)
+        constant_is_variable = token_utils.is_variable(constant)
+        constant_is_number = token_utils.is_number(constant)
 
         constants = [
             constant_is_label, constant_is_variable, constant_is_number
         ]
-
-        if not any(constants):
-            raise LineProcessingError()
 
         num_constants = sum([1 for _constant in constants if _constant])
         if num_constants > 1:
@@ -359,56 +280,10 @@ def validate_and_identify_constants(machine_code_bytes):
             mc_byte["constant_type"] = "variable"
         else:
             mc_byte["constant_type"] = "number"
-            value = number_constant_value(constant)
-            if not (numbers.number_is_within_bit_limit(value, bits=8)):
+            value = token_utils.number_constant_value(constant)
+            if not (number_utils.number_is_within_bit_limit(value, bits=8)):
                 raise LineProcessingError()
             mc_byte["number_value"] = value
-
-
-def is_constant(test_string):
-    if (is_label(test_string)
-            or is_variable(test_string)
-            or is_number(test_string)):
-        return True
-    else:
-        return False
-
-
-def is_number(test_string):
-    """
-    Test if a string is a valid number.
-
-    Args:
-        test_string (str): The string to test
-    Returns:
-        bool: True if the string is a valid number, false otherwise.
-    """
-    if not test_string:
-        return False
-    if test_string[0] == "#":
-        stripped = test_string[1:]
-        if not stripped:
-            return False
-        try:
-            num = int(stripped, 0)
-        except ValueError:
-            return False
-        return True
-    else:
-        return False
-
-
-def number_constant_value(number_constant):
-    """
-    Get the value that a number constant represents.
-
-    Args:
-        number_constant (str): The constant to extract the value from.
-    Returns:
-        int: The value of the constant.
-    """
-
-    return int(number_constant[1:], 0)
 
 
 def assign_machine_code_byte_indexes(assembly_lines):
@@ -490,7 +365,7 @@ def create_label_map(assembly_lines):
     mc_byte_index = 0
     for assembly_line in assembly_lines:
         if assembly_line["has_label_assigned"]:
-            index_bit_string = numbers.number_to_bitstring(mc_byte_index)
+            index_bit_string = number_utils.number_to_bitstring(mc_byte_index)
             label_map[assembly_line["assigned_label"]] = index_bit_string
         if assembly_line["has_machine_code"]:
             mc_byte_index += len(assembly_line["mc_bytes"])
@@ -513,7 +388,7 @@ def resolve_numbers(assembly_lines):
                 if (mc_byte["byte_type"] == "constant"
                         and mc_byte["constant_type"] == "number"):
                     number = mc_byte["number_value"]
-                    mc_byte["bitstring"] = numbers.number_to_bitstring(
+                    mc_byte["bitstring"] = number_utils.number_to_bitstring(
                         number
                     )
 
@@ -563,7 +438,7 @@ def create_variable_map(assembly_lines, variable_start_offset):
             variable = assembly_line["defined_variable"]
             if variable in variable_map:
                 continue
-            variable_map[variable] = numbers.number_to_bitstring(
+            variable_map[variable] = number_utils.number_to_bitstring(
                 variable_index
             )
             variable_index += 1
@@ -579,7 +454,7 @@ def create_variable_map(assembly_lines, variable_start_offset):
                 variable = mc_byte["constant"]
                 if variable in variable_map:
                     continue
-                variable_map[variable] = numbers.number_to_bitstring(
+                variable_map[variable] = number_utils.number_to_bitstring(
                     variable_index
                 )
                 variable_index += 1

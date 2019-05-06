@@ -2,11 +2,11 @@ import textwrap
 
 import pytest
 
-from eight_bit_computer.assembler import extraction
+from eight_bit_computer import assembly_summary
 
 
 def test_get_assembly_summary_data(assembly_line_infos, assembly_summary_data):
-    assert extraction.get_assembly_summary_data(assembly_line_infos) == assembly_summary_data
+    assert assembly_summary.get_assembly_summary_data(assembly_line_infos) == assembly_summary_data
 
 
 def test_generate_assembly_summary_lines(assembly_line_infos):
@@ -32,7 +32,7 @@ def test_generate_assembly_summary_lines(assembly_line_infos):
         "13 $variable4              |",
         "14 // comment              |",
     ]
-    assert extraction.generate_assembly_summary_lines(assembly_line_infos) == expected
+    assert assembly_summary.generate_assembly_summary_lines(assembly_line_infos) == expected
 
 
 def test_get_widest_column_values(assembly_summary_data):
@@ -43,4 +43,4 @@ def test_get_widest_column_values(assembly_summary_data):
         "mc_byte_decimal": 3,
         "mc_label": 7,
     }
-    assert extraction.get_widest_column_values(assembly_summary_data) == expected
+    assert assembly_summary.get_widest_column_values(assembly_summary_data) == expected
