@@ -139,8 +139,8 @@ def parse_line(line):
     instruction_byte = instruction_byte_from_bitdefs(
         generate_instruction_byte_bitdefs(op_args_def)
     )
-    machine_code = utils.get_machine_code_byte_template()
-    machine_code["byte_type"] = "instruction"
-    machine_code["bitstring"] = instruction_byte
+    mc_byte = utils.get_machine_code_byte_template()
+    mc_byte["byte_type"] = "instruction"
+    mc_byte["bitstring"] = instruction_byte
 
-    return [machine_code]
+    return [mc_byte]
