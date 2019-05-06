@@ -8,18 +8,7 @@ from .language.operations import get_all_operations
 from .language import fetch
 from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from . import bitdef
-
-from collections import namedtuple
-
-
-RomData = namedtuple("RomData", ["address", "data"])
-"""
-Some data and an address to store it in
-
-Attributes:
-    address (str): The address to store the data in.
-    data (int): The data to be stored at the given address.
-"""
+from .data_structures import RomData
 
 
 def get_rom():
@@ -239,14 +228,6 @@ def rom_slice_to_logisim_string(rom_slice):
         rom_lines.append(line)
     rom_string = "\n".join(rom_lines)
     return rom_string
-
-
-def byte_bitstring_to_hex_string(bitstring):
-    """
-
-    """
-
-    return "{0:02X}".format(int(bitstring, 2))
 
 
 def chunker(seq, chunk_size):

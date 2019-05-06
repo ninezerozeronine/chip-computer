@@ -16,6 +16,9 @@ from ..definitions import (
 )
 from .. import utils
 from ...exceptions import InstructionParsingError
+from ..data_structures import (
+    get_arg_def_template, get_machine_code_byte_template
+)
 
 _NAME = "COPY"
 

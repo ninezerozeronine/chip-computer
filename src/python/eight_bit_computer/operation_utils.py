@@ -7,6 +7,7 @@ from ..exceptions import InstructionParsingError
 from ..assembler.assembler import is_constant
 from .. import bitdef
 
+from .data_structures import 
 
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     """
@@ -51,43 +52,6 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
         templates.append(template)
 
     return templates
-
-
-def get_machine_code_byte_template():
-    """
-    Get the template used to describe a machine code byte.
-
-    This is a set of information that describes the byte (of which there
-    could be many) of machine code that an operation (e.g. LOAD
-    [$variable] A) results in.
-
-    The keys have the following meaning:
-
-    - bitstring: A byte bitstring of the final byte that will make up
-      the machine code.
-    - byte_type: The type of machine code byte. Will be instruction or
-      constant.
-    - constant_type: The type of the constant. Could be a label,
-      variable or number.
-    - constant: The constant that this byte will need to become. The
-      resolution of the constant to a real machine code byte is done by
-      the assembler.
-    - number_value: The value of the constant as an int if it's a
-      number.
-    - index: The index of this byte in program data.
-
-    Returns:
-        dict: Machine code byte description template.
-    """
-
-    return {
-        "bitstring": "",
-        "byte_type": "",
-        "constant_type": "",
-        "constant": "",
-        "number_value": 0,
-        "index": -1,
-    }
 
 
 def add_quotes_to_strings(strings):
@@ -419,76 +383,4 @@ def match_and_parse_args(line_args, op_args_def):
     return True, parsed_args
 
 
-def get_arg_def_template():
-    """
-    Get a definition template for an assembly operation argument.
 
-    This is a set of information that describes an argument used in a
-    line of assembly.
-
-    The keys have the following meaning:
-
-    - value_type: What kind of argument this is. ``constant`` or
-      ``module_name``.
-    - is_memory_location: Whether this argument is referring to a
-      location in memory.
-    - value: The permitted value of the argument if it's a module.
-
-    These dictionaries will be grouped in a list of lists that describe
-    the possible arguments for an assembly operation. E.g. if the
-    possible arguments for an assembly operation were:
-
-    - ``ACC`` ``A``
-    - ``B`` ``C``
-    - ``A`` ``[#123]``
-
-    The data structure would be as follows::
-
-        [
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "ACC",
-                },
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "A",
-                },
-            ],
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "B",
-                },
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": True,
-                    "value": "C",
-                },
-            ],
-            [
-                {
-                    "value_type": "module_name",
-                    "is_memory_location": False,
-                    "value": "A",
-                },
-                {
-                    "value_type": "constant",
-                    "is_memory_location": True,
-                    "value": "",
-                },
-            ],
-        ]
-
-    Returns:
-        dict: Machine code byte description template.
-    """
-
-    return {
-        "value_type": "",
-        "is_memory_location": False,
-        "value": "",
-    }
