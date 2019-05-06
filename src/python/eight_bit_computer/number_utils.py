@@ -38,9 +38,11 @@ def number_is_within_bit_limit(number, bits=8):
     return min_val <= number <= max_val
 
 
-def bitstring_to_hex_string(bitstring):
+def bitstring_to_hex_string(bitstring, zero_pad_width=2):
     """
 
     """
 
-    return "{0X}".format(int(bitstring, 2))
+    return "{num:0{zero_pad_width}X}".format(
+        num=int(bitstring, 2), zero_pad_width=zero_pad_width
+    )

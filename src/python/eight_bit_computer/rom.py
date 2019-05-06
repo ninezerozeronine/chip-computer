@@ -8,6 +8,7 @@ from .operations import get_all_operations, fetch
 from .language_defs import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from .data_structures import RomData
 from . import bitdef
+from . import number_utils
 
 
 def get_rom():

@@ -132,7 +132,7 @@ def parse_line(line):
         empty list.
     """
 
-    match, op_args_def = utils.match_and_parse_line(
+    match, op_args_def = match_and_parse_line(
         line, _NAME, gen_op_args_defs()
     )
 
@@ -142,7 +142,7 @@ def parse_line(line):
     instruction_byte = instruction_byte_from_bitdefs(
         generate_instruction_byte_bitdefs(op_args_def)
     )
-    mc_byte = utils.get_machine_code_byte_template()
+    mc_byte = get_machine_code_byte_template()
     mc_byte["byte_type"] = "instruction"
     mc_byte["bitstring"] = instruction_byte
 

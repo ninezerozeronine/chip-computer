@@ -1,6 +1,7 @@
 """
 
 """
+import re
 
 
 def is_label(test_string):

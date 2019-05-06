@@ -2,9 +2,6 @@
 Process assembly code and output machine code.
 """
 
-import copy
-import re
-
 from .exceptions import (
     LineProcessingError,
     InstructionParsingError,
@@ -12,7 +9,7 @@ from .exceptions import (
 )
 from .data_structures import get_assembly_line_template
 from .assembly_validity import check_structure_validity
-from ..operations import get_all_operations
+from .operations import get_all_operations
 from . import number_utils
 from . import token_utils
 

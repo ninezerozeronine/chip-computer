@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer.language.operations import load
+from eight_bit_computer.operations import load
 from eight_bit_computer.data_structures import get_machine_code_byte_template
 from eight_bit_computer.exceptions import InstructionParsingError
 
