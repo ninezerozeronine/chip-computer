@@ -1,5 +1,5 @@
 """
-
+Data structures use to pass information between functions.
 """
 
 from collections import namedtuple

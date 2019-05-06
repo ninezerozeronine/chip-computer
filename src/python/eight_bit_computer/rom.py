@@ -4,11 +4,10 @@ Create and export roms for the computer
 
 import os
 
-from .language.operations import get_all_operations
-from .language import fetch
-from .language.definitions import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
-from . import bitdef
+from .operations import get_all_operations, fetch
+from .language_defs import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
 from .data_structures import RomData
+from . import bitdef
 
 
 def get_rom():
@@ -218,7 +217,7 @@ def rom_slice_to_logisim_string(rom_slice):
                 in line_chunk_romdatas
             ]
             hex_strings = [
-                byte_bitstring_to_hex_string(bit_string)
+                number_utils.bitstring_to_hex_string(bit_string)
                 for bit_string
                 in bit_strings
             ]

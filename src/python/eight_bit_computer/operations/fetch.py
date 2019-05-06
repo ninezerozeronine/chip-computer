@@ -2,9 +2,9 @@
 The fetch steps added to the start of all operations.
 """
 
-from .definitions import MODULE_CONTROL, STEPS, EMPTY_ADDRESS
+from ..language_defs import MODULE_CONTROL, STEPS, EMPTY_ADDRESS
 from .. import bitdef
-from ..datatemplate import DataTemplate
+from ..data_structures import DataTemplate
 
 
 def generate_microcode_templates():

@@ -2,7 +2,7 @@
 Validity checks on the processed assembly lines
 """
 
-from ..exceptions import AssemblyError
+from .exceptions import AssemblyError
 
 ERROR_TEMPLATE = "Error on line {line_no}:\n\n{details}"
 

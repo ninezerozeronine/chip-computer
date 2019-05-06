@@ -5,15 +5,16 @@ Process assembly code and output machine code.
 import copy
 import re
 
-from .validity import check_structure_validity
-from ..language.operations import get_all_operations
-from ..exceptions import (
+from .exceptions import (
     LineProcessingError,
     InstructionParsingError,
     AssemblyError,
 )
-from .. import number_utils
 from .data_structures import get_assembly_line_template
+from .assembly_validity import check_structure_validity
+from ..operations import get_all_operations
+from . import number_utils
+from . import token_utils
 
 
 def assemble(input_path, output_path=None, variable_start_offset=0):
@@ -130,12 +131,12 @@ def process_line(line):
         return assembly_line
     assembly_line["clean"] = cleaned_line
 
-    line_is_label = is_label(cleaned_line)
+    line_is_label = token_utils.is_label(cleaned_line)
     if line_is_label:
         assembly_line["defines_label"] = True
         assembly_line["defined_label"] = cleaned_line
 
-    line_is_variable = is_variable(cleaned_line)
+    line_is_variable = token_utils.is_variable(cleaned_line)
     if line_is_variable:
         assembly_line["defines_variable"] = True
         assembly_line["defined_variable"] = cleaned_line
@@ -260,16 +261,17 @@ def validate_and_identify_constants(machine_code_bytes):
             continue
 
         constant = mc_byte["constant"]
-        constant_is_label = is_label(constant)
-        constant_is_variable = is_variable(constant)
-        constant_is_number = is_number(constant)
+
+        if not token_utils.is_constant(constant):
+            raise LineProcessingError("Not a valid constant")
+
+        constant_is_label = token_utils.is_label(constant)
+        constant_is_variable = token_utils.is_variable(constant)
+        constant_is_number = token_utils.is_number(constant)
 
         constants = [
             constant_is_label, constant_is_variable, constant_is_number
         ]
-
-        if not any(constants):
-            raise LineProcessingError()
 
         num_constants = sum([1 for _constant in constants if _constant])
         if num_constants > 1:
@@ -281,7 +283,7 @@ def validate_and_identify_constants(machine_code_bytes):
             mc_byte["constant_type"] = "variable"
         else:
             mc_byte["constant_type"] = "number"
-            value = number_constant_value(constant)
+            value = token_utils.number_constant_value(constant)
             if not (number_utils.number_is_within_bit_limit(value, bits=8)):
                 raise LineProcessingError()
             mc_byte["number_value"] = value

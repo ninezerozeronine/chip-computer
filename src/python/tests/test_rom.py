@@ -1,7 +1,7 @@
 import pytest
 
 from eight_bit_computer import rom
-from eight_bit_computer.datatemplate import DataTemplate
+from eight_bit_computer.data_structures import DataTemplate
 
 
 @pytest.mark.parametrize("test_input,expected", [

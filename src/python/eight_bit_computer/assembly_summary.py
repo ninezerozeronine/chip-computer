@@ -3,7 +3,7 @@ Extract information from a list of assembly line info dictionaries.
 """
 from copy import deepcopy
 
-from .. import number_utils
+from . import number_utils
 from .data_structures import get_summary_entry_template
 
 

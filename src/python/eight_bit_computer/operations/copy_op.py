@@ -6,7 +6,7 @@ Copies a value from one module into another.
 
 from itertools import product
 
-from ..definitions import (
+from ..language_defs import (
     INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
@@ -14,8 +14,8 @@ from ..definitions import (
     FLAGS,
     instruction_byte_from_bitdefs,
 )
-from .. import utils
-from ...exceptions import InstructionParsingError
+
+from ..operation_utils import assemble_instruction, match_and_parse_line
 from ..data_structures import (
     get_arg_def_template, get_machine_code_byte_template
 )
@@ -39,12 +39,12 @@ def gen_op_args_defs():
         if src != dest:
             args_def = []
 
-            arg0_def = utils.get_arg_def_template()
+            arg0_def = get_arg_def_template()
             arg0_def["value_type"] = "module_name"
             arg0_def["value"] = src
             args_def.append(arg0_def)
 
-            arg1_def = utils.get_arg_def_template()
+            arg1_def = get_arg_def_template()
             arg1_def["value_type"] = "module_name"
             arg1_def["value"] = dest
             args_def.append(arg1_def)
@@ -94,7 +94,7 @@ def generate_operation_templates(op_args_def):
         ]
     ]
 
-    return utils.assemble_instruction(
+    return assemble_instruction(
         instruction_byte_bitdefs, flags_bitdefs, control_steps
     )
 

@@ -1,7 +1,7 @@
 """Defnitions of named items"""
 
-from ..bitdef import remove_whitespace as rw
-from ..bitdef import merge
+from .bitdef import remove_whitespace as rw
+from .bitdef import merge
 
 INSTRUCTION_GROUPS = {
     "COPY":  rw("00...... .... ..."),

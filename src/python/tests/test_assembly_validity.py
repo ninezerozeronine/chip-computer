@@ -1,9 +1,10 @@
 import pytest
 
-from eight_bit_computer.assembler import validity
-from eight_bit_computer.assembler.assembler import get_assembly_line_template
+from eight_bit_computer import assembly_validity
+from eight_bit_computer.data_structures import (
+    get_assembly_line_template, get_machine_code_byte_template
+)
 from eight_bit_computer.exceptions import AssemblyError
-from eight_bit_computer.language.utils import get_machine_code_byte_template
 
 
 def test_check_multiple_label_defs_raises():

@@ -2,7 +2,7 @@
 Example and explanation of required functions for an operation module.
 """
 
-from ..definitions import (
+from ..language_defs import (
     INSTRUCTION_GROUPS,
     SRC_REGISTERS,
     DEST_REGISTERS,
