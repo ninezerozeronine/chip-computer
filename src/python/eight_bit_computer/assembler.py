@@ -14,65 +14,9 @@ from . import number_utils
 from . import token_utils
 
 
-def assemble(input_path, output_path=None, variable_start_offset=0):
+def process_assembly_lines(lines, variable_start_offset=0):
     """
-    Read an assembly file and write out equivalent machine code.
-
-    Args:
-        input_path (str): The location of the assembly file.
-        output_path (str) (optional): The location to write out the
-            machine code. If nothing is passed, the output path will be
-            the input path with the extension changed to mc or have mc
-            added if no extension was present.
-        variable_start_offset (int) (optional): How far to offset the
-            first variable in data memory from 0.
-    """
-
-    lines = filepath_to_lines(input_path)
-
-    try:
-        machine_code = lines_to_machine_code(
-            lines, variable_start_offset=variable_start_offset
-        )
-    except AssemblyError:
-        print AssemblyError
-
-    if output_path is None:
-        output_path = basename(input_path) + ".mc"
-
-    write_machine_code(machine_code, output_path)
-
-
-def filepath_to_lines(input_path):
-    """
-    Take a filepath and get all the lines of the file.
-
-    The lines returned have the newline stripped.
-
-    Args:
-        input_path (str): Path to the file of disk to read.
-    Returns:
-        list(str): Lines of the file.
-    """
-    with open(input_path) as file:
-        lines = file.read().splitlines()
-    return lines
-
-
-def write_machine_code(machine_code, output_path):
-    """
-    Write machine code to a file
-
-    Args:
-        machine_code (list(str)): List of the machine code values.
-        output_path (str): Path of the file to write to.
-    """
-    pass
-
-
-def lines_to_machine_code(lines, variable_start_offset=0):
-    """
-    Convert assembly lines to machine code lines.
+    Parse, assemble and generate machine code.
 
     Args:
         lines (list(str)): The lines that made up the assembly file to
@@ -80,8 +24,9 @@ def lines_to_machine_code(lines, variable_start_offset=0):
         variable_start_offset (int) (optional): How far to offset the
             first variable in data memory from 0.
     Returns:
-        list(str): The assembly file converted to an equivalent list of
-        machine code bytes as 8 bit binary strings.
+        list(dict): The assembly file converted to an equivalent list of
+        dictionaries with information about what each line was resolved
+        to.
     Raises:
         AssemblyError: If there was an error assembling the machine
             code.
@@ -102,9 +47,8 @@ def lines_to_machine_code(lines, variable_start_offset=0):
     resolve_labels(assembly_lines)
     resolve_numbers(assembly_lines)
     resolve_variables(assembly_lines, variable_start_offset)
-    machine_code = extract_machine_code(assembly_lines)
 
-    return machine_code
+    return assembly_lines
 
 
 def process_line(line):
@@ -459,21 +403,3 @@ def create_variable_map(assembly_lines, variable_start_offset):
                 )
                 variable_index += 1
     return variable_map
-
-
-def extract_machine_code(assembly_lines):
-    """
-    Extract machine code from assembly line dictionaries.
-
-    Args:
-        assembly_lines (list(dict)): List of assembly lines to extract
-            machine code from.
-    Returns:
-        list(str): List of bit strings for the machine code.
-    """
-    machine_code = []
-    for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                machine_code.append(mc_byte["bitstring"])
-    return machine_code

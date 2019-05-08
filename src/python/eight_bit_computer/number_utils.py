@@ -9,6 +9,12 @@ def number_to_bitstring(number, bit_width=8):
     Raises:
         ValueError: If a negative number doesn't fit in the bit width.
     """
+    if not number_is_within_bit_limit(number, bits=bit_width):
+        raise ValueError(
+            "{number} will not fit in {num_bits} bits.".format(
+                number=number, num_bits=bit_width
+            )
+        )
     return "{number:0{bit_width}b}".format(number=number, bit_width=bit_width)
 
 

@@ -7,47 +7,12 @@ from . import number_utils
 from .data_structures import get_summary_entry_template
 
 
-def get_assembly_summary_data(asm_line_infos):
-    """
-    Get print friendly lists of the data in assembly line info dicts.
-
-    Args:
-        asm_line_infos (list(dict)): List of line info dictionaries as
-            returned by :func:`~assembler.lines_to_machine_code`.
-    Returns:
-        list: List of entries for the assembly summary print out
+def generate_assembly_summary(asm_line_infos):
     """
 
-    assembly_summary = []
-
-    for asm_line_info in asm_line_infos:
-        if asm_line_info["has_machine_code"]:
-            dual_entry = get_summary_entry_template()
-            dual_entry["has_assembly"] = True
-            dual_entry["assembly"]["info"] = deepcopy(asm_line_info)
-
-            dual_entry["has_machine_code_byte"] = True
-            dual_entry["machine_code_byte"]["info"] = deepcopy(
-                asm_line_info["mc_bytes"][0]
-            )
-            if asm_line_info["has_label_assigned"]:
-                dual_entry["machine_code_byte"]["has_label"] = True
-                dual_entry["machine_code_byte"]["label"] = asm_line_info["assigned_label"]
-            assembly_summary.append(dual_entry)
-
-            for mc_byte_info in asm_line_info["mc_bytes"][1:]:
-                byte_only_entry = get_summary_entry_template()
-                byte_only_entry["has_machine_code_byte"] = True
-                byte_only_entry["machine_code_byte"]["info"] = deepcopy(mc_byte_info)
-                assembly_summary.append(byte_only_entry)
-
-        else:
-            assembly_only_entry = get_summary_entry_template()
-            assembly_only_entry["has_assembly"] = True
-            assembly_only_entry["assembly"]["info"] = deepcopy(asm_line_info)
-            assembly_summary.append(assembly_only_entry)
-
-    return assembly_summary
+    """
+    lines = generate_assembly_summary_lines(asm_line_infos)
+    return "\n".join(lines)
 
 
 def generate_assembly_summary_lines(asm_line_infos):
@@ -161,6 +126,49 @@ def generate_assembly_summary_lines(asm_line_infos):
         formatted_summary_lines.append(formatted_line)
 
     return formatted_summary_lines
+
+
+def get_assembly_summary_data(asm_line_infos):
+    """
+    Get print friendly lists of the data in assembly line info dicts.
+
+    Args:
+        asm_line_infos (list(dict)): List of line info dictionaries as
+            returned by :func:`~assembler.lines_to_machine_code`.
+    Returns:
+        list: List of entries for the assembly summary print out
+    """
+
+    assembly_summary = []
+
+    for asm_line_info in asm_line_infos:
+        if asm_line_info["has_machine_code"]:
+            dual_entry = get_summary_entry_template()
+            dual_entry["has_assembly"] = True
+            dual_entry["assembly"]["info"] = deepcopy(asm_line_info)
+
+            dual_entry["has_machine_code_byte"] = True
+            dual_entry["machine_code_byte"]["info"] = deepcopy(
+                asm_line_info["mc_bytes"][0]
+            )
+            if asm_line_info["has_label_assigned"]:
+                dual_entry["machine_code_byte"]["has_label"] = True
+                dual_entry["machine_code_byte"]["label"] = asm_line_info["assigned_label"]
+            assembly_summary.append(dual_entry)
+
+            for mc_byte_info in asm_line_info["mc_bytes"][1:]:
+                byte_only_entry = get_summary_entry_template()
+                byte_only_entry["has_machine_code_byte"] = True
+                byte_only_entry["machine_code_byte"]["info"] = deepcopy(mc_byte_info)
+                assembly_summary.append(byte_only_entry)
+
+        else:
+            assembly_only_entry = get_summary_entry_template()
+            assembly_only_entry["has_assembly"] = True
+            assembly_only_entry["assembly"]["info"] = deepcopy(asm_line_info)
+            assembly_summary.append(assembly_only_entry)
+
+    return assembly_summary
 
 
 def get_widest_column_values(assembly_summary_data):

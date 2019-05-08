@@ -118,20 +118,6 @@ def romdatas_have_duplicate_addresses(romdatas):
     return duplicates
 
 
-def write_logisim_roms(directory):
-    """
-
-    """
-    rom = get_rom()
-    slices = slice_rom(rom)
-    for rom_index in range(4):
-        rom_slice_string = rom_slice_to_logisim_string(slices[rom_index])
-        rom_filename = "rom_{rom_index}".format(rom_index=rom_index)
-        filepath = os.path.join(directory, rom_filename)
-        with open(filepath, "w") as romfile:
-            romfile.write(rom_slice_string)
-
-
 def slice_rom(rom):
     """
     Slice a rom into chunks 8 bits wide.
@@ -201,39 +187,3 @@ def get_romdata_slice(romdatas, end, start):
         sliced_romdata = RomData(address=romdata.address, data=data_slice)
         sliced_romdatas.append(sliced_romdata)
     return sliced_romdatas
-
-
-def rom_slice_to_logisim_string(rom_slice):
-    """
-
-    """
-
-    rom_lines = ["v2.0 raw"]
-    for line_romdatas in chunker(rom_slice, 16):
-        line_parts = []
-        for line_chunk_romdatas in chunker(line_romdatas, 4):
-            bit_strings = [
-                romdata.data
-                for romdata
-                in line_chunk_romdatas
-            ]
-            hex_strings = [
-                number_utils.bitstring_to_hex_string(bit_string)
-                for bit_string
-                in bit_strings
-            ]
-            four_hex_bytes = " ".join(hex_strings)
-            line_parts.append(four_hex_bytes)
-        line = "  ".join(line_parts)
-        rom_lines.append(line)
-    rom_string = "\n".join(rom_lines)
-    return rom_string
-
-
-def chunker(seq, chunk_size):
-    """
-
-    """
-    return (
-        seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
-    )
