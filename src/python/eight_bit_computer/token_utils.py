@@ -1,5 +1,5 @@
 """
-
+Function for working with string tokens on assembly lines
 """
 import re
 
@@ -82,46 +82,6 @@ def number_constant_value(number_constant):
     return int(number_constant[1:], 0)
 
 
-def get_tokens_from_line(line):
-    """
-    Given a line split it into tokens and return them.
-
-    Tokens are runs of characters separated by spaces. If there are no
-    tokens return an empty list.
-
-    Args:
-        line (str): line to convert to tokens
-    Returns:
-        list(str): The tokens
-    """
-
-    # Does line have any content
-    if not line:
-        return []
-
-    # Does the line have any content after splitting it
-    line_tokens = line.split()
-    if not line_tokens:
-        return []
-
-    return line_tokens
-
-
-def extract_memory_position(argument):
-    """
-    Extract a memory position from a memory index argument.
-
-    See :func:~`is_memory_index` for details of what a memory index is.
-
-    Args:
-        argument (str): The argument to extract a memory position from.
-    Returns:
-        str: The location in memory being referenced.
-    """
-
-    return argument[1:-1]
-
-
 def is_memory_index(argument):
     """
     Determine whether this argument is a memory index.
@@ -152,7 +112,7 @@ def represent_as_memory_index(argument):
     """
     Format the argument so it appears as a memory index.
 
-    See :func:~`is_memory_index` for details on what a memory index is.
+    See :func:`~is_memory_index` for details on what a memory index is.
 
     Args:
         argument (str): The argument to represent as a memory index.
@@ -160,3 +120,43 @@ def represent_as_memory_index(argument):
         str: The formatted argument.
     """
     return "[{argument}]".format(argument=argument)
+
+
+def extract_memory_position(argument):
+    """
+    Extract a memory position from a memory index argument.
+
+    See :func:`~is_memory_index` for details of what a memory index is.
+
+    Args:
+        argument (str): The argument to extract a memory position from.
+    Returns:
+        str: The location in memory being referenced.
+    """
+
+    return argument[1:-1]
+
+
+def get_tokens_from_line(line):
+    """
+    Given a line split it into tokens and return them.
+
+    Tokens are runs of characters separated by spaces. If there are no
+    tokens return an empty list.
+
+    Args:
+        line (str): line to convert to tokens
+    Returns:
+        list(str): The tokens
+    """
+
+    # Does line have any content
+    if not line:
+        return []
+
+    # Does the line have any content after splitting it
+    line_tokens = line.split()
+    if not line_tokens:
+        return []
+
+    return line_tokens

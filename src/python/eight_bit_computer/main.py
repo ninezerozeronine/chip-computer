@@ -1,9 +1,12 @@
 """
-
+Top level interface for the module
 """
+
+import os
 
 from .assembler import process_assembly_lines
 from .assembly_summary import generate_assembly_summary
+from .exceptions import AssemblyError
 from . import export
 from . import rom
 
@@ -29,21 +32,26 @@ def assemble(
             ``logisim`` or ``cpp``.
     """
 
+    if not input_path.endswith(".asm"):
+        print "Input file must have a .asm extension."
+        return
+
     lines = filepath_to_lines(input_path)
 
     try:
         assembly_line_infos = process_assembly_lines(
             lines, variable_start_offset=variable_start_offset
         )
-    except AssemblyError:
-        print AssemblyError
+    except AssemblyError as inst:
+        print inst.args[0]
+        return
 
     if output_path is None:
-        output_path = basename(input_path) + ".mc"
+        output_path = get_mc_filepath(input_path)
 
     print generate_assembly_summary(assembly_line_infos)
 
-    mc_byte_bitstrings = extract_machine_code(assembly_lines)
+    mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
     if output_format == "logisim":
         output = export.bitstrings_to_logisim(mc_byte_bitstrings)
     elif output_format == "cpp":
@@ -69,13 +77,22 @@ def filepath_to_lines(input_path):
     return lines
 
 
+def get_mc_filepath(asm_path):
+    """
+
+    """
+
+    return "{basepath}.mc".format(basepath=asm_path[:-4])
+
+
 def extract_machine_code(assembly_lines):
     """
     Extract machine code from assembly line dictionaries.
 
     Args:
         assembly_lines (list(dict)): List of assembly lines to extract
-            machine code from.
+            machine code from. See :func:`~get_assembly_line_template`
+            for details on what those dictionaries contain.
     Returns:
         list(str): List of bit strings for the machine code.
     """
@@ -89,7 +106,7 @@ def extract_machine_code(assembly_lines):
 
 def create_roms(directory="", output_format="logisim"):
     """
-
+    Write files containing microcode for drive the roms.
 
     Args:
         directory (str) (optional): The directory to write the roms

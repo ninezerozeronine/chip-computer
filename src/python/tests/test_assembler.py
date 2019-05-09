@@ -16,9 +16,9 @@ from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
         0,
     )
 ])
-def test_lines_to_machine_code_raises(test_input, variable_start_offset):
+def test_process_assembly_lines_raises(test_input, variable_start_offset):
     with pytest.raises(AssemblyError):
-        assembler.lines_to_machine_code(
+        assembler.process_assembly_lines(
             test_input, variable_start_offset=variable_start_offset
         )
 

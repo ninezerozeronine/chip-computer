@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from eight_bit_computer import rom
+from eight_bit_computer import rom, main
 
 
 def sandbox():
@@ -86,8 +86,12 @@ def dict_ref_test_2():
     print b
 
 
+def assemble_test():
+    main.assemble("../../programs/dummy.asm")
+
 if __name__ == "__main__":
-    sandbox()
+    # sandbox()
     # file_test()
     # dict_ref_test()
     # dict_ref_test_2()
+    assemble_test()

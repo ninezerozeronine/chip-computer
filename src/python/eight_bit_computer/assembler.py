@@ -13,6 +13,10 @@ from .operations import get_all_operations
 from . import number_utils
 from . import token_utils
 
+LINE_ERROR_TEMPLATE = (
+    "Error on "
+    )
+
 
 def process_assembly_lines(lines, variable_start_offset=0):
     """
@@ -36,8 +40,15 @@ def process_assembly_lines(lines, variable_start_offset=0):
     for line_no, line in enumerate(lines, start=1):
         try:
             assembly_line = process_line(line)
-        except LineProcessingError as e:
-            raise AssemblyError(e)
+        except LineProcessingError as inst:
+            msg = (
+                "Error processing line {line_no} ({line}): "
+                "{reason}".format(
+                    line_no=line_no,
+                    line=line,
+                    reason=inst.args[0])
+            )
+            raise AssemblyError(msg)
         assembly_line["line_no"] = line_no
         assembly_lines.append(assembly_line)
 
@@ -84,7 +95,7 @@ def process_line(line):
 
     if not (line_is_variable or line_is_label):
         mc_bytes = machine_code_bytes_from_line(cleaned_line)
-        validate_and_identify_constants(mc_byte_infos)
+        validate_and_identify_constants(mc_bytes)
         assembly_line["mc_bytes"] = mc_bytes
         assembly_line["has_machine_code"] = True
 
@@ -169,7 +180,7 @@ def machine_code_bytes_from_line(line):
 
     num_matches = len(operation_matches)
     if num_matches == 0:
-        raise LineProcessingError("Unable to match line")
+        raise LineProcessingError("Unable to match line to an operation")
     if num_matches > 1:
         raise LineProcessingError("Line matched multiple operations")
 
@@ -184,7 +195,7 @@ def validate_and_identify_constants(machine_code_bytes):
     function then validates them to make sure they are correct and
     determines what kind of constant they are.
 
-    See :func:~`get_mc_byte_template` for information on
+    See :func:`~get_mc_byte_template` for information on
     machine code dictionaries from instructions.
 
     This function modifies the passed in machine code templates list
@@ -216,7 +227,7 @@ def validate_and_identify_constants(machine_code_bytes):
 
         num_constants = sum([1 for _constant in constants if _constant])
         if num_constants > 1:
-            raise LineProcessingError()
+            raise LineProcessingError("Constant is of more than one type")
 
         if constant_is_label:
             mc_byte["constant_type"] = "label"
@@ -226,7 +237,12 @@ def validate_and_identify_constants(machine_code_bytes):
             mc_byte["constant_type"] = "number"
             value = token_utils.number_constant_value(constant)
             if not (number_utils.number_is_within_bit_limit(value, bits=8)):
-                raise LineProcessingError()
+                msg = (
+                    "Number specified ({number}) is not within the "
+                    "range of values that a byte can store "
+                    "(-127 to 255)".format(number=constant)
+                )
+                raise LineProcessingError(msg)
             mc_byte["number_value"] = value
 
 

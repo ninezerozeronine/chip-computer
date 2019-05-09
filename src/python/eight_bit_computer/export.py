@@ -1,3 +1,10 @@
+"""
+
+"""
+
+from . import number_utils
+
+
 def bitstrings_to_cpp(bitstrings):
     """
 
@@ -16,7 +23,7 @@ def bitstrings_to_logisim(bitstrings):
             hex_strings = [
                 number_utils.bitstring_to_hex_string(bit_string)
                 for bit_string
-                in bit_strings
+                in line_chunk_bytes
             ]
             four_hex_bytes = " ".join(hex_strings)
             line_parts.append(four_hex_bytes)

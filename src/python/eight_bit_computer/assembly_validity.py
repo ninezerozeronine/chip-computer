@@ -4,7 +4,7 @@ Validity checks on the processed assembly lines
 
 from .exceptions import AssemblyError
 
-ERROR_TEMPLATE = "Error on line {line_no}:\n\n{details}"
+ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
 
 
 def check_structure_validity(asm_line_infos, variable_start_offset):
@@ -13,15 +13,15 @@ def check_structure_validity(asm_line_infos, variable_start_offset):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     """
-    check_multiple_label_defs(assembly_lines)
-    check_multiple_label_assignment(assembly_lines)
-    check_undefined_label_ref(assembly_lines)
-    check_multiple_variable_def(assembly_lines)
-    check_num_variables(assembly_lines, variable_start_offset)
-    check_num_instruction_bytes(assembly_lines)
+    check_multiple_label_defs(asm_line_infos)
+    check_multiple_label_assignment(asm_line_infos)
+    check_undefined_label_ref(asm_line_infos)
+    check_multiple_variable_def(asm_line_infos)
+    check_num_variables(asm_line_infos, variable_start_offset)
+    check_num_instruction_bytes(asm_line_infos)
 
 
 def check_multiple_label_defs(asm_line_infos):
@@ -30,7 +30,7 @@ def check_multiple_label_defs(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If the same label been defined more than once.
@@ -52,6 +52,7 @@ def check_multiple_label_defs(asm_line_infos):
                 )
                 msg = ERROR_TEMPLATE.format(
                     line_no=asm_line_info["line_no"],
+                    line=asm_line_info["raw"],
                     details=details,
                 )
                 raise AssemblyError(msg)
@@ -66,7 +67,7 @@ def check_multiple_label_assignment(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If a single line been assigned more than one
@@ -85,6 +86,7 @@ def check_multiple_label_assignment(asm_line_infos):
             )
             msg = ERROR_TEMPLATE.format(
                 line_no=asm_line_info["line_no"],
+                line=asm_line_info["raw"],
                 details=details,
             )
             raise AssemblyError(msg)
@@ -103,7 +105,7 @@ def check_undefined_label_ref(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If an operation is using a label that hasn't
@@ -129,6 +131,7 @@ def check_undefined_label_ref(asm_line_infos):
                     )
                     msg = ERROR_TEMPLATE.format(
                         line_no=asm_line_info["line_no"],
+                        line=asm_line_info["raw"],
                         details=details,
                     )
                     raise AssemblyError(msg)
@@ -140,7 +143,7 @@ def check_multiple_variable_def(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If
@@ -160,6 +163,7 @@ def check_multiple_variable_def(asm_line_infos):
                 )
                 msg = ERROR_TEMPLATE.format(
                     line_no=asm_line_info["line_no"],
+                    line=asm_line_info["raw"],
                     details=details,
                 )
                 raise AssemblyError(msg)
@@ -177,7 +181,7 @@ def check_num_variables(asm_line_infos, variable_start_offset):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
         variable_start_offset (int): How far in memory to offset when
             defining the first variable.
@@ -220,6 +224,7 @@ def check_num_variables(asm_line_infos, variable_start_offset):
         )
         msg = ERROR_TEMPLATE.format(
             line_no=asm_line_info["line_no"],
+            line=asm_line_info["raw"],
             details=details,
         )
         raise AssemblyError(msg)
@@ -231,7 +236,7 @@ def check_num_instruction_bytes(assembly_lines):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:~`get_line_info_template`) with information about all
+            :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If there are more instruction bytes than will
@@ -248,7 +253,7 @@ def check_num_instruction_bytes(assembly_lines):
 
     if num_mc_bytes > 255:
         details = (
-            "This operation has brought the total number of machine "
+            "This operation brought the total number of machine "
             "code bytes above 255. The complete assembly code has "
             "resulted in {num_mc_bytes} bytes of machine code.".format(
                 num_mc_bytes=num_mc_bytes,
@@ -256,6 +261,7 @@ def check_num_instruction_bytes(assembly_lines):
         )
         msg = ERROR_TEMPLATE.format(
             line_no=bad_line_no,
+            line=assembly_line["raw"],
             details=details,
         )
         raise AssemblyError(msg)

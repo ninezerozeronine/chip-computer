@@ -10,6 +10,10 @@ from ..data_structures import DataTemplate
 def generate_microcode_templates():
     """
     Generate datatemplates for all the fetch steps.
+
+    Returns:
+        list(DataTemplate): Datatemplates that represent the fetch
+        steps.
     """
 
     return [fetch_step_0(), fetch_step_1()]
@@ -17,7 +21,10 @@ def generate_microcode_templates():
 
 def fetch_step_0():
     """
-    Create template for the first fetch step
+    Create template for the first fetch step.
+
+    Returns:
+        DataTemplate: The first fetch step.
     """
 
     address_bitdef = bitdef.merge(
@@ -40,7 +47,10 @@ def fetch_step_0():
 
 def fetch_step_1():
     """
-    Create template for the second fetch step
+    Create template for the second fetch step.
+
+    Returns:
+        DataTemplate: The second fetch step.
     """
     address_bitdef = bitdef.merge(
         [
