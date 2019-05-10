@@ -1,16 +1,5 @@
-eight\_bit\_computer.assembler package
-======================================
-
-Submodules
-----------
-
-.. toctree::
-
-   eight_bit_computer.assembler.assembler
-   eight_bit_computer.assembler.validity
-
-Module contents
----------------
+eight\_bit\_computer.assembler module
+=====================================
 
 .. automodule:: eight_bit_computer.assembler
     :members:

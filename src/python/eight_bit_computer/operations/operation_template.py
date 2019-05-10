@@ -9,7 +9,12 @@ from ..language_defs import (
     MODULE_CONTROL,
     FLAGS,
 )
-from .. import utils
+from ..operation_utils import assemble_instruction, match_and_parse_line
+from ..data_structures import (
+    get_arg_def_template, get_machine_code_byte_template
+)
+
+_NAME = "OPERATION_TEMPLATE"
 
 
 def generate_microcode_templates():

@@ -1,7 +1,7 @@
-eight\_bit\_computer.assembler.assembler module
+eight\_bit\_computer.operations.copy\_op module
 ===============================================
 
-.. automodule:: eight_bit_computer.assembler.assembler
+.. automodule:: eight_bit_computer.operations.copy_op
     :members:
     :undoc-members:
     :show-inheritance:

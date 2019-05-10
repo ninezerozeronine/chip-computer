@@ -20,6 +20,9 @@ Some example assembly::
         JUMP @label1
 
 
+:download:`saved session <table.html>`
+
+
 Handling Constants
 -------------------
 
