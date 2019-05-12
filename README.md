@@ -37,3 +37,8 @@ To run the tests, run:
     python -B -m pytest
 
 in `src/python`
+
+To generate a coverage report run:
+
+    python -B -m pytest --cov=eight_bit_computer --cov-report=html:cov_html tests
+
