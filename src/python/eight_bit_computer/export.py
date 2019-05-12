@@ -40,4 +40,3 @@ def chunker(seq, chunk_size):
     return (
         seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
     )
-

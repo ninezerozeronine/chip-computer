@@ -8,6 +8,7 @@ from eight_bit_computer import token_utils
     ("LOAD [$foo] A", False),
     ("@hello", True),
     ("@hello_123_blah", True),
+    ("@_my_var", True),
     ("@hello  world  ", False),
     ("@@monkey", False),
     ("@123", False),
