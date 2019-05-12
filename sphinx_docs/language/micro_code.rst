@@ -4,4 +4,13 @@ Micro Code
 ==========
 
 Fetch steps
+-----------
+
 Microcode step counter
+----------------------
+
+Flags
+-----
+
+ROMs
+----
