@@ -236,7 +236,8 @@ def validate_and_identify_constants(machine_code_bytes):
         else:
             mc_byte["constant_type"] = "number"
             value = token_utils.number_constant_value(constant)
-            if not (number_utils.number_is_within_bit_limit(value, bits=8)):
+            if not (number_utils.number_is_within_bit_limit(
+                    value, bit_width=8)):
                 msg = (
                     "Number specified ({number}) is not within the "
                     "range of values that a byte can store "

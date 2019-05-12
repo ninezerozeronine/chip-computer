@@ -47,6 +47,7 @@ def test_is_constant(test_input, expected):
 
 @pytest.mark.parametrize("test_input,expected", [
     ("#123", True),
+    ("#-1", True),
     ("#0xFF", True),
     ("#0o22", True),
     ("#0b101", True),

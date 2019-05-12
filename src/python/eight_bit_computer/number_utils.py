@@ -1,31 +1,32 @@
 """
 Functions for working with, checking and converting numbers.
+
+All numbers are stored within the computer as the positive equivalent.
+They may be interpreted as negative.
 """
 
 
 def number_to_bitstring(number, bit_width=8):
     """
+    Convert a number to an equivalent bitstring of the given width.
 
     Raises:
-        ValueError: If a negative number doesn't fit in the bit width.
+        ValueError: If number doesn't fit in the bit width.
     """
-    if not number_is_within_bit_limit(number, bits=bit_width):
+    if not number_is_within_bit_limit(number, bit_width=bit_width):
         raise ValueError(
             "{number} will not fit in {num_bits} bits.".format(
                 number=number, num_bits=bit_width
             )
         )
-    return "{number:0{bit_width}b}".format(number=number, bit_width=bit_width)
+    number = get_positive_equivalent(number)
+
+    return "{number:0{bit_width}b}".format(
+        number=number, bit_width=bit_width
+    )
 
 
-def bitstring_to_number(bitstring, twos_compliment=False):
-    """
-
-    """
-    return int(bitstring, 2)
-
-
-def number_is_within_bit_limit(number, bits=8):
+def number_is_within_bit_limit(number, bit_width=8):
     """
     Check if a number can be stored in the number of bits given.
 
@@ -33,15 +34,49 @@ def number_is_within_bit_limit(number, bits=8):
 
     Args:
         number (int): The number to check.
-        bits (int, optional): The number of bits available.
+        bit_width (int, optional): The number of bits available.
     Returns:
         bool: True if within limits, False if not.
     """
 
-    min_val = ((2**bits / 2) - 1) * -1
-    max_val = 2**bits - 1
+    min_val = (2**bit_width / 2) * -1
+    max_val = 2**bit_width - 1
 
     return min_val <= number <= max_val
+
+
+def get_positive_equivalent(number):
+    """
+    Read the 2's compliment equivalent of this number as positive.
+
+    With a 3 bit number, the positive equivalent of -2 is 5. E.g.::
+
+        -4 4 100
+        -3 5 101
+        -2 6 110
+        -1 7 111
+         0 0 000
+         1 1 001
+         2 2 010
+         3 3 011
+
+    Args:
+        number (int): The number to convert to a positive quivalent
+    Returns:
+        int: The positive equivalent of the number.
+    """
+
+    ret = number
+    if number < 0:
+        ret = number + 256
+    return ret
+
+
+def bitstring_to_number(bitstring):
+    """
+
+    """
+    return int(bitstring, 2)
 
 
 def bitstring_to_hex_string(bitstring, zero_pad_width=2):
