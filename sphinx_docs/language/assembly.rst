@@ -1,6 +1,16 @@
 Assembly
 ========
 
+Assembly code provides a way to specify instructions for the computer to
+perform in a more human readable from than machine code
+
+Assembly operations and arguments to specify thier behaviour can be saved in an
+assembly file and passed to an assembler to convert them to machine code that
+the computer can then execute.
+
+These are the operations and other assembly constructs that can be used to
+create a valid assembly file.
+
 Arithmetic Operations
 ---------------------
 
@@ -34,6 +44,41 @@ Data Operations
 COPY
 ^^^^
 
+The ``COPY`` command copies the value from a source module to a destination
+module. This overwrites the current value of the destination register. It
+requires a single machine code byte in program memory.
+
+It is used by specifying the source module as the first argument and the
+destination module as the second.
+
+The possible usages are:
+
+ - ``COPY ACC A``
+ - ``COPY ACC B``
+ - ``COPY ACC C``
+ - ``COPY ACC SP``
+ - ``COPY A ACC``
+ - ``COPY A B``
+ - ``COPY A C``
+ - ``COPY A SP``
+ - ``COPY B ACC``
+ - ``COPY B A``
+ - ``COPY B C``
+ - ``COPY B SP``
+ - ``COPY C ACC``
+ - ``COPY C A``
+ - ``COPY C B``
+ - ``COPY C SP``
+ - ``COPY PC ACC``
+ - ``COPY PC A``
+ - ``COPY PC B``
+ - ``COPY PC C``
+ - ``COPY PC SP``
+ - ``COPY SP ACC``
+ - ``COPY SP A``
+ - ``COPY SP B``
+ - ``COPY SP C``
+
 LOAD
 ^^^^
 
@@ -54,6 +99,22 @@ POP
 
 SET
 ^^^
+
+The ``SET`` operation will set a module in the computer to a given
+constant value.
+
+It requires two machine code bytes in program memory.
+
+It is used by specifying a module as the first argument, then the value to set
+it to as a constant.
+
+The possible usages are:
+
+ - ``SET ACC <constant>``
+ - ``SET A <constant>``
+ - ``SET B <constant>``
+ - ``SET C <constant>``
+ - ``SET SP <constant>``
 
 SETZERO
 ^^^^^^^

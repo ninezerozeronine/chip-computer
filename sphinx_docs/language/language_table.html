@@ -38,7 +38,7 @@
   }
 </style>
 
-<table id="machine_code">
+<table id="language_table">
   <tr>
     <th onclick="sortTable(0)"><span>Decimal</span></th>
     <th onclick="sortTable(1)"><span>Binary</span></th>
@@ -4415,7 +4415,7 @@
 <script>
 function sortTable(n) {
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-  table = document.getElementById("machine_code");
+  table = document.getElementById("language_table");
   switching = true;
   //Set the sorting direction to ascending:
   dir = "asc"; 
