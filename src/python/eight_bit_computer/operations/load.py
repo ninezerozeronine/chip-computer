@@ -126,7 +126,7 @@ def generate_instruction_byte_bitdefs(op_args_def):
     if op_args_def[0]["value_type"] == "constant":
         instruction_byte_bitdefs = [
             INSTRUCTION_GROUPS["LOAD"],
-            SRC_REGISTERS["IMM"],
+            SRC_REGISTERS["CONST"],
             DEST_REGISTERS[op_args_def[1]["value"]],
         ]
     elif op_args_def[0]["value_type"] == "module_name":

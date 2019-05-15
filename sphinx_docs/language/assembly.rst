@@ -44,7 +44,7 @@ Data Operations
 COPY
 ^^^^
 
-The ``COPY`` command copies the value from a source module to a destination
+The ``COPY`` operation copies the value from a source module to a destination
 module. This overwrites the current value of the destination register. It
 requires a single machine code byte in program memory.
 
@@ -82,6 +82,44 @@ The possible usages are:
 LOAD
 ^^^^
 
+The ``LOAD`` operation loads a value from data memory into a module.
+
+It is used by specifying the position in memory as the first argument and the
+destination module as the second. The position in memory can be a module or a
+constant and is encased in square parentheses.
+
+The possible usages are:
+
+ - ``LOAD [ACC] ACC``
+ - ``LOAD [ACC] A``
+ - ``LOAD [ACC] B``
+ - ``LOAD [ACC] C``
+ - ``LOAD [A] ACC``
+ - ``LOAD [A] A``
+ - ``LOAD [A] B``
+ - ``LOAD [A] C``
+ - ``LOAD [B] ACC``
+ - ``LOAD [B] A``
+ - ``LOAD [B] B``
+ - ``LOAD [B] C``
+ - ``LOAD [C] ACC``
+ - ``LOAD [C] A``
+ - ``LOAD [C] B``
+ - ``LOAD [C] C``
+ - ``LOAD [PC] ACC``
+ - ``LOAD [PC] A``
+ - ``LOAD [PC] B``
+ - ``LOAD [PC] C``
+ - ``LOAD [SP] ACC``
+ - ``LOAD [SP] A``
+ - ``LOAD [SP] B``
+ - ``LOAD [SP] C``
+ - ``LOAD [CONST] ACC``
+ - ``LOAD [CONST] A``
+ - ``LOAD [CONST] B``
+ - ``LOAD [CONST] C``
+
+
 STORE
 ^^^^^
 
@@ -103,18 +141,22 @@ SET
 The ``SET`` operation will set a module in the computer to a given
 constant value.
 
-It requires two machine code bytes in program memory.
-
 It is used by specifying a module as the first argument, then the value to set
 it to as a constant.
 
+It requires two machine code bytes in program memory. Consider the
+:ref:`setzero` operation if the constant is zero.
+
 The possible usages are:
 
- - ``SET ACC <constant>``
- - ``SET A <constant>``
- - ``SET B <constant>``
- - ``SET C <constant>``
- - ``SET SP <constant>``
+ - ``SET ACC CONST``
+ - ``SET A CONST``
+ - ``SET B CONST``
+ - ``SET C CONST``
+ - ``SET SP CONST``
+
+
+.. _setzero:
 
 SETZERO
 ^^^^^^^

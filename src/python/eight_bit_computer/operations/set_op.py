@@ -105,7 +105,7 @@ def generate_instruction_byte_bitdefs(op_args_def):
 
     return [
         INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS["IMM"],
+        SRC_REGISTERS["CONST"],
         DEST_REGISTERS[op_args_def[0]["value"]],
     ]
 
