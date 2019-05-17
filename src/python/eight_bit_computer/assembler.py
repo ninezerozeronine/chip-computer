@@ -13,10 +13,6 @@ from .operations import get_all_operations
 from . import number_utils
 from . import token_utils
 
-LINE_ERROR_TEMPLATE = (
-    "Error on "
-    )
-
 
 def process_assembly_lines(lines, variable_start_offset=0):
     """
@@ -72,8 +68,8 @@ def process_line(line):
             removed).
     Returns:
         dict: A dictionary of information about this line. See the
-        :data:`~LINE_INFO_TEMPLATE` documentation for more information
-        about what is in the dictionary.
+        :func:`~get_assembly_line_template` documentation for more
+        information about what is in the dictionary.
     """
     assembly_line = get_assembly_line_template()
     assembly_line["raw"] = line
@@ -155,8 +151,8 @@ def machine_code_bytes_from_line(line):
     Get machine code bytes that describe this line.
 
     Uses all the defined instructions and defers the work of parsing to
-    them. See XXX for information on machine code dictionaries from
-    instructions.
+    them. See :func:`~get_machine_code_byte_template` for information on
+    machine code dictionaries from instructions.
 
     Expects the passed in line to be a valid line of machine code. That
     is, the passed in line should be translatable to valid machine code.

@@ -26,13 +26,13 @@ group. There are 4 groups:
 +--------------+------------+
 | Bit value    | Group Name |
 +==============+============+
-| ``00xxxxxx`` | Copy       |
+| ``00......`` | Copy       |
 +--------------+------------+
-| ``01xxxxxx`` | Load       |
+| ``01......`` | Load       |
 +--------------+------------+
-| ``10xxxxxx`` | Store      |
+| ``10......`` | Store      |
 +--------------+------------+
-| ``11xxxxxx`` | ALU        |
+| ``11......`` | ALU        |
 +--------------+------------+
 
 Sources and destinations
@@ -42,26 +42,26 @@ For copy, load and store instructions, the third to fifth, and sixth to eighth
 bytes are the source and destination respectively.
 
 The table below only shows the source codes for brevity. The destination bits
-are the last 3 bits, e.g.: ``xxxxx000`` and have the same name and meaning.
+are the last 3 bits, e.g.: ``.....000`` and have the same name and meaning.
 
 +--------------+-------+-----------------------------------------------------------------------------+
 | Bit value    | Name  | Meaning                                                                     |
 +==============+=======+=============================================================================+
-| ``xx000xxx`` | ACC   | The accumulator register.                                                   |
+| ``..000...`` | ACC   | The accumulator register.                                                   |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx001xxx`` | A     | The A register.                                                             |
+| ``..001...`` | A     | The A register.                                                             |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx010xxx`` | B     | The B register.                                                             |
+| ``..010...`` | B     | The B register.                                                             |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx011xxx`` | C     | The C register.                                                             |
+| ``..011...`` | C     | The C register.                                                             |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx100xxx`` | SP    | The stack pointer.                                                          |
+| ``..100...`` | SP    | The stack pointer.                                                          |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx101xxx`` | PC    | The program counter                                                         |
+| ``..101...`` | PC    | The program counter                                                         |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx110xxx`` | SP+/- | The stack pointer, preceded or followed by incrementing or decrementing it. |
+| ``..110...`` | SP+/- | The stack pointer, preceded or followed by incrementing or decrementing it. |
 +--------------+-------+-----------------------------------------------------------------------------+
-| ``xx111xxx`` | CONST | A constant value.                                                           |
+| ``..111...`` | CONST | A constant value.                                                           |
 +--------------+-------+-----------------------------------------------------------------------------+
 
 ALU Operations
@@ -73,37 +73,37 @@ instruction byte when the operation group is ALU. The operations and codes are:
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Bit value    | Name    | Meaning                                                                                                                                                                           |
 +==============+=========+===================================================================================================================================================================================+
-| ``110000xx`` | ZERO    | The ALU will output zero.                                                                                                                                                         |
+| ``110000..`` | ZERO    | The ALU will output zero.                                                                                                                                                         |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110001xx`` | INCR    | The argument supplied will be incremented by 1.                                                                                                                                   |
+| ``110001..`` | INCR    | The argument supplied will be incremented by 1.                                                                                                                                   |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110010xx`` | DECR    | The argument supplied will be decremented by 1.                                                                                                                                   |
+| ``110010..`` | DECR    | The argument supplied will be decremented by 1.                                                                                                                                   |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110011xx`` | ADD     | The argument will be added to the accumulator.                                                                                                                                    |
+| ``110011..`` | ADD     | The argument will be added to the accumulator.                                                                                                                                    |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110100xx`` | ADDC    | The argument will be added to the accumulator and one will be added if the last add resulted in a carry.                                                                          |
+| ``110100..`` | ADDC    | The argument will be added to the accumulator and one will be added if the last add resulted in a carry.                                                                          |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110101xx`` | SUB     | The argument will be subtracted from the accumulator.                                                                                                                             |
+| ``110101..`` | SUB     | The argument will be subtracted from the accumulator.                                                                                                                             |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110110xx`` | SUBB    | The argument will be subtracted from the accumulator and one will be subtracted if the last subtraction resulted in a borrow.                                                     |
+| ``110110..`` | SUBB    | The argument will be subtracted from the accumulator and one will be subtracted if the last subtraction resulted in a borrow.                                                     |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``110111xx`` | AND     | The argument will be ANDed with the accumulator.                                                                                                                                  |
+| ``110111..`` | AND     | The argument will be ANDed with the accumulator.                                                                                                                                  |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111000xx`` | NAND    | The argument will be NANDed with the accumulator.                                                                                                                                 |
+| ``111000..`` | NAND    | The argument will be NANDed with the accumulator.                                                                                                                                 |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111001xx`` | OR      | The argument will be ORed with the accumulator.                                                                                                                                   |
+| ``111001..`` | OR      | The argument will be ORed with the accumulator.                                                                                                                                   |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111010xx`` | NOR     | The argument will be NORed with the accumulator.                                                                                                                                  |
+| ``111010..`` | NOR     | The argument will be NORed with the accumulator.                                                                                                                                  |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111011xx`` | XOR     | The argument will be XORed with the accumulator.                                                                                                                                  |
+| ``111011..`` | XOR     | The argument will be XORed with the accumulator.                                                                                                                                  |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111100xx`` | NXOR    | The argument will be NXORed with the accumulator.                                                                                                                                 |
+| ``111100..`` | NXOR    | The argument will be NXORed with the accumulator.                                                                                                                                 |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111101xx`` | NOT     | The argument will have all it's bits inverted                                                                                                                                     |
+| ``111101..`` | NOT     | The argument will have all it's bits inverted                                                                                                                                     |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111110xx`` | LSHIFT  | All the bits in the argument will move one place to the left (toward the most significant bit)                                                                                    |
+| ``111110..`` | LSHIFT  | All the bits in the argument will move one place to the left (toward the most significant bit)                                                                                    |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``111111xx`` | LSHIFTC | All the bits in the argument will move one place to the left (toward the most significant bit). If the last shift resulted in a carry then the least significant bit is set to 1. |
+| ``111111..`` | LSHIFTC | All the bits in the argument will move one place to the left (toward the most significant bit). If the last shift resulted in a carry then the least significant bit is set to 1. |
 +--------------+---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ALU Arguments
@@ -115,13 +115,13 @@ instruction byte when the operation group is ALU. The arguments and codes are:
 +--------------+----------+
 | Bit value    | Argument |
 +==============+==========+
-| ``11xxxx00`` | ACC      |
+| ``11....00`` | ACC      |
 +--------------+----------+
-| ``11xxxx01`` | A        |
+| ``11....01`` | A        |
 +--------------+----------+
-| ``11xxxx10`` | B        |
+| ``11....10`` | B        |
 +--------------+----------+
-| ``11xxxx11`` | C        |
+| ``11....11`` | C        |
 +--------------+----------+
 
 Instruction byte gaps
@@ -145,21 +145,21 @@ These "instruction byte gaps" are:
 | - ``00110110``      |                                                                                       |                  |
 | - ``00111111``      |                                                                                       |                  |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``00110XXX``        | Copy from SP+/-. Ambiguous.                                                           | JUMP_IF_LT_ACC   |
+| ``00110...``        | Copy from SP+/-. Ambiguous.                                                           | JUMP_IF_LT_ACC   |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``00XXX110``        | Copy to SP+/-. Ambiguous.                                                             | JUMP_IF_LTE_ACC  |
+| ``00...110``        | Copy to SP+/-. Ambiguous.                                                             | JUMP_IF_LTE_ACC  |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``00XXX111``        | Copy to a constant. Constants cannot be written to.                                   | JUMP_IF_EQ_ACC   |
+| ``00...111``        | Copy to a constant. Constants cannot be written to.                                   | JUMP_IF_EQ_ACC   |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``01XXX100``        | Loading into SP. SP has a dedicated register, instead a load to a register then copy. | JUMP_IF_GTE_ACC  |
+| ``01...100``        | Loading into SP. SP has a dedicated register, instead a load to a register then copy. | JUMP_IF_GTE_ACC  |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``01XXX110``        | Loading into SP+/-. SP+/- cannot be written to.                                       | CALL             |
+| ``01...110``        | Loading into SP+/-. SP+/- cannot be written to.                                       | CALL             |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``01XXX111``        | Loading into a constant. Constants cannot be written to.                              | PROGRAM_LOAD     |
+| ``01...111``        | Loading into a constant. Constants cannot be written to.                              | PROGRAM_LOAD     |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``10110XXX``        | Storing SP+/-. Ambiguous.                                                             | JUMP_IF_GT_ACC   |
+| ``10110...``        | Storing SP+/-. Ambiguous.                                                             | JUMP_IF_GT_ACC   |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``10100XXX``        | Storing SP. SP has a dedicated register, instead copy to a register and store.        | JUMP_IF_EQ_ZERO  |
+| ``10100...``        | Storing SP. SP has a dedicated register, instead copy to a register and store.        | JUMP_IF_EQ_ZERO  |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
-| ``10111XXX``        | Storing a constant value. Instead Set a register and store.                           | PROGRAM_STORE    |
+| ``10111...``        | Storing a constant value. Instead Set a register and store.                           | PROGRAM_STORE    |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
