@@ -1,2 +1,5 @@
 sphinx_docs/_build
 *.pyc
+src/python/.pytest_cache
+src/python/.coverage
+src/python/cov_html

@@ -318,12 +318,45 @@ WWWW - ALU Operation
 TTT - Tests
 Jump if test result:
 000: ZZ == 0
-001: ZZ == B
+001: ZZ == ARG
 010: ZZ is negative (2's Compliment)
 011: ZZ <= B
 100: ZZ > B
 101: ZZ < B
 110: ZZ >= B
+111: -
+
+
+
+
+
+0000: ZZ = 0
+0001: ACC = ACC + 1
+0010: ACC = ACC - 1
+0011: ACC = ACC + ZZ
+0100: ACC = ACC - ZZ
+0101: ACC = ACC + ZZ with carry if last operation output a carry
+0110: ACC = ACC - ZZ with borrow if last operation output a borrow
+0111: ACC = ACC AND ZZ
+1000: ACC = ACC NAND ZZ
+1001: ACC = ACC OR ZZ
+1010: ACC = ACC NOR ZZ 
+1011: ACC = ACC XOR ZZ
+1100: ACC = ACC NXOR ZZ
+1101: ZZ = NOT ZZ
+1110: ZZ = ZZ << 1
+1111: ZZ = ZZ << 1 with carry if last operation had carry
+
+
+TTT - Tests
+Jump if test result:
+000: ZZ == 0
+001: ZZ == DAT
+010: ZZ is negative (2's Compliment)
+011: ZZ < DAT
+100: ZZ <= DAT
+101: ZZ >= DAT
+110: ZZ > DAT
 111: -
 
 FFF - ALU Flags
@@ -340,44 +373,66 @@ FFF - ALU Flags
 
 
 
+
+
+
+
+
+
+
+
 Opcode Gaps
 ===========
 Copying a register to itelf is meaningless
-00 000 000 - NOOP
-00 001 001 - JUMP_IF_FLAG ZERO
-00 010 010 - JUMP_IF_FLAG NEGATIVE
-00 011 011 - JUMP_IF_FLAG OVERFLOW
-00 100 100 - JUMP_IF_FLAG UNDERFLOW
-00 101 101
-00 110 110
-00 111 111 - HALT
+
+00 000 000 - JUMP_IF_ZERO_FLAG
+00 001 001 - JUMP_IF_NOT_ZERO_FLAG
+00 010 010 - JUMP_IF_NEGATIVE_FLAG
+00 011 011 - JUMP_IF_POSITIVE_FLAG
+00 100 100 - JUMP_IF_OVERFLOW_FLAG
+00 101 101 - JUMP_IF_NOT_OVERFLOW_FLAG
+00 110 110 - JUMP_IF_UNDERFLOW_FLAG
+00 111 111 - JUMP_IF_NOT_UNDERFLOW_FLAG
 
 A copy from SP+/- doesn't make sense, it only has a meaning when doing load or stores
-00 110 XXX - Used by jump if test result
+00 110 XXX - Used by jump if less than ACC
+00 110 000 - No sense in comparing ACC to ACC
 
 A copy to SP+/- doesn't make sense, it only has a meaning when doing load or stores
-00 XXX 110 - Used by jump if zero
+00 XXX 110 - Used by jump if less than or equal to ACC
+00 000 110 - No sense in comparing ACC to ACC
 
-A copy to an immediate value doesnt make sense, you can't write to an immediate value
-00 XXX 111 - Used by jump if negative
+A copy to an immediate value doesn't make sense, you can't write to an immediate value
+00 XXX 111 - Used by jump if equal to ACC
+00 000 111 - No sense in comparing ACC to ACC
 
 Loading into SP - Not very useful. Can be achieved with a load to a reg then a copy anyway.
-01 [XXX] 100
+01 [XXX] 100 - Used by jump if greater than or equal to ACC
+01 [000] 100 - No sense in comparing ACC to ACC
 
 Loading into SP+/- doesn't make sense, SP+/- isn't somewhere you can store data
 01 [XXX] 110 - Used by CALL
 
 Loading into an immediate doeasn't make sense, you cant write to immediate values
 01 [XXX] 111 - Used by PROGRAM_LOAD
+01 [110] 111 - Loading from SP+/- doesn't make sense
 
 Storing SP+/- Not very meaningful - do you want to store the increment or decrement of SP?
-10 110 [XXX] - Used by jump if equal to ACC
+10 110 [XXX] - Used by jump if greater than ACC
+10 110 [000] - No sense in comparing ACC to ACC
+10 110 [110] - No sense in comparing ACC to SP+/-
 
 Storing SP - Not very useful - that's what SP is there for. Can be achieved with a load to a reg then a copy anyway.
-10 100 [XXX] - 
+10 100 [XXX] - Used by jump if zero
+10 100 [110] - No sense in comparing SP+/- to zero
 
 Storing immediate values - Simply not possible as a value needs be copied from one location in memory to another and we have no intermediate storage space
 10 111 [XXX] - Used by PROGRAM_STORE
+
+Still need slots for:
+    NOOP
+    HALT
+    JUMP_IF_EQ CONST (Got used by JUMP_IF_LT_ACC)
 
 
 
