@@ -42,8 +42,8 @@ control_clock, like this:
 
 .. image:: images/clock/inverted_data_clock.png
 
-This is not suitable for this computer due to a couple of notes in the 74HCT161
-datasheet:
+This is not suitable for this computer due to some restrictions on the 74HCT161
+used in the :ref:`program_counter_module`. Here is the note from the datasheet:
 
 .. note::
     2. The High-to-Low transition of PE or TE on the ’HC/HCT161 and the
@@ -53,12 +53,18 @@ datasheet:
        on the ’HC/HCT163 should only occur while CP is HIGH for
        conventional operation.
 
-Control signal changes must happen while data_clock is high. The inverted clock
-method doesn't satisfy this constraint as control signal changes (which happen a
-short delay after the rising edge of control_clock would occur after data_clock
-had gone low. The delay is introduced by the EEPROMs in the :ref:`control_unit`
-settling after a new instruction/flag/micro-step value goes onto their address
-lines. This demonstrates the problem using the PE control (_SPE is the same):
+This means:
+
+- PE going from high to low (i.e. disabling counting) must happen while data_clock is high.
+- SPE going from low to high (i.e. disabling parallel load mode) must happen while data_clock is high.
+
+  
+The inverted clock method doesn't satisfy this constraint as control signal
+changes (which happen a short delay after the rising edge of control_clock) would
+occur after data_clock had gone low. The delay is introduced by the EEPROMs in
+the :ref:`control_unit` settling after a new instruction/flag/micro-step value
+goes onto their address lines. This demonstrates the problem using the PE
+control (_SPE is the same):
 
 .. image:: images/clock/inverted_data_clock_problem.png
 
@@ -69,6 +75,9 @@ To satisfy this constraint, the two clock signals proceed like this:
 This means data_clock is still high when PE/count_enable changes:
 
 .. image:: images/clock/offset_clock_signals_fix.png
+
+Halt and reset
+^^^^^^^^^^^^^^
 
 Once halt or reset go high, both data_clock and control_clock immediately go
 low. Once halt and reset go low again after either becomes high, data_clock

@@ -1,4 +1,7 @@
-from eight_bit_computer import rom, utils
+from pprint import pprint
+
+from eight_bit_computer import rom, main
+
 
 def sandbox():
 
@@ -13,9 +16,10 @@ def sandbox():
     # print romdatas[4]
 
     romdatas = rom.get_rom()
+    print "done"
     slices = rom.slice_rom(romdatas)
     slice_index = 1
-    romdata_chunks = utils.chunker(slices[slice_index], 16)
+    romdata_chunks = rom.chunker(slices[slice_index], 16)
     count = 0
     for sixteen_index, romdata_chunk in enumerate(romdata_chunks):
         for line_index, romdata in enumerate(romdata_chunk):
@@ -33,12 +37,61 @@ def sandbox():
     logisim_string = rom.rom_slice_to_logisim_string(slices[slice_index])
     print logisim_string
 
-
     # romdatas = rom.get_defined_romdata()
     # full_rom = rom.populate_empty_addresses(romdatas)
     # for romdata in full_rom:
     #     print romdata
     # print len(full_rom)
 
+
+def file_test():
+    with open("test.py") as file:
+        lines = file.read().splitlines()
+
+    for line in lines[:10]:
+        print line
+        # print line.endswith("\n")
+
+
+def modify(my_list):
+    my_list[0]["new"] = "foo"
+    my_list[1]["existing"].append("bar")
+
+
+def dict_ref_test():
+    a = [
+        {
+            "hello": 1
+        },
+        {
+            "existing": ["baz"]
+        },
+    ]
+    pprint(a)
+    modify(a)
+    pprint(a)
+
+
+def get_dict():
+    return {"a": 1, "b": 2}
+
+
+def dict_ref_test_2():
+    a = get_dict()
+    a["a"] = "foo"
+    print a
+    b = get_dict()
+    b["a"] = "bar"
+    print a
+    print b
+
+
+def assemble_test():
+    main.assemble("../../programs/dummy.asm")
+
 if __name__ == "__main__":
-    sandbox()
+    # sandbox()
+    # file_test()
+    # dict_ref_test()
+    # dict_ref_test_2()
+    assemble_test()
