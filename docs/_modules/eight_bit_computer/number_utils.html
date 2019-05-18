@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eight_bit_computer.number_utils &mdash; Eight Bit Computer  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Eight Bit Computer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../language/index.html">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Eight Bit Computer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>eight_bit_computer.number_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for eight_bit_computer.number_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for working with, checking and converting numbers.</span>
+
+<span class="sd">All numbers are stored within the computer as the positive equivalent.</span>
+<span class="sd">They may be interpreted as negative.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="number_to_bitstring"><a class="viewcode-back" href="../../software/source/eight_bit_computer.number_utils.html#eight_bit_computer.number_utils.number_to_bitstring">[docs]</a><span class="k">def</span> <span class="nf">number_to_bitstring</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">bit_width</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a number to an equivalent bitstring of the given width.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If number doesn&#39;t fit in the bit width.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">number_is_within_bit_limit</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">bit_width</span><span class="o">=</span><span class="n">bit_width</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{number}</span><span class="s2"> will not fit in </span><span class="si">{num_bits}</span><span class="s2"> bits.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">number</span><span class="o">=</span><span class="n">number</span><span class="p">,</span> <span class="n">num_bits</span><span class="o">=</span><span class="n">bit_width</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="n">number</span> <span class="o">=</span> <span class="n">get_positive_equivalent</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s2">&quot;{number:0</span><span class="si">{bit_width}</span><span class="s2">b}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">number</span><span class="o">=</span><span class="n">number</span><span class="p">,</span> <span class="n">bit_width</span><span class="o">=</span><span class="n">bit_width</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="number_is_within_bit_limit"><a class="viewcode-back" href="../../software/source/eight_bit_computer.number_utils.html#eight_bit_computer.number_utils.number_is_within_bit_limit">[docs]</a><span class="k">def</span> <span class="nf">number_is_within_bit_limit</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">bit_width</span><span class="o">=</span><span class="mi">8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a number can be stored in the number of bits given.</span>
+
+<span class="sd">    Negative numbers are stored in 2&#39;s compliment binary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number (int): The number to check.</span>
+<span class="sd">        bit_width (int, optional): The number of bits available.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if within limits, False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">min_val</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">bit_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">max_val</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="n">bit_width</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">min_val</span> <span class="o">&lt;=</span> <span class="n">number</span> <span class="o">&lt;=</span> <span class="n">max_val</span></div>
+
+
+<div class="viewcode-block" id="get_positive_equivalent"><a class="viewcode-back" href="../../software/source/eight_bit_computer.number_utils.html#eight_bit_computer.number_utils.get_positive_equivalent">[docs]</a><span class="k">def</span> <span class="nf">get_positive_equivalent</span><span class="p">(</span><span class="n">number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the 2&#39;s compliment equivalent of this number as positive.</span>
+
+<span class="sd">    With a 3 bit number, the positive equivalent of -2 is 5. E.g.::</span>
+
+<span class="sd">        -4 4 100</span>
+<span class="sd">        -3 5 101</span>
+<span class="sd">        -2 6 110</span>
+<span class="sd">        -1 7 111</span>
+<span class="sd">         0 0 000</span>
+<span class="sd">         1 1 001</span>
+<span class="sd">         2 2 010</span>
+<span class="sd">         3 3 011</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        number (int): The number to convert to a positive quivalent</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The positive equivalent of the number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">number</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">number</span> <span class="o">+</span> <span class="mi">256</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+
+<div class="viewcode-block" id="bitstring_to_number"><a class="viewcode-back" href="../../software/source/eight_bit_computer.number_utils.html#eight_bit_computer.number_utils.bitstring_to_number">[docs]</a><span class="k">def</span> <span class="nf">bitstring_to_number</span><span class="p">(</span><span class="n">bitstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a bitstring to a number.</span>
+
+<span class="sd">    E.g. ``10110101`` gives 181.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitstring (str): String of ``1``\ s and ``0``\ s.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The equivalent integer.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bitstring_to_hex_string"><a class="viewcode-back" href="../../software/source/eight_bit_computer.number_utils.html#eight_bit_computer.number_utils.bitstring_to_hex_string">[docs]</a><span class="k">def</span> <span class="nf">bitstring_to_hex_string</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="n">zero_pad_width</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a bitstring to a hex number.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        bitstring (str): String of ``1``\ s and ``0``\ s.</span>
+<span class="sd">        zero_pad_width (int) (optional): How many zeroes to pad the</span>
+<span class="sd">            returned hex value with.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="s2">&quot;{num:0</span><span class="si">{zero_pad_width}</span><span class="s2">X}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">num</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">zero_pad_width</span><span class="o">=</span><span class="n">zero_pad_width</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Andy Palmer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

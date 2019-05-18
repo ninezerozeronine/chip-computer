@@ -17,32 +17,34 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -155,21 +157,11 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">.language</span> <span class="k">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">load</span><span class="p">,</span> <span class="n">fetch</span><span class="p">,</span> <span class="n">set_op</span>
-<span class="kn">from</span> <span class="nn">.language.definitions</span> <span class="k">import</span> <span class="n">EMPTY_ADDRESS</span><span class="p">,</span> <span class="n">MODULE_CONTROLS_DEFAULT</span>
+<span class="kn">from</span> <span class="nn">.operations</span> <span class="k">import</span> <span class="n">get_all_operations</span><span class="p">,</span> <span class="n">fetch</span>
+<span class="kn">from</span> <span class="nn">.language_defs</span> <span class="k">import</span> <span class="n">EMPTY_ADDRESS</span><span class="p">,</span> <span class="n">MODULE_CONTROLS_DEFAULT</span>
+<span class="kn">from</span> <span class="nn">.data_structures</span> <span class="k">import</span> <span class="n">RomData</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">bitdef</span>
-
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
-
-
-<span class="n">RomData</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;RomData&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;address&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">])</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Some data and an address to store it in</span>
-
-<span class="sd">Attributes:</span>
-<span class="sd">    address (str): The address to store the data in.</span>
-<span class="sd">    data (int): The data to be stored at the given address.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">number_utils</span>
 
 
 <div class="viewcode-block" id="get_rom"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.get_rom">[docs]</a><span class="k">def</span> <span class="nf">get_rom</span><span class="p">():</span>
@@ -198,12 +190,8 @@
 <span class="sd">            operations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">operations</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">copy</span><span class="p">,</span>
-        <span class="n">load</span><span class="p">,</span>
-        <span class="n">fetch</span><span class="p">,</span>
-        <span class="n">set_op</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="n">operations</span> <span class="o">=</span> <span class="n">get_all_operations</span><span class="p">()</span>
+    <span class="n">operations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fetch</span><span class="p">)</span>
 
     <span class="n">templates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">operation</span> <span class="ow">in</span> <span class="n">operations</span><span class="p">:</span>
@@ -283,53 +271,39 @@
     <span class="k">return</span> <span class="n">duplicates</span></div>
 
 
-<div class="viewcode-block" id="write_logisim_roms"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.write_logisim_roms">[docs]</a><span class="k">def</span> <span class="nf">write_logisim_roms</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">rom</span> <span class="o">=</span> <span class="n">get_rom</span><span class="p">()</span>
-    <span class="n">slices</span> <span class="o">=</span> <span class="n">slice_rom</span><span class="p">(</span><span class="n">rom</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">rom_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-        <span class="n">rom_slice_string</span> <span class="o">=</span> <span class="n">rom_slice_to_logisim_string</span><span class="p">(</span><span class="n">slices</span><span class="p">[</span><span class="n">rom_index</span><span class="p">])</span>
-        <span class="n">rom_filename</span> <span class="o">=</span> <span class="s2">&quot;rom_</span><span class="si">{rom_index}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rom_index</span><span class="o">=</span><span class="n">rom_index</span><span class="p">)</span>
-        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">rom_filename</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">romfile</span><span class="p">:</span>
-            <span class="n">romfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">rom_slice_string</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="slice_rom"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.slice_rom">[docs]</a><span class="k">def</span> <span class="nf">slice_rom</span><span class="p">(</span><span class="n">rom</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Slice a rom into chunks 8 bits wide.</span>
 
 <span class="sd">    This is to prepare the data to write into the roms. To take a single</span>
 <span class="sd">    RomData as an example, if it looked like this (spaces added for</span>
-<span class="sd">    clarity):</span>
+<span class="sd">    clarity)::</span>
 
-<span class="sd">    RomData(</span>
-<span class="sd">        address=&quot;0000000 0000 000&quot;,</span>
-<span class="sd">        data=&quot;10101010 111111111 00000000 11001100&quot;</span>
-<span class="sd">    )</span>
-
-<span class="sd">    We would end up with:</span>
-
-<span class="sd">    {</span>
-<span class="sd">        0: RomData(</span>
+<span class="sd">        RomData(</span>
 <span class="sd">            address=&quot;0000000 0000 000&quot;,</span>
-<span class="sd">            data=&quot;11001100&quot;</span>
-<span class="sd">        ),</span>
-<span class="sd">        1: RomData(</span>
-<span class="sd">            address=&quot;0000000 0000 000&quot;,</span>
-<span class="sd">            data=&quot;00000000&quot;</span>
-<span class="sd">        ),</span>
-<span class="sd">        2: RomData(</span>
-<span class="sd">            address=&quot;0000000 0000 000&quot;,</span>
-<span class="sd">            data=&quot;11111111&quot;</span>
-<span class="sd">        ),</span>
-<span class="sd">        3: RomData(</span>
-<span class="sd">            address=&quot;0000000 0000 000&quot;,</span>
-<span class="sd">            data=&quot;10101010&quot;</span>
+<span class="sd">            data=&quot;10101010 111111111 00000000 11001100&quot;</span>
 <span class="sd">        )</span>
-<span class="sd">    }</span>
+
+<span class="sd">    We would end up with::</span>
+
+<span class="sd">        {</span>
+<span class="sd">            0: RomData(</span>
+<span class="sd">                address=&quot;0000000 0000 000&quot;,</span>
+<span class="sd">                data=&quot;11001100&quot;</span>
+<span class="sd">            ),</span>
+<span class="sd">            1: RomData(</span>
+<span class="sd">                address=&quot;0000000 0000 000&quot;,</span>
+<span class="sd">                data=&quot;00000000&quot;</span>
+<span class="sd">            ),</span>
+<span class="sd">            2: RomData(</span>
+<span class="sd">                address=&quot;0000000 0000 000&quot;,</span>
+<span class="sd">                data=&quot;11111111&quot;</span>
+<span class="sd">            ),</span>
+<span class="sd">            3: RomData(</span>
+<span class="sd">                address=&quot;0000000 0000 000&quot;,</span>
+<span class="sd">                data=&quot;10101010&quot;</span>
+<span class="sd">            )</span>
+<span class="sd">        }</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rom (list(RomData)): The complete ROM</span>
@@ -366,50 +340,6 @@
         <span class="n">sliced_romdata</span> <span class="o">=</span> <span class="n">RomData</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">romdata</span><span class="o">.</span><span class="n">address</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_slice</span><span class="p">)</span>
         <span class="n">sliced_romdatas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sliced_romdata</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sliced_romdatas</span></div>
-
-
-<div class="viewcode-block" id="rom_slice_to_logisim_string"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.rom_slice_to_logisim_string">[docs]</a><span class="k">def</span> <span class="nf">rom_slice_to_logisim_string</span><span class="p">(</span><span class="n">rom_slice</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">rom_lines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;v2.0 raw&quot;</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">line_romdatas</span> <span class="ow">in</span> <span class="n">chunker</span><span class="p">(</span><span class="n">rom_slice</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
-        <span class="n">line_parts</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">line_chunk_romdatas</span> <span class="ow">in</span> <span class="n">chunker</span><span class="p">(</span><span class="n">line_romdatas</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="n">bit_strings</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">romdata</span><span class="o">.</span><span class="n">data</span>
-                <span class="k">for</span> <span class="n">romdata</span>
-                <span class="ow">in</span> <span class="n">line_chunk_romdatas</span>
-            <span class="p">]</span>
-            <span class="n">hex_strings</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">byte_bitstring_to_hex_string</span><span class="p">(</span><span class="n">bit_string</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">bit_string</span>
-                <span class="ow">in</span> <span class="n">bit_strings</span>
-            <span class="p">]</span>
-            <span class="n">four_hex_bytes</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hex_strings</span><span class="p">)</span>
-            <span class="n">line_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">four_hex_bytes</span><span class="p">)</span>
-        <span class="n">line</span> <span class="o">=</span> <span class="s2">&quot;  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line_parts</span><span class="p">)</span>
-        <span class="n">rom_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-    <span class="n">rom_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rom_lines</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rom_string</span></div>
-
-
-<div class="viewcode-block" id="byte_bitstring_to_hex_string"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.byte_bitstring_to_hex_string">[docs]</a><span class="k">def</span> <span class="nf">byte_bitstring_to_hex_string</span><span class="p">(</span><span class="n">bitstring</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{0:02X}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="chunker"><a class="viewcode-back" href="../../software/source/eight_bit_computer.rom.html#eight_bit_computer.rom.chunker">[docs]</a><span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">seq</span><span class="p">,</span> <span class="n">chunk_size</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">seq</span><span class="p">[</span><span class="n">pos</span><span class="p">:</span><span class="n">pos</span> <span class="o">+</span> <span class="n">chunk_size</span><span class="p">]</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">),</span> <span class="n">chunk_size</span><span class="p">)</span>
-    <span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -439,26 +369,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

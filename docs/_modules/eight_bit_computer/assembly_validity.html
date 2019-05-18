@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eight_bit_computer.assembly_validity &mdash; Eight Bit Computer  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Eight Bit Computer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../language/index.html">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../software/index.html">Software</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Eight Bit Computer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>eight_bit_computer.assembly_validity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for eight_bit_computer.assembly_validity</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Validity checks on the processed assembly lines</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">AssemblyError</span>
+
+<span class="n">ERROR_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;Error processing line </span><span class="si">{line_no}</span><span class="s2"> (</span><span class="si">{line}</span><span class="s2">): </span><span class="si">{details}</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="check_structure_validity"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_structure_validity">[docs]</a><span class="k">def</span> <span class="nf">check_structure_validity</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">,</span> <span class="n">variable_start_offset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check the processed assembly lines for consistency/correctness.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">check_multiple_label_defs</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">)</span>
+    <span class="n">check_multiple_label_assignment</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">)</span>
+    <span class="n">check_undefined_label_ref</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">)</span>
+    <span class="n">check_multiple_variable_def</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">)</span>
+    <span class="n">check_num_variables</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">,</span> <span class="n">variable_start_offset</span><span class="p">)</span>
+    <span class="n">check_num_instruction_bytes</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_multiple_label_defs"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_multiple_label_defs">[docs]</a><span class="k">def</span> <span class="nf">check_multiple_label_defs</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if the same label been defined more than once.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If the same label been defined more than once.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">label_lines</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_label&quot;</span><span class="p">]:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_label&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The label: </span><span class="se">\&quot;</span><span class="si">{label}</span><span class="se">\&quot;</span><span class="s2"> has already been defined on &quot;</span>
+                    <span class="s2">&quot;line </span><span class="si">{prev_line}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+                        <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
+                        <span class="n">prev_line</span><span class="o">=</span><span class="n">label_lines</span><span class="p">[</span><span class="n">label</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+                    <span class="n">line</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+                    <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="n">label_lines</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="check_multiple_label_assignment"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_multiple_label_assignment">[docs]</a><span class="k">def</span> <span class="nf">check_multiple_label_assignment</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a single line been assigned more than one label.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If a single line been assigned more than one</span>
+<span class="sd">            label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">label_queued</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">last_label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">label_queued</span> <span class="ow">and</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_label&quot;</span><span class="p">]:</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;There is already a label (</span><span class="si">{label}</span><span class="s2">) queued for &quot;</span>
+                <span class="s2">&quot;assignment to the next instruction.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">last_label</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+                <span class="n">line</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+                <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_label&quot;</span><span class="p">]:</span>
+            <span class="n">label_queued</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">last_label</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_label&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;has_machine_code&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">label_queued</span><span class="p">:</span>
+            <span class="n">label_queued</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="check_undefined_label_ref"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_undefined_label_ref">[docs]</a><span class="k">def</span> <span class="nf">check_undefined_label_ref</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if an operation is using a label that hasn&#39;t been defined.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If an operation is using a label that hasn&#39;t</span>
+<span class="sd">            been defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Gather labels</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_label&quot;</span><span class="p">]:</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_label&quot;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;has_machine_code&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">mc_byte_info</span> <span class="ow">in</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;mc_bytes&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;byte_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span>
+                        <span class="ow">and</span> <span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;label&quot;</span>
+                        <span class="ow">and</span> <span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">):</span>
+                    <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="s2">&quot;This line is referencing a label (</span><span class="si">{label}</span><span class="s2">) &quot;</span>
+                        <span class="s2">&quot;that has not been defined.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">label</span><span class="o">=</span><span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+                        <span class="n">line</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+                        <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_multiple_variable_def"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_multiple_variable_def">[docs]</a><span class="k">def</span> <span class="nf">check_multiple_variable_def</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Has the same variable been defined multiple times.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If a variable has been defined more than once.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">variable_lines</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_variable&quot;</span><span class="p">]:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_variable&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">variable</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;The variable: </span><span class="se">\&quot;</span><span class="si">{variable}</span><span class="se">\&quot;</span><span class="s2"> has already been defined on &quot;</span>
+                    <span class="s2">&quot;line </span><span class="si">{prev_line}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span>
+                        <span class="n">prev_line</span><span class="o">=</span><span class="n">variable_lines</span><span class="p">[</span><span class="n">variable</span><span class="p">],</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+                    <span class="n">line</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+                    <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">variables</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+                <span class="n">variable_lines</span><span class="p">[</span><span class="n">variable</span><span class="p">]</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="check_num_variables"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_num_variables">[docs]</a><span class="k">def</span> <span class="nf">check_num_variables</span><span class="p">(</span><span class="n">asm_line_infos</span><span class="p">,</span> <span class="n">variable_start_offset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check there are more variables defined than will fit in data mem.</span>
+
+<span class="sd">    There are 255 bytes of data memory available and the start offset</span>
+<span class="sd">    may eat into this.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">        variable_start_offset (int): How far in memory to offset when</span>
+<span class="sd">            defining the first variable.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If there are more variables defined than will fit</span>
+<span class="sd">            in data memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">asm_line_info</span> <span class="ow">in</span> <span class="n">asm_line_infos</span><span class="p">:</span>
+
+        <span class="c1"># Check for defined variable</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defines_variable&quot;</span><span class="p">]:</span>
+            <span class="n">variable</span> <span class="o">=</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_variable&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">variable</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+                <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;defined_variable&quot;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">+</span> <span class="n">variable_start_offset</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+        <span class="c1"># Check for used variables</span>
+        <span class="k">if</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;has_machine_code&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">mc_byte_info</span> <span class="ow">in</span> <span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;mc_bytes&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;byte_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span>
+                        <span class="ow">and</span> <span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;variable&quot;</span>
+                        <span class="ow">and</span> <span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">):</span>
+                    <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mc_byte_info</span><span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">+</span> <span class="n">variable_start_offset</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">variables</span><span class="p">)</span> <span class="o">+</span> <span class="n">variable_start_offset</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;No more data memory is available for the declaration of &quot;</span>
+            <span class="s2">&quot;variable: </span><span class="se">\&quot;</span><span class="si">{variable}</span><span class="se">\&quot;</span><span class="s2">. The max is 255 and a variable &quot;</span>
+            <span class="s2">&quot;start offset of </span><span class="si">{variable_start_offset}</span><span class="s2"> was used.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">variable</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span>
+                <span class="n">variable_start_offset</span><span class="o">=</span><span class="n">variable_start_offset</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">line_no</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">],</span>
+            <span class="n">line</span><span class="o">=</span><span class="n">asm_line_info</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+            <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_num_instruction_bytes"><a class="viewcode-back" href="../../software/source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_num_instruction_bytes">[docs]</a><span class="k">def</span> <span class="nf">check_num_instruction_bytes</span><span class="p">(</span><span class="n">assembly_lines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check there aren&#39;t too many instruction_bytes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        asm_line_infos (list(dict)): List of dictionaries (conforming to</span>
+<span class="sd">            :func:`~.get_assembly_line_template`) with information about all</span>
+<span class="sd">            the lines in the assembly file.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        AssemblyError: If there are more instruction bytes than will</span>
+<span class="sd">            fit in program memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bad_line_no</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">num_mc_bytes</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">assembly_line</span> <span class="ow">in</span> <span class="n">assembly_lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">assembly_line</span><span class="p">[</span><span class="s2">&quot;has_machine_code&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">mc_byte</span> <span class="ow">in</span> <span class="n">assembly_line</span><span class="p">[</span><span class="s2">&quot;mc_bytes&quot;</span><span class="p">]:</span>
+                <span class="n">num_mc_bytes</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">num_mc_bytes</span> <span class="o">&gt;</span> <span class="mi">255</span> <span class="ow">and</span> <span class="n">bad_line_no</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">bad_line_no</span> <span class="o">=</span> <span class="n">assembly_line</span><span class="p">[</span><span class="s2">&quot;line_no&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">num_mc_bytes</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+        <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;This operation brought the total number of machine &quot;</span>
+            <span class="s2">&quot;code bytes above 255. The complete assembly code has &quot;</span>
+            <span class="s2">&quot;resulted in </span><span class="si">{num_mc_bytes}</span><span class="s2"> bytes of machine code.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">num_mc_bytes</span><span class="o">=</span><span class="n">num_mc_bytes</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">ERROR_TEMPLATE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">line_no</span><span class="o">=</span><span class="n">bad_line_no</span><span class="p">,</span>
+            <span class="n">line</span><span class="o">=</span><span class="n">assembly_line</span><span class="p">[</span><span class="s2">&quot;raw&quot;</span><span class="p">],</span>
+            <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AssemblyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Andy Palmer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Micro Code" href="micro_code.html" />
     <link rel="prev" title="Assembly" href="assembly.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -85,7 +87,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Language</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="assembly.html">Assembly</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Machine Code</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Machine Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-groups">Instruction Groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sources-and-destinations">Sources and destinations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#alu-operations">ALU Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#alu-arguments">ALU Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#instruction-byte-gaps">Instruction byte gaps</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="micro_code.html">Micro Code</a></li>
 </ul>
 </li>
@@ -161,6 +170,288 @@
             
   <div class="section" id="machine-code">
 <h1>Machine Code<a class="headerlink" href="#machine-code" title="Permalink to this headline">¶</a></h1>
+<p>The computer is directly controlled by machine code. It is stored in program
+memory. The machine code is stored as 8 bit bytes.</p>
+<p>Machine code consists of instruction bytes and constant bytes. Instruction bytes
+encode a particular instruction (e.g. copying the value in register A to
+register B), constant bytes encode a value that an operation may require (e.g.
+setting the A register to 42).</p>
+<p>There are 256 possible instruction bytes, most of these are occupied by the
+instruction set. They are organised using the grouping described below. This
+is very much inspired by how <a class="reference internal" href="../credits.html#james-bates"><span class="std std-ref">James Bates</span></a> organised his machine code.</p>
+<p>See the full <a class="reference download internal" download="" href="../_downloads/aea6a17e4976646e6bd059045fdae5ec/language_table.html"><code class="xref download docutils literal notranslate"><span class="pre">language</span> <span class="pre">table</span></code></a> for a complete
+listing of all the machine code and operations and their arguments. The table is
+sortable by clicking on the headers (but it’s a little slow).</p>
+<div class="section" id="instruction-groups">
+<h2>Instruction Groups<a class="headerlink" href="#instruction-groups" title="Permalink to this headline">¶</a></h2>
+<p>The first two bytes of an instruction byte always represent the instruction
+group. There are 4 groups:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="54%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bit value</th>
+<th class="head">Group Name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">00......</span></code></td>
+<td>Copy</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">01......</span></code></td>
+<td>Load</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">10......</span></code></td>
+<td>Store</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">11......</span></code></td>
+<td>ALU</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="sources-and-destinations">
+<h2>Sources and destinations<a class="headerlink" href="#sources-and-destinations" title="Permalink to this headline">¶</a></h2>
+<p>For copy, load and store instructions, the third to fifth, and sixth to eighth
+bytes are the source and destination respectively.</p>
+<p>The table below only shows the source codes for brevity. The destination bits
+are the last 3 bits, e.g.: <code class="docutils literal notranslate"><span class="pre">.....000</span></code> and have the same name and meaning.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="7%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bit value</th>
+<th class="head">Name</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">..000...</span></code></td>
+<td>ACC</td>
+<td>The accumulator register.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">..001...</span></code></td>
+<td>A</td>
+<td>The A register.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">..010...</span></code></td>
+<td>B</td>
+<td>The B register.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">..011...</span></code></td>
+<td>C</td>
+<td>The C register.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">..100...</span></code></td>
+<td>SP</td>
+<td>The stack pointer.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">..101...</span></code></td>
+<td>PC</td>
+<td>The program counter</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">..110...</span></code></td>
+<td>SP+/-</td>
+<td>The stack pointer, preceded or followed by incrementing or decrementing it.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">..111...</span></code></td>
+<td>CONST</td>
+<td>A constant value.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="alu-operations">
+<h2>ALU Operations<a class="headerlink" href="#alu-operations" title="Permalink to this headline">¶</a></h2>
+<p>There are 16 ALU operations and they are identified with bits 3-6 of the
+instruction byte when the operation group is ALU. The operations and codes are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="4%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bit value</th>
+<th class="head">Name</th>
+<th class="head">Meaning</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">110000..</span></code></td>
+<td>ZERO</td>
+<td>The ALU will output zero.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">110001..</span></code></td>
+<td>INCR</td>
+<td>The argument supplied will be incremented by 1.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">110010..</span></code></td>
+<td>DECR</td>
+<td>The argument supplied will be decremented by 1.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">110011..</span></code></td>
+<td>ADD</td>
+<td>The argument will be added to the accumulator.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">110100..</span></code></td>
+<td>ADDC</td>
+<td>The argument will be added to the accumulator and one will be added if the last add resulted in a carry.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">110101..</span></code></td>
+<td>SUB</td>
+<td>The argument will be subtracted from the accumulator.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">110110..</span></code></td>
+<td>SUBB</td>
+<td>The argument will be subtracted from the accumulator and one will be subtracted if the last subtraction resulted in a borrow.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">110111..</span></code></td>
+<td>AND</td>
+<td>The argument will be ANDed with the accumulator.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">111000..</span></code></td>
+<td>NAND</td>
+<td>The argument will be NANDed with the accumulator.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">111001..</span></code></td>
+<td>OR</td>
+<td>The argument will be ORed with the accumulator.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">111010..</span></code></td>
+<td>NOR</td>
+<td>The argument will be NORed with the accumulator.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">111011..</span></code></td>
+<td>XOR</td>
+<td>The argument will be XORed with the accumulator.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">111100..</span></code></td>
+<td>NXOR</td>
+<td>The argument will be NXORed with the accumulator.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">111101..</span></code></td>
+<td>NOT</td>
+<td>The argument will have all it’s bits inverted</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">111110..</span></code></td>
+<td>LSHIFT</td>
+<td>All the bits in the argument will move one place to the left (toward the most significant bit)</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">111111..</span></code></td>
+<td>LSHIFTC</td>
+<td>All the bits in the argument will move one place to the left (toward the most significant bit). If the last shift resulted in a carry then the least significant bit is set to 1.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="alu-arguments">
+<h2>ALU Arguments<a class="headerlink" href="#alu-arguments" title="Permalink to this headline">¶</a></h2>
+<p>ALU operations work on an argument. This is specified with bits 7 and 8 of the
+instruction byte when the operation group is ALU. The arguments and codes are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Bit value</th>
+<th class="head">Argument</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">11....00</span></code></td>
+<td>ACC</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">11....01</span></code></td>
+<td>A</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">11....10</span></code></td>
+<td>B</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">11....11</span></code></td>
+<td>C</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="instruction-byte-gaps">
+<h2>Instruction byte gaps<a class="headerlink" href="#instruction-byte-gaps" title="Permalink to this headline">¶</a></h2>
+<p>Not all source and destination combinations are valid or make sense. For
+example, copying the value in Register A to Register A has no purpose. In these
+cases, those instructions are re purposed for other instructions.</p>
+<p>These “instruction byte gaps” are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="69%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Instruction byte(s)</th>
+<th class="head">Explanation</th>
+<th class="head">Used by</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><ul class="first last simple">
+<li><code class="docutils literal notranslate"><span class="pre">00000000</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00001001</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00010010</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00011011</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00100100</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00101101</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00110110</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">00111111</span></code></li>
+</ul>
+</td>
+<td>Copying a register to itself.</td>
+<td>JUMP_IF_XXX_FLAG</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">00110...</span></code></td>
+<td>Copy from SP+/-. Ambiguous.</td>
+<td>JUMP_IF_LT_ACC</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">00...110</span></code></td>
+<td>Copy to SP+/-. Ambiguous.</td>
+<td>JUMP_IF_LTE_ACC</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">00...111</span></code></td>
+<td>Copy to a constant. Constants cannot be written to.</td>
+<td>JUMP_IF_EQ_ACC</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">01...100</span></code></td>
+<td>Loading into SP. SP has a dedicated register, instead a load to a register then copy.</td>
+<td>JUMP_IF_GTE_ACC</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">01...110</span></code></td>
+<td>Loading into SP+/-. SP+/- cannot be written to.</td>
+<td>CALL</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">01...111</span></code></td>
+<td>Loading into a constant. Constants cannot be written to.</td>
+<td>PROGRAM_LOAD</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">10110...</span></code></td>
+<td>Storing SP+/-. Ambiguous.</td>
+<td>JUMP_IF_GT_ACC</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">10100...</span></code></td>
+<td>Storing SP. SP has a dedicated register, instead copy to a register and store.</td>
+<td>JUMP_IF_EQ_ZERO</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">10111...</span></code></td>
+<td>Storing a constant value. Instead Set a register and store.</td>
+<td>PROGRAM_STORE</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -174,7 +465,7 @@
         <a href="micro_code.html" class="btn btn-neutral float-right" title="Micro Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="assembly.html" class="btn btn-neutral" title="Assembly" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="assembly.html" class="btn btn-neutral float-left" title="Assembly" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -200,26 +491,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

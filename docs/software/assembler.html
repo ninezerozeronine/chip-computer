@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Assembler &mdash; Eight Bit Computer  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="eight_bit_computer package" href="source/eight_bit_computer.html" />
+    <link rel="prev" title="Software" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Eight Bit Computer
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../language/index.html">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hardware/index.html">Hardware</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Software</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Assembler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/eight_bit_computer.html">eight_bit_computer package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Assembler</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development_tools.html">Development Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../credits.html">Credits</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Eight Bit Computer</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Software</a> &raquo;</li>
+        
+      <li>Assembler</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/software/assembler.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="assembler">
+<span id="sw-assembler"></span><h1>Assembler<a class="headerlink" href="#assembler" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="source/eight_bit_computer.assembler.html#module-eight_bit_computer.assembler" title="eight_bit_computer.assembler"><code class="xref py py-mod docutils literal notranslate"><span class="pre">assembler</span></code></a> module is responsible for taking lines
+of assembly code and processing it to generate equivalent machine code.</p>
+<p>It is passed a list of strings which are the lines of the assembly file. Each
+line is then processed and the information about the line stored in <a class="reference internal" href="source/eight_bit_computer.data_structures.html#eight_bit_computer.data_structures.get_assembly_line_template" title="eight_bit_computer.data_structures.get_assembly_line_template"><code class="xref py py-func docutils literal notranslate"><span class="pre">a</span>
+<span class="pre">dictionary</span></code></a>.</p>
+<p>During processing each line is checked to see if it’s a constant definition, if
+not, it’s treated as an assembly line and <a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.machine_code_bytes_from_line" title="eight_bit_computer.assembler.machine_code_bytes_from_line"><code class="xref py py-func docutils literal notranslate"><span class="pre">parsed</span> <span class="pre">into</span> <span class="pre">machine</span> <span class="pre">code</span> <span class="pre">bytes</span></code></a>.</p>
+<p>The line is passed to <a class="reference internal" href="source/eight_bit_computer.operations.html#eight_bit_computer.operations.get_all_operations" title="eight_bit_computer.operations.get_all_operations"><code class="xref py py-func docutils literal notranslate"><span class="pre">each</span> <span class="pre">operation</span></code></a> to attempt to
+generate the machine code bytes. The operations can expect certain tokens on the
+line to be constants and are identified as such and returned to the assembler.
+The constants are then <a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.validate_and_identify_constants" title="eight_bit_computer.assembler.validate_and_identify_constants"><code class="xref py py-func docutils literal notranslate"><span class="pre">validated</span> <span class="pre">and</span> <span class="pre">identified</span></code></a> and the machine code bytes added to the
+dictionary of information about the line of assembly.</p>
+<p>With all the lines processed, machine code bytes generated and constants
+identified, the assembler <a class="reference internal" href="source/eight_bit_computer.assembly_validity.html#eight_bit_computer.assembly_validity.check_structure_validity" title="eight_bit_computer.assembly_validity.check_structure_validity"><code class="xref py py-func docutils literal notranslate"><span class="pre">checks</span> <span class="pre">for</span> <span class="pre">overall</span> <span class="pre">validity</span> <span class="pre">and</span> <span class="pre">structure</span></code></a> The assembler then performs global operations that
+need to take the entire assembly code into account:</p>
+<ul>
+<li><p class="first"><a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.assign_machine_code_byte_indexes" title="eight_bit_computer.assembler.assign_machine_code_byte_indexes"><code class="xref py py-func docutils literal notranslate"><span class="pre">Assigning</span> <span class="pre">indexes</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">machine</span> <span class="pre">code</span> <span class="pre">bytes</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.assign_labels" title="eight_bit_computer.assembler.assign_labels"><code class="xref py py-func docutils literal notranslate"><span class="pre">Assigning</span> <span class="pre">labels</span> <span class="pre">to</span> <span class="pre">machine</span> <span class="pre">code</span> <span class="pre">bytes</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.resolve_labels" title="eight_bit_computer.assembler.resolve_labels"><code class="xref py py-func docutils literal notranslate"><span class="pre">Resolving</span> <span class="pre">labels</span> <span class="pre">to</span> <span class="pre">indexes</span> <span class="pre">in</span> <span class="pre">program</span> <span class="pre">memory</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.resolve_numbers" title="eight_bit_computer.assembler.resolve_numbers"><code class="xref py py-func docutils literal notranslate"><span class="pre">Resolving</span> <span class="pre">number</span> <span class="pre">constants</span> <span class="pre">to</span> <span class="pre">bytes</span></code></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="source/eight_bit_computer.assembler.html#eight_bit_computer.assembler.resolve_variables" title="eight_bit_computer.assembler.resolve_variables"><code class="xref py py-func docutils literal notranslate"><span class="pre">Resolving</span> <span class="pre">variable</span> <span class="pre">constants</span> <span class="pre">to</span> <span class="pre">indexes</span> <span class="pre">in</span> <span class="pre">data</span> <span class="pre">memory</span></code></a></p>
+<p>With these checks, assignments and resolutions complete, the final assembly
+line dictionaries are returned.</p>
+</li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="source/eight_bit_computer.html" class="btn btn-neutral float-right" title="eight_bit_computer package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Andy Palmer
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
