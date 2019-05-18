@@ -43,11 +43,11 @@ def get_summary_entry_template():
       byte.
     - mc_byte: Information about the machine code byte on this line.
     - mc_byte/info: Machine code byte information dictionary (as
-      returned by :func:`~get_machine_code_byte_template and filled by
+      returned by :func:`~get_machine_code_byte_template` and filled by
       the assembly process).
     - mc_byte/has_label: Whether of not this machine code byte has an
       associated label.
-    - mc_byte/label: The label of this machien code byte.
+    - mc_byte/label: The label of this machine code byte.
 
     Returns:
         dict: Summary entry template.
