@@ -19,11 +19,14 @@ with open('../../machine-code.csv') as f:
             output.append("  </tr>")
         else:
             output.append("  <tr>")
+            row_content = []
             for column in row:
-                output.append("    <td>{column}</td>".format(
+                row_content.append("<td>{column}</td>".format(
                     column=column
                     )
                 )
+            final_row = "    {tds}".format(tds="".join(row_content))
+            output.append(final_row)
             output.append("  </tr>")
 
 output.append("</table>")
