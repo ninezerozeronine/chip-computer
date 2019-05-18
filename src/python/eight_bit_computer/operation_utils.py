@@ -96,7 +96,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
         opcode (str): The opcode this line is being tested to match.
         op_args_defs (list(list(dict)), optional): Data structure that
             defines the different combinations of arguments. See
-            :func:`~get_arg_def_template` for more details.
+            :func:`~.get_arg_def_template` for more details.
 
     Returns:
         (bool, list(dict)): Whether or not the line matched, and if it
@@ -169,7 +169,7 @@ def generate_possible_arg_list(op_args_defs):
     Args:
         op_args_defs (list(list(dict))): Data structure that defines
             the different combinations of arguments. See
-            :func:`~get_arg_def_template` for more details.
+            :func:`~.get_arg_def_template` for more details.
     Returns:
         list(str): All possible argument combinations.
     """
@@ -201,7 +201,7 @@ def match_and_parse_args(line_args, op_args_def):
         line_args: (list(str)): The arguments supplied for this assembly
             operation.
         op_args_def (list(dict)): Definition of a set of arguments. See
-            :func:`~get_arg_def_template` for more details.
+            :func:`~.get_arg_def_template` for more details.
 
     Returns:
         (bool, list(dict)): Whether or not the arguments matched, and if

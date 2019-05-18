@@ -97,9 +97,10 @@ def extract_machine_code(assembly_lines):
     Extract machine code from assembly line dictionaries.
 
     Args:
-        assembly_lines (list(dict)): List of assembly lines to extract
-            machine code from. See :func:`~get_assembly_line_template`
-            for details on what those dictionaries contain.
+        assembly_lines (list(dict)): List of assembly line info
+            dictionaries to extract machine code from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
     Returns:
         list(str): List of bit strings for the machine code.
     """

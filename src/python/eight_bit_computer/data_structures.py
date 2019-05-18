@@ -37,13 +37,13 @@ def get_summary_entry_template():
     - has_assembly: Does this line of the summary have assembly code.
     - assembly: Information about the assembly in this summary line.
     - assembly/info: The assembly line information dictionary (as
-      returned by :func:`~get_assembly_line_template`) and filled in by
+      returned by :func:`~.get_assembly_line_template`) and filled in by
       the assembler.
     - has_mc_byte: Does this line of the summary have a machine code
       byte.
     - mc_byte: Information about the machine code byte on this line.
     - mc_byte/info: Machine code byte information dictionary (as
-      returned by :func:`~get_machine_code_byte_template` and filled by
+      returned by :func:`~.get_machine_code_byte_template` and filled by
       the assembly process).
     - mc_byte/has_label: Whether of not this machine code byte has an
       associated label.

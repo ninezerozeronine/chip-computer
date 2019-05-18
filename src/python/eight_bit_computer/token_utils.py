@@ -113,7 +113,7 @@ def represent_as_memory_index(argument):
     """
     Format the argument so it appears as a memory index.
 
-    See :func:`~is_memory_index` for details on what a memory index is.
+    See :func:`~.is_memory_index` for details on what a memory index is.
 
     Args:
         argument (str): The argument to represent as a memory index.
@@ -127,7 +127,7 @@ def extract_memory_position(argument):
     """
     Extract a memory position from a memory index argument.
 
-    See :func:`~is_memory_index` for details of what a memory index is.
+    See :func:`~.is_memory_index` for details of what a memory index is.
 
     Args:
         argument (str): The argument to extract a memory position from.

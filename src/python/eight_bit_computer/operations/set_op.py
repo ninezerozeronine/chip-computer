@@ -27,7 +27,7 @@ def gen_op_args_defs():
 
     Returns:
         list(list(dict)): All possible arguments. See
-        :func:`~get_arg_def_template` for more information.
+        :func:`~.get_arg_def_template` for more information.
     """
 
     args_defs = []

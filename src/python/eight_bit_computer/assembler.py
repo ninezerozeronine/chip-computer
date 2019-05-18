@@ -68,7 +68,7 @@ def process_line(line):
             removed).
     Returns:
         dict: A dictionary of information about this line. See the
-        :func:`~get_assembly_line_template` documentation for more
+        :func:`~.get_assembly_line_template` documentation for more
         information about what is in the dictionary.
     """
     assembly_line = get_assembly_line_template()
@@ -151,7 +151,7 @@ def machine_code_bytes_from_line(line):
     Get machine code bytes that describe this line.
 
     Uses all the defined instructions and defers the work of parsing to
-    them. See :func:`~get_machine_code_byte_template` for information on
+    them. See :func:`~.get_machine_code_byte_template` for information on
     machine code dictionaries from instructions.
 
     Expects the passed in line to be a valid line of machine code. That
@@ -191,7 +191,7 @@ def validate_and_identify_constants(machine_code_bytes):
     function then validates them to make sure they are correct and
     determines what kind of constant they are.
 
-    See :func:`~get_mc_byte_template` for information on
+    See :func:`~.get_mc_byte_template` for information on
     machine code dictionaries from instructions.
 
     This function modifies the passed in machine code templates list

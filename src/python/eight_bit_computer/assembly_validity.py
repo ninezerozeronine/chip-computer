@@ -13,7 +13,7 @@ def check_structure_validity(asm_line_infos, variable_start_offset):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     """
     check_multiple_label_defs(asm_line_infos)
@@ -30,7 +30,7 @@ def check_multiple_label_defs(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If the same label been defined more than once.
@@ -67,7 +67,7 @@ def check_multiple_label_assignment(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If a single line been assigned more than one
@@ -105,7 +105,7 @@ def check_undefined_label_ref(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If an operation is using a label that hasn't
@@ -144,7 +144,7 @@ def check_multiple_variable_def(asm_line_infos):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If a variable has been defined more than once.
@@ -182,7 +182,7 @@ def check_num_variables(asm_line_infos, variable_start_offset):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
         variable_start_offset (int): How far in memory to offset when
             defining the first variable.
@@ -237,7 +237,7 @@ def check_num_instruction_bytes(assembly_lines):
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
-            :func:`~get_line_info_template`) with information about all
+            :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
     Raises:
         AssemblyError: If there are more instruction bytes than will

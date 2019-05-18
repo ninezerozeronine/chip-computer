@@ -142,11 +142,13 @@ def generate_assembly_summary_lines(asm_line_infos):
 
 def get_assembly_summary_data(asm_line_infos):
     """
-    Get print friendly lists of the data in assembly line info dicts.
+    Process assembly data to make formatting easier for the summary.
 
     Args:
         asm_line_infos (list(dict)): List of line info dictionaries as
-            returned by :func:`~assembler.lines_to_machine_code`.
+            returned by
+            :func:`~.process_assembly_lines`
+            .
     Returns:
         list: List of entries for the assembly summary print out
     """
@@ -190,8 +192,8 @@ def get_widest_column_values(assembly_summary_data):
     Required for the eventual printed table to line up correctly.
 
     Args:
-        assembly_summary_data list(dict): List of dictionaries (as
-            returned by :func:`~get_assembly_summary_data`) with all the
+        assembly_summary_data (list(dict)): List of dictionaries (as
+            returned by :func:`~.get_assembly_summary_data`) with all the
             summary information data.
     Returns:
         dict: Mapping of columns for widest values.
