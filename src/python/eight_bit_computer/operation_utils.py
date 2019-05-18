@@ -2,7 +2,7 @@ import re
 from copy import deepcopy
 
 from .data_structures import DataTemplate
-from .exceptions import InstructionParsingError
+from .exceptions import OperationParsingError
 from .language_defs import MODULE_CONTROL, STEPS
 from . import token_utils
 from . import bitdef
@@ -87,7 +87,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
         did, the parsed arguments.
 
     Raises:
-        InstructionParsingError: If multiple op_args defs matched. Or
+        OperationParsingError: If multiple op_args defs matched. Or
         if no op_args defs matched if the opcode matched (i.e. the
         arguments weren't valid for that assembly operation).
     """
@@ -121,7 +121,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
                 msg = (
                     "Args matched multiple arg possibilities."
                 )
-                raise InstructionParsingError(msg)
+                raise OperationParsingError(msg)
             else:
                 match = True
                 ret_args = parsed_args
@@ -141,7 +141,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
                 pretty_possible_args=pretty_possible_args,
             )
         )
-        raise InstructionParsingError(msg)
+        raise OperationParsingError(msg)
 
     return True, ret_args
 
@@ -192,7 +192,7 @@ def match_and_parse_args(line_args, op_args_def):
         they did, the parsed values.
 
     Raises:
-        InstructionParsingError: If a single argument managed to match
+        OperationParsingError: If a single argument managed to match
             different kinds of argument definitions.
     """
 
@@ -254,7 +254,7 @@ def match_and_parse_args(line_args, op_args_def):
                 "The argument '{line_arg} matched more than one "
                 "argument type".format(line_arg=line_arg)
             )
-            raise InstructionParsingError(msg)
+            raise OperationParsingError(msg)
 
     # If the for loop completes successfully, we've matched all the
     # args.

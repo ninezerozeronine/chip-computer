@@ -4,7 +4,7 @@ Process assembly code and output machine code.
 
 from .exceptions import (
     LineProcessingError,
-    InstructionParsingError,
+    OperationParsingError,
     AssemblyError,
 )
 from .data_structures import get_assembly_line_template
@@ -169,7 +169,7 @@ def machine_code_bytes_from_line(line):
     for operation in get_all_operations():
         try:
             mc_bytes = operation.parse_line(line)
-        except InstructionParsingError as e:
+        except OperationParsingError as e:
             raise LineProcessingError(e)
         if mc_bytes:
             operation_matches.append(mc_bytes)

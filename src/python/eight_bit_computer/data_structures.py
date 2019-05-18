@@ -30,7 +30,27 @@ Attributes:
 
 def get_summary_entry_template():
     """
+    Get a template to describe each line in an assembly summary
 
+    Keys have the following meanings:
+
+    - has_assembly: Does this line of the summary have assembly code.
+    - assembly: Information about the assembly in this summary line.
+    - assembly/info: The assembly line information dictionary (as
+      returned by :func:`~get_assembly_line_template`) and filled in by
+      the assembler.
+    - has_mc_byte: Does this line of the summary have a machine code
+      byte.
+    - mc_byte: Information about the machine code byte on this line.
+    - mc_byte/info: Machine code byte information dictionary (as
+      returned by :func:`~get_machine_code_byte_template and filled by
+      the assembly process).
+    - mc_byte/has_label: Whether of not this machine code byte has an
+      associated label.
+    - mc_byte/label: The label of this machien code byte.
+
+    Returns:
+        dict: Summary entry template.
     """
 
     return {
@@ -38,8 +58,8 @@ def get_summary_entry_template():
         "assembly": {
             "info": {},
         },
-        "has_machine_code_byte": False,
-        "machine_code_byte": {
+        "has_mc_byte": False,
+        "mc_byte": {
             "info": {},
             "has_label": False,
             "label": "",

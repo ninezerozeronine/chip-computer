@@ -280,18 +280,18 @@ def assembly_summary_data():
     # LOAD [$variable1] A
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[2]["mc_bytes"][0])
-    summary_line["machine_code_byte"]["has_label"] = True
-    summary_line["machine_code_byte"]["label"] = "@label1"
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[2]["mc_bytes"][0])
+    summary_line["mc_byte"]["has_label"] = True
+    summary_line["mc_byte"]["label"] = "@label1"
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[2])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[2]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[2]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     #
@@ -309,33 +309,33 @@ def assembly_summary_data():
     # LOAD [$variable2] A
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[5]["mc_bytes"][0])
-    summary_line["machine_code_byte"]["has_label"] = True
-    summary_line["machine_code_byte"]["label"] = "@label2"
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[5]["mc_bytes"][0])
+    summary_line["mc_byte"]["has_label"] = True
+    summary_line["mc_byte"]["label"] = "@label2"
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[5])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[5]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[5]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     # JUMP @label1
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[6]["mc_bytes"][0])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[6]["mc_bytes"][0])
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[6])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[6]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[6]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     #
@@ -347,16 +347,16 @@ def assembly_summary_data():
     # STORE A [#123]
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[8]["mc_bytes"][0])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[8]["mc_bytes"][0])
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[8])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[8]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[8]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     # @label3
@@ -368,33 +368,33 @@ def assembly_summary_data():
     # LOAD [$variable3] B
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[10]["mc_bytes"][0])
-    summary_line["machine_code_byte"]["has_label"] = True
-    summary_line["machine_code_byte"]["label"] = "@label3"
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[10]["mc_bytes"][0])
+    summary_line["mc_byte"]["has_label"] = True
+    summary_line["mc_byte"]["label"] = "@label3"
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[10])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[10]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[10]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     # LOAD [$variable0] C
     # byte0
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[11]["mc_bytes"][0])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[11]["mc_bytes"][0])
 
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[11])
     summary_lines.append(summary_line)
     # byte1
     summary_line = get_summary_entry_template()
-    summary_line["has_machine_code_byte"] = True
-    summary_line["machine_code_byte"]["info"] = deepcopy(asm_line_infos[11]["mc_bytes"][1])
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[11]["mc_bytes"][1])
     summary_lines.append(summary_line)
 
     # $variable4

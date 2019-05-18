@@ -4,7 +4,7 @@ import pytest
 
 from eight_bit_computer import operation_utils
 from eight_bit_computer.data_structures import get_arg_def_template
-from eight_bit_computer.exceptions import InstructionParsingError
+from eight_bit_computer.exceptions import OperationParsingError
 
 
 @pytest.mark.parametrize("test_input,expected", [
@@ -459,7 +459,7 @@ def gen_test_match_and_parse_line_raises_input_1():
     ]
 )
 def test_match_and_parse_line_raises(line, opcode, op_args_defs):
-    with pytest.raises(InstructionParsingError):
+    with pytest.raises(OperationParsingError):
         operation_utils.match_and_parse_line(line, opcode, op_args_defs)
 
 

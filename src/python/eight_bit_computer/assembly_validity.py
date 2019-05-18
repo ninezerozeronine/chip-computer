@@ -111,6 +111,7 @@ def check_undefined_label_ref(asm_line_infos):
         AssemblyError: If an operation is using a label that hasn't
             been defined.
     """
+
     # Gather labels
     labels = []
     for asm_line_info in asm_line_infos:
@@ -139,14 +140,14 @@ def check_undefined_label_ref(asm_line_infos):
 
 def check_multiple_variable_def(asm_line_infos):
     """
-    Has the same variable been defined mutiple times (?)
+    Has the same variable been defined multiple times.
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
             :func:`~get_line_info_template`) with information about all
             the lines in the assembly file.
     Raises:
-        AssemblyError: If
+        AssemblyError: If a variable has been defined more than once.
     """
     variables = set()
     variable_lines = {}

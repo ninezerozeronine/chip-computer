@@ -9,16 +9,9 @@ from .data_structures import get_summary_entry_template
 
 def generate_assembly_summary(asm_line_infos):
     """
+    Produce a summary that combines assembly and machine code.
 
-    """
-    lines = generate_assembly_summary_lines(asm_line_infos)
-    return "\n".join(lines)
-
-
-def generate_assembly_summary_lines(asm_line_infos):
-    """
-
-    The end result is a set of lines that could be printed like this::
+    The summary will be like this::
 
          1 $variable0              |
          2 @label1                 |
@@ -39,8 +32,27 @@ def generate_assembly_summary_lines(asm_line_infos):
         12     LOAD [$variable0] C | 10 0A 00001010 -         255 FF 11111111
                                    | 11 0B 00001011 -           0 00 00000000 $variable0
         13 $variable4              |
-        14 // comment              |
+        14 // comment
 
+    Args:
+        asm_line_infos (list(dict)): List of dictionaries of information
+            about the parsed assembly.
+    Returns:
+        str: Printable summary.
+    """
+    lines = generate_assembly_summary_lines(asm_line_infos)
+    return "\n".join(lines)
+
+
+def generate_assembly_summary_lines(asm_line_infos):
+    """
+    Generate list of lines for an assembly summary
+
+    Args:
+        asm_line_infos (list(dict)): List of dictionaries of information
+            about the parsed assembly.
+    Returns:
+        list(str): List of lines for the summary.
     """
 
     summary_data = get_assembly_summary_data(asm_line_infos)
@@ -69,8 +81,8 @@ def generate_assembly_summary_lines(asm_line_infos):
             asm_line_no = ""
             raw_assembly_line = ""
 
-        if summary_line["has_machine_code_byte"]:
-            mc_byte_info = summary_line["machine_code_byte"]["info"]
+        if summary_line["has_mc_byte"]:
+            mc_byte_info = summary_line["mc_byte"]["info"]
             mc_index_decimal = str(mc_byte_info["index"])
             mc_index_hex = "{index:02X}".format(
                 index=mc_byte_info["index"],
@@ -79,8 +91,8 @@ def generate_assembly_summary_lines(asm_line_infos):
                 mc_byte_info["index"]
             )
             mc_byte_sep = "-"
-            if summary_line["machine_code_byte"]["has_label"]:
-                mc_label = summary_line["machine_code_byte"]["label"]
+            if summary_line["mc_byte"]["has_label"]:
+                mc_label = summary_line["mc_byte"]["label"]
             else:
                 mc_label = ""
             mc_byte_decimal = str(
@@ -147,19 +159,19 @@ def get_assembly_summary_data(asm_line_infos):
             dual_entry["has_assembly"] = True
             dual_entry["assembly"]["info"] = deepcopy(asm_line_info)
 
-            dual_entry["has_machine_code_byte"] = True
-            dual_entry["machine_code_byte"]["info"] = deepcopy(
+            dual_entry["has_mc_byte"] = True
+            dual_entry["mc_byte"]["info"] = deepcopy(
                 asm_line_info["mc_bytes"][0]
             )
             if asm_line_info["has_label_assigned"]:
-                dual_entry["machine_code_byte"]["has_label"] = True
-                dual_entry["machine_code_byte"]["label"] = asm_line_info["assigned_label"]
+                dual_entry["mc_byte"]["has_label"] = True
+                dual_entry["mc_byte"]["label"] = asm_line_info["assigned_label"]
             assembly_summary.append(dual_entry)
 
             for mc_byte_info in asm_line_info["mc_bytes"][1:]:
                 byte_only_entry = get_summary_entry_template()
-                byte_only_entry["has_machine_code_byte"] = True
-                byte_only_entry["machine_code_byte"]["info"] = deepcopy(mc_byte_info)
+                byte_only_entry["has_mc_byte"] = True
+                byte_only_entry["mc_byte"]["info"] = deepcopy(mc_byte_info)
                 assembly_summary.append(byte_only_entry)
 
         else:
@@ -173,7 +185,16 @@ def get_assembly_summary_data(asm_line_infos):
 
 def get_widest_column_values(assembly_summary_data):
     """
+    Find widest values in the columns of the output.
 
+    Required for the eventual printed table to line up correctly.
+
+    Args:
+        assembly_summary_data list(dict): List of dictionaries (as
+            returned by :func:`~get_assembly_summary_data`) with all the
+            summary information data.
+    Returns:
+        dict: Mapping of columns for widest values.
     """
 
     widest_values = {
@@ -196,10 +217,10 @@ def get_widest_column_values(assembly_summary_data):
             if asm_line_width > widest_values["asm_line"]:
                 widest_values["asm_line"] = asm_line_width
 
-        if entry["has_machine_code_byte"]:
+        if entry["has_mc_byte"]:
             # Decimal byte index width
             mcb_index_decimal_width = len(
-                str(entry["machine_code_byte"]["info"]["index"])
+                str(entry["mc_byte"]["info"]["index"])
             )
             if mcb_index_decimal_width > widest_values["mc_index_decimal"]:
                 widest_values["mc_index_decimal"] = mcb_index_decimal_width
@@ -208,7 +229,7 @@ def get_widest_column_values(assembly_summary_data):
             mc_byte_decimal_width = len(
                 str(
                     number_utils.bitstring_to_number(
-                        entry["machine_code_byte"]["info"]["bitstring"]
+                        entry["mc_byte"]["info"]["bitstring"]
                     )
                 )
             )
@@ -216,8 +237,8 @@ def get_widest_column_values(assembly_summary_data):
                 widest_values["mc_byte_decimal"] = mc_byte_decimal_width
 
             # Label width
-            if entry["machine_code_byte"]["has_label"]:
-                mcb_label_width = len(entry["machine_code_byte"]["label"])
+            if entry["mc_byte"]["has_label"]:
+                mcb_label_width = len(entry["mc_byte"]["label"])
                 if mcb_label_width > widest_values["mc_label"]:
                     widest_values["mc_label"] = mcb_label_width
 

@@ -6,7 +6,6 @@ Software
    :caption: Key functionality:
 
    assembler
-   rom
 
 .. toctree::
    :maxdepth: 3

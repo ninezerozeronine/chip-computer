@@ -74,6 +74,14 @@ def get_positive_equivalent(number):
 
 def bitstring_to_number(bitstring):
     """
+    Convert a bitstring to a number.
+
+    E.g. ``10110101`` gives 181.
+
+    Args:
+        bitstring (str): String of ``1``\ s and ``0``\ s.
+    Returns:
+        int: The equivalent integer.
 
     """
     return int(bitstring, 2)
@@ -81,7 +89,12 @@ def bitstring_to_number(bitstring):
 
 def bitstring_to_hex_string(bitstring, zero_pad_width=2):
     """
+    Convert a bitstring to a hex number.
 
+    Args:
+        bitstring (str): String of ``1``\ s and ``0``\ s.
+        zero_pad_width (int) (optional): How many zeroes to pad the
+            returned hex value with.
     """
 
     return "{num:0{zero_pad_width}X}".format(

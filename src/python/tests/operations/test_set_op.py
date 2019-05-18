@@ -2,7 +2,7 @@ import pytest
 
 from eight_bit_computer.operations import set_op
 from eight_bit_computer.data_structures import get_machine_code_byte_template
-from eight_bit_computer.exceptions import InstructionParsingError
+from eight_bit_computer.exceptions import OperationParsingError
 
 
 def generate_parse_line_test_data():
@@ -57,5 +57,5 @@ def test_parse_line(test_input, expected):
     "SET A #123 FOO",
 ])
 def test_parse_line_raises(test_input):
-    with pytest.raises(InstructionParsingError):
+    with pytest.raises(OperationParsingError):
         set_op.parse_line(test_input)

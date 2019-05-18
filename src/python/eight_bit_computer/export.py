@@ -14,6 +14,7 @@ def bitstrings_to_cpp(bitstrings):
 
 def bitstrings_to_logisim(bitstrings):
     """
+    
 
     """
     logisim_lines = ["v2.0 raw"]

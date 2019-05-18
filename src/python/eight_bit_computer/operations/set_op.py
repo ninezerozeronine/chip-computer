@@ -123,7 +123,7 @@ def parse_line(line):
         list(dict): List of instruction byte template dictionaries or an
         empty list.
     Raises:
-        InstructionParsingError: If the line was identifiably a
+        OperationParsingError: If the line was identifiably a
             SET operation but incorrectly specified.
     """
 
