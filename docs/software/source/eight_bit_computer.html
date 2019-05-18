@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="eight_bit_computer.language package" href="eight_bit_computer.language.html" />
-    <link rel="prev" title="Software" href="../index.html" /> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    <link rel="next" title="eight_bit_computer.operations package" href="eight_bit_computer.operations.html" />
+    <link rel="prev" title="Assembler" href="../assembler.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -86,20 +88,32 @@
 <li class="toctree-l1"><a class="reference internal" href="../../language/index.html">Language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../hardware/index.html">Hardware</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Software</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../assembler.html">Assembler</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">eight_bit_computer package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.language.html">eight_bit_computer.language package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.operations.html">eight_bit_computer.operations package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.assembler.html">eight_bit_computer.assembler module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.assembly_summary.html">eight_bit_computer.assembly_summary module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.assembly_validity.html">eight_bit_computer.assembly_validity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.bitdef.html">eight_bit_computer.bitdef module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.datatemplate.html">eight_bit_computer.datatemplate module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.data_structures.html">eight_bit_computer.data_structures module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.exceptions.html">eight_bit_computer.exceptions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.export.html">eight_bit_computer.export module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.language_defs.html">eight_bit_computer.language_defs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.main.html">eight_bit_computer.main module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.number_utils.html">eight_bit_computer.number_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.operation_utils.html">eight_bit_computer.operation_utils module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.rom.html">eight_bit_computer.rom module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="eight_bit_computer.token_utils.html">eight_bit_computer.token_utils module</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#module-eight_bit_computer">Module contents</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../assembler.html">Assembler</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../development_tools.html">Development Tools</a></li>
@@ -176,17 +190,16 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.language.html">eight_bit_computer.language package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="eight_bit_computer.language.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.copy.html">eight_bit_computer.language.copy module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.definitions.html">eight_bit_computer.language.definitions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.fetch.html">eight_bit_computer.language.fetch module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.load.html">eight_bit_computer.language.load module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.set_op.html">eight_bit_computer.language.set_op module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.language.utils.html">eight_bit_computer.language.utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.operations.html">eight_bit_computer.operations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="eight_bit_computer.operations.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.operations.copy_op.html">eight_bit_computer.operations.copy_op module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.operations.fetch.html">eight_bit_computer.operations.fetch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.operations.load.html">eight_bit_computer.operations.load module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.operations.operation_template.html">eight_bit_computer.operations.operation_template module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="eight_bit_computer.operations.set_op.html">eight_bit_computer.operations.set_op module</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="eight_bit_computer.language.html#module-eight_bit_computer.language">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="eight_bit_computer.operations.html#module-eight_bit_computer.operations">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -196,9 +209,19 @@
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.assembler.html">eight_bit_computer.assembler module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.assembly_summary.html">eight_bit_computer.assembly_summary module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.assembly_validity.html">eight_bit_computer.assembly_validity module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.bitdef.html">eight_bit_computer.bitdef module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.datatemplate.html">eight_bit_computer.datatemplate module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.data_structures.html">eight_bit_computer.data_structures module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.exceptions.html">eight_bit_computer.exceptions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.export.html">eight_bit_computer.export module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.language_defs.html">eight_bit_computer.language_defs module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.main.html">eight_bit_computer.main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.number_utils.html">eight_bit_computer.number_utils module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.operation_utils.html">eight_bit_computer.operation_utils module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.rom.html">eight_bit_computer.rom module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="eight_bit_computer.token_utils.html">eight_bit_computer.token_utils module</a></li>
 </ul>
 </div>
 </div>
@@ -215,10 +238,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="eight_bit_computer.language.html" class="btn btn-neutral float-right" title="eight_bit_computer.language package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="eight_bit_computer.operations.html" class="btn btn-neutral float-right" title="eight_bit_computer.operations package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../index.html" class="btn btn-neutral" title="Software" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../assembler.html" class="btn btn-neutral float-left" title="Assembler" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -244,26 +267,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

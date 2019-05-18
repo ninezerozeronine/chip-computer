@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="RAM" href="ram.html" />
     <link rel="prev" title="Program Counter" href="program_counter.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -89,6 +91,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Clock</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#interface-and-operation">Interface and Operation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#control-and-data-clocks">Control and Data Clocks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#halt-and-reset">Halt and reset</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#implementation">Implementation</a><ul>
@@ -230,8 +233,8 @@ arbitrary speed.</p>
 <p>Typically the clocks in other computers invert data_clock to create
 control_clock, like this:</p>
 <img alt="../_images/inverted_data_clock.png" src="../_images/inverted_data_clock.png" />
-<p>This is not suitable for this computer due to a couple of notes in the 74HCT161
-datasheet:</p>
+<p>This is not suitable for this computer due to some restrictions on the 74HCT161
+used in the <a class="reference internal" href="program_counter.html#program-counter-module"><span class="std std-ref">Program Counter</span></a>. Here is the note from the datasheet:</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <ol class="last arabic simple" start="2">
@@ -243,17 +246,25 @@ on the ’HC/HCT163 should only occur while CP is HIGH for
 conventional operation.</li>
 </ol>
 </div>
-<p>Control signal changes must happen while data_clock is high. The inverted clock
-method doesn’t satisfy this constraint as control signal changes (which happen a
-short delay after the rising edge of control_clock would occur after data_clock
-had gone low. The delay is introduced by the EEPROMs in the <a class="reference internal" href="control_unit.html#control-unit"><span class="std std-ref">Control Unit</span></a>
-settling after a new instruction/flag/micro-step value goes onto their address
-lines. This demonstrates the problem using the PE control (_SPE is the same):</p>
+<p>This means:</p>
+<ul class="simple">
+<li>PE going from high to low (i.e. disabling counting) must happen while data_clock is high.</li>
+<li>SPE going from low to high (i.e. disabling parallel load mode) must happen while data_clock is high.</li>
+</ul>
+<p>The inverted clock method doesn’t satisfy this constraint as control signal
+changes (which happen a short delay after the rising edge of control_clock) would
+occur after data_clock had gone low. The delay is introduced by the EEPROMs in
+the <a class="reference internal" href="control_unit.html#control-unit"><span class="std std-ref">Control Unit</span></a> settling after a new instruction/flag/micro-step value
+goes onto their address lines. This demonstrates the problem using the PE
+control (_SPE is the same):</p>
 <img alt="../_images/inverted_data_clock_problem.png" src="../_images/inverted_data_clock_problem.png" />
 <p>To satisfy this constraint, the two clock signals proceed like this:</p>
 <img alt="../_images/offset_clock_signals.png" src="../_images/offset_clock_signals.png" />
 <p>This means data_clock is still high when PE/count_enable changes:</p>
 <img alt="../_images/offset_clock_signals_fix.png" src="../_images/offset_clock_signals_fix.png" />
+</div>
+<div class="section" id="halt-and-reset">
+<h3>Halt and reset<a class="headerlink" href="#halt-and-reset" title="Permalink to this headline">¶</a></h3>
 <p>Once halt or reset go high, both data_clock and control_clock immediately go
 low. Once halt and reset go low again after either becomes high, data_clock
 should be the first to go high and the then sequence continues. This is to
@@ -324,7 +335,7 @@ additional signal inverting.</li>
         <a href="ram.html" class="btn btn-neutral float-right" title="RAM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="program_counter.html" class="btn btn-neutral" title="Program Counter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="program_counter.html" class="btn btn-neutral float-left" title="Program Counter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -350,26 +361,16 @@ additional signal inverting.</li>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

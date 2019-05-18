@@ -17,34 +17,36 @@
   
 
   
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Machine Code" href="machine_code.html" />
     <link rel="prev" title="Language" href="index.html" /> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -84,7 +86,71 @@
 <li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Language</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Assembly</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Assembly</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#arithmetic-operations">Arithmetic Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#add">ADD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#addc">ADDC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sub">SUB</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subb">SUBB</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lshift">LSHIFT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#lshiftc">LSHIFTC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#incr">INCR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#decr">DECR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#data-operations">Data Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#copy">COPY</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#load">LOAD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#store">STORE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#progload">PROGLOAD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#progstore">PROGSTORE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#push">PUSH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pop">POP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set">SET</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setzero">SETZERO</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#program-control-operations">Program Control Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#noop">NOOP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump">JUMP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-lt-acc">JUMP_IF_LT_ACC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-lte-acc">JUMP_IF_LTE_ACC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-eq-acc">JUMP_IF_EQ_ACC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-gteq-acc">JUMP_IF_GTEQ_ACC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-gt-acc">JUMP_IF_GT_ACC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-eq-zero">JUMP_IF_EQ_ZERO</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-positive-flag">JUMP_IF_POSITIVE_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-negative-flag">JUMP_IF_NEGATIVE_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-overflow-flag">JUMP_IF_OVERFLOW_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-not-overflow-flag">JUMP_IF_NOT_OVERFLOW_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-underflow-flag">JUMP_IF_UNDERFLOW_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-not-underflow-flag">JUMP_IF_NOT_UNDERFLOW_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-zero-flag">JUMP_IF_ZERO_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jump-if-not-zero-flag">JUMP_IF_NOT_ZERO_FLAG</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#call">CALL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#return">RETURN</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#halt">HALT</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logical-operations">Logical Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#not">NOT</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#and">AND</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nand">NAND</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#or">OR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nor">NOR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xor">XOR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nxor">NXOR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#constants">Constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#labels">Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#numbers">Numbers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comments">Comments</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="machine_code.html">Machine Code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="micro_code.html">Micro Code</a></li>
 </ul>
@@ -161,6 +227,324 @@
             
   <div class="section" id="assembly">
 <h1>Assembly<a class="headerlink" href="#assembly" title="Permalink to this headline">¶</a></h1>
+<p>Assembly code provides a way to specify instructions for the computer to
+perform in a more human readable from than machine code</p>
+<p>Assembly operations and arguments to specify thier behaviour can be saved in an
+assembly file and passed to an assembler to convert them to machine code that
+the computer can then execute.</p>
+<p>These are the operations and other assembly constructs that can be used to
+create a valid assembly file.</p>
+<div class="section" id="arithmetic-operations">
+<h2>Arithmetic Operations<a class="headerlink" href="#arithmetic-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="add">
+<h3>ADD<a class="headerlink" href="#add" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="addc">
+<h3>ADDC<a class="headerlink" href="#addc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="sub">
+<h3>SUB<a class="headerlink" href="#sub" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="subb">
+<h3>SUBB<a class="headerlink" href="#subb" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="lshift">
+<h3>LSHIFT<a class="headerlink" href="#lshift" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="lshiftc">
+<h3>LSHIFTC<a class="headerlink" href="#lshiftc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="incr">
+<h3>INCR<a class="headerlink" href="#incr" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="decr">
+<h3>DECR<a class="headerlink" href="#decr" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="data-operations">
+<h2>Data Operations<a class="headerlink" href="#data-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="copy">
+<h3>COPY<a class="headerlink" href="#copy" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">COPY</span></code> operation copies the value from a source module to a destination
+module. This overwrites the current value of the destination register. It
+requires a single machine code byte in program memory.</p>
+<p>It is used by specifying the source module as the first argument and the
+destination module as the second.</p>
+<p>The possible usages are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">ACC</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">ACC</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">ACC</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">ACC</span> <span class="pre">SP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">A</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">A</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">A</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">A</span> <span class="pre">SP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">B</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">B</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">B</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">B</span> <span class="pre">SP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">C</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">C</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">C</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">C</span> <span class="pre">SP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">PC</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">PC</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">PC</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">PC</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">PC</span> <span class="pre">SP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">SP</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">SP</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">SP</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">COPY</span> <span class="pre">SP</span> <span class="pre">C</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="load">
+<h3>LOAD<a class="headerlink" href="#load" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">LOAD</span></code> operation loads a value from data memory into a module.</p>
+<p>It is used by specifying the position in memory as the first argument and the
+destination module as the second. The position in memory can be a module or a
+constant and is encased in square parentheses.</p>
+<p>The possible usages are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[ACC]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[ACC]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[ACC]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[ACC]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[A]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[A]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[A]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[A]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[B]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[B]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[B]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[B]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[C]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[C]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[C]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[C]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[PC]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[PC]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[PC]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[PC]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[SP]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[SP]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[SP]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[SP]</span> <span class="pre">C</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[CONST]</span> <span class="pre">ACC</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[CONST]</span> <span class="pre">A</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[CONST]</span> <span class="pre">B</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[CONST]</span> <span class="pre">C</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="store">
+<h3>STORE<a class="headerlink" href="#store" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="progload">
+<h3>PROGLOAD<a class="headerlink" href="#progload" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="progstore">
+<h3>PROGSTORE<a class="headerlink" href="#progstore" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="push">
+<h3>PUSH<a class="headerlink" href="#push" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="pop">
+<h3>POP<a class="headerlink" href="#pop" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="set">
+<h3>SET<a class="headerlink" href="#set" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">SET</span></code> operation will set a module in the computer to a given
+constant value.</p>
+<p>It is used by specifying a module as the first argument, then the value to set
+it to as a constant.</p>
+<p>It requires two machine code bytes in program memory. Consider the
+<a class="reference internal" href="#setzero"><span class="std std-ref">SETZERO</span></a> operation if the constant is zero.</p>
+<p>The possible usages are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">ACC</span> <span class="pre">CONST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">A</span> <span class="pre">CONST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">B</span> <span class="pre">CONST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">C</span> <span class="pre">CONST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">SP</span> <span class="pre">CONST</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="setzero">
+<span id="id1"></span><h3>SETZERO<a class="headerlink" href="#setzero" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="program-control-operations">
+<h2>Program Control Operations<a class="headerlink" href="#program-control-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="noop">
+<h3>NOOP<a class="headerlink" href="#noop" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump">
+<h3>JUMP<a class="headerlink" href="#jump" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-lt-acc">
+<h3>JUMP_IF_LT_ACC<a class="headerlink" href="#jump-if-lt-acc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-lte-acc">
+<h3>JUMP_IF_LTE_ACC<a class="headerlink" href="#jump-if-lte-acc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-eq-acc">
+<h3>JUMP_IF_EQ_ACC<a class="headerlink" href="#jump-if-eq-acc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-gteq-acc">
+<h3>JUMP_IF_GTEQ_ACC<a class="headerlink" href="#jump-if-gteq-acc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-gt-acc">
+<h3>JUMP_IF_GT_ACC<a class="headerlink" href="#jump-if-gt-acc" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-eq-zero">
+<h3>JUMP_IF_EQ_ZERO<a class="headerlink" href="#jump-if-eq-zero" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-positive-flag">
+<h3>JUMP_IF_POSITIVE_FLAG<a class="headerlink" href="#jump-if-positive-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-negative-flag">
+<h3>JUMP_IF_NEGATIVE_FLAG<a class="headerlink" href="#jump-if-negative-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-overflow-flag">
+<h3>JUMP_IF_OVERFLOW_FLAG<a class="headerlink" href="#jump-if-overflow-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-not-overflow-flag">
+<h3>JUMP_IF_NOT_OVERFLOW_FLAG<a class="headerlink" href="#jump-if-not-overflow-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-underflow-flag">
+<h3>JUMP_IF_UNDERFLOW_FLAG<a class="headerlink" href="#jump-if-underflow-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-not-underflow-flag">
+<h3>JUMP_IF_NOT_UNDERFLOW_FLAG<a class="headerlink" href="#jump-if-not-underflow-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-zero-flag">
+<h3>JUMP_IF_ZERO_FLAG<a class="headerlink" href="#jump-if-zero-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="jump-if-not-zero-flag">
+<h3>JUMP_IF_NOT_ZERO_FLAG<a class="headerlink" href="#jump-if-not-zero-flag" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="call">
+<h3>CALL<a class="headerlink" href="#call" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="return">
+<h3>RETURN<a class="headerlink" href="#return" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="halt">
+<h3>HALT<a class="headerlink" href="#halt" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="logical-operations">
+<h2>Logical Operations<a class="headerlink" href="#logical-operations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="not">
+<h3>NOT<a class="headerlink" href="#not" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="and">
+<h3>AND<a class="headerlink" href="#and" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="nand">
+<h3>NAND<a class="headerlink" href="#nand" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="or">
+<h3>OR<a class="headerlink" href="#or" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="nor">
+<h3>NOR<a class="headerlink" href="#nor" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="xor">
+<h3>XOR<a class="headerlink" href="#xor" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="nxor">
+<h3>NXOR<a class="headerlink" href="#nxor" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="constants">
+<h2>Constants<a class="headerlink" href="#constants" title="Permalink to this headline">¶</a></h2>
+<p>Constants are values that the assembler will convert to machine code bytes for
+operations that require data in the machine code. For example, a jump to an
+explicit index in program memory, or setting a register to an explicit value.</p>
+<div class="section" id="labels">
+<h3>Labels<a class="headerlink" href="#labels" title="Permalink to this headline">¶</a></h3>
+<p>A label binds to the line of assembly that follows it. Once assembly is complete
+the label’s value is the index in program memory of the instruction byte that
+followed the label definition. E.g. If an assembly file looked like this:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>    LOAD [#123] A
+    ADD A
+
+@label
+    SET B #42
+</pre></div>
+</div>
+<p>The value of <code class="docutils literal notranslate"><span class="pre">&#64;label</span></code> would be 3. The instruction byte corresponding to <code class="docutils literal notranslate"><span class="pre">SET</span>
+<span class="pre">B</span> <span class="pre">#42</span></code> is at program memory index 3. <code class="docutils literal notranslate"><span class="pre">LOAD</span> <span class="pre">[#123]</span> <span class="pre">A</span></code> takes 2 bytes, <code class="docutils literal notranslate"><span class="pre">ADD</span> <span class="pre">A</span></code>
+one, and <code class="docutils literal notranslate"><span class="pre">SET</span> <span class="pre">B</span> <span class="pre">#42</span></code> is the byte after that.</p>
+<p>Labels are typically used by jump operations.</p>
+<p>A label is a token that starts with the <code class="docutils literal notranslate"><span class="pre">&#64;</span></code> character followed by any letter or
+an underscore, then any alphanumeric or an underscore. E.g.:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">&#64;label</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">&#64;label_1</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">&#64;_other_label</span></code></li>
+</ul>
+</div></blockquote>
+<p>Labels must be unique.</p>
+<p>A label is defined by putting it on a line by itself.</p>
+</div>
+<div class="section" id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h3>
+<p>Variables are named aliases for indexes into data memory. They can be
+predeclared by putting them by themselves on a line or declared as they are
+used by using them as an argument.</p>
+<p>The index for a given variable is determined by the assembler. As it parses
+assembly lines from the start of the file to the end, addresses are assigned to
+variables as they are encountered in the file. E.g. for the following assembly:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>$variable1
+LOAD [$variable2] A
+</pre></div>
+</div>
+<p>variable1 is predclared, variable2 is declared as it’s used. Variable1 is an
+alias for 0, variable2 is an alias for 1.</p>
+<p>A variable is a token that starts with the <code class="docutils literal notranslate"><span class="pre">$</span></code> character followed by any letter or
+an underscore, then any alphanumeric or an underscore. E.g.:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">$variable</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">$variable1</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">$_other_variable</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="numbers">
+<h3>Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">¶</a></h3>
+<p>Numbers are integer values. In most cases they within the range -127 to 255
+(inclusive). This range comes from the minimum and maximum values that 8 bits,
+or 8 bits with 2’s compliment encoding can hold.</p>
+<p>A number is a token that starts with the <code class="docutils literal notranslate"><span class="pre">#</span></code> character and is followed by any
+valid Python integer definition. E.g.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">#123</span></code> (decimal)</li>
+<li><code class="docutils literal notranslate"><span class="pre">#-5</span></code> (decimal)</li>
+<li><code class="docutils literal notranslate"><span class="pre">#0b00010010</span></code> (binary)</li>
+<li><code class="docutils literal notranslate"><span class="pre">#-0b0101</span></code> (binary)</li>
+<li><code class="docutils literal notranslate"><span class="pre">#0xA2</span></code> (hex)</li>
+<li><code class="docutils literal notranslate"><span class="pre">#0o107</span></code> (octal)</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="comments">
+<h2>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h2>
+<p>Comments are parts of the assembly file ignored by the assembler.</p>
+<p>A comment is anything after and including <code class="docutils literal notranslate"><span class="pre">//</span></code> on a line until the end of the
+line.</p>
+</div>
 </div>
 
 
@@ -174,7 +558,7 @@
         <a href="machine_code.html" class="btn btn-neutral float-right" title="Machine Code" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -200,26 +584,16 @@
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

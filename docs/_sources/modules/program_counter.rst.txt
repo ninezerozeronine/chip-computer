@@ -1,3 +1,5 @@
+.. _program_counter_module:
+
 Program Counter
 ===============
 
