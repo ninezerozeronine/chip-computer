@@ -79,7 +79,14 @@ def filepath_to_lines(input_path):
 
 def get_mc_filepath(asm_path):
     """
+    Get the filepath for the machine code.
 
+    This is the assembly filepath with .asm replaced with .mc
+
+    Args:
+        asm_path (str): Path to the assembly file.
+    Returns:
+        str: Path to the machine code file.
     """
 
     return "{basepath}.mc".format(basepath=asm_path[:-4])

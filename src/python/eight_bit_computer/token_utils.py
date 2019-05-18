@@ -1,6 +1,7 @@
 """
-Function for working with string tokens on assembly lines
+Functionality for working with string tokens on assembly lines
 """
+
 import re
 
 

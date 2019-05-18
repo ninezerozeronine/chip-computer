@@ -1,4 +1,6 @@
-"""Defnitions of named items"""
+"""
+Defnitions for the machine code and microcode.
+"""
 
 from .bitdef import remove_whitespace as rw
 from .bitdef import merge
@@ -90,26 +92,6 @@ STEPS = {
     7: rw("........ .... 111"),
 }
 
-# ALU_MODE_FLAGS = {
-#     "A_PLUS_1"                      
-#     "A_PLUS_B"                      
-#     "A_MINUS_B"                     
-#     "A_PLUS_B_PLUS_1"                       
-#     "A_MINUS_B_MINS_1"                      
-#     "A_AND_B"                       
-#     "A_OR_B"                        
-#     "A_NAND_B"                      
-#     "A_XOR_B"                       
-#     "NOT_A"                     
-#     "A_PLUS_A"                      
-#     "A_PLUS_A_PLUS_1"                       
-#     "COMPARE_LTE_GT_EQ"                     
-#     "COMPARE_LT_GTE"
-#     "A"                        
-#     "ZERO"                      
-# }
-
-
 MODULE_CONTROL = {
     "ACC": {
         "IN":               rw("1....... ........ ........ ........"),
@@ -166,6 +148,25 @@ MODULE_CONTROL = {
         "HALT":             rw("........ ........ ........ .....1.."),
     },
 }
+
+# ALU_MODE_FLAGS = {
+#     "A_PLUS_1"                      
+#     "A_PLUS_B"                      
+#     "A_MINUS_B"                     
+#     "A_PLUS_B_PLUS_1"                       
+#     "A_MINUS_B_MINS_1"                      
+#     "A_AND_B"                       
+#     "A_OR_B"                        
+#     "A_NAND_B"                      
+#     "A_XOR_B"                       
+#     "NOT_A"                     
+#     "A_PLUS_A"                      
+#     "A_PLUS_A_PLUS_1"                       
+#     "COMPARE_LTE_GT_EQ"                     
+#     "COMPARE_LT_GTE"
+#     "A"                        
+#     "ZERO"                      
+# }
 
 EMPTY_ADDRESS = rw("........ .... ...")
 MODULE_CONTROLS_DEFAULT = rw("00000000 00000000 00000000 00000000")

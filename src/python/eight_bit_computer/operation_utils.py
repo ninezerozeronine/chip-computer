@@ -1,3 +1,7 @@
+"""
+Common functions for operations.
+"""
+
 import re
 from copy import deepcopy
 
@@ -11,6 +15,18 @@ from . import bitdef
 def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
     """
     Create templates for all steps to form a complete instruction.
+
+    Args:
+        instruction_bitdefs (list(str)): List of the bitdefs that make
+            up the instruction byte.
+        flags_bitdefs: list(str): List of the bitdefs that make up the
+            flags for this instruction.
+        control_steps: list(list(str): List of list of bitdefs that
+            make up the control signals for each step.
+    Returns:
+        list(DataTemplate): All the steps for this instruction.
+    Raises:
+        ValueError: If too many steps were provided.
     """
 
     num_steps = len(control_steps)
