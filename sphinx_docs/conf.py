@@ -182,3 +182,23 @@ epub_exclude_files = ['search.html']
 # -- Extension configuration -------------------------------------------------
 
 autodoc_member_order = "bysource"
+
+
+def run_apidoc(_):
+    """
+    Run apidoc as part of the regular build.
+
+    https://github.com/rtfd/readthedocs.org/issues/1139#issuecomment-259692625
+    """
+    from sphinx.ext.apidoc import main
+    import os
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+    cur_dir = os.path.abspath(os.path.dirname(__file__))
+    module = os.path.join(cur_dir, "..", "src", "python", "eight_bit_computer")
+    output_dir = os.path.join(cur_dir, "software", "source")
+    main(["--separate", "--force", "--no-toc", "--output-dir", output_dir, module])
+
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)
