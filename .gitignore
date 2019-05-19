@@ -1,4 +1,4 @@
-sphinx_docs/_build
+docs/_build
 *.pyc
 src/python/.pytest_cache
 src/python/.coverage
