@@ -4,7 +4,7 @@ This is a project to make a basic but fully functional 8 bit computer
 using 7400 series ICs.
 
 The full docs can be found on the GitHub Pages pages for this
-project: https://ninezerozeronine.github.io/eight-bit-computer/
+project: https://ninezerozeronine.github.io/eight_bit_computer/
 
 # License
 

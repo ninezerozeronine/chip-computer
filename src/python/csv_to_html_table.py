@@ -5,7 +5,7 @@ output.append("<table id=\"machine_code\">")
 
 HEADER_TEMPLATE = "    <th onclick=\"sortTable({header_index})\"><span>{header}</span></th>"
 
-with open('../../machine-code.csv') as f:
+with open('../../sphinx_docs/_static/language_table.csv') as f:
     reader = csv.reader(f)
     for row_index, row in enumerate(reader):
         if row_index == 0:
