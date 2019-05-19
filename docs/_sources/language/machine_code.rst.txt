@@ -13,8 +13,9 @@ There are 256 possible instruction bytes, most of these are occupied by the
 instruction set. They are organised using the grouping described below. This
 is very much inspired by how :ref:`james_bates` organised his machine code.
 
-See the full :download:`language table <language_table.html>` for a complete
-listing of all the machine code and operations and their arguments. The table is
+See the `language table <../_static/language_table.html>`_ (or
+:download:`download it <../_static/language_table.csv>`) for a complete listing
+of all the machine code and operations with their arguments. The table is
 sortable by clicking on the headers (but it's a little slow).
 
 Instruction Groups
