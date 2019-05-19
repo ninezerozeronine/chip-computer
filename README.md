@@ -34,6 +34,8 @@ To generate a coverage report run:
 
     python -B -m pytest --cov=eight_bit_computer --cov-report=html:cov_html tests
 
+in `src/python`
+
 # License
 
 The content of this project itself is licensed under the
