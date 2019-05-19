@@ -31,8 +31,9 @@ The language of the computer is broadly defined with the following terms:
 | Microcode Step           | A single transfer of data via the bus or action of a module occurring on a rising clock edge. The smallest, most specific level of control. An instruction is completed by doing a number of microcode steps. |
 +--------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-See the full :download:`language table <language_table.html>` for a complete
-listing of all the machine code and operations and their arguments. The table is
+See the `language table <../_static/language_table.html>`_ (or
+:download:`download it <../_static/language_table.csv>`) for a complete listing
+of all the machine code and operations with their arguments. The table is
 sortable by clicking on the headers (but it's a little slow).
 
 .. toctree::
