@@ -1,5 +1,7 @@
 # 8 bit Computer
 
+[![Documentation Status](https://readthedocs.org/projects/eight-bit-computer/badge/?version=master)](https://eight-bit-computer.readthedocs.io/en/master/?badge=master)
+
 This is a project to make a basic but fully functional 8 bit computer 
 using 7400 series ICs.
 
