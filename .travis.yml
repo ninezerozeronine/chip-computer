@@ -6,6 +6,7 @@ python:
 install:
 - pip install tox-travis
 - pip install coverage
+- pip install coveralls
 
 script:
   - tox -e travis
