@@ -1,5 +1,15 @@
 language: python
+
 python:
   - "2.7"
+
+install:
+- pip install tox-travis
+
 script:
-  - cd src/python && python -B -m pytest
+  - tox -e travis
+  - coverage run --source eight_bit_computer -m pytest
+  - coverage report -m
+
+after_success:
+  - coveralls

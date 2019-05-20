@@ -6,3 +6,4 @@ src/python/cov_html
 build
 dist
 src/*.egg-info
+.tox
