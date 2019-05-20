@@ -28,15 +28,15 @@ in `docs`.
 
 To run the tests, run:
 
-    python -B -m pytest
+    tox -e test
 
-in `src/python`
+in the root directory.
 
 To generate a coverage report run:
 
-    python -B -m pytest --cov=eight_bit_computer --cov-report=html:cov_html tests
+    tox -e cov
 
-in `src/python`
+in the root directory.
 
 # License
 
