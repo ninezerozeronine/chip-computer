@@ -1,9 +1,8 @@
 docs/_build
 *.pyc
-src/python/.pytest_cache
-src/python/.coverage
-src/python/cov_html
 build
 dist
 src/*.egg-info
 .tox
+.coverage
+htmlcov
