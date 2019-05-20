@@ -9,8 +9,6 @@ install:
 
 script:
   - tox -e travis
-  - coverage run --source eight_bit_computer -m pytest
-  - coverage report -m
 
 after_success:
   - coveralls
