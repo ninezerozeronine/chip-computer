@@ -38,6 +38,11 @@ To generate a coverage report run:
 
 in the root directory.
 
+# Release
+
+    python setup.py sdist bdist_wheel
+    python -m twine upload dist/*
+
 # License
 
 The content of this project itself is licensed under the
