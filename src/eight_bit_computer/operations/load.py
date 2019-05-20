@@ -117,7 +117,7 @@ def generate_instruction_byte_bitdefs(op_args_def):
 
     Args:
         op_args_def (list(dict)): List of argument definitions that
-            specify which particular copy operation to generate
+            specify which particular LOAD operation to generate
             the instruction byte bitdefs for.
     Returns:
         list(str): Bitdefs that make up the instruction_byte
@@ -205,21 +205,16 @@ def parse_line(line):
     )
 
     mc_bytes = []
-    if op_args_def[0]["value_type"] == "module_name":
+
+    mc_byte = get_machine_code_byte_template()
+    mc_byte["byte_type"] = "instruction"
+    mc_byte["bitstring"] = instruction_byte
+    mc_bytes.append(mc_byte)
+
+    if op_args_def[0]["value_type"] == "constant":
         mc_byte = get_machine_code_byte_template()
-        mc_byte["byte_type"] = "instruction"
-        mc_byte["bitstring"] = instruction_byte
+        mc_byte["byte_type"] = "constant"
+        mc_byte["constant"] = op_args_def[0]["value"]
         mc_bytes.append(mc_byte)
-
-    elif op_args_def[0]["value_type"] == "constant":
-        mc_byte_0 = get_machine_code_byte_template()
-        mc_byte_0["byte_type"] = "instruction"
-        mc_byte_0["bitstring"] = instruction_byte
-        mc_bytes.append(mc_byte_0)
-
-        mc_byte_1 = get_machine_code_byte_template()
-        mc_byte_1["byte_type"] = "constant"
-        mc_byte_1["constant"] = op_args_def[0]["value"]
-        mc_bytes.append(mc_byte_1)
 
     return mc_bytes

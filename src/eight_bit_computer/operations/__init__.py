@@ -20,10 +20,12 @@ def get_all_operations():
         copy_op,
         load,
         set_op,
+        jump,
     )
 
     return [
         copy_op,
         load,
         set_op,
+        jump,
     ]

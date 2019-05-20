@@ -1,5 +1,5 @@
 """
-Example and explanation of required functions for an operation module.
+JUMP Operation
 """
 
 from ..language_defs import (
@@ -8,6 +8,7 @@ from ..language_defs import (
     DEST_REGISTERS,
     MODULE_CONTROL,
     FLAGS,
+    instruction_byte_from_bitdefs,
 )
 from ..operation_utils import assemble_instruction, match_and_parse_line
 from ..data_structures import (
@@ -78,7 +79,7 @@ def generate_signatures():
 
 def generate_operation_templates(signature):
     """
-    Create the DataTemplates to define a load with the given args.
+    Create the DataTemplates to define a load with the given signature.
 
     Args:
         signature (list(dict)): List of argument definitions that
@@ -99,21 +100,136 @@ def generate_operation_templates(signature):
     )
 
 
+def generate_instruction_byte_bitdefs(signature):
+    """
+    Generate bitdefs to specify the instruction byte for this signature.
+
+    Args:
+        signature (list(dict)): List of argument definitions that
+            specify which particular JUMP operation to generate
+            the instruction byte bitdefs for.
+    Returns:
+        list(str): Bitdefs that make up the instruction_byte
+    """
+
+    instruction_byte_bitdefs = []
+
+    instruction_byte_bitdefs.append(DEST_REGISTERS["PC"])
+    if signature[0]["is_memory_location"]:
+        instruction_byte_bitdefs.append(INSTRUCTION_GROUPS["LOAD"])
+    else:
+        instruction_byte_bitdefs.append(INSTRUCTION_GROUPS["COPY"])
+
+    if signature[0]["value_type"] == "constant":
+        instruction_byte_bitdefs.append(SRC_REGISTERS["CONST"])
+    elif signature[0]["value_type"] == "module_name":
+        instruction_byte_bitdefs.append(signature[0]["value"])
+
+    return instruction_byte_bitdefs
+
+
+def generate_control_steps(signature):
+    """
+    Generate control steps for this signature.
+
+    Args:
+        signature (list(dict)): List of argument definitions that
+            specify which particular JUMP operation to generate the
+            control steps for.
+    Returns:
+        list(list(str)): List of list of bitdefs that specify the
+        control steps.
+    """
+
+    if signature[0]["is_memory_location"]:
+        if signature[0]["value_type"] == "constant":
+            # E.g. JUMP [$var]
+            control_steps = [
+                [
+                   MODULE_CONTROL["PC"]["OUT"],
+                   MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                   MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                   MODULE_CONTROL["RAM"]["OUT"],
+                   MODULE_CONTROL["PC"]["IN"],
+                ],
+            ]
+        if signature[0]["value_type"] == "module_name":
+            # E.g. JUMP [A]
+            control_steps = [
+                [
+                   MODULE_CONTROL[signature[0]["value"]]["OUT"],
+                   MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                   MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                   MODULE_CONTROL["RAM"]["OUT"],
+                   MODULE_CONTROL["PC"]["IN"],
+                ],
+            ]
+    else:
+        if signature[0]["value_type"] == "constant":
+            # E.g. JUMP @label
+            control_steps = [
+                [
+                   MODULE_CONTROL["PC"]["OUT"],
+                   MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                   MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+                   MODULE_CONTROL["RAM"]["OUT"],
+                   MODULE_CONTROL["PC"]["IN"],
+                ],
+            ]
+        if signature[0]["value_type"] == "module_name":
+            # E.g. JUMP A
+            control_steps = [
+                [
+                   MODULE_CONTROL[signature[0]["value"]]["OUT"],
+                   MODULE_CONTROL["PC"]["IN"],
+                ],
+            ]
+
+    return control_steps
+
 
 def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably a OPERATION_TEMPLATE assembly line,
-    return an empty list instead.
+    If a line is not identifiably a LOAD assembly line, return an empty
+    list instead.
 
     Args:
         line (str): Assembly line to be parsed.
     Returns:
-        list(dict): List of instruction byte template dictionaries or an
-        empty list.
-    Raises:
-        OperationParsingError: If the line was identifiably a
-            OPERATION_TEMPLATE operation but incorrectly specified.
+        list(dict): List of machine code byte template dictionaries or
+        an empty list.
     """
-    pass
+
+    match, signature = match_and_parse_line(
+        line, _NAME, generate_signatures()
+    )
+
+    if not match:
+        return []
+
+    instruction_byte = instruction_byte_from_bitdefs(
+        generate_instruction_byte_bitdefs(signature)
+    )
+
+    mc_bytes = []
+
+    mc_byte = get_machine_code_byte_template()
+    mc_byte["byte_type"] = "instruction"
+    mc_byte["bitstring"] = instruction_byte
+    mc_bytes.append(mc_byte)
+
+    if signature[0]["value_type"] == "constant":
+        mc_byte = get_machine_code_byte_template()
+        mc_byte["byte_type"] = "constant"
+        mc_byte["constant"] = signature[0]["value"]
+        mc_bytes.append(mc_byte)
+
+    return mc_bytes
