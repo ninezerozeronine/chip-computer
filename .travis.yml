@@ -10,6 +10,3 @@ install:
 
 script:
   - tox -e travis
-
-after_success:
-  - coveralls
