@@ -1,44 +1,47 @@
 # 8 bit Computer
 
+[![Documentation Status](https://readthedocs.org/projects/eight-bit-computer/badge/?version=master)](https://eight-bit-computer.readthedocs.io/en/master/?badge=master)
+
+[![Coverage Status](https://coveralls.io/repos/github/ninezerozeronine/eight-bit-computer/badge.svg?branch=master)](https://coveralls.io/github/ninezerozeronine/eight-bit-computer?branch=master)
+
 This is a project to make a basic but fully functional 8 bit computer 
 using 7400 series ICs.
 
-The full docs can be found on the GitHub Pages pages for this
-project: https://ninezerozeronine.github.io/eight_bit_computer/
-
-# License
-
-The content of this project itself is licensed under the [Creative Commons Attribution 3.0 license](http://creativecommons.org/licenses/by/3.0/us/deed.en_US), 
-and any code used is licensed under the [MIT license](http://opensource.org/licenses/mit-license.php).
+The full docs can be found on the Read the Docs: https://eight-bit-computer.readthedocs.io/
 
 # Docs
 
 To build the docs on mac run:
 
-    sphinx-apidoc --force --separate --no-toc -o software/source/ ../src/python/eight_bit_computer/
     make clean
     make html
 
-in `sphinx_docs`.
+in `docs`.
 
 To build the docs in windows run:
 
-    sphinx-apidoc --force --separate --no-toc -o software/source/ ../src/python/eight_bit_computer/
     sphinx-build.exe . _build
 
-in `sphinx_docs`.
-
-Then copy `sphinx_docs/_build/html/*` into `docs` so that github pages can see them.
+in `docs`.
 
 # Tests
 
 To run the tests, run:
 
-    python -B -m pytest
+    tox -e test
 
-in `src/python`
+in the root directory.
 
 To generate a coverage report run:
 
-    python -B -m pytest --cov=eight_bit_computer --cov-report=html:cov_html tests
+    tox -e cov
 
+in the root directory.
+
+# License
+
+The content of this project itself is licensed under the
+[Attribution-ShareAlike 4.0 International
+license](http://creativecommons.org/licenses/by-sa/4.0/), and any source code used
+in conjunction with the project is licensed under the [MIT
+license](http://opensource.org/licenses/mit-license.php).
