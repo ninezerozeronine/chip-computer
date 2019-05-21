@@ -107,7 +107,7 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably a LOAD assembly line, return an empty
+    If a line is not identifiably a OP_TEMPLATE assembly line, return an empty
     list instead.
 
     Args:

@@ -152,27 +152,35 @@ def generate_control_steps(op_args_def):
         control steps.
     """
     if op_args_def[0]["value_type"] == "module_name":
+        # E.g. LOAD [A] B
         control_steps = [
             [
-               MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
-               MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
+                MODULE_CONTROL["MAR"]["IN"],
             ],
             [
-               MODULE_CONTROL["RAM"]["OUT"],
-               MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+                MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                MODULE_CONTROL["RAM"]["OUT"],
+                MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
             ],
         ]
     elif op_args_def[0]["value_type"] == "constant":
+        # E.g. LOAD [$var] ACC
         control_steps = [
             [
-               MODULE_CONTROL["PC"]["OUT"],
-               MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL["PC"]["OUT"],
+                MODULE_CONTROL["MAR"]["IN"],
             ],
             [
-               MODULE_CONTROL["PC"]["COUNT"],
-               MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-               MODULE_CONTROL["RAM"]["OUT"],
-               MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+                MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+                MODULE_CONTROL["RAM"]["OUT"],
+                MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
+            ],
+            [
+                MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                MODULE_CONTROL["RAM"]["OUT"],
+                MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
             ],
         ]
 

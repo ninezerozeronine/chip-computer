@@ -60,3 +60,19 @@ from eight_bit_computer.data_structures import DataTemplate
 ])
 def test_collapse_datatemplates_to_romdatas(test_input, expected):
     assert rom.collapse_datatemplates_to_romdatas(test_input) == expected
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    ("010", 1),
+    ("01001111", 1),
+    ("010011110", 2),
+    ("00000000111111110000000011111111", 4),
+])
+def test_get_num_bytes(test_input, expected):
+    assert rom.get_num_bytes(test_input) == expected
+
+
+@pytest.mark.slow
+def test_get_rom_doesnt_raise():
+    data = rom.get_rom()
+    assert True

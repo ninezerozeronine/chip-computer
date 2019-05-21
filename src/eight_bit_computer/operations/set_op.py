@@ -75,10 +75,10 @@ def generate_microcode_templates():
                 MODULE_CONTROL["MAR"]["IN"],
             ],
             [
-                MODULE_CONTROL["PC"]["COUNT"],
                 MODULE_CONTROL["RAM"]["OUT"],
                 MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
                 MODULE_CONTROL[op_args_def[0]["value"]]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
             ],
         ]
 

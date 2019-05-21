@@ -79,14 +79,14 @@ def generate_signatures():
 
 def generate_operation_templates(signature):
     """
-    Create the DataTemplates to define a load with the given signature.
+    Create the DataTemplates to define a JUMP with the given signature.
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular load operation to generate
+            specify which particular JUMP operation to generate
             templates for.
     Returns:
-        list(DataTemplate) : Datatemplates that define this load.
+        list(DataTemplate) : Datatemplates that define this JUMP.
     """
 
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
@@ -123,7 +123,7 @@ def generate_instruction_byte_bitdefs(signature):
     if signature[0]["value_type"] == "constant":
         instruction_byte_bitdefs.append(SRC_REGISTERS["CONST"])
     elif signature[0]["value_type"] == "module_name":
-        instruction_byte_bitdefs.append(signature[0]["value"])
+        instruction_byte_bitdefs.append(SRC_REGISTERS[signature[0]["value"]])
 
     return instruction_byte_bitdefs
 
@@ -146,26 +146,36 @@ def generate_control_steps(signature):
             # E.g. JUMP [$var]
             control_steps = [
                 [
-                   MODULE_CONTROL["PC"]["OUT"],
-                   MODULE_CONTROL["MAR"]["IN"],
+                    MODULE_CONTROL["PC"]["OUT"],
+                    MODULE_CONTROL["MAR"]["IN"],
                 ],
                 [
-                   MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
-                   MODULE_CONTROL["RAM"]["OUT"],
-                   MODULE_CONTROL["PC"]["IN"],
+                    MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+                    MODULE_CONTROL["RAM"]["OUT"],
+                    MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                    MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                    MODULE_CONTROL["RAM"]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
                 ],
             ]
         if signature[0]["value_type"] == "module_name":
             # E.g. JUMP [A]
             control_steps = [
                 [
-                   MODULE_CONTROL[signature[0]["value"]]["OUT"],
-                   MODULE_CONTROL["MAR"]["IN"],
+                    MODULE_CONTROL[signature[0]["value"]]["OUT"],
+                    MODULE_CONTROL["MAR"]["IN"],
                 ],
                 [
-                   MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
-                   MODULE_CONTROL["RAM"]["OUT"],
-                   MODULE_CONTROL["PC"]["IN"],
+                    MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+                    MODULE_CONTROL["RAM"]["OUT"],
+                    MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                    MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+                    MODULE_CONTROL["RAM"]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
                 ],
             ]
     else:
@@ -173,21 +183,21 @@ def generate_control_steps(signature):
             # E.g. JUMP @label
             control_steps = [
                 [
-                   MODULE_CONTROL["PC"]["OUT"],
-                   MODULE_CONTROL["MAR"]["IN"],
+                    MODULE_CONTROL["PC"]["OUT"],
+                    MODULE_CONTROL["MAR"]["IN"],
                 ],
                 [
-                   MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-                   MODULE_CONTROL["RAM"]["OUT"],
-                   MODULE_CONTROL["PC"]["IN"],
+                    MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+                    MODULE_CONTROL["RAM"]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
                 ],
             ]
         if signature[0]["value_type"] == "module_name":
             # E.g. JUMP A
             control_steps = [
                 [
-                   MODULE_CONTROL[signature[0]["value"]]["OUT"],
-                   MODULE_CONTROL["PC"]["IN"],
+                    MODULE_CONTROL[signature[0]["value"]]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
                 ],
             ]
 

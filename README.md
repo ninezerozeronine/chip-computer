@@ -30,6 +30,12 @@ To run the tests, run:
 
 in the root directory.
 
+Run:
+
+    tox -e test -- -m "not slow"
+
+To avoid the slow checks.
+
 To generate a coverage report run:
 
     tox -e cov
