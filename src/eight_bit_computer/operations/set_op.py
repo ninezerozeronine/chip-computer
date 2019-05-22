@@ -21,7 +21,7 @@ from ..data_structures import (
 _NAME = "SET"
 
 
-def gen_op_args_defs():
+def generate_signatures():
     """
     Generate the definitions of all possible arguments passable.
 
@@ -30,23 +30,23 @@ def gen_op_args_defs():
         :func:`~.get_arg_def_template` for more information.
     """
 
-    args_defs = []
+    signatures = []
     destinations = ("ACC", "A", "B", "C", "SP")
     for dest in destinations:
-        args_def = []
+        signature = []
 
         arg0_def = get_arg_def_template()
         arg0_def["value_type"] = "module_name"
         arg0_def["value"] = dest
-        args_def.append(arg0_def)
+        signature.append(arg0_def)
 
         arg1_def = get_arg_def_template()
         arg1_def["value_type"] = "constant"
-        args_def.append(arg1_def)
+        signature.append(arg1_def)
 
-        args_defs.append(args_def)
+        signatures.append(signature)
 
-    return args_defs
+    return signatures
 
 
 def generate_microcode_templates():
@@ -60,11 +60,11 @@ def generate_microcode_templates():
 
     data_templates = []
 
-    op_args_defs = gen_op_args_defs()
-    for op_args_def in op_args_defs:
+    signatures = generate_signatures()
+    for signature in signatures:
 
         instruction_byte_bitdefs = generate_instruction_byte_bitdefs(
-            op_args_def
+            signature
         )
 
         flags_bitdefs = [FLAGS["ANY"]]
@@ -77,7 +77,7 @@ def generate_microcode_templates():
             [
                 MODULE_CONTROL["RAM"]["OUT"],
                 MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
-                MODULE_CONTROL[op_args_def[0]["value"]]["IN"],
+                MODULE_CONTROL[signature[0]["value"]]["IN"],
                 MODULE_CONTROL["PC"]["COUNT"],
             ],
         ]
@@ -91,12 +91,12 @@ def generate_microcode_templates():
     return data_templates
 
 
-def generate_instruction_byte_bitdefs(op_args_def):
+def generate_instruction_byte_bitdefs(signature):
     """
     Generate bitdefs to specify the instruction byte for these args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular set operation to generate
             the instruction byte bitdefs for.
     Returns:
@@ -106,7 +106,7 @@ def generate_instruction_byte_bitdefs(op_args_def):
     return [
         INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS["CONST"],
-        DEST_REGISTERS[op_args_def[0]["value"]],
+        DEST_REGISTERS[signature[0]["value"]],
     ]
 
 
@@ -127,15 +127,15 @@ def parse_line(line):
             SET operation but incorrectly specified.
     """
 
-    match, op_args_def = match_and_parse_line(
-        line, _NAME, gen_op_args_defs()
+    match, signature = match_and_parse_line(
+        line, _NAME, generate_signatures()
     )
 
     if not match:
         return []
 
     instruction_byte = instruction_byte_from_bitdefs(
-        generate_instruction_byte_bitdefs(op_args_def)
+        generate_instruction_byte_bitdefs(signature)
     )
 
     mc_byte_0 = get_machine_code_byte_template()
@@ -144,6 +144,6 @@ def parse_line(line):
 
     mc_byte_1 = get_machine_code_byte_template()
     mc_byte_1["byte_type"] = "constant"
-    mc_byte_1["constant"] = op_args_def[1]["value"]
+    mc_byte_1["constant"] = signature[1]["value"]
 
     return [mc_byte_0, mc_byte_1]

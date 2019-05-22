@@ -33,15 +33,15 @@ def generate_microcode_templates():
 
     data_templates = []
 
-    op_args_defs = gen_op_args_defs()
-    for op_args_def in op_args_defs:
-        templates = generate_operation_templates(op_args_def)
+    signatures = generate_signatures()
+    for signature in signatures:
+        templates = generate_operation_templates(signature)
         data_templates.extend(templates)
 
     return data_templates
 
 
-def gen_op_args_defs():
+def generate_signatures():
     """
     Generate the definitions of all possible arguments passable.
 
@@ -50,121 +50,121 @@ def gen_op_args_defs():
         :func:`~.get_arg_def_template` for more information.
     """
 
-    args_defs = []
+    signatures = []
     sources = ("ACC", "A", "B", "C", "PC", "SP")
     destinations = ("ACC", "A", "B", "C")
 
     for src, dest in product(sources, destinations):
-        args_def = []
+        signature = []
 
         arg0_def = get_arg_def_template()
         arg0_def["value_type"] = "module_name"
         arg0_def["is_memory_location"] = True
         arg0_def["value"] = src
-        args_def.append(arg0_def)
+        signature.append(arg0_def)
 
         arg1_def = get_arg_def_template()
         arg1_def["value_type"] = "module_name"
         arg1_def["value"] = dest
-        args_def.append(arg1_def)
+        signature.append(arg1_def)
 
-        args_defs.append(args_def)
+        signatures.append(signature)
 
     for dest in destinations:
-        args_def = []
+        signature = []
 
         arg0_def = get_arg_def_template()
         arg0_def["value_type"] = "constant"
         arg0_def["is_memory_location"] = True
-        args_def.append(arg0_def)
+        signature.append(arg0_def)
 
         arg1_def = get_arg_def_template()
         arg1_def["value_type"] = "module_name"
         arg1_def["value"] = dest
-        args_def.append(arg1_def)
+        signature.append(arg1_def)
 
-        args_defs.append(args_def)
+        signatures.append(signature)
 
-    return args_defs
+    return signatures
 
 
-def generate_operation_templates(op_args_def):
+def generate_operation_templates(signature):
     """
     Create the DataTemplates to define a load with the given args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular load operation to generate
             templates for.
     Returns:
         list(DataTemplate) : Datatemplates that define this load.
     """
 
-    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(op_args_def)
+    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
 
     flags_bitdefs = [FLAGS["ANY"]]
 
-    control_steps = generate_control_steps(op_args_def)
+    control_steps = generate_control_steps(signature)
 
     return assemble_instruction(
         instruction_byte_bitdefs, flags_bitdefs, control_steps
     )
 
 
-def generate_instruction_byte_bitdefs(op_args_def):
+def generate_instruction_byte_bitdefs(signature):
     """
     Generate bitdefs to specify the instruction byte for these args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular LOAD operation to generate
             the instruction byte bitdefs for.
     Returns:
         list(str): Bitdefs that make up the instruction_byte
     """
 
-    if op_args_def[0]["value_type"] == "constant":
+    if signature[0]["value_type"] == "constant":
         instruction_byte_bitdefs = [
             INSTRUCTION_GROUPS["LOAD"],
             SRC_REGISTERS["CONST"],
-            DEST_REGISTERS[op_args_def[1]["value"]],
+            DEST_REGISTERS[signature[1]["value"]],
         ]
-    elif op_args_def[0]["value_type"] == "module_name":
+    elif signature[0]["value_type"] == "module_name":
         instruction_byte_bitdefs = [
             INSTRUCTION_GROUPS["LOAD"],
-            SRC_REGISTERS[op_args_def[0]["value"]],
-            DEST_REGISTERS[op_args_def[1]["value"]],
+            SRC_REGISTERS[signature[0]["value"]],
+            DEST_REGISTERS[signature[1]["value"]],
         ]
 
     return instruction_byte_bitdefs
 
 
-def generate_control_steps(op_args_def):
+def generate_control_steps(signature):
     """
     Generate control steps for these args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular load operation to generate the
             control steps for.
     Returns:
         list(list(str)): List of list of bitdefs that specify the
         control steps.
     """
-    if op_args_def[0]["value_type"] == "module_name":
+    if signature[0]["value_type"] == "module_name":
         # E.g. LOAD [A] B
         control_steps = [
             [
-                MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
+                MODULE_CONTROL[signature[0]["value"]]["OUT"],
                 MODULE_CONTROL["MAR"]["IN"],
             ],
             [
                 MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
                 MODULE_CONTROL["RAM"]["OUT"],
-                MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+                MODULE_CONTROL[signature[1]["value"]]["IN"],
             ],
         ]
-    elif op_args_def[0]["value_type"] == "constant":
+    elif signature[0]["value_type"] == "constant":
         # E.g. LOAD [$var] ACC
         control_steps = [
             [
@@ -180,7 +180,7 @@ def generate_control_steps(op_args_def):
             [
                 MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
                 MODULE_CONTROL["RAM"]["OUT"],
-                MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+                MODULE_CONTROL[signature[1]["value"]]["IN"],
             ],
         ]
 
@@ -201,15 +201,15 @@ def parse_line(line):
         an empty list.
     """
 
-    match, op_args_def = match_and_parse_line(
-        line, _NAME, gen_op_args_defs()
+    match, signature = match_and_parse_line(
+        line, _NAME, generate_signatures()
     )
 
     if not match:
         return []
 
     instruction_byte = instruction_byte_from_bitdefs(
-        generate_instruction_byte_bitdefs(op_args_def)
+        generate_instruction_byte_bitdefs(signature)
     )
 
     mc_bytes = []
@@ -219,10 +219,10 @@ def parse_line(line):
     mc_byte["bitstring"] = instruction_byte
     mc_bytes.append(mc_byte)
 
-    if op_args_def[0]["value_type"] == "constant":
+    if signature[0]["value_type"] == "constant":
         mc_byte = get_machine_code_byte_template()
         mc_byte["byte_type"] = "constant"
-        mc_byte["constant"] = op_args_def[0]["value"]
+        mc_byte["constant"] = signature[0]["value"]
         mc_bytes.append(mc_byte)
 
     return mc_bytes

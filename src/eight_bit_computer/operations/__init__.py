@@ -21,6 +21,7 @@ def get_all_operations():
         load,
         set_op,
         jump,
+        jump_if_overflow_flag,
     )
 
     return [
@@ -28,4 +29,5 @@ def get_all_operations():
         load,
         set_op,
         jump,
+        jump_if_overflow_flag,
     ]
