@@ -17,6 +17,7 @@ def get_all_operations():
     """
 
     from . import (
+        add,
         copy_op,
         load,
         set_op,
@@ -25,6 +26,7 @@ def get_all_operations():
     )
 
     return [
+        add,
         copy_op,
         load,
         set_op,

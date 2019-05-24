@@ -124,9 +124,8 @@ def create_roms(directory="", output_format="logisim"):
     """
     rom_data = rom.get_rom()
     rom_slices = rom.slice_rom(rom_data)
-    for rom_index, rom_slice in enumerate(rom_slices):
-
-        slice_bitstrings = [romdata["data"] for romdata in rom_slice]
+    for rom_index, rom_slice in rom_slices.iteritems():
+        slice_bitstrings = [romdata.data for romdata in rom_slice]
         if output_format == "logisim":
             output = export.bitstrings_to_logisim(slice_bitstrings)
         elif output_format == "cpp":
