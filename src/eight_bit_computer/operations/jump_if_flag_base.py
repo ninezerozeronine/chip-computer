@@ -36,16 +36,17 @@ def generate_microcode_templates(
 
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(src_dest)
 
+    # DataTemplates for when the condition is true - i.e. it should jump
     control_steps = generate_true_control_steps()
-
     data_templates.extend(
         assemble_instruction(
             instruction_byte_bitdefs, [true_flag_bitdef], control_steps
         )
     )
 
+    # DataTemplates for when the condition is fale - i.e. it should just
+    # continue to the next instruction
     control_steps = []
-
     data_templates.extend(
         assemble_instruction(
             instruction_byte_bitdefs, [false_flag_bitdef], control_steps
