@@ -5,7 +5,7 @@ from . import main
 
 def assemble():
     """
-    Entry point for the assemble command line script.
+    Entry point for the command line assemble script.
     """
     parser = get_assemble_parser()
     args = parser.parse_args()
@@ -57,7 +57,7 @@ def get_assemble_parser():
         "-f",
         "--output_format",
         choices=["logisim", "cpp"],
-        help="Format to write the machone code in.",
+        help="Format to write the machine code in.",
         default="logisim",
     )
 
@@ -96,16 +96,45 @@ def positive_int(value):
 
 def gen_roms():
     """
-    Entry point for the ebc_gen_roms command line script.
+    Entry point for the command line rom generation script.
     """
-    pass
+    parser = get_gen_roms_parser()
+    args = parser.parse_args()
+    main.gen_roms(
+        output_dir=args.output_dir,
+        rom_prefix=args.rom_prefix,
+        output_format=args.output_format,
+    )
 
 
-def get_assemble_parser():
+def get_gen_roms_parser():
     """
     Generate arg parser for the gen_roms command line script.
 
     Returns:
         argparse.ArgumentParser: The argument parser.
     """
-    pass
+    parser = argparse.ArgumentParser(
+        description="Generate ROMs that contain the microcode."
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        help="Directory to write the ROMs into.",
+        default=".",
+    )
+    parser.add_argument(
+        "-p",
+        "--rom_prefix",
+        help="Prefix for the ROM files.",
+        default="rom",
+    )
+    parser.add_argument(
+        "-f",
+        "--output_format",
+        choices=["logisim", "cpp"],
+        help="Format to write the ROMs in.",
+        default="logisim",
+    )
+
+    return parser

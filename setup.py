@@ -9,4 +9,10 @@ setup(
     url="https://github.com/ninezerozeronine/eight-bit-computer",
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    entry_points={
+        "console_scripts": [
+            "ebc-assemble=eight_bit_computer.cli:assemble",
+            "ebc-gen-roms=eight_bit_computer.cli:gen_roms",
+        ]
+    }
 )

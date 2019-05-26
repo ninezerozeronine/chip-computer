@@ -4,7 +4,7 @@ Assembly
 Assembly code provides a way to specify instructions for the computer to
 perform in a more human readable from than machine code
 
-Assembly operations and arguments to specify thier behaviour can be saved in an
+Assembly operations and arguments to specify their behaviour can be saved in an
 assembly file and passed to an assembler to convert them to machine code that
 the computer can then execute.
 

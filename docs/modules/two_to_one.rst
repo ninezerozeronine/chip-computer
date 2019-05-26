@@ -23,7 +23,7 @@ This is how it operates:
 +------+-----------+-----------------------------------------------+
 | out  | 8         | Output, either A or B.                        |
 +------+-----------+-----------------------------------------------+
-| A/B  | 1         | When low, A is output, when high, b is output |
+| A/B  | 1         | When low, A is output, when high, B is output |
 +------+-----------+-----------------------------------------------+
 
 Implementation

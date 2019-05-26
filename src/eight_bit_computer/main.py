@@ -137,16 +137,24 @@ def extract_machine_code(assembly_lines):
     return machine_code
 
 
-def create_roms(directory="", output_format="logisim"):
+def gen_roms(output_dir=".", rom_prefix="rom", output_format="logisim"):
     """
     Write files containing microcode for drive the roms.
 
     Args:
-        directory (str) (optional): The directory to write the roms
+        output_dir (str) (optional): The directory to write the roms
             into.
+        rom_prefix (str) (optional): The prefix for the rom files.
         output_format (str) (optional): How to foramt the output.
             ``logisim`` or ``cpp``.
     """
+
+    if not os.path.isdir(output_dir):
+        print "Output directory: {output_dir} does not exist.".format(
+            output_dir=output_dir
+        )
+        return
+
     rom_data = rom.get_rom()
     rom_slices = rom.slice_rom(rom_data)
     for rom_index, rom_slice in rom_slices.iteritems():
@@ -156,8 +164,15 @@ def create_roms(directory="", output_format="logisim"):
         elif output_format == "cpp":
             output = export.bitstrings_to_cpp(slice_bitstrings)
 
-        rom_filename = "rom_{rom_index}".format(rom_index=rom_index)
-        filepath = os.path.join(directory, rom_filename)
+        rom_filename = "{rom_prefix}_{rom_index}".format(
+            rom_prefix=rom_prefix, rom_index=rom_index
+        )
+        filepath = os.path.join(output_dir, rom_filename)
 
         with open(filepath, "w") as romfile:
             romfile.write(output)
+
+    msg = "ROM writing complete. ROMs written to {output_dir}".format(
+        output_dir=output_dir
+    )
+    print msg
