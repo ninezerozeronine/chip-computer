@@ -26,11 +26,25 @@ def generate_parse_line_test_data():
     mc["bitstring"] = "11001101"
     ret.append((test_input, [mc]))
 
-    test_input = "   ADD  ACC   "
-    mc = get_machine_code_byte_template()
-    mc["byte_type"] = "instruction"
-    mc["bitstring"] = "11001100"
-    ret.append((test_input, [mc]))
+    test_input = "   ADD  #123   "
+    mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
+    mc_0["bitstring"] = "11001100"
+
+    mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
+    mc_1["constant"] = "#123"
+    ret.append((test_input, [mc_0, mc_1]))
+
+    test_input = "ADD #0b00101111"
+    mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
+    mc_0["bitstring"] = "11001100"
+
+    mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
+    mc_1["constant"] = "#0b00101111"
+    ret.append((test_input, [mc_0, mc_1]))
 
     return ret
 
@@ -46,7 +60,7 @@ def test_parse_line(test_input, expected):
     "ADD",
     "ADD PC",
     "ADD A B",
-    "ADD #123",
+    "ADD ACCS",
     "ADD BLAH #123",
     "ADD A #123 FOO",
 ])

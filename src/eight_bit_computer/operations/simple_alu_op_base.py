@@ -53,12 +53,18 @@ def generate_signatures():
     """
 
     signatures = []
-    alu_args = ("ACC", "A", "B", "C")
+    alu_args = ("A", "B", "C")
     for alu_arg in alu_args:
         arg_def = get_arg_def_template()
         arg_def["value_type"] = "module_name"
+        arg_def["is_memory_location"] = False
         arg_def["value"] = alu_arg
         signatures.append([arg_def])
+
+    arg_def = get_arg_def_template()
+    arg_def["value_type"] = "constant"
+    arg_def["is_memory_location"] = False
+    signatures.append([arg_def])
 
     return signatures
 
@@ -106,11 +112,20 @@ def generate_instruction_byte_bitdefs(signature, alu_op):
         list(str): Bitdefs that make up the instruction_byte
     """
 
-    return [
-        INSTRUCTION_GROUPS["ALU"],
-        alu_op,
-        ALU_OPERANDS[signature[0]["value"]],
-    ]
+    if signature[0]["value_type"] == "module_name":
+        bitdefs = [
+            INSTRUCTION_GROUPS["ALU"],
+            alu_op,
+            ALU_OPERANDS[signature[0]["value"]],
+        ]
+    elif signature[0]["value_type"] == "constant":
+        bitdefs = [
+            INSTRUCTION_GROUPS["ALU"],
+            alu_op,
+            ALU_OPERANDS["ACC/CONST"],
+        ]
+
+    return bitdefs
 
 
 def generate_control_steps(signature, control_flags):
@@ -128,19 +143,44 @@ def generate_control_steps(signature, control_flags):
         control steps.
     """
 
-    step_0 = [
-        MODULE_CONTROL[signature[0]["value"]]["OUT"],
-        MODULE_CONTROL["ALU"]["STORE_RESULT"],
-        MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-    ]
-    step_0.extend(control_flags)
+    if signature[0]["value_type"] == "module_name":
+        step_0 = [
+            MODULE_CONTROL[signature[0]["value"]]["OUT"],
+            MODULE_CONTROL["ALU"]["STORE_RESULT"],
+            MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+        ]
+        step_0.extend(control_flags)
 
-    step_1 = [
-        MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL["ACC"]["IN"],
-    ]
+        step_1 = [
+            MODULE_CONTROL["ALU"]["OUT"],
+            MODULE_CONTROL["ACC"]["IN"],
+        ]
 
-    return [step_0, step_1]
+        control_steps = [step_0, step_1]
+
+    elif signature[0]["value_type"] == "constant":
+        step_0 = [
+            MODULE_CONTROL["PC"]["OUT"],
+            MODULE_CONTROL["MAR"]["IN"],
+        ]
+
+        step_1 = [
+            MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+            MODULE_CONTROL["RAM"]["OUT"],
+            MODULE_CONTROL["ALU"]["STORE_RESULT"],
+            MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+            MODULE_CONTROL["PC"]["COUNT"],
+        ]
+        step_1.extend(control_flags)
+
+        step_2 = [
+            MODULE_CONTROL["ALU"]["OUT"],
+            MODULE_CONTROL["ACC"]["IN"],
+        ]
+
+        control_steps = [step_0, step_1, step_2]
+
+    return control_steps
 
 
 def parse_line(line, name, alu_op):
@@ -177,5 +217,11 @@ def parse_line(line, name, alu_op):
     mc_byte["byte_type"] = "instruction"
     mc_byte["bitstring"] = instruction_byte
     mc_bytes.append(mc_byte)
+
+    if signature[0]["value_type"] == "constant":
+        mc_byte = get_machine_code_byte_template()
+        mc_byte["byte_type"] = "constant"
+        mc_byte["constant"] = signature[0]["value"]
+        mc_bytes.append(mc_byte)
 
     return mc_bytes

@@ -44,9 +44,13 @@ def generate_microcode_templates(
         )
     )
 
-    # DataTemplates for when the condition is fale - i.e. it should just
-    # continue to the next instruction
-    control_steps = []
+    # DataTemplates for when the condition is false - i.e. it should
+    # just continue to the next instruction
+    control_steps = [
+        [
+            MODULE_CONTROL["PC"]["COUNT"],
+        ]
+    ]
     data_templates.extend(
         assemble_instruction(
             instruction_byte_bitdefs, [false_flag_bitdef], control_steps
