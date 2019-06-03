@@ -12,8 +12,8 @@ from . import rom
 
 
 def assemble(
-        input_path,
-        output_path=None,
+        input_filepath,
+        output_filepath=None,
         variable_start_offset=0,
         output_format="logisim",
         ):
@@ -21,23 +21,43 @@ def assemble(
     Read an assembly file and write out equivalent machine code.
 
     Args:
-        input_path (str): The location of the assembly file.
-        output_path (str) (optional): The location to write out the
+        input_filepath (str): The location of the assembly file.
+        output_filepath (str) (optional): The location to write out the
             machine code. If nothing is passed, the output path will be
-            the input path with the extension changed to mc or have mc
-            added if no extension was present.
+            the input path with the extension changed to mc.
         variable_start_offset (int) (optional): How far to offset the
             first variable in data memory from 0.
-        output_format (str) (optional): How to foramt the output.
+        output_format (str) (optional): How to format the output.
             ``logisim`` or ``cpp``.
     """
 
-    if not input_path.endswith(".asm"):
+    # Does input file exist
+    if not os.path.isfile(input_filepath):
+        print "Input file: {input_filepath} does not exist.".format(
+            input_filepath=input_filepath)
+        return
+
+    # Does input file have the correct extension
+    if not input_filepath.endswith(".asm"):
         print "Input file must have a .asm extension."
         return
 
-    lines = filepath_to_lines(input_path)
+    # Validate/generate output filepath
+    if output_filepath is None:
+        output_filepath = get_mc_filepath(input_filepath)
+    output_dir = os.path.dirname(output_filepath)
+    if output_dir == "":
+        output_filepath = "./{output_filepath}".format(
+            output_filepath=output_filepath
+        )
+    elif not os.path.isdir(output_dir):
+        print "Output directory: {output_dir} does not exist.".format(
+            output_dir=output_dir
+        )
+        return
 
+    # Do assembly
+    lines = filepath_to_lines(input_filepath)
     try:
         assembly_line_infos = process_assembly_lines(
             lines, variable_start_offset=variable_start_offset
@@ -46,33 +66,38 @@ def assemble(
         print inst.args[0]
         return
 
-    if output_path is None:
-        output_path = get_mc_filepath(input_path)
-
+    # Success message and summary
+    completion_msg = (
+        "Assembly complete. Assembly file written to: {output_filepath}."
+        "\n\nAssembly summary:\n".format(output_filepath=output_filepath)
+    )
+    print completion_msg
     print generate_assembly_summary(assembly_line_infos)
 
+    # Convert to correct format
     mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
     if output_format == "logisim":
         output = export.bitstrings_to_logisim(mc_byte_bitstrings)
     elif output_format == "cpp":
         output = export.bitstrings_to_cpp(mc_byte_bitstrings)
 
-    with open(output_path, "w") as file:
+    # Write file.
+    with open(output_filepath, "w") as file:
         file.write(output)
 
 
-def filepath_to_lines(input_path):
+def filepath_to_lines(input_filepath):
     """
     Take a filepath and get all the lines of the file.
 
     The lines returned have the newline stripped.
 
     Args:
-        input_path (str): Path to the file of disk to read.
+        input_filepath (str): Path to the file of disk to read.
     Returns:
         list(str): Lines of the file.
     """
-    with open(input_path) as file:
+    with open(input_filepath) as file:
         lines = file.read().splitlines()
     return lines
 
@@ -112,28 +137,42 @@ def extract_machine_code(assembly_lines):
     return machine_code
 
 
-def create_roms(directory="", output_format="logisim"):
+def gen_roms(output_dir=".", rom_prefix="rom", output_format="logisim"):
     """
     Write files containing microcode for drive the roms.
 
     Args:
-        directory (str) (optional): The directory to write the roms
+        output_dir (str) (optional): The directory to write the roms
             into.
+        rom_prefix (str) (optional): The prefix for the rom files.
         output_format (str) (optional): How to foramt the output.
             ``logisim`` or ``cpp``.
     """
+
+    if not os.path.isdir(output_dir):
+        print "Output directory: {output_dir} does not exist.".format(
+            output_dir=output_dir
+        )
+        return
+
     rom_data = rom.get_rom()
     rom_slices = rom.slice_rom(rom_data)
-    for rom_index, rom_slice in enumerate(rom_slices):
-
-        slice_bitstrings = [romdata["data"] for romdata in rom_slice]
+    for rom_index, rom_slice in rom_slices.iteritems():
+        slice_bitstrings = [romdata.data for romdata in rom_slice]
         if output_format == "logisim":
             output = export.bitstrings_to_logisim(slice_bitstrings)
         elif output_format == "cpp":
             output = export.bitstrings_to_cpp(slice_bitstrings)
 
-        rom_filename = "rom_{rom_index}".format(rom_index=rom_index)
-        filepath = os.path.join(directory, rom_filename)
+        rom_filename = "{rom_prefix}_{rom_index}".format(
+            rom_prefix=rom_prefix, rom_index=rom_index
+        )
+        filepath = os.path.join(output_dir, rom_filename)
 
         with open(filepath, "w") as romfile:
             romfile.write(output)
+
+    msg = "ROM writing complete. ROMs written to {output_dir}".format(
+        output_dir=output_dir
+    )
+    print msg

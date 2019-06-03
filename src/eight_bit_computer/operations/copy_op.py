@@ -23,7 +23,7 @@ from ..data_structures import (
 _NAME = "COPY"
 
 
-def gen_op_args_defs():
+def generate_signatures():
     """
     Generate the definitions of all possible arguments passable.
 
@@ -32,26 +32,26 @@ def gen_op_args_defs():
         :func:`~.get_arg_def_template` for more information.
     """
 
-    args_defs = []
+    signatures = []
     sources = ("ACC", "A", "B", "C", "PC", "SP")
     destinations = ("ACC", "A", "B", "C", "SP")
     for src, dest in product(sources, destinations):
         if src != dest:
-            args_def = []
+            signature = []
 
             arg0_def = get_arg_def_template()
             arg0_def["value_type"] = "module_name"
             arg0_def["value"] = src
-            args_def.append(arg0_def)
+            signature.append(arg0_def)
 
             arg1_def = get_arg_def_template()
             arg1_def["value_type"] = "module_name"
             arg1_def["value"] = dest
-            args_def.append(arg1_def)
+            signature.append(arg1_def)
 
-            args_defs.append(args_def)
+            signatures.append(signature)
 
-    return args_defs
+    return signatures
 
 
 def generate_microcode_templates():
@@ -64,33 +64,33 @@ def generate_microcode_templates():
 
     data_templates = []
 
-    op_args_defs = gen_op_args_defs()
-    for op_args_def in op_args_defs:
-        templates = generate_operation_templates(op_args_def)
+    signatures = generate_signatures()
+    for signature in signatures:
+        templates = generate_operation_templates(signature)
         data_templates.extend(templates)
 
     return data_templates
 
 
-def generate_operation_templates(op_args_def):
+def generate_operation_templates(signature):
     """
     Create the DataTemplates to define a copy with the given args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular copy operation to generate
             templates for.
     Returns:
         list(DataTemplate) : Datatemplates that define this copy.
     """
-    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(op_args_def)
+    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
 
     flags_bitdefs = [FLAGS["ANY"]]
 
     control_steps = [
         [
-            MODULE_CONTROL[op_args_def[0]["value"]]["OUT"],
-            MODULE_CONTROL[op_args_def[1]["value"]]["IN"],
+            MODULE_CONTROL[signature[0]["value"]]["OUT"],
+            MODULE_CONTROL[signature[1]["value"]]["IN"],
         ]
     ]
 
@@ -99,12 +99,12 @@ def generate_operation_templates(op_args_def):
     )
 
 
-def generate_instruction_byte_bitdefs(op_args_def):
+def generate_instruction_byte_bitdefs(signature):
     """
     Generate bitdefs to specify the instruction byte for these args.
 
     Args:
-        op_args_def (list(dict)): List of argument definitions that
+        signature (list(dict)): List of argument definitions that
             specify which particular copy operation to generate
             the instruction byte bitdefs for.
     Returns:
@@ -113,8 +113,8 @@ def generate_instruction_byte_bitdefs(op_args_def):
 
     return [
         INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS[op_args_def[0]["value"]],
-        DEST_REGISTERS[op_args_def[1]["value"]],
+        SRC_REGISTERS[signature[0]["value"]],
+        DEST_REGISTERS[signature[1]["value"]],
     ]
 
 
@@ -132,15 +132,15 @@ def parse_line(line):
         empty list.
     """
 
-    match, op_args_def = match_and_parse_line(
-        line, _NAME, gen_op_args_defs()
+    match, signature = match_and_parse_line(
+        line, _NAME, generate_signatures()
     )
 
     if not match:
         return []
 
     instruction_byte = instruction_byte_from_bitdefs(
-        generate_instruction_byte_bitdefs(op_args_def)
+        generate_instruction_byte_bitdefs(signature)
     )
     mc_byte = get_machine_code_byte_template()
     mc_byte["byte_type"] = "instruction"

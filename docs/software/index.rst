@@ -8,8 +8,13 @@ Software
    assembler
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Command line utilities:
+
+   command_line
+
+.. toctree::
    :maxdepth: 3
    :caption: Source Documentation:
 
    source/eight_bit_computer
-   assembler
