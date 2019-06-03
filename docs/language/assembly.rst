@@ -182,6 +182,24 @@ NOOP
 JUMP
 ^^^^
 
+The ``JUMP`` operation will set the program counter to a value.
+
+The possible usages are:
+
+ - ``JUMP ACC``
+ - ``JUMP A``
+ - ``JUMP B``
+ - ``JUMP C``
+ - ``JUMP SP``
+ - ``JUMP CONST``
+ - ``JUMP [ACC]``
+ - ``JUMP [A]``
+ - ``JUMP [B]``
+ - ``JUMP [C]``
+ - ``JUMP [SP]``
+ - ``JUMP [PC]``
+ - ``JUMP [CONST]``
+
 JUMP_IF_LT_ACC
 ^^^^^^^^^^^^^^
 
@@ -208,6 +226,13 @@ JUMP_IF_NEGATIVE_FLAG
 
 JUMP_IF_OVERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_OVERFLOW_FLAG`` operation will set the program counter to the
+value of a given constant if the overflow flag is high.
+
+The possible usages are:
+
+ - ``JUMP_IF_OVERFLOW_FLAG CONST``
 
 JUMP_IF_NOT_OVERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -310,10 +335,11 @@ variables as they are encountered in the file. E.g. for the following assembly:
 .. code-block:: text
 
         $variable1
+        COPY A ACC
         LOAD [$variable2] A
 
-variable1 is predclared, variable2 is declared as it's used. Variable1 is an
-alias for 0, variable2 is an alias for 1.
+variable1 is predeclared, variable2 is declared as it's used. Once assembled,
+variable1 is an alias for 0, variable2 is an alias for 2.
 
 A variable is a token that starts with the ``$`` character followed by any letter or
 an underscore, then any alphanumeric or an underscore. E.g.:
