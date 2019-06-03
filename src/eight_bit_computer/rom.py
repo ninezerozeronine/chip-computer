@@ -21,9 +21,11 @@ def get_rom():
 
     language_templates = collect_language_datatemplates()
     romdatas = collapse_datatemplates_to_romdatas(language_templates)
-    full_rom = populate_empty_addresses(romdatas)
-    if romdatas_have_duplicate_addresses(full_rom):
+    if romdatas_have_duplicate_addresses(romdatas):
         raise ValueError("Romdata set has duplicate addresses")
+    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
+    default_data = MODULE_CONTROLS_DEFAULT
+    full_rom = populate_empty_addresses(romdatas, all_addresses, default_data)
     full_rom.sort(key=lambda romdata: romdata.address)
     return full_rom
 
@@ -70,19 +72,22 @@ def collapse_datatemplates_to_romdatas(datatemplates):
     return romdatas
 
 
-def populate_empty_addresses(romdatas):
+def populate_empty_addresses(romdatas, all_addresses, default_data):
     """
     Form a complete set of rom data by filling any undefined addresses.
 
     Args:
         romdatas list(RomData): The romdatas defined by the
             instructions.
+        all_addresses (list(str)): List of bitdefs representing every
+            address in the rom
+        default_data (str): The value to set for any address that isn't
+            in romdatas.
     Returns:
         list(RomData): List of RomDatas representing a completely full
             rom
     """
 
-    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
     filled_addresses = {romdata.address: romdata.data for romdata in romdatas}
     complete_rom = []
     for address in all_addresses:
@@ -92,7 +97,7 @@ def populate_empty_addresses(romdatas):
             )
         else:
             complete_rom.append(
-                RomData(address=address, data=MODULE_CONTROLS_DEFAULT)
+                RomData(address=address, data=default_data)
             )
     return complete_rom
 
@@ -160,11 +165,28 @@ def slice_rom(rom):
     """
 
     rom_slices = {}
-    for rom_index in range(4):
+    for rom_index in range(get_num_bytes(rom[0].data)):
         rom_offset = 8 * rom_index
         rom_slice = get_romdata_slice(rom, rom_offset + 7, rom_offset)
         rom_slices[rom_index] = rom_slice
     return rom_slices
+
+
+def get_num_bytes(bitstring):
+    """
+    Get the number of bytes needed to store this bitdef.
+
+    Args:
+        bitstring (str): Bitstring representing the bits to store.
+    Returns:
+        int: The number of bytes needed to store the bitstring.
+    """
+
+    num_bits = bitdef.length(bitstring)
+    num_bytes = num_bits // 8
+    if num_bits % 8:
+        num_bytes += 1
+    return num_bytes
 
 
 def get_romdata_slice(romdatas, end, start):

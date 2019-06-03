@@ -1,8 +1,6 @@
 # 8 bit Computer
 
-[![Documentation Status](https://readthedocs.org/projects/eight-bit-computer/badge/?version=master)](https://eight-bit-computer.readthedocs.io/en/master/?badge=master)
-
-[![Coverage Status](https://coveralls.io/repos/github/ninezerozeronine/eight-bit-computer/badge.svg?branch=master)](https://coveralls.io/github/ninezerozeronine/eight-bit-computer?branch=master)
+ [![Build Status](https://travis-ci.org/ninezerozeronine/eight-bit-computer.svg?branch=master)](https://travis-ci.org/ninezerozeronine/eight-bit-computer) [![Coverage Status](https://coveralls.io/repos/github/ninezerozeronine/eight-bit-computer/badge.svg?branch=master)](https://coveralls.io/github/ninezerozeronine/eight-bit-computer?branch=master) [![Documentation Status](https://readthedocs.org/projects/eight-bit-computer/badge/?version=master)](https://eight-bit-computer.readthedocs.io/en/master/?badge=master)
 
 This is a project to make a basic but fully functional 8 bit computer 
 using 7400 series ICs.
@@ -22,7 +20,7 @@ To build the docs in windows run:
 
     sphinx-build.exe . _build
 
-in `docs`.
+in `docs`. This also runs the apidoc command on build with a convenience function in conf.py.
 
 # Tests
 
@@ -32,11 +30,22 @@ To run the tests, run:
 
 in the root directory.
 
+Run:
+
+    tox -e test -- -m "not slow"
+
+To avoid the slow checks.
+
 To generate a coverage report run:
 
     tox -e cov
 
 in the root directory.
+
+# Release
+
+    python setup.py sdist bdist_wheel
+    python -m twine upload dist/*
 
 # License
 

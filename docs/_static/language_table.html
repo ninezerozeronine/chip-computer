@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Assembly listing</title>
+<title>Eight Bit Computer Language Table</title>
 <style>
   table {
     border-collapse: collapse;
@@ -78,7 +78,7 @@
     <td>006</td><td>00000110</td><td>00</td><td>000</td><td>110</td><td></td><td></td><td>Copy</td><td>ACC</td><td>SP+/-</td><td></td><td></td><td></td><td></td><td>No sense in comparing ACC to ACC</td>
   </tr>
   <tr>
-    <td>007</td><td>00000111</td><td>00</td><td>000</td><td>111</td><td></td><td></td><td>Copy</td><td>ACC</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC CONST</td><td>Original slot (00111111) used by JUMP_IF_NOT_UNDERFLOW_FLAG</td>
+    <td>007</td><td>00000111</td><td>00</td><td>000</td><td>111</td><td></td><td></td><td>Copy</td><td>ACC</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC CONST CONST</td><td>Original slot (00111111) used by JUMP_IF_NOT_UNDERFLOW_FLAG</td>
   </tr>
   <tr>
     <td>008</td><td>00001000</td><td>00</td><td>001</td><td>000</td><td></td><td></td><td>Copy</td><td>A</td><td>ACC</td><td></td><td></td><td>COPY</td><td>COPY A ACC</td><td></td>
@@ -99,10 +99,10 @@
     <td>013</td><td>00001101</td><td>00</td><td>001</td><td>101</td><td></td><td></td><td>Copy</td><td>A</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP A</td><td></td>
   </tr>
   <tr>
-    <td>014</td><td>00001110</td><td>00</td><td>001</td><td>110</td><td></td><td></td><td>Copy</td><td>A</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC A</td><td></td>
+    <td>014</td><td>00001110</td><td>00</td><td>001</td><td>110</td><td></td><td></td><td>Copy</td><td>A</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC A CONST</td><td></td>
   </tr>
   <tr>
-    <td>015</td><td>00001111</td><td>00</td><td>001</td><td>111</td><td></td><td></td><td>Copy</td><td>A</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC A</td><td></td>
+    <td>015</td><td>00001111</td><td>00</td><td>001</td><td>111</td><td></td><td></td><td>Copy</td><td>A</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC A CONST</td><td></td>
   </tr>
   <tr>
     <td>016</td><td>00010000</td><td>00</td><td>010</td><td>000</td><td></td><td></td><td>Copy</td><td>B</td><td>ACC</td><td></td><td></td><td>COPY</td><td>COPY B ACC</td><td></td>
@@ -123,10 +123,10 @@
     <td>021</td><td>00010101</td><td>00</td><td>010</td><td>101</td><td></td><td></td><td>Copy</td><td>B</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP B</td><td></td>
   </tr>
   <tr>
-    <td>022</td><td>00010110</td><td>00</td><td>010</td><td>110</td><td></td><td></td><td>Copy</td><td>B</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC B</td><td></td>
+    <td>022</td><td>00010110</td><td>00</td><td>010</td><td>110</td><td></td><td></td><td>Copy</td><td>B</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC B CONST</td><td></td>
   </tr>
   <tr>
-    <td>023</td><td>00010111</td><td>00</td><td>010</td><td>111</td><td></td><td></td><td>Copy</td><td>B</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC B</td><td></td>
+    <td>023</td><td>00010111</td><td>00</td><td>010</td><td>111</td><td></td><td></td><td>Copy</td><td>B</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC B CONST</td><td></td>
   </tr>
   <tr>
     <td>024</td><td>00011000</td><td>00</td><td>011</td><td>000</td><td></td><td></td><td>Copy</td><td>C</td><td>ACC</td><td></td><td></td><td>COPY</td><td>COPY C ACC</td><td></td>
@@ -147,10 +147,10 @@
     <td>029</td><td>00011101</td><td>00</td><td>011</td><td>101</td><td></td><td></td><td>Copy</td><td>C</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP C</td><td></td>
   </tr>
   <tr>
-    <td>030</td><td>00011110</td><td>00</td><td>011</td><td>110</td><td></td><td></td><td>Copy</td><td>C</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC C</td><td></td>
+    <td>030</td><td>00011110</td><td>00</td><td>011</td><td>110</td><td></td><td></td><td>Copy</td><td>C</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC C CONST</td><td></td>
   </tr>
   <tr>
-    <td>031</td><td>00011111</td><td>00</td><td>011</td><td>111</td><td></td><td></td><td>Copy</td><td>C</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC C</td><td></td>
+    <td>031</td><td>00011111</td><td>00</td><td>011</td><td>111</td><td></td><td></td><td>Copy</td><td>C</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC C CONST</td><td></td>
   </tr>
   <tr>
     <td>032</td><td>00100000</td><td>00</td><td>100</td><td>000</td><td></td><td></td><td>Copy</td><td>SP</td><td>ACC</td><td></td><td></td><td>COPY</td><td>COPY SP ACC</td><td></td>
@@ -171,10 +171,10 @@
     <td>037</td><td>00100101</td><td>00</td><td>100</td><td>101</td><td></td><td></td><td>Copy</td><td>SP</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP SP</td><td></td>
   </tr>
   <tr>
-    <td>038</td><td>00100110</td><td>00</td><td>100</td><td>110</td><td></td><td></td><td>Copy</td><td>SP</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC SP</td><td></td>
+    <td>038</td><td>00100110</td><td>00</td><td>100</td><td>110</td><td></td><td></td><td>Copy</td><td>SP</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC SP CONST</td><td></td>
   </tr>
   <tr>
-    <td>039</td><td>00100111</td><td>00</td><td>100</td><td>111</td><td></td><td></td><td>Copy</td><td>SP</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC SP</td><td></td>
+    <td>039</td><td>00100111</td><td>00</td><td>100</td><td>111</td><td></td><td></td><td>Copy</td><td>SP</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC SP CONST</td><td></td>
   </tr>
   <tr>
     <td>040</td><td>00101000</td><td>00</td><td>101</td><td>000</td><td></td><td></td><td>Copy</td><td>PC</td><td>ACC</td><td></td><td></td><td>COPY</td><td>COPY PC ACC</td><td></td>
@@ -195,34 +195,34 @@
     <td>045</td><td>00101101</td><td>00</td><td>101</td><td>101</td><td></td><td></td><td>Copy</td><td>PC</td><td>PC</td><td></td><td></td><td>JUMP_IF_NOT_OVERFLOW_FLAG</td><td>JUMP_IF_NOT_OVERFLOW_FLAG CONST</td><td></td>
   </tr>
   <tr>
-    <td>046</td><td>00101110</td><td>00</td><td>101</td><td>110</td><td></td><td></td><td>Copy</td><td>PC</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC PC</td><td></td>
+    <td>046</td><td>00101110</td><td>00</td><td>101</td><td>110</td><td></td><td></td><td>Copy</td><td>PC</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC PC CONST</td><td></td>
   </tr>
   <tr>
-    <td>047</td><td>00101111</td><td>00</td><td>101</td><td>111</td><td></td><td></td><td>Copy</td><td>PC</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC PC</td><td></td>
+    <td>047</td><td>00101111</td><td>00</td><td>101</td><td>111</td><td></td><td></td><td>Copy</td><td>PC</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ACC</td><td>JUMP_IF_EQ_ACC PC CONST</td><td></td>
   </tr>
   <tr>
     <td>048</td><td>00110000</td><td>00</td><td>110</td><td>000</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>ACC</td><td></td><td></td><td></td><td></td><td>No sense in comparing ACC to ACC</td>
   </tr>
   <tr>
-    <td>049</td><td>00110001</td><td>00</td><td>110</td><td>001</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>A</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC A</td><td></td>
+    <td>049</td><td>00110001</td><td>00</td><td>110</td><td>001</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>A</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC A CONST</td><td></td>
   </tr>
   <tr>
-    <td>050</td><td>00110010</td><td>00</td><td>110</td><td>010</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>B</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC B</td><td></td>
+    <td>050</td><td>00110010</td><td>00</td><td>110</td><td>010</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>B</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC B CONST</td><td></td>
   </tr>
   <tr>
-    <td>051</td><td>00110011</td><td>00</td><td>110</td><td>011</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>C</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC C</td><td></td>
+    <td>051</td><td>00110011</td><td>00</td><td>110</td><td>011</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>C</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC C CONST</td><td></td>
   </tr>
   <tr>
-    <td>052</td><td>00110100</td><td>00</td><td>110</td><td>100</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>SP</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC SP</td><td></td>
+    <td>052</td><td>00110100</td><td>00</td><td>110</td><td>100</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>SP</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC SP CONST</td><td></td>
   </tr>
   <tr>
-    <td>053</td><td>00110101</td><td>00</td><td>110</td><td>101</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>PC</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC PC</td><td></td>
+    <td>053</td><td>00110101</td><td>00</td><td>110</td><td>101</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>PC</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC PC CONST</td><td></td>
   </tr>
   <tr>
     <td>054</td><td>00110110</td><td>00</td><td>110</td><td>110</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_UNDERFLOW_FLAG</td><td>JUMP_IF_UNDERFLOW_FLAG CONST</td><td></td>
   </tr>
   <tr>
-    <td>055</td><td>00110111</td><td>00</td><td>110</td><td>111</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>CONST</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC CONST</td><td></td>
+    <td>055</td><td>00110111</td><td>00</td><td>110</td><td>111</td><td></td><td></td><td>Copy</td><td>SP+/-</td><td>CONST</td><td></td><td></td><td>JUMP_IF_LT_ACC</td><td>JUMP_IF_LT_ACC CONST CONST</td><td></td>
   </tr>
   <tr>
     <td>056</td><td>00111000</td><td>00</td><td>111</td><td>000</td><td></td><td></td><td>Copy</td><td>CONST</td><td>ACC</td><td></td><td></td><td>SET</td><td>SET ACC CONST</td><td></td>
@@ -243,7 +243,7 @@
     <td>061</td><td>00111101</td><td>00</td><td>111</td><td>101</td><td></td><td></td><td>Copy</td><td>CONST</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP CONST</td><td></td>
   </tr>
   <tr>
-    <td>062</td><td>00111110</td><td>00</td><td>111</td><td>110</td><td></td><td></td><td>Copy</td><td>CONST</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC CONST</td><td></td>
+    <td>062</td><td>00111110</td><td>00</td><td>111</td><td>110</td><td></td><td></td><td>Copy</td><td>CONST</td><td>SP+/-</td><td></td><td></td><td>JUMP_IF_LTE_ACC</td><td>JUMP_IF_LTE_ACC CONST CONST</td><td></td>
   </tr>
   <tr>
     <td>063</td><td>00111111</td><td>00</td><td>111</td><td>111</td><td></td><td></td><td>Copy</td><td>CONST</td><td>CONST</td><td></td><td></td><td>JUMP_IF_NOT_UNDERFLOW_FLAG</td><td>JUMP_IF_NOT_UNDERFLOW_FLAG CONST</td><td></td>
@@ -285,7 +285,7 @@
     <td>075</td><td>01001011</td><td>01</td><td>001</td><td>011</td><td></td><td></td><td>Load</td><td>A</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [A] C</td><td></td>
   </tr>
   <tr>
-    <td>076</td><td>01001100</td><td>01</td><td>001</td><td>100</td><td></td><td></td><td>Load</td><td>A</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC A</td><td></td>
+    <td>076</td><td>01001100</td><td>01</td><td>001</td><td>100</td><td></td><td></td><td>Load</td><td>A</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC A CONST</td><td></td>
   </tr>
   <tr>
     <td>077</td><td>01001101</td><td>01</td><td>001</td><td>101</td><td></td><td></td><td>Load</td><td>A</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [A]</td><td></td>
@@ -309,7 +309,7 @@
     <td>083</td><td>01010011</td><td>01</td><td>010</td><td>011</td><td></td><td></td><td>Load</td><td>B</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [B] C</td><td></td>
   </tr>
   <tr>
-    <td>084</td><td>01010100</td><td>01</td><td>010</td><td>100</td><td></td><td></td><td>Load</td><td>B</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC B</td><td></td>
+    <td>084</td><td>01010100</td><td>01</td><td>010</td><td>100</td><td></td><td></td><td>Load</td><td>B</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC B CONST</td><td></td>
   </tr>
   <tr>
     <td>085</td><td>01010101</td><td>01</td><td>010</td><td>101</td><td></td><td></td><td>Load</td><td>B</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [B]</td><td></td>
@@ -333,7 +333,7 @@
     <td>091</td><td>01011011</td><td>01</td><td>011</td><td>011</td><td></td><td></td><td>Load</td><td>C</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [C] C</td><td></td>
   </tr>
   <tr>
-    <td>092</td><td>01011100</td><td>01</td><td>011</td><td>100</td><td></td><td></td><td>Load</td><td>C</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC C</td><td></td>
+    <td>092</td><td>01011100</td><td>01</td><td>011</td><td>100</td><td></td><td></td><td>Load</td><td>C</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC C CONST</td><td></td>
   </tr>
   <tr>
     <td>093</td><td>01011101</td><td>01</td><td>011</td><td>101</td><td></td><td></td><td>Load</td><td>C</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [C]</td><td></td>
@@ -357,7 +357,7 @@
     <td>099</td><td>01100011</td><td>01</td><td>100</td><td>011</td><td></td><td></td><td>Load</td><td>SP</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [SP] C</td><td></td>
   </tr>
   <tr>
-    <td>100</td><td>01100100</td><td>01</td><td>100</td><td>100</td><td></td><td></td><td>Load</td><td>SP</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC SP</td><td></td>
+    <td>100</td><td>01100100</td><td>01</td><td>100</td><td>100</td><td></td><td></td><td>Load</td><td>SP</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC SP CONST</td><td></td>
   </tr>
   <tr>
     <td>101</td><td>01100101</td><td>01</td><td>100</td><td>101</td><td></td><td></td><td>Load</td><td>SP</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [SP]</td><td></td>
@@ -381,7 +381,7 @@
     <td>107</td><td>01101011</td><td>01</td><td>101</td><td>011</td><td></td><td></td><td>Load</td><td>PC</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [PC] C</td><td></td>
   </tr>
   <tr>
-    <td>108</td><td>01101100</td><td>01</td><td>101</td><td>100</td><td></td><td></td><td>Load</td><td>PC</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC PC</td><td></td>
+    <td>108</td><td>01101100</td><td>01</td><td>101</td><td>100</td><td></td><td></td><td>Load</td><td>PC</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC PC CONST</td><td></td>
   </tr>
   <tr>
     <td>109</td><td>01101101</td><td>01</td><td>101</td><td>101</td><td></td><td></td><td>Load</td><td>PC</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [PC]</td><td></td>
@@ -429,7 +429,7 @@
     <td>123</td><td>01111011</td><td>01</td><td>111</td><td>011</td><td></td><td></td><td>Load</td><td>CONST</td><td>C</td><td></td><td></td><td>LOAD</td><td>LOAD [CONST] C</td><td></td>
   </tr>
   <tr>
-    <td>124</td><td>01111100</td><td>01</td><td>111</td><td>100</td><td></td><td></td><td>Load</td><td>CONST</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC CONST</td><td></td>
+    <td>124</td><td>01111100</td><td>01</td><td>111</td><td>100</td><td></td><td></td><td>Load</td><td>CONST</td><td>SP</td><td></td><td></td><td>JUMP_IF_GTEQ_ACC</td><td>JUMP_IF_GTEQ_ACC CONST CONST</td><td></td>
   </tr>
   <tr>
     <td>125</td><td>01111101</td><td>01</td><td>111</td><td>101</td><td></td><td></td><td>Load</td><td>CONST</td><td>PC</td><td></td><td></td><td>JUMP</td><td>JUMP [CONST]</td><td></td>
@@ -537,28 +537,28 @@
     <td>159</td><td>10011111</td><td>10</td><td>011</td><td>111</td><td></td><td></td><td>Store</td><td>C</td><td>CONST</td><td></td><td></td><td>STORE</td><td>STORE C [CONST]</td><td></td>
   </tr>
   <tr>
-    <td>160</td><td>10100000</td><td>10</td><td>100</td><td>000</td><td></td><td></td><td>Store</td><td>SP</td><td>ACC</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO ACC</td><td></td>
+    <td>160</td><td>10100000</td><td>10</td><td>100</td><td>000</td><td></td><td></td><td>Store</td><td>SP</td><td>ACC</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO ACC CONST</td><td></td>
   </tr>
   <tr>
-    <td>161</td><td>10100001</td><td>10</td><td>100</td><td>001</td><td></td><td></td><td>Store</td><td>SP</td><td>A</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO A</td><td></td>
+    <td>161</td><td>10100001</td><td>10</td><td>100</td><td>001</td><td></td><td></td><td>Store</td><td>SP</td><td>A</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO A CONST</td><td></td>
   </tr>
   <tr>
-    <td>162</td><td>10100010</td><td>10</td><td>100</td><td>010</td><td></td><td></td><td>Store</td><td>SP</td><td>B</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO B</td><td></td>
+    <td>162</td><td>10100010</td><td>10</td><td>100</td><td>010</td><td></td><td></td><td>Store</td><td>SP</td><td>B</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO B CONST</td><td></td>
   </tr>
   <tr>
-    <td>163</td><td>10100011</td><td>10</td><td>100</td><td>011</td><td></td><td></td><td>Store</td><td>SP</td><td>C</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO C</td><td></td>
+    <td>163</td><td>10100011</td><td>10</td><td>100</td><td>011</td><td></td><td></td><td>Store</td><td>SP</td><td>C</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO C CONST</td><td></td>
   </tr>
   <tr>
-    <td>164</td><td>10100100</td><td>10</td><td>100</td><td>100</td><td></td><td></td><td>Store</td><td>SP</td><td>SP</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO SP</td><td></td>
+    <td>164</td><td>10100100</td><td>10</td><td>100</td><td>100</td><td></td><td></td><td>Store</td><td>SP</td><td>SP</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO SP CONST</td><td></td>
   </tr>
   <tr>
-    <td>165</td><td>10100101</td><td>10</td><td>100</td><td>101</td><td></td><td></td><td>Store</td><td>SP</td><td>PC</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO PC</td><td></td>
+    <td>165</td><td>10100101</td><td>10</td><td>100</td><td>101</td><td></td><td></td><td>Store</td><td>SP</td><td>PC</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO PC CONST</td><td></td>
   </tr>
   <tr>
     <td>166</td><td>10100110</td><td>10</td><td>100</td><td>110</td><td></td><td></td><td>Store</td><td>SP</td><td>SP+/-</td><td></td><td></td><td></td><td></td><td>No sense in comparing SP+/- to zero</td>
   </tr>
   <tr>
-    <td>167</td><td>10100111</td><td>10</td><td>100</td><td>111</td><td></td><td></td><td>Store</td><td>SP</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO CONST</td><td></td>
+    <td>167</td><td>10100111</td><td>10</td><td>100</td><td>111</td><td></td><td></td><td>Store</td><td>SP</td><td>CONST</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO CONST CONST</td><td></td>
   </tr>
   <tr>
     <td>168</td><td>10101000</td><td>10</td><td>101</td><td>000</td><td></td><td></td><td>Store</td><td>PC</td><td>ACC</td><td></td><td></td><td>STORE</td><td>STORE PC [ACC]</td><td></td>
@@ -588,25 +588,25 @@
     <td>176</td><td>10110000</td><td>10</td><td>110</td><td>000</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>ACC</td><td></td><td></td><td></td><td></td><td>No sense in comparing ACC to ACC</td>
   </tr>
   <tr>
-    <td>177</td><td>10110001</td><td>10</td><td>110</td><td>001</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>A</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC A</td><td></td>
+    <td>177</td><td>10110001</td><td>10</td><td>110</td><td>001</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>A</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC A CONST</td><td></td>
   </tr>
   <tr>
-    <td>178</td><td>10110010</td><td>10</td><td>110</td><td>010</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>B</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC B</td><td></td>
+    <td>178</td><td>10110010</td><td>10</td><td>110</td><td>010</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>B</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC B CONST</td><td></td>
   </tr>
   <tr>
-    <td>179</td><td>10110011</td><td>10</td><td>110</td><td>011</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>C</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC C</td><td></td>
+    <td>179</td><td>10110011</td><td>10</td><td>110</td><td>011</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>C</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC C CONST</td><td></td>
   </tr>
   <tr>
-    <td>180</td><td>10110100</td><td>10</td><td>110</td><td>100</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>SP</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC SP</td><td></td>
+    <td>180</td><td>10110100</td><td>10</td><td>110</td><td>100</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>SP</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC SP CONST</td><td></td>
   </tr>
   <tr>
-    <td>181</td><td>10110101</td><td>10</td><td>110</td><td>101</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>PC</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC PC</td><td></td>
+    <td>181</td><td>10110101</td><td>10</td><td>110</td><td>101</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>PC</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC PC CONST</td><td></td>
   </tr>
   <tr>
     <td>182</td><td>10110110</td><td>10</td><td>110</td><td>110</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>SP+/-</td><td></td><td></td><td>HALT</td><td>HALT</td><td>No sense in comparing ACC to SP+/-</td>
   </tr>
   <tr>
-    <td>183</td><td>10110111</td><td>10</td><td>110</td><td>111</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>CONST</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC CONST</td><td></td>
+    <td>183</td><td>10110111</td><td>10</td><td>110</td><td>111</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>CONST</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC CONST CONST</td><td></td>
   </tr>
   <tr>
     <td>184</td><td>10111000</td><td>10</td><td>111</td><td>000</td><td></td><td></td><td>Store</td><td>CONST</td><td>ACC</td><td></td><td></td><td>PROGSTORE</td><td>PROGSTORE [ACC]</td><td></td>
@@ -633,7 +633,7 @@
     <td>191</td><td>10111111</td><td>10</td><td>111</td><td>111</td><td></td><td></td><td>Store</td><td>CONST</td><td>CONST</td><td></td><td></td><td>PROGSTORE</td><td>PROGSTORE [CONST]</td><td></td>
   </tr>
   <tr>
-    <td>192</td><td>11000000</td><td>11</td><td></td><td></td><td>0000</td><td>00</td><td>ALU</td><td></td><td></td><td>SET_ZERO</td><td>ACC</td><td>SET_ZERO</td><td>SET_ZERO ACC</td><td></td>
+    <td>192</td><td>11000000</td><td>11</td><td></td><td></td><td>0000</td><td>00</td><td>ALU</td><td></td><td></td><td>SET_ZERO</td><td>ACC/CONST</td><td>SET_ZERO</td><td>SET_ZERO ACC</td><td></td>
   </tr>
   <tr>
     <td>193</td><td>11000001</td><td>11</td><td></td><td></td><td>0000</td><td>01</td><td>ALU</td><td></td><td></td><td>SET_ZERO</td><td>A</td><td>SET_ZERO</td><td>SET_ZERO A</td><td></td>
@@ -645,7 +645,7 @@
     <td>195</td><td>11000011</td><td>11</td><td></td><td></td><td>0000</td><td>11</td><td>ALU</td><td></td><td></td><td>SET_ZERO</td><td>C</td><td>SET_ZERO</td><td>SET_ZERO C</td><td></td>
   </tr>
   <tr>
-    <td>196</td><td>11000100</td><td>11</td><td></td><td></td><td>0001</td><td>00</td><td>ALU</td><td></td><td></td><td>INCR</td><td>ACC</td><td>INCR</td><td>INCR ACC</td><td></td>
+    <td>196</td><td>11000100</td><td>11</td><td></td><td></td><td>0001</td><td>00</td><td>ALU</td><td></td><td></td><td>INCR</td><td>ACC/CONST</td><td>INCR</td><td>INCR ACC</td><td></td>
   </tr>
   <tr>
     <td>197</td><td>11000101</td><td>11</td><td></td><td></td><td>0001</td><td>01</td><td>ALU</td><td></td><td></td><td>INCR</td><td>A</td><td>INCR</td><td>INCR A</td><td></td>
@@ -657,7 +657,7 @@
     <td>199</td><td>11000111</td><td>11</td><td></td><td></td><td>0001</td><td>11</td><td>ALU</td><td></td><td></td><td>INCR</td><td>C</td><td>INCR</td><td>INCR C</td><td></td>
   </tr>
   <tr>
-    <td>200</td><td>11001000</td><td>11</td><td></td><td></td><td>0010</td><td>00</td><td>ALU</td><td></td><td></td><td>DECR</td><td>ACC</td><td>DECR</td><td>DECR ACC</td><td></td>
+    <td>200</td><td>11001000</td><td>11</td><td></td><td></td><td>0010</td><td>00</td><td>ALU</td><td></td><td></td><td>DECR</td><td>ACC/CONST</td><td>DECR</td><td>DECR ACC</td><td></td>
   </tr>
   <tr>
     <td>201</td><td>11001001</td><td>11</td><td></td><td></td><td>0010</td><td>01</td><td>ALU</td><td></td><td></td><td>DECR</td><td>A</td><td>DECR</td><td>DECR A</td><td></td>
@@ -669,7 +669,7 @@
     <td>203</td><td>11001011</td><td>11</td><td></td><td></td><td>0010</td><td>11</td><td>ALU</td><td></td><td></td><td>DECR</td><td>C</td><td>DECR</td><td>DECR C</td><td></td>
   </tr>
   <tr>
-    <td>204</td><td>11001100</td><td>11</td><td></td><td></td><td>0011</td><td>00</td><td>ALU</td><td></td><td></td><td>ADD</td><td>ACC</td><td>ADD</td><td>ADD ACC</td><td></td>
+    <td>204</td><td>11001100</td><td>11</td><td></td><td></td><td>0011</td><td>00</td><td>ALU</td><td></td><td></td><td>ADD</td><td>ACC/CONST</td><td>ADD</td><td>ADD CONST</td><td></td>
   </tr>
   <tr>
     <td>205</td><td>11001101</td><td>11</td><td></td><td></td><td>0011</td><td>01</td><td>ALU</td><td></td><td></td><td>ADD</td><td>A</td><td>ADD</td><td>ADD A</td><td></td>
@@ -681,7 +681,7 @@
     <td>207</td><td>11001111</td><td>11</td><td></td><td></td><td>0011</td><td>11</td><td>ALU</td><td></td><td></td><td>ADD</td><td>C</td><td>ADD</td><td>ADD C</td><td></td>
   </tr>
   <tr>
-    <td>208</td><td>11010000</td><td>11</td><td></td><td></td><td>0100</td><td>00</td><td>ALU</td><td></td><td></td><td>ADDC</td><td>ACC</td><td>ADDC</td><td>ADDC ACC</td><td></td>
+    <td>208</td><td>11010000</td><td>11</td><td></td><td></td><td>0100</td><td>00</td><td>ALU</td><td></td><td></td><td>ADDC</td><td>ACC/CONST</td><td>ADDC</td><td>ADDC CONST</td><td></td>
   </tr>
   <tr>
     <td>209</td><td>11010001</td><td>11</td><td></td><td></td><td>0100</td><td>01</td><td>ALU</td><td></td><td></td><td>ADDC</td><td>A</td><td>ADDC</td><td>ADDC A</td><td></td>
@@ -693,7 +693,7 @@
     <td>211</td><td>11010011</td><td>11</td><td></td><td></td><td>0100</td><td>11</td><td>ALU</td><td></td><td></td><td>ADDC</td><td>C</td><td>ADDC</td><td>ADDC C</td><td></td>
   </tr>
   <tr>
-    <td>212</td><td>11010100</td><td>11</td><td></td><td></td><td>0101</td><td>00</td><td>ALU</td><td></td><td></td><td>SUB</td><td>ACC</td><td>SUB</td><td>SUB ACC</td><td></td>
+    <td>212</td><td>11010100</td><td>11</td><td></td><td></td><td>0101</td><td>00</td><td>ALU</td><td></td><td></td><td>SUB</td><td>ACC/CONST</td><td>SUB</td><td>SUB CONST</td><td></td>
   </tr>
   <tr>
     <td>213</td><td>11010101</td><td>11</td><td></td><td></td><td>0101</td><td>01</td><td>ALU</td><td></td><td></td><td>SUB</td><td>A</td><td>SUB</td><td>SUB A</td><td></td>
@@ -705,7 +705,7 @@
     <td>215</td><td>11010111</td><td>11</td><td></td><td></td><td>0101</td><td>11</td><td>ALU</td><td></td><td></td><td>SUB</td><td>C</td><td>SUB</td><td>SUB C</td><td></td>
   </tr>
   <tr>
-    <td>216</td><td>11011000</td><td>11</td><td></td><td></td><td>0110</td><td>00</td><td>ALU</td><td></td><td></td><td>SUBB</td><td>ACC</td><td>SUBB</td><td>SUBB ACC</td><td></td>
+    <td>216</td><td>11011000</td><td>11</td><td></td><td></td><td>0110</td><td>00</td><td>ALU</td><td></td><td></td><td>SUBB</td><td>ACC/CONST</td><td>SUBB</td><td>SUBB CONST</td><td></td>
   </tr>
   <tr>
     <td>217</td><td>11011001</td><td>11</td><td></td><td></td><td>0110</td><td>01</td><td>ALU</td><td></td><td></td><td>SUBB</td><td>A</td><td>SUBB</td><td>SUBB A</td><td></td>
@@ -717,7 +717,7 @@
     <td>219</td><td>11011011</td><td>11</td><td></td><td></td><td>0110</td><td>11</td><td>ALU</td><td></td><td></td><td>SUBB</td><td>C</td><td>SUBB</td><td>SUBB C</td><td></td>
   </tr>
   <tr>
-    <td>220</td><td>11011100</td><td>11</td><td></td><td></td><td>0111</td><td>00</td><td>ALU</td><td></td><td></td><td>AND</td><td>ACC</td><td>AND</td><td>AND ACC</td><td></td>
+    <td>220</td><td>11011100</td><td>11</td><td></td><td></td><td>0111</td><td>00</td><td>ALU</td><td></td><td></td><td>AND</td><td>ACC/CONST</td><td>AND</td><td>AND CONST</td><td></td>
   </tr>
   <tr>
     <td>221</td><td>11011101</td><td>11</td><td></td><td></td><td>0111</td><td>01</td><td>ALU</td><td></td><td></td><td>AND</td><td>A</td><td>AND</td><td>AND A</td><td></td>
@@ -729,7 +729,7 @@
     <td>223</td><td>11011111</td><td>11</td><td></td><td></td><td>0111</td><td>11</td><td>ALU</td><td></td><td></td><td>AND</td><td>C</td><td>AND</td><td>AND C</td><td></td>
   </tr>
   <tr>
-    <td>224</td><td>11100000</td><td>11</td><td></td><td></td><td>1000</td><td>00</td><td>ALU</td><td></td><td></td><td>NAND</td><td>ACC</td><td>NAND</td><td>NAND ACC</td><td></td>
+    <td>224</td><td>11100000</td><td>11</td><td></td><td></td><td>1000</td><td>00</td><td>ALU</td><td></td><td></td><td>NAND</td><td>ACC/CONST</td><td>NAND</td><td>NAND CONST</td><td></td>
   </tr>
   <tr>
     <td>225</td><td>11100001</td><td>11</td><td></td><td></td><td>1000</td><td>01</td><td>ALU</td><td></td><td></td><td>NAND</td><td>A</td><td>NAND</td><td>NAND A</td><td></td>
@@ -741,7 +741,7 @@
     <td>227</td><td>11100011</td><td>11</td><td></td><td></td><td>1000</td><td>11</td><td>ALU</td><td></td><td></td><td>NAND</td><td>C</td><td>NAND</td><td>NAND C</td><td></td>
   </tr>
   <tr>
-    <td>228</td><td>11100100</td><td>11</td><td></td><td></td><td>1001</td><td>00</td><td>ALU</td><td></td><td></td><td>OR</td><td>ACC</td><td>OR</td><td>OR ACC</td><td></td>
+    <td>228</td><td>11100100</td><td>11</td><td></td><td></td><td>1001</td><td>00</td><td>ALU</td><td></td><td></td><td>OR</td><td>ACC/CONST</td><td>OR</td><td>OR CONST</td><td></td>
   </tr>
   <tr>
     <td>229</td><td>11100101</td><td>11</td><td></td><td></td><td>1001</td><td>01</td><td>ALU</td><td></td><td></td><td>OR</td><td>A</td><td>OR</td><td>OR A</td><td></td>
@@ -753,7 +753,7 @@
     <td>231</td><td>11100111</td><td>11</td><td></td><td></td><td>1001</td><td>11</td><td>ALU</td><td></td><td></td><td>OR</td><td>C</td><td>OR</td><td>OR C</td><td></td>
   </tr>
   <tr>
-    <td>232</td><td>11101000</td><td>11</td><td></td><td></td><td>1010</td><td>00</td><td>ALU</td><td></td><td></td><td>NOR</td><td>ACC</td><td>NOR</td><td>NOR ACC</td><td></td>
+    <td>232</td><td>11101000</td><td>11</td><td></td><td></td><td>1010</td><td>00</td><td>ALU</td><td></td><td></td><td>NOR</td><td>ACC/CONST</td><td>NOR</td><td>NOR CONST</td><td></td>
   </tr>
   <tr>
     <td>233</td><td>11101001</td><td>11</td><td></td><td></td><td>1010</td><td>01</td><td>ALU</td><td></td><td></td><td>NOR</td><td>A</td><td>NOR</td><td>NOR A</td><td></td>
@@ -765,7 +765,7 @@
     <td>235</td><td>11101011</td><td>11</td><td></td><td></td><td>1010</td><td>11</td><td>ALU</td><td></td><td></td><td>NOR</td><td>C</td><td>NOR</td><td>NOR C</td><td></td>
   </tr>
   <tr>
-    <td>236</td><td>11101100</td><td>11</td><td></td><td></td><td>1011</td><td>00</td><td>ALU</td><td></td><td></td><td>XOR</td><td>ACC</td><td>XOR</td><td>XOR ACC</td><td></td>
+    <td>236</td><td>11101100</td><td>11</td><td></td><td></td><td>1011</td><td>00</td><td>ALU</td><td></td><td></td><td>XOR</td><td>ACC/CONST</td><td>XOR</td><td>XOR CONST</td><td></td>
   </tr>
   <tr>
     <td>237</td><td>11101101</td><td>11</td><td></td><td></td><td>1011</td><td>01</td><td>ALU</td><td></td><td></td><td>XOR</td><td>A</td><td>XOR</td><td>XOR A</td><td></td>
@@ -777,7 +777,7 @@
     <td>239</td><td>11101111</td><td>11</td><td></td><td></td><td>1011</td><td>11</td><td>ALU</td><td></td><td></td><td>XOR</td><td>C</td><td>XOR</td><td>XOR C</td><td></td>
   </tr>
   <tr>
-    <td>240</td><td>11110000</td><td>11</td><td></td><td></td><td>1100</td><td>00</td><td>ALU</td><td></td><td></td><td>NXOR</td><td>ACC</td><td>NXOR</td><td>NXOR ACC</td><td></td>
+    <td>240</td><td>11110000</td><td>11</td><td></td><td></td><td>1100</td><td>00</td><td>ALU</td><td></td><td></td><td>NXOR</td><td>ACC/CONST</td><td>NXOR</td><td>NXOR CONST</td><td></td>
   </tr>
   <tr>
     <td>241</td><td>11110001</td><td>11</td><td></td><td></td><td>1100</td><td>01</td><td>ALU</td><td></td><td></td><td>NXOR</td><td>A</td><td>NXOR</td><td>NXOR A</td><td></td>
@@ -789,7 +789,7 @@
     <td>243</td><td>11110011</td><td>11</td><td></td><td></td><td>1100</td><td>11</td><td>ALU</td><td></td><td></td><td>NXOR</td><td>C</td><td>NXOR</td><td>NXOR C</td><td></td>
   </tr>
   <tr>
-    <td>244</td><td>11110100</td><td>11</td><td></td><td></td><td>1101</td><td>00</td><td>ALU</td><td></td><td></td><td>NOT</td><td>ACC</td><td>NOT</td><td>NOT ACC</td><td></td>
+    <td>244</td><td>11110100</td><td>11</td><td></td><td></td><td>1101</td><td>00</td><td>ALU</td><td></td><td></td><td>NOT</td><td>ACC/CONST</td><td>NOT</td><td>NOT ACC</td><td></td>
   </tr>
   <tr>
     <td>245</td><td>11110101</td><td>11</td><td></td><td></td><td>1101</td><td>01</td><td>ALU</td><td></td><td></td><td>NOT</td><td>A</td><td>NOT</td><td>NOT A</td><td></td>
@@ -801,7 +801,7 @@
     <td>247</td><td>11110111</td><td>11</td><td></td><td></td><td>1101</td><td>11</td><td>ALU</td><td></td><td></td><td>NOT</td><td>C</td><td>NOT</td><td>NOT C</td><td></td>
   </tr>
   <tr>
-    <td>248</td><td>11111000</td><td>11</td><td></td><td></td><td>1110</td><td>00</td><td>ALU</td><td></td><td></td><td>LSHIFT</td><td>ACC</td><td>LSHIFT</td><td>LSHIFT ACC</td><td></td>
+    <td>248</td><td>11111000</td><td>11</td><td></td><td></td><td>1110</td><td>00</td><td>ALU</td><td></td><td></td><td>LSHIFT</td><td>ACC/CONST</td><td>LSHIFT</td><td>LSHIFT ACC</td><td></td>
   </tr>
   <tr>
     <td>249</td><td>11111001</td><td>11</td><td></td><td></td><td>1110</td><td>01</td><td>ALU</td><td></td><td></td><td>LSHIFT</td><td>A</td><td>LSHIFT</td><td>LSHIFT A</td><td></td>
@@ -813,7 +813,7 @@
     <td>251</td><td>11111011</td><td>11</td><td></td><td></td><td>1110</td><td>11</td><td>ALU</td><td></td><td></td><td>LSHIFT</td><td>C</td><td>LSHIFT</td><td>LSHIFT C</td><td></td>
   </tr>
   <tr>
-    <td>252</td><td>11111100</td><td>11</td><td></td><td></td><td>1111</td><td>00</td><td>ALU</td><td></td><td></td><td>LSHIFTC</td><td>ACC</td><td>LSHIFTC</td><td>LSHIFTC ACC</td><td></td>
+    <td>252</td><td>11111100</td><td>11</td><td></td><td></td><td>1111</td><td>00</td><td>ALU</td><td></td><td></td><td>LSHIFTC</td><td>ACC/CONST</td><td>LSHIFTC</td><td>LSHIFTC ACC</td><td></td>
   </tr>
   <tr>
     <td>253</td><td>11111101</td><td>11</td><td></td><td></td><td>1111</td><td>01</td><td>ALU</td><td></td><td></td><td>LSHIFTC</td><td>A</td><td>LSHIFTC</td><td>LSHIFTC A</td><td></td>

@@ -17,13 +17,19 @@ def get_all_operations():
     """
 
     from . import (
+        add,
         copy_op,
         load,
         set_op,
+        jump,
+        jump_if_overflow_flag,
     )
 
     return [
+        add,
         copy_op,
         load,
         set_op,
+        jump,
+        jump_if_overflow_flag,
     ]

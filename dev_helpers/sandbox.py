@@ -1,5 +1,9 @@
+import sys
+import os
 from pprint import pprint
 
+sys.path.append(os.path.abspath("../src"))
+print sys.path
 from eight_bit_computer import rom, main
 
 
@@ -87,7 +91,7 @@ def dict_ref_test_2():
 
 
 def assemble_test():
-    main.assemble("../../programs/dummy.asm")
+    main.assemble("../programs/fibbonaci.asm")
 
 if __name__ == "__main__":
     # sandbox()
@@ -95,3 +99,4 @@ if __name__ == "__main__":
     # dict_ref_test()
     # dict_ref_test_2()
     assemble_test()
+    # main.create_roms(directory="./test_roms")

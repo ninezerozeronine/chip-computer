@@ -16,7 +16,7 @@ import os
 import sys
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath('../src/python'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 
 # -- Project information -----------------------------------------------------
@@ -45,6 +45,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
+    'sphinxarg.ext.',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -195,7 +196,7 @@ def run_apidoc(_):
     import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
     cur_dir = os.path.abspath(os.path.dirname(__file__))
-    module = os.path.join(cur_dir, "..", "src", "python", "eight_bit_computer")
+    module = os.path.join(cur_dir, "..", "src", "eight_bit_computer")
     output_dir = os.path.join(cur_dir, "software", "source")
     main(["--separate", "--force", "--no-toc", "--output-dir", output_dir, module])
 

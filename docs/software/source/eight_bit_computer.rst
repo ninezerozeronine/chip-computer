@@ -17,6 +17,7 @@ Submodules
    eight_bit_computer.assembly_summary
    eight_bit_computer.assembly_validity
    eight_bit_computer.bitdef
+   eight_bit_computer.cli
    eight_bit_computer.data_structures
    eight_bit_computer.exceptions
    eight_bit_computer.export

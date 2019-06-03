@@ -85,7 +85,7 @@ def add_quotes_to_strings(strings):
     return pretty_strings
 
 
-def match_and_parse_line(line, opcode, op_args_defs=None):
+def match_and_parse_line(line, opcode, signatures=None):
     """
     Examine assembly code to see if it is valid and parse the arguments.
 
@@ -94,7 +94,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
     Args:
         line (str): The line of assembly code.
         opcode (str): The opcode this line is being tested to match.
-        op_args_defs (list(list(dict)), optional): Data structure that
+        signatures (list(list(dict)), optional): Data structure that
             defines the different combinations of arguments. See
             :func:`~.get_arg_def_template` for more details.
 
@@ -108,8 +108,8 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
         arguments weren't valid for that assembly operation).
     """
 
-    if op_args_defs is None:
-        op_args_defs = []
+    if signatures is None:
+        signatures = []
 
     line_tokens = token_utils.get_tokens_from_line(line)
 
@@ -124,13 +124,13 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
 
     # Return early if this op code has no args
     line_args = line_tokens[1:]
-    if not line_args and not op_args_defs:
+    if not line_args and not signatures:
         return True, []
 
     match = False
-    for op_args_def in op_args_defs:
+    for signature in signatures:
         args_are_correct, parsed_args = match_and_parse_args(
-            line_args, op_args_def
+            line_args, signature
         )
         if args_are_correct:
             if match:
@@ -143,7 +143,7 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
                 ret_args = parsed_args
 
     if not match:
-        poss_args_list = generate_possible_arg_list(op_args_defs)
+        poss_args_list = generate_possible_signatures_list(signatures)
         poss_args_quotes_list = [
             add_quotes_to_strings(poss_args) for poss_args in poss_args_list
         ]
@@ -162,12 +162,12 @@ def match_and_parse_line(line, opcode, op_args_defs=None):
     return True, ret_args
 
 
-def generate_possible_arg_list(op_args_defs):
+def generate_possible_signatures_list(signatures):
     """
-    Create a readable list of all possible argument combinations.
+    Create a readable list of all possible signatures.
 
     Args:
-        op_args_defs (list(list(dict))): Data structure that defines
+        signatures (list(list(dict))): Data structure that defines
             the different combinations of arguments. See
             :func:`~.get_arg_def_template` for more details.
     Returns:
@@ -175,22 +175,22 @@ def generate_possible_arg_list(op_args_defs):
     """
 
     arg_possibilities = []
-    for op_args_def in op_args_defs:
+    for signature in signatures:
         args = []
-        for op_arg_def in op_args_def:
+        for arg_def in signature:
             arg = ""
-            if op_arg_def["value_type"] == "module_name":
-                arg = op_arg_def["value"]
-            if op_arg_def["value_type"] == "constant":
+            if arg_def["value_type"] == "module_name":
+                arg = arg_def["value"]
+            if arg_def["value_type"] == "constant":
                 arg = "<constant>"
-            if op_arg_def["is_memory_location"]:
+            if arg_def["is_memory_location"]:
                 arg = token_utils.represent_as_memory_index(arg)
             args.append(arg)
         arg_possibilities.append(args)
     return arg_possibilities
 
 
-def match_and_parse_args(line_args, op_args_def):
+def match_and_parse_args(line_args, signature):
     """
     Parse assembly operation args if they match the definition.
 
@@ -200,7 +200,7 @@ def match_and_parse_args(line_args, op_args_def):
     Args:
         line_args: (list(str)): The arguments supplied for this assembly
             operation.
-        op_args_def (list(dict)): Definition of a set of arguments. See
+        signature (list(dict)): Definition of a set of arguments. See
             :func:`~.get_arg_def_template` for more details.
 
     Returns:
@@ -212,48 +212,48 @@ def match_and_parse_args(line_args, op_args_def):
             different kinds of argument definitions.
     """
 
-    if len(line_args) != len(op_args_def):
+    if len(line_args) != len(signature):
         return False, []
 
     parsed_args = []
-    for line_arg, op_arg_def in zip(line_args, op_args_def):
+    for line_arg, arg_def in zip(line_args, signature):
         num_matches = 0
         # If the argument is a plain module name
-        if (op_arg_def["value_type"] == "module_name"
-                and not op_arg_def["is_memory_location"]
+        if (arg_def["value_type"] == "module_name"
+                and not arg_def["is_memory_location"]
                 and not token_utils.is_memory_index(line_arg)
-                and line_arg == op_arg_def["value"]):
-            parsed_arg = deepcopy(op_arg_def)
+                and line_arg == arg_def["value"]):
+            parsed_arg = deepcopy(arg_def)
             parsed_args.append(parsed_arg)
             num_matches += 1
 
         # If the argument is a module name indexing memory
-        if (op_arg_def["value_type"] == "module_name"
-                and op_arg_def["is_memory_location"]
+        if (arg_def["value_type"] == "module_name"
+                and arg_def["is_memory_location"]
                 and token_utils.is_memory_index(line_arg)):
             memory_position = token_utils.extract_memory_position(line_arg)
-            if memory_position == op_arg_def["value"]:
-                parsed_arg = deepcopy(op_arg_def)
+            if memory_position == arg_def["value"]:
+                parsed_arg = deepcopy(arg_def)
                 parsed_args.append(parsed_arg)
                 num_matches += 1
 
         # If the argument is a plain constant
-        if (op_arg_def["value_type"] == "constant"
-                and not op_arg_def["is_memory_location"]
+        if (arg_def["value_type"] == "constant"
+                and not arg_def["is_memory_location"]
                 and not token_utils.is_memory_index(line_arg)
                 and token_utils.is_constant(line_arg)):
-            parsed_arg = deepcopy(op_arg_def)
+            parsed_arg = deepcopy(arg_def)
             parsed_arg["value"] = line_arg
             parsed_args.append(parsed_arg)
             num_matches += 1
 
         # If the argument is a constant indexing memory
-        if (op_arg_def["value_type"] == "constant"
-                and op_arg_def["is_memory_location"]
+        if (arg_def["value_type"] == "constant"
+                and arg_def["is_memory_location"]
                 and token_utils.is_memory_index(line_arg)):
             memory_position = token_utils.extract_memory_position(line_arg)
             if token_utils.is_constant(memory_position):
-                parsed_arg = deepcopy(op_arg_def)
+                parsed_arg = deepcopy(arg_def)
                 parsed_arg["value"] = memory_position
                 parsed_args.append(parsed_arg)
                 num_matches += 1

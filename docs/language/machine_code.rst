@@ -164,3 +164,15 @@ These "instruction byte gaps" are:
 +---------------------+---------------------------------------------------------------------------------------+------------------+
 | ``10111...``        | Storing a constant value. Instead Set a register and store.                           | PROGRAM_STORE    |
 +---------------------+---------------------------------------------------------------------------------------+------------------+
+
+Fetch
+-----
+
+To execute an instruction, the instruction byte must be loaded from program
+memory into the instruction register.
+
+This is handled by the first two steps of every instruction which:
+
+- Load the program counter into the memory address register.
+- Load the instruction register with the data from program memory at increment
+  the program counter ready for the next instruction.
