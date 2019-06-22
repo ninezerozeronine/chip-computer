@@ -26,13 +26,13 @@ in `docs`. This also runs the apidoc command on build with a convenience functio
 
 To run the tests, run:
 
-    tox -e test
+    tox
 
 in the root directory.
 
 Run:
 
-    tox -e test -- -m "not slow"
+    tox -- -m "not slow"
 
 To avoid the slow checks.
 
