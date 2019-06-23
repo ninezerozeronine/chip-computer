@@ -25,11 +25,11 @@ def test_width(test_input, expected):
     assert test_input.width == expected
 
 
-def get_ports_data():
+def gen_ports_data():
     tests = []
 
     conn = Connection()
-    tests.append(conn, [])
+    tests.append((conn, []))
 
     return tests
 
@@ -39,7 +39,7 @@ def test_ports(test_input, expected):
     assert True
 
 
-def get_ports_in_contention_data():
+def gen_ports_in_contention_data():
     """
     Test data for the process line test
     """
@@ -87,6 +87,6 @@ def get_ports_in_contention_data():
     return tests
 
 
-@pytest.mark.parametrize("test_input,expected", get_ports_in_contention_data())
+@pytest.mark.parametrize("test_input,expected", gen_ports_in_contention_data())
 def test_ports_in_contention(test_input, expected):
     assert test_input.ports_in_contention() is expected
