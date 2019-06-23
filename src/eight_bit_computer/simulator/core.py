@@ -9,13 +9,17 @@ MODE = {
     "OUTPUT": 1,
     "NC": 2,
 }
-
+"""
+Possible modes a channel can be in.
+"""
 
 STATE = {
     "LOW": 0,
     "HIGH": 1,
 }
-
+"""
+Possible states a channel can be in.
+"""
 
 class Channel(object):
     """
@@ -23,6 +27,12 @@ class Channel(object):
     """
 
     def __init__(self, mode=MODE["NC"]):
+        """
+        Initialise the Channel.
+
+        Args:
+            mode (int): The mode for the channel.
+        """
         self.mode = mode
         self.state = STATE["LOW"]
 
@@ -60,7 +70,7 @@ class Channel(object):
 
     def randomise_state(self):
         """
-
+        Randomise the state of the channel.
         """
         self.state = random.choice([STATE["HIGH"], STATE["LOW"]])
 
@@ -71,6 +81,14 @@ class Port(object):
     """
 
     def __init__(self, name, channels=None):
+        """
+        Initialise the Port.
+
+        Args:
+            name (str): Name of the port.
+            channels (list(Channel)) (optional): List of channels for
+                this port to communicate over.
+        """
         self.name = name
         self._width = 0
         if channels is None:
@@ -134,14 +152,17 @@ class Port(object):
 
     def set_all_modes(self, mode):
         """
+        Set the modes of all the channels in the port
 
+        Args:
+            mode (int): The mode to set all the ports to.
         """
         for channel in self.channels:
             channel.mode = mode
 
     def randomise_states(self):
         """
-
+        Randomise the state of all the channels in the port.
         """
         for channel in self.channels:
             channel.randomise_state()
@@ -149,7 +170,7 @@ class Port(object):
 
 class Connection(object):
     """
-    A connection between to or more modules
+    A connection between to or more Ports
     """
     def __init__(self, ports=None):
         """
@@ -185,6 +206,7 @@ class Connection(object):
     def ports(self, ports):
         if not ports:
             self._ports = []
+            self.width = 0
         elif all_ports_same_width(ports):
             self._ports = ports
             self.width = ports[0].width
@@ -226,7 +248,7 @@ class Connection(object):
 
         return False
 
-    def propagate_to_inputs(self):
+    def propagate(self):
         """
         Update value of any inputs in the connection
         """
@@ -258,7 +280,7 @@ class Connection(object):
 
 class Module(object):
     """
-
+    Base class for modules in the simulation.
     """
 
     def __init__(self, name):
@@ -266,7 +288,7 @@ class Module(object):
         Initialise the class
 
         Args:
-            name (str): The name of this module
+            name (str): The name of this module.
         """
         self.name = name
 
@@ -301,22 +323,21 @@ def all_ports_same_width(ports):
     return True
 
 
-def eight_bit_port(name, mode=MODE["NC"]):
+def create_port(name, mode=MODE["NC"], width=8):
     """
+    Convenience method to create an eight bit port.
 
+    Args:
+        name (str) (optional): Name of the port.
+        width (int) (optional): Number of channels in the port.
+    Returns:
+        Port: Created port.
     """
 
     channels = []
-    for _ in range(8):
+    for _ in range(width):
         channels.append(Channel(mode=mode))
     return Port(name, channels=channels)
-
-
-def one_bit_port(name, mode=MODE["NC"]):
-    """
-
-    """
-    return Port(name, channels=[Channel(mode=mode)])
 
 
 

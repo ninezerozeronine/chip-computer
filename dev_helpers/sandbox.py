@@ -199,7 +199,7 @@ class SimpleSim(object):
     def update(self):
         for connection in self.connections:
             for port in connection.ports:
-                connection.propagate_to_inputs()
+                connection.propagate()
 
         for module in self.modules.values():
             module.update()
@@ -240,11 +240,11 @@ class SimpleSim(object):
         self.modules["clock"].output.states = [core.STATE["HIGH"]]
         self.update()
         self.print_reg()
-        self.modules["output_enable"].output.states = [core.STATE["LOW"]]
-        self.update()
-        self.print_reg()
-        self.update()
-        self.print_reg()
+        # self.modules["output_enable"].output.states = [core.STATE["LOW"]]
+        # self.update()
+        # self.print_reg()
+        # self.update()
+        # self.print_reg()
 
 def sim_test():
     sim = SimpleSim()
