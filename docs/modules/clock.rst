@@ -125,17 +125,12 @@ the best use of space and gates available on chips:
 Hardware
 ^^^^^^^^
 
-There is also some debouncing that happens on the clock for the manual signals.
-
 The following electronics are used:
 
 - A 555 and accompanying resistors and capacitors to generate the auto
   clock signal.
 - A 74HCT109 to get an even duty cycle from the 555.
-- A 74HCT14 and accompanying resistors and capacitors to debounce the
-  manual inputs.
-- A 74HCT00 to create a multiplexer to select between the manual and
-  auto clock signals.
+- A 74HCT157 to multiplex between the manual and auto clock signals.
 - A 74HCT02 and 74HCT00 to create the safe clock gate and some
   additional signal inverting.
 - Another 74HCT109 to provide the last 2 toggles for the clocks.
@@ -144,5 +139,3 @@ The components are laid out on the breadboard like so:
 
 .. image:: images/clock/clock_bb.png
     :width: 100%
-
-The clock module is the first in the list to be redesigned :).
