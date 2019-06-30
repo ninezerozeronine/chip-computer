@@ -31,11 +31,35 @@ def gen_ports_data():
     conn = Connection()
     tests.append((conn, []))
 
+    p1 = core.Port("one", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    p2 = core.Port("two", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    conn = Connection([p1, p2])
+    tests.append((conn, ["one", "two"]))
+
+    p1 = core.Port("one", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    p2 = core.Port("two", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    conn = Connection([p1, p2])
+    conn.add_port(
+        core.Port("three", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    )
+    tests.append((conn, ["one", "two", "three"]))
+
+    p1 = core.Port("one", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    p2 = core.Port("two", channels=[core.Channel(mode=core.MODE["OUTPUT"])])
+    conn = Connection()
+    conn.ports = [p1, p2]
+    tests.append((conn, ["one", "two"]))
+
     return tests
 
 
 @pytest.mark.parametrize("test_input,expected", gen_ports_data())
 def test_ports(test_input, expected):
+    port_names = [port.name for port in test_input.ports]
+    assert port_names == expected
+
+
+def test_ports_raises():
     assert True
 
 
@@ -90,3 +114,13 @@ def gen_ports_in_contention_data():
 @pytest.mark.parametrize("test_input,expected", gen_ports_in_contention_data())
 def test_ports_in_contention(test_input, expected):
     assert test_input.ports_in_contention() is expected
+
+
+def test_propagate():
+    assert True
+
+
+
+
+
+

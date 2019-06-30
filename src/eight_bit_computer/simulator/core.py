@@ -325,7 +325,7 @@ def all_ports_same_width(ports):
 
 def create_port(name, mode=MODE["NC"], width=8):
     """
-    Convenience method to create an eight bit port.
+    Convenience method to create a port.
 
     Args:
         name (str) (optional): Name of the port.
@@ -338,27 +338,3 @@ def create_port(name, mode=MODE["NC"], width=8):
     for _ in range(width):
         channels.append(Channel(mode=mode))
     return Port(name, channels=channels)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
