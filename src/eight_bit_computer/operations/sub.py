@@ -15,10 +15,10 @@ _NAME = "SUB"
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the ADD instructions.
+    Generate microcode for all the SUB instructions.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the ADD instructions.
+        list(DataTemplate): DataTemplates for all the SUB instructions.
     """
 
     return simple_alu_op_base.generate_microcode_templates(
@@ -31,7 +31,7 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably a ADD assembly line, return an empty
+    If a line is not identifiably a SUB assembly line, return an empty
     list instead.
 
     Args:
