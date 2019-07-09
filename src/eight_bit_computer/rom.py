@@ -133,7 +133,7 @@ def slice_rom(rom):
 
         RomData(
             address="0000000 0000 000",
-            data="10101010 111111111 00000000 11001100"
+            data="10101010 11111111 00000000 11001100"
         )
 
     We would end up with::
