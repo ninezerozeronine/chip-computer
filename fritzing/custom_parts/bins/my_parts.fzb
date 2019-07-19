@@ -62,5 +62,8 @@
         <instance moduleIdRef="74HCT109fixed_92e1dc410d94209e3ec7a517d7e5af86_1" modelIndex="73891" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT109fixed_92e1dc410d94209e3ec7a517d7e5af86_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="74HCT123_25262beaefa4c04033004e637132213b_1" modelIndex="73935" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT123_25262beaefa4c04033004e637132213b_1.fzp">
+            <views/>
+        </instance>
     </instances>
 </module>
