@@ -21,7 +21,7 @@ And this is how it operates:
 +--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
 | Name               | Bit width | Description                                                                                                               |
 +====================+===========+===========================================================================================================================+
-| auto/manual        | 1         | When low, the clock signals are advanced manually with manual_input. When high, clock singals are advanced automatically. |
+| auto/manual        | 1         | When low, the clock signals are advanced manually with manual_input. When high, clock signals are advanced automatically. |
 +--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
 | manual_clock_input | 1         | High/low transitions here will advance the clock signals.                                                                 |
 +--------------------+-----------+---------------------------------------------------------------------------------------------------------------------------+
@@ -109,7 +109,7 @@ From left to right:
 - Feed the 555 into a JK flip flop configured to toggle to achieve even duty
   cycle.
 - Multiplex to choose the manual or auto clock.
-- Halt and reset signals.
+- Halt and reset signals - effectively do the same thing - stop the clock.
 - :ref:`safe_clock_enable`. This ensures correct timing of the clock after
   reset is released.
 - Two JK flip flops configured to toggle, one fed with the inverse of the
