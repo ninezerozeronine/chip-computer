@@ -2,9 +2,9 @@ import sys
 import os
 from pprint import pprint
 
-sys.path.append(os.path.abspath("../src"))
+sys.path.insert(0, os.path.abspath("../src"))
 print sys.path
-from eight_bit_computer import rom, main
+from eight_bit_computer import rom, main, export
 
 
 def sandbox():
@@ -93,10 +93,28 @@ def dict_ref_test_2():
 def assemble_test():
     main.assemble("../programs/fibbonaci.asm")
 
+
+def rle_comparision():
+    rom_ = rom.get_rom()
+    slices = rom.slice_rom(rom_)
+    for slice_index in range(4):
+        # values, lengths = export.run_length_encode(slices[slice_index], max_run_length=1024)
+        values, lengths = export.run_length_encode(slices[slice_index])
+        # pprint(slices[slice_index])
+        # for value, length in zip(values, lengths):
+        #     print value, length
+        print "---"
+        print slice_index
+        print "before rle:", len(slices[slice_index])
+        print "after rle:", len(values), len(lengths)
+
+
+
 if __name__ == "__main__":
     # sandbox()
     # file_test()
     # dict_ref_test()
     # dict_ref_test_2()
-    assemble_test()
+    # assemble_test()
     # main.create_roms(directory="./test_roms")
+    rle_comparision()

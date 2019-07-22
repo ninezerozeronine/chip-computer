@@ -180,7 +180,7 @@ def chunker(seq, chunk_size):
 
 def run_length_encode(data, max_run_length=255):
     """
-    Encode data as two lists with run length encoding.
+    Encode a list of value as two lists with run length encoding.
 
     Args:
         data (list): Data to encode.
