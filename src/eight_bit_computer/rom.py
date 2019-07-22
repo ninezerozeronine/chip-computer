@@ -25,8 +25,10 @@ def get_rom():
         raise ValueError("Romdata set has duplicate addresses")
     all_addresses = bitdef.collapse(EMPTY_ADDRESS)
     default_data = MODULE_CONTROLS_DEFAULT
-    full_rom = populate_empty_addresses(romdatas, all_addresses, default_data)
-    full_rom.sort(key=lambda romdata: romdata.address)
+    empties_filled = populate_empty_addresses(
+        romdatas, all_addresses, default_data
+    )
+    full_rom = rom_to_bitdef_list(empties_filled)
     return full_rom
 
 
@@ -72,6 +74,27 @@ def collapse_datatemplates_to_romdatas(datatemplates):
     return romdatas
 
 
+def romdatas_have_duplicate_addresses(romdatas):
+    """
+    Check if any of the romdatas have duplicate addresses.
+
+    Args:
+        romdatas list(RomData): List of romdatas to check.
+    Returns:
+        Bool: Whether or not there were any duplicated addresses.
+    """
+
+    duplicates = False
+    addresses = []
+    for romdata in romdatas:
+        if romdata.address in addresses:
+            duplicates = True
+            break
+        else:
+            addresses.append(romdata.address)
+    return duplicates
+
+
 def populate_empty_addresses(romdatas, all_addresses, default_data):
     """
     Form a complete set of rom data by filling any undefined addresses.
@@ -102,25 +125,41 @@ def populate_empty_addresses(romdatas, all_addresses, default_data):
     return complete_rom
 
 
-def romdatas_have_duplicate_addresses(romdatas):
+def rom_to_bitdef_list(rom):
     """
-    Check if any of the romdatas have duplicate addresses.
+    Convert a rom to a list of bitdefs.
 
     Args:
-        romdatas list(RomData): List of romdatas to check.
+        rom (list(RomData)): The complete ROM
     Returns:
-        Bool: Whether or not there were any duplicated addresses.
+        list(str): Bitdefs that make up the rom in order.
+    Raises:
+        ValueError: If the addresses don't start at 0, or the addresses
+            aren't continuous.
     """
 
-    duplicates = False
-    addresses = []
-    for romdata in romdatas:
-        if romdata.address in addresses:
-            duplicates = True
-            break
+    bitdefs = []
+    rom.sort(key=lambda romdata: romdata.address)
+
+    next_address = 0
+    for romdata in rom:
+        address = number_utils.bitstring_to_number(romdata.address)
+        if address != next_address:
+            if next_address == 0:
+                raise ValueError(
+                    "Romdata set does not start at zero. It starts at "
+                    "{address}".format(address=address)
+                )
+            else:
+                raise ValueError(
+                    "Romdata set is not continuous. The last good "
+                    "address is {address}".format(address=address)
+                )
         else:
-            addresses.append(romdata.address)
-    return duplicates
+            bitdefs.append(romdata.data)
+            next_address += 1
+
+    return bitdefs
 
 
 def slice_rom(rom):
@@ -131,43 +170,42 @@ def slice_rom(rom):
     RomData as an example, if it looked like this (spaces added for
     clarity)::
 
-        RomData(
-            address="0000000 0000 000",
-            data="10101010 11111111 00000000 11001100"
-        )
+        [
+            "10101010 11111111 00000000 11001100"
+            "00000000 11000011 00111100 11110000",
+        ]
 
     We would end up with::
 
         {
-            0: RomData(
-                address="0000000 0000 000",
-                data="11001100"
-            ),
-            1: RomData(
-                address="0000000 0000 000",
-                data="00000000"
-            ),
-            2: RomData(
-                address="0000000 0000 000",
-                data="11111111"
-            ),
-            3: RomData(
-                address="0000000 0000 000",
-                data="10101010"
-            )
+            0: [
+                "11001100",
+                "11110000",
+            1: [
+                "00000000",
+                "00111100",
+            ]
+            2: [
+                "11111111",
+                "11000011",
+            ]
+            3: [
+                "10101010",
+                "00000000",
+            ]
         }
 
     Args:
-        rom (list(RomData)): The complete ROM
+        rom (list(str)): The complete ROM
 
     Returns:
-        dict(int:list(RomData)) Dictionary of ROM slices
+        dict(int:list(str)) Dictionary of ROM slices
     """
 
     rom_slices = {}
-    for rom_index in range(get_num_bytes(rom[0].data)):
+    for rom_index in range(get_num_bytes(rom[0])):
         rom_offset = 8 * rom_index
-        rom_slice = get_romdata_slice(rom, rom_offset + 7, rom_offset)
+        rom_slice = get_rom_slice(rom, rom_offset + 7, rom_offset)
         rom_slices[rom_index] = rom_slice
     return rom_slices
 
@@ -189,23 +227,22 @@ def get_num_bytes(bitstring):
     return num_bytes
 
 
-def get_romdata_slice(romdatas, end, start):
+def get_rom_slice(bitdefs, end, start):
     """
-    Get a slice of the data in the romdatas.
+    Get a slice of the data in the rom.
 
     Args:
-        romdatas (list(RomData)): The romdatas to get a slice from
-        end (int): The index for the end of the slice. Starts at zero at
-            the rightmost (least significant) bit.
-        start (int): The index for the start of the slice. Starts at
+        bitdefs (list(str)): The bitdefs to get a slice from
+        end (int): The index for the end of the slice. Index starts at
             zero at the rightmost (least significant) bit.
+        start (int): The index for the start of the slice. Index starts
+            at zero at the rightmost (least significant) bit.
     Returns:
-        list(RomData): The sliced list of romdatas
+        list(str): The sliced list of bitdefs
     """
 
-    sliced_romdatas = []
-    for romdata in romdatas:
-        data_slice = bitdef.extract_bits(romdata.data, end, start)
-        sliced_romdata = RomData(address=romdata.address, data=data_slice)
-        sliced_romdatas.append(sliced_romdata)
-    return sliced_romdatas
+    sliced_bitdefs = []
+    for each_bitdef in bitdefs:
+        bitdef_slice = bitdef.extract_bits(each_bitdef, end, start)
+        sliced_bitdefs.append(bitdef_slice)
+    return sliced_bitdefs
