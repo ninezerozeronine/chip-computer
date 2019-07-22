@@ -176,3 +176,55 @@ def chunker(seq, chunk_size):
     return (
         seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
     )
+
+
+def run_length_encode(data, max_run_length=255):
+    """
+    Encode data as two lists with run length encoding.
+
+    Args:
+        data (list): Data to encode.
+        max_run_length (int) (optional): Maximum length of a run
+    Returns:
+        tuple(list, list): The values of the data and how long each
+    value runs for.
+    Raises:
+        ValueError: If max_run_length is less than 1
+    """
+
+    if max_run_length < 1:
+        msg = "max_run_length must be >= 1, it was {max_run_length}.".format(
+            max_run_length=max_run_length
+        )
+        raise ValueError(msg)
+
+    run_length = 0
+    last_value = None
+
+    values = []
+    run_lengths = []
+
+    for value in data:
+        if run_length == 0:
+            last_value = value
+            values.append(value)
+            run_length = 1
+            continue
+        else:
+            if value == last_value:
+                if run_length == max_run_length:
+                    values.append(value)
+                    run_lengths.append(run_length)
+                    run_length = 0
+                    continue
+                else:
+                    run_length += 1
+                    continue
+            else:
+                run_lengths.append(run_length)
+                run_length = 0
+
+    if run_length > 0:
+        run_lengths.append(run_length)
+
+    return (values, run_lengths)

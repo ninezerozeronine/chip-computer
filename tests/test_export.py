@@ -81,3 +81,84 @@ def generator_tester(generator_iterator_to_test, expected_values):
 def test_number_to_bitstring(seq, chunk_size, expected):
     generator = export.chunker(seq, chunk_size)
     generator_tester(generator, expected)
+
+
+@pytest.mark.parametrize("data_to_encode,max_run_length,expected", [
+    (
+        [],
+        None,
+        (
+            [],
+            []
+        )
+    ),
+    (
+        ["A"],
+        None,
+        (
+            ["A"],
+            [1]
+        )
+    ),
+    (
+        ["A", "A"],
+        None,
+        (
+            ["A"],
+            [2]
+        )
+    ),
+    (
+        ["A", "A", "B", "B"],
+        None,
+        (
+            ["A", "B"],
+            [2, 2]
+        )
+    ),
+    (
+        ["A", "A", "B", "B", "A", "A", "C"],
+        None,
+        (
+            ["A", "B", "A", "C"],
+            [2, 2, 2, 1]
+        )
+    ),
+    (
+        [],
+        2,
+        (
+            [],
+            []
+        )
+    ),
+    (
+        ["A"],
+        2,
+        (
+            ["A"],
+            [1]
+        )
+    ),
+    (
+        ["A", "A", "A", "A", "B", "B"],
+        2,
+        (
+            ["A", "A", "B"],
+            [2, 2, 2]
+        )
+    ),
+    (
+        ["A", "A", "A", "A", "A", "B", "B", "C"],
+        2,
+        (
+            ["A", "A", "A", "B", "C"],
+            [2, 2, 1, 2, 1]
+        )
+    ),
+])
+def test_run_length_encode(data_to_encode, max_run_length, expected"):
+    if max_run_length is None:
+        assert run_length_encode(data_to_encode) == expected
+    else:
+        assert run_length_encode(data_to_encode, max_run_length) == expected
