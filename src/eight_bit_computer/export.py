@@ -198,33 +198,17 @@ def run_length_encode(data, max_run_length=255):
         )
         raise ValueError(msg)
 
-    run_length = 0
-    last_value = None
+    if not data:
+        return ([], [])
 
-    values = []
-    run_lengths = []
+    values = [data[0]]
+    run_lengths = [1]
 
-    for value in data:
-        if run_length == 0:
-            last_value = value
+    for value in data[1:]:
+        if run_lengths[-1] == max_run_length or value != values[-1]:
             values.append(value)
-            run_length = 1
-            continue
+            run_lengths.append(1)
         else:
-            if value == last_value:
-                if run_length == max_run_length:
-                    values.append(value)
-                    run_lengths.append(run_length)
-                    run_length = 0
-                    continue
-                else:
-                    run_length += 1
-                    continue
-            else:
-                run_lengths.append(run_length)
-                run_length = 0
-
-    if run_length > 0:
-        run_lengths.append(run_length)
+            run_lengths[-1] = run_lengths[-1] + 1
 
     return (values, run_lengths)

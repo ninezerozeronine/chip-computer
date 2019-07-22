@@ -157,8 +157,16 @@ def test_number_to_bitstring(seq, chunk_size, expected):
         )
     ),
 ])
-def test_run_length_encode(data_to_encode, max_run_length, expected"):
+def test_run_length_encode(data_to_encode, max_run_length, expected):
     if max_run_length is None:
-        assert run_length_encode(data_to_encode) == expected
+        assert export.run_length_encode(data_to_encode) == expected
     else:
-        assert run_length_encode(data_to_encode, max_run_length) == expected
+        assert export.run_length_encode(data_to_encode, max_run_length) == expected
+
+
+@pytest.mark.parametrize("max_run_length", [
+    -1, 0,
+])
+def test_run_length_encode_raises(max_run_length):
+    with pytest.raises(ValueError):
+        export.run_length_encode([1, 2, 3], max_run_length)
