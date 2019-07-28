@@ -5,20 +5,22 @@
 #include "button.h"
 #include "roms.h"
 
-#define ROM_SEL_BUTTON_PIN 1
-#define MODE_SEL_BUTTON_PIN 2
-#define GO_BUTTON_PIN 3
-#define _CE_PIN 4
-#define _OE_PIN 5
+#define ROM_SEL_BUTTON_PIN A0
+#define MODE_SEL_BUTTON_PIN A1
+#define GO_BUTTON_PIN A2
+#define _CE_PIN 16
+#define _OE_PIN 14
 #define _WE_PIN 6
 #define NUM_DATA_PINS 8
 #define NUM_ADDRESS_PINS 15
 #define NUM_ADDRESSES 32768
 
-const int DATA_PINS[NUM_DATA_PINS] = {1,2,3,4,5,6,7,8};
-const int ADDRESS_PINS[NUM_ADDRESS_PINS] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
-const int ROM_INDICATOR_PINS[4] = {1,2,3,4};
-const int MODE_INDICATOR_PINS[2] = {1,2};
+//                                    0    1    2    3   4   5   6   7
+const int DATA_PINS[NUM_DATA_PINS] = {A15, A14, A13, 21, 20, 19, 18, 17};
+//                                          0    1    2    3   4   5   6   7   8  9  10  11  12 13 14
+const int ADDRESS_PINS[NUM_ADDRESS_PINS] = {A12, A11, A10, A9, A8, A7, A6, A5, 4, 3, 15, 2,  4, 5, 3};
+const int ROM_INDICATOR_PINS[4] = {12,11,10,9};
+const int MODE_INDICATOR_PINS[2] = {8,7};
 
 const byte* ROMS[] = {ROM_0, ROM_1, ROM_2, ROM_3};
 
@@ -59,6 +61,9 @@ void setup() {
     while (!Serial) {
     ; 
     }
+
+    set_rom_indicator_LED();
+    set_mode_indicator_LED();
 }
 
 void loop() {
@@ -185,11 +190,14 @@ void go_button_pressed() {
     // Perform the correct action base on the current mode and rom
     switch (mode) {
         case 0: {
-            read_eeprom_data();
+            // read_eeprom_data();
+            Serial.println("read");
             break;
         }
         case 1: {
-            write_eeprom_data(ROMS[selected_rom]);
+            // write_eeprom_data(ROMS[selected_rom]);
+            Serial.print("write ");
+            Serial.println(selected_rom);
             break;
         }
     }
