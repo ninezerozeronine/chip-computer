@@ -63,12 +63,8 @@ void setup() {
 
     set_rom_indicator_LED();
     set_mode_indicator_LED();
-
-
-    // const byte foo[] PROGMEM = {0x00, 0x0F, 0xF0, 0xFF};
-    // Serial.println(sizeof(ROM_0));
-    // Serial.println(sizeof(ROM_0)/sizeof(ROM_0[0]));
 }
+
 
 void loop() {
     // Main loop function for arduino.
@@ -77,112 +73,35 @@ void loop() {
     go_button.update(&go_button_pressed, NULL);
 }
 
-void set_datapins_mode(int pin_mode) {
-    // Set the mode of the data pins
-    //
-    // Args:
-    //     mode: The mode to set the pins to. E.g. INPUT, INPUT_PULLUP or OUTPUT.
-    for (int index = 0; index < NUM_DATA_PINS; index++) {
-        pinMode(DATA_PINS[index], pin_mode);
-    }
-}
 
-void set_datapins_value(byte value){
-    // Set the datapins to represent a value in binary.
-    //
-    // Args:
-    //     value: The value to set the data pins to.
-    for (int index = 0; index < NUM_DATA_PINS; index++) {
-        digitalWrite(DATA_PINS[index], value & 1);
-        value = value >> 1;
-    }
-}
+void read_eeprom_data() {
+    // Read all of the data on the EEPROM and print to serial.
 
-void set_addresspins_value(unsigned int address) {
-    // Set an address on the address pins
-    //
-    // Args:
-    //     address: The value to set the address pins to.
-    // char buf[50];
-    // sprintf(buf, "Setting Address %05d. (Reversed)", address);
-    // Serial.println(buf);
+    digitalWrite(_OE_PIN, LOW);
+    set_datapins_mode(INPUT);
 
-    for (int index = 0; index < NUM_ADDRESS_PINS; index++) {
-        digitalWrite(ADDRESS_PINS[index], address & 1);
-        // Serial.print(address & 1);
-        address = address >> 1;
-    }
-    // Serial.println(" ");
-}
+    byte byte_row[16];
 
-void write_eeprom_data(byte data[], byte last_byte) {
-    set_datapins_mode(OUTPUT);
+    for (unsigned int base = 0; base < NUM_ADDRESSES; base+=16) {
 
-    byte value = 0;
-    int chunk = 1;
-    for (unsigned int address = 0; address < NUM_ADDRESSES; address++) {
-
-        if ((address % 256) == 0) {
-            char buf[40];
-            sprintf(buf, "Writing chunk %03d of 128.", chunk);
-            delay(200);
-            Serial.println(buf);
-            chunk += 1;
+        for (unsigned int offset = 0; offset < 16; offset++) {
+            delayMicroseconds(5);
+            set_addresspins_value(base + offset);
+            delayMicroseconds(5);
+            byte_row[offset] = read_current_byte();
         }
 
+        char buf[100];
+        sprintf(buf, "%05d/32768 (%04X/7FFF):  %02X %02X %02X %02X  %02X %02X %02X %02X    %02X %02X %02X %02X  %02X %02X %02X %02X",
+                base, base,
+                byte_row[0], byte_row[1], byte_row[2], byte_row[3], byte_row[4], byte_row[5], byte_row[6], byte_row[7],
+                byte_row[8], byte_row[9], byte_row[10], byte_row[11], byte_row[12], byte_row[13], byte_row[14], byte_row[15]);
+        Serial.println(buf);
 
-        set_addresspins_value(address);
-        delayMicroseconds(20);
-        value = pgm_read_byte_near(data + address);
-        set_datapins_value(value);
-
-        if ((address > 24944) and (address < 24976)) {
-            char buf[60]; 
-            sprintf(buf, "Writing %02x to %05d.", value, address);
-            Serial.println(buf);
-        }
-
-        digitalWrite(_WE_PIN, LOW);
-        delayMicroseconds(20);
-        digitalWrite(_WE_PIN, HIGH);
-        delayMicroseconds(20);
     }
-
-    // Write the last byte
-    set_addresspins_value(NUM_ADDRESSES - 1);
-    delayMicroseconds(20);
-    set_datapins_value(last_byte);
-
-    digitalWrite(_WE_PIN, LOW);
-    delayMicroseconds(20);
-    digitalWrite(_WE_PIN, HIGH);
-    delayMicroseconds(20);
-
-    set_datapins_value(0);
-    set_datapins_mode(INPUT);
+    
+    digitalWrite(_OE_PIN, HIGH);
 }
-
-
-void write_eeprom_range(unsigned int start, unsigned int end, byte data[]) {
-    set_datapins_mode(OUTPUT);
-
-    for (unsigned int address = start; address <= end; address++) {
-
-        set_addresspins_value(address);
-        delayMicroseconds(3);
-        byte value = pgm_read_byte_near(data + address);
-        set_datapins_value(value);
-
-        digitalWrite(_WE_PIN, LOW);
-        delayMicroseconds(3);
-        digitalWrite(_WE_PIN, HIGH);
-        delayMicroseconds(3);
-    }
-
-    set_datapins_value(0);
-    set_datapins_mode(INPUT);
-}
-
 
 byte read_current_byte(){
     // Read the currently addressed byte.
@@ -199,50 +118,90 @@ byte read_current_byte(){
     return current_byte;
 }
 
-void read_eeprom_data() {
-    // Read all of the data on the EEPROM and print to serial.
 
-    digitalWrite(_OE_PIN, LOW);
-    set_datapins_mode(INPUT);
+void write_eeprom_data(unsigned long data_pointer, byte last_byte) {
+    // Write a full ROM
+    //
+    // Args:
+    //     data_pointer: Address of the start of the array of bytes. 
+    //     last_byte: The last byte to write
+    set_datapins_mode(OUTPUT);
 
-    byte byte_row[16];
+    byte value = 0;
+    int chunk = 1;
+    for (unsigned int address = 0; address < NUM_ADDRESSES; address++) {
 
-    delayMicroseconds(5);
-    for (unsigned int base = 0; base < NUM_ADDRESSES; base+=16) {
-
-        for (unsigned int offset = 0; offset < 16; offset++) {
-            delayMicroseconds(5);
-            set_addresspins_value(base + offset);
-            delayMicroseconds(5);
-            byte_row[offset] = read_current_byte();
+        // Delay after every 64 bytes to give time for the page write to happen.
+        if (((address % 64) == 0 ) and (address != 0)) {
+            delay(12);
         }
 
-        char buf[100];
-        sprintf(buf, "%05d/32768 (%04X/7FFF):  %02x %02x %02x %02x  %02x %02x %02x %02x    %02x %02x %02x %02x  %02x %02x %02x %02x",
-                base, base,
-                byte_row[0], byte_row[1], byte_row[2], byte_row[3], byte_row[4], byte_row[5], byte_row[6], byte_row[7],
-                byte_row[8], byte_row[9], byte_row[10], byte_row[11], byte_row[12], byte_row[13], byte_row[14], byte_row[15]);
-        Serial.println(buf);
+        if ((address % 256) == 0) {
+            char buf[40];
+            sprintf(buf, "Writing chunk %03d of 128.", chunk);
+            Serial.println(buf);
+            chunk += 1;
+        }
 
+        set_addresspins_value(address);
+        value = pgm_read_byte_far(data_pointer + address);
+        set_datapins_value(value);
+
+        digitalWrite(_WE_PIN, LOW);
+        delayMicroseconds(5);
+        digitalWrite(_WE_PIN, HIGH);
+        delayMicroseconds(5);
     }
-    
-    digitalWrite(_OE_PIN, HIGH);
+
+    // Another delay just in case there's some delay breaking out of the loop
+    delay(12);
+
+    // Write the last byte
+    set_addresspins_value(NUM_ADDRESSES - 1);
+    set_datapins_value(last_byte);
+
+    digitalWrite(_WE_PIN, LOW);
+    delayMicroseconds(5);
+    digitalWrite(_WE_PIN, HIGH);
+    delayMicroseconds(5);
+
+    set_datapins_value(0);
+    set_datapins_mode(INPUT);
 }
 
-void read_eeprom_range(unsigned int start, unsigned int end) {
-    digitalWrite(_OE_PIN, LOW);
-    set_datapins_mode(INPUT);
-    delayMicroseconds(3);
 
-    for (unsigned int address = start; address <= end; address++) {
-        set_addresspins_value(address);
-        delayMicroseconds(3);
-        byte value = read_current_byte();
-        char buf[30];
-        sprintf(buf, "%05d (%04X):  %02x", address, address, value);
-        Serial.println(buf);
+void set_datapins_mode(int pin_mode) {
+    // Set the mode of the data pins
+    //
+    // Args:
+    //     mode: The mode to set the pins to. E.g. INPUT, INPUT_PULLUP or OUTPUT.
+    for (int index = 0; index < NUM_DATA_PINS; index++) {
+        pinMode(DATA_PINS[index], pin_mode);
     }
-    digitalWrite(_OE_PIN, HIGH);
+}
+
+
+void set_datapins_value(byte value){
+    // Set the datapins to represent a value in binary.
+    //
+    // Args:
+    //     value: The value to set the data pins to.
+    for (int index = 0; index < NUM_DATA_PINS; index++) {
+        digitalWrite(DATA_PINS[index], value & 1);
+        value = value >> 1;
+    }
+}
+
+
+void set_addresspins_value(unsigned int address) {
+    // Set an address on the address pins
+    //
+    // Args:
+    //     address: The value to set the address pins to.
+    for (int index = 0; index < NUM_ADDRESS_PINS; index++) {
+        digitalWrite(ADDRESS_PINS[index], address & 1);
+        address = address >> 1;
+    }
 }
 
 
@@ -252,28 +211,26 @@ void rom_sel_button_pressed() {
     set_rom_indicator_LED();
 }
 
+
 void mode_sel_button_pressed() {
     // Update state when mode select button is pressed
     mode = (mode + 1) % 2;
     set_mode_indicator_LED();
 }
 
+
 void go_button_pressed() {
     // Perform the correct action base on the current mode and rom
+    //
+    // We get the address here because the pgm_get_far_address needs a compile
+    // time constant to work correctly otherwise you get compilation errors.
+    //
+    // https://www.avrfreaks.net/comment/502866#comment-502866
+    // https://forum.arduino.cc/index.php?topic=387506.0
     switch (mode) {
         case 0: {
             Serial.println("Reading current ROM");
-            switch (selected_rom) {
-                case 0: {
-                    // write_eeprom_data(ROM_0, ROM_0_last_byte);
-                    read_eeprom_range(0, 15);
-                    break;
-                }
-                case 1: {
-                    read_eeprom_data();
-                    break;
-                } 
-            }
+            read_eeprom_data();
             break;
         }
         case 1: {
@@ -281,20 +238,19 @@ void go_button_pressed() {
             Serial.println(selected_rom);
             switch (selected_rom) {
                 case 0: {
-                    // write_eeprom_data(ROM_0, ROM_0_last_byte);
-                    write_eeprom_range(0, 15, ROM_3);
+                    write_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
                     break;
                 }
                 case 1: {
-                    write_eeprom_data(ROM_3, ROM_3_last_byte);
+                    write_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
                     break;
                 }                
                 case 2: {
-                    write_eeprom_data(ROM_2, ROM_2_last_byte);
+                    write_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
                     break;
                 }                
                 case 3: {
-                    write_eeprom_data(ROM_3, ROM_3_last_byte);
+                    write_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
                     break;
                 }
             break;
@@ -302,6 +258,7 @@ void go_button_pressed() {
         }
     }
 }
+
 
 void set_rom_indicator_LED() {
     // Set the LEDs to indicate which ROM will be written.
@@ -313,6 +270,7 @@ void set_rom_indicator_LED() {
         }
     }
 }
+
 
 void set_mode_indicator_LED() {
     // Set the LEDs to indicate which mode is active (read or write).
