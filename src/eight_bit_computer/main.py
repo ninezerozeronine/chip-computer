@@ -15,7 +15,6 @@ def assemble(
         input_filepath,
         output_filepath=None,
         variable_start_offset=0,
-        output_format="logisim",
         ):
     """
     Read an assembly file and write out equivalent machine code.
@@ -27,8 +26,6 @@ def assemble(
             the input path with the extension changed to mc.
         variable_start_offset (int) (optional): How far to offset the
             first variable in data memory from 0.
-        output_format (str) (optional): How to format the output.
-            ``logisim`` or ``cpp``.
     """
 
     # Does input file exist
@@ -76,10 +73,7 @@ def assemble(
 
     # Convert to correct format
     mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
-    if output_format == "logisim":
-        output = export.bitstrings_to_logisim(mc_byte_bitstrings)
-    elif output_format == "cpp":
-        output = export.bitstrings_to_cpp(mc_byte_bitstrings)
+    output = export.bitstrings_to_logisim(mc_byte_bitstrings)
 
     # Write file.
     with open(output_filepath, "w") as file:
@@ -145,8 +139,8 @@ def gen_roms(output_dir=".", rom_prefix="rom", output_format="logisim"):
         output_dir (str) (optional): The directory to write the roms
             into.
         rom_prefix (str) (optional): The prefix for the rom files.
-        output_format (str) (optional): How to foramt the output.
-            ``logisim`` or ``cpp``.
+        output_format (str) (optional): How to format the output.
+            ``logisim`` or ``arduino``.
     """
 
     if not os.path.isdir(output_dir):
@@ -161,16 +155,34 @@ def gen_roms(output_dir=".", rom_prefix="rom", output_format="logisim"):
         slice_bitstrings = [romdata.data for romdata in rom_slice]
         if output_format == "logisim":
             output = export.bitstrings_to_logisim(slice_bitstrings)
-        elif output_format == "cpp":
-            output = export.bitstrings_to_cpp(slice_bitstrings)
+            rom_filename = "{rom_prefix}_{rom_index}".format(
+                rom_prefix=rom_prefix, rom_index=rom_index
+            )
+            filepath = os.path.join(output_dir, rom_filename)
 
-        rom_filename = "{rom_prefix}_{rom_index}".format(
-            rom_prefix=rom_prefix, rom_index=rom_index
-        )
-        filepath = os.path.join(output_dir, rom_filename)
+            with open(filepath, "w") as romfile:
+                romfile.write(output)
 
-        with open(filepath, "w") as romfile:
-            romfile.write(output)
+        elif output_format == "arduino":
+            # Write cpp
+            cpp_output = export.bitstrings_to_arduino_cpp(
+                rom_index, rom_prefix, slice_bitstrings
+            )
+            cpp_filename = "{rom_prefix}_{rom_index}.cpp".format(
+                rom_prefix=rom_prefix, rom_index=rom_index
+            )
+            cpp_filepath = os.path.join(output_dir, cpp_filename)
+            with open(cpp_filepath, "w") as rom_cpp_file:
+                rom_cpp_file.write(cpp_output)
+
+            # Write h
+            h_output = export.create_arduino_header(rom_index, rom_prefix)
+            h_filename = "{rom_prefix}_{rom_index}.h".format(
+                rom_prefix=rom_prefix, rom_index=rom_index
+            )
+            h_filepath = os.path.join(output_dir, h_filename)
+            with open(h_filepath, "w") as rom_h_file:
+                rom_h_file.write(h_output)
 
     msg = "ROM writing complete. ROMs written to {output_dir}".format(
         output_dir=output_dir
