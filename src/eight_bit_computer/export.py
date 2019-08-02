@@ -36,21 +36,23 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
         str: String ready to be written to cpp file
     """
     cpp_lines = []
-    cpp_lines.append("#include {prefix}_{rom_index}".format(
+    cpp_lines.append("#include \"{prefix}_{rom_index}.h\"".format(
         prefix=file_prefix, rom_index=rom_index
     ))
     cpp_lines.append("")
     cpp_lines.append(
-        "extern const byte ROM_{rom_index}[] __attribute__ (( __section__(\".fini{fini_index}\") )) = {".format(
+        "extern const byte ROM_{rom_index}[] __attribute__ (( __section__(\".fini{fini_index}\") )) = {{".format(
             rom_index=rom_index, fini_index=rom_index + 1
         )
     )
     data_lines = []
-    for line_bytes in chunker(bitstrings[:-1], 16):
+    for line_index, line_bytes in enumerate(chunker(bitstrings[:-1], 16)):
         line_parts = []
         for line_chunk in chunker(line_bytes, 4):
             chunk_bytes = [
-                "0x{hex}".format(hex=bitstring_to_hex_string(bit_string))
+                "0x{hex}".format(hex=number_utils.bitstring_to_hex_string(
+                    chunk_byte
+                ))
                 for chunk_byte
                 in line_chunk
             ]
@@ -61,18 +63,18 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
         # Add extra spacing if it's the last row
         if len(line_bytes) == 16:
             data_line = "    {data_line}, // {byte_index:05}".format(
-                data_line=data_line, byte_index=16_index*16)
+                data_line=data_line, byte_index=line_index*16)
         else:
             data_line = "    {data_line}        // {byte_index:05}".format(
-                data_line=data_line, byte_index=16_index*16)
+                data_line=data_line, byte_index=line_index*16)
 
         data_lines.append(data_line)
     cpp_lines.extend(data_lines)
     cpp_lines.append("};")
     cpp_lines.append(
-        "extern const byte ROM_{rom_index}_last_byte = 0x{byte}};".format(
+        "extern const byte ROM_{rom_index}_last_byte = 0x{byte};".format(
             rom_index=rom_index,
-            byte=bitstring_to_hex_string(bitstrings[-1])
+            byte=number_utils.bitstring_to_hex_string(bitstrings[-1])
         )
     )
     cpp_string = "\n".join(cpp_lines)
@@ -80,18 +82,50 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
     return cpp_string
 
 
-def bitstrings_to_arduino_h(rom_index, file_prefix):
+def create_arduino_header(rom_index, file_prefix):
     """
-    Convert rom bitstrings to arduino header and cpp files
+    Create arduino header file
+
+    The header file looks like this::
+        #ifndef ROM_0_H
+        #define ROM_0_H
+
+        #include <Arduino.h>
+
+        extern const byte ROM_0[];
+        extern const byte ROM_0_last_byte;
+
+        #endif
 
     Args:
-        rom_index (int): The index of the rom
-        bitstrings (list(str)): This of bitstrings that make up the rom.
+        rom_index (int): The index of the rom.
+        file_prefix (str): Prefix for the filename.
     Returns:
-        str: String ready to be written to
+        str: String ready to be written to a file.
     """
 
-    pass
+    h_lines = []
+    h_lines.append("#ifndef {prefix}_{rom_index}_H".format(
+        prefix=file_prefix.upper(), rom_index=rom_index
+    ))
+    h_lines.append("#define {prefix}_{rom_index}_H".format(
+        prefix=file_prefix.upper(), rom_index=rom_index
+    ))
+    h_lines.append("")
+    h_lines.append("#include <Arduino.h>")
+    h_lines.append("")
+    h_lines.append("extern const byte ROM_{rom_index}[];".format(
+        rom_index=rom_index
+    ))
+    h_lines.append(
+        "extern const byte ROM_{rom_index}_last_byte;".format(
+            rom_index=rom_index
+        )
+    )
+    h_lines.append("")
+    h_lines.append("#endif")
+    h_lines.append("")
+    return "\n".join(h_lines)
 
 
 def bitstrings_to_logisim(bitstrings):
