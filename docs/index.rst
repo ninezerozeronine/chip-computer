@@ -12,6 +12,7 @@ Welcome to the documentation for the 8 bit computer project!
    modules/index
    language/index
    hardware/index
+   peripherals/index
    software/index
    development_tools
    credits
