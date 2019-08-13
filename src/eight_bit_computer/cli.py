@@ -13,7 +13,6 @@ def assemble():
         args.asm_filepath,
         output_filepath=args.output_filepath,
         variable_start_offset=args.variable_start_offset,
-        output_format=args.output_format,
     )
 
 
@@ -52,13 +51,6 @@ def get_assemble_parser():
             "assigned variables at."
         ),
         default=0,
-    )
-    parser.add_argument(
-        "-f",
-        "--output_format",
-        choices=["logisim", "cpp"],
-        help="Format to write the machine code in.",
-        default="logisim",
     )
 
     return parser
@@ -132,7 +124,7 @@ def get_gen_roms_parser():
     parser.add_argument(
         "-f",
         "--output_format",
-        choices=["logisim", "cpp"],
+        choices=["logisim", "arduino"],
         help="Format to write the ROMs in.",
         default="logisim",
     )

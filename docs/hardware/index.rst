@@ -10,6 +10,5 @@ Hardware
    materials_and_tools
    edge_detection
    debouncing
-   eeprom_programmer
    safe_clock_enable
    open_collector
