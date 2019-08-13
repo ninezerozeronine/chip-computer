@@ -3,7 +3,10 @@
 #include <Arduino.h>
 
 #include "button.h"
-#include "roms.h"
+#include "rom_0.h"
+#include "rom_1.h"
+#include "rom_2.h"
+#include "rom_3.h"
 
 #define ROM_SEL_BUTTON_PIN A0
 #define MODE_SEL_BUTTON_PIN A1
