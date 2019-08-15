@@ -132,7 +132,7 @@ void write_eeprom_data(unsigned long data_pointer, byte last_byte) {
 
     byte value = 0;
     int chunk = 1;
-    for (unsigned int address = 0; address < NUM_ADDRESSES; address++) {
+    for (unsigned int address = 0; address < NUM_ADDRESSES - 1; address++) {
 
         // Delay after every 64 bytes to give time for the page write to happen.
         if (((address % 64) == 0 ) and (address != 0)) {
@@ -170,6 +170,73 @@ void write_eeprom_data(unsigned long data_pointer, byte last_byte) {
 
     set_datapins_value(0);
     set_datapins_mode(INPUT);
+
+    // Delay so the chip is ready for whatever happens next.
+    delay(12);
+}
+
+
+void verify_eeprom_data(unsigned long data_pointer, byte last_byte) {
+    // Read the rom and verify that the data inside is correct.
+    //
+    // Args:
+    //     data_pointer: Address of the start of the array of bytes. 
+    //     last_byte: The last byte to write
+
+    byte read_value = 0;
+    byte correct_value = 0;
+    int chunk = 1;
+
+    digitalWrite(_OE_PIN, LOW);
+    set_datapins_mode(INPUT);
+
+    for (unsigned int address = 0; address < NUM_ADDRESSES - 1; address++) {
+
+        if ((address % 256) == 0) {
+            char buf[40];
+            sprintf(buf, "Verifying chunk %03d of 128.", chunk);
+            Serial.println(buf);
+            chunk += 1;
+        }
+
+        delayMicroseconds(5);
+        set_addresspins_value(address);
+        delayMicroseconds(5);
+        read_value = read_current_byte();
+        correct_value = pgm_read_byte_far(data_pointer + address);
+        
+        if (read_value != correct_value) {
+            char err_buf[80];
+            sprintf(err_buf,
+                "Incorrect value at %05d (%04X hex). Read %02X but it should be %02X.",
+                address,
+                address,
+                read_value,
+                correct_value
+            );
+            Serial.println(err_buf);
+        }
+    }
+
+    // Verify the last byte
+    delayMicroseconds(5);
+    set_addresspins_value(NUM_ADDRESSES - 1);
+    delayMicroseconds(5);
+    read_value = read_current_byte();
+
+    if (read_value != last_byte) {
+        char err_buf[80];
+        sprintf(err_buf,
+            "Incorrect value at %05d (%04X hex). Read %02X but it should be %02X.",
+            32767, // sprintf doesn't like (NUM_ADDRESSES - 1) for some reason
+            32767,
+            read_value,
+            last_byte
+        );
+        Serial.println(err_buf);
+    }
+
+    digitalWrite(_OE_PIN, HIGH);
 }
 
 
@@ -223,7 +290,7 @@ void mode_sel_button_pressed() {
 
 
 void go_button_pressed() {
-    // Perform the correct action base on the current mode and rom
+    // Perform the correct action based on the current mode and rom
     //
     // We get the address here because the pgm_get_far_address needs a compile
     // time constant to work correctly otherwise you get compilation errors.
@@ -242,18 +309,22 @@ void go_button_pressed() {
             switch (selected_rom) {
                 case 0: {
                     write_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
+                    verify_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
                     break;
                 }
                 case 1: {
                     write_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
+                    verify_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
                     break;
                 }                
                 case 2: {
                     write_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
+                    verify_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
                     break;
                 }                
                 case 3: {
                     write_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
+                    verify_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
                     break;
                 }
             break;
