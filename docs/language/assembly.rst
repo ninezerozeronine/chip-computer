@@ -814,7 +814,7 @@ variables as they are encountered in the file. E.g. for the following assembly:
         LOAD [$variable2] A
 
 variable1 is predeclared, variable2 is declared as it's used. Once assembled,
-variable1 is an alias for 0, variable2 is an alias for 2.
+variable1 is an alias for 0, variable2 is an alias for 1.
 
 A variable is a token that starts with the ``$`` character followed by any letter or
 an underscore, then any alphanumeric or an underscore. E.g.:
