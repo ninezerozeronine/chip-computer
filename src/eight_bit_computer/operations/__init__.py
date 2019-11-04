@@ -17,6 +17,11 @@ def get_all_operations():
     """
 
     from . import (
+        and_op,
+        nand_op,
+        or_op,
+        nor_op,
+        xor_op,
         add,
         copy_op,
         load,
@@ -26,10 +31,15 @@ def get_all_operations():
     )
 
     return [
+        and_op,
+        nand_op,
+        or_op,
+        nor_op,
+        xor_op,
         add,
         copy_op,
         load,
         set_op,
         jump,
-        jump_if_overflow_flag,
+        jump_if_overflow_flag
     ]
