@@ -223,8 +223,21 @@ ALU_CONTROL_FLAGS = {
         MODULE_CONTROL["ALU"]["M_HIGH"],
         MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
+    "A_NXOR_B": [
+        MODULE_CONTROL["ALU"]["S0_HIGH"],
+        MODULE_CONTROL["ALU"]["S1_LOW"],
+        MODULE_CONTROL["ALU"]["S2_LOW"],
+        MODULE_CONTROL["ALU"]["S3_HIGH"],
+        MODULE_CONTROL["ALU"]["M_HIGH"],
+        MODULE_CONTROL["ALU"]["NO_CARRY"],
+    ],
     "NOT_A": [
-
+        MODULE_CONTROL["ALU"]["S0_LOW"],
+        MODULE_CONTROL["ALU"]["S1_LOW"],
+        MODULE_CONTROL["ALU"]["S2_LOW"],
+        MODULE_CONTROL["ALU"]["S3_LOW"],
+        MODULE_CONTROL["ALU"]["M_HIGH"],
+        MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
     "A_PLUS_A": [
 
