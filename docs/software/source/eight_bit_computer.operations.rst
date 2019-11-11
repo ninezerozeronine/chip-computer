@@ -9,6 +9,7 @@ Submodules
    eight_bit_computer.operations.add
    eight_bit_computer.operations.and_op
    eight_bit_computer.operations.copy_op
+   eight_bit_computer.operations.decr_op
    eight_bit_computer.operations.fetch
    eight_bit_computer.operations.incr_op
    eight_bit_computer.operations.jump

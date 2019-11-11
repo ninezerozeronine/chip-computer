@@ -45,7 +45,8 @@ def generate_microcode_templates(
     )
 
     # DataTemplates for when the condition is false - i.e. it should
-    # just continue to the next instruction
+    # just continue to the next instruction. This count is to skip over
+    # the memory address that would have been jumped to.
     control_steps = [
         [
             MODULE_CONTROL["PC"]["COUNT"],
