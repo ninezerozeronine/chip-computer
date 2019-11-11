@@ -30,6 +30,7 @@ def get_all_operations():
         set_op,
         jump,
         jump_if_overflow_flag,
+        lshift_op
     )
 
     return [
@@ -45,5 +46,6 @@ def get_all_operations():
         load,
         set_op,
         jump,
-        jump_if_overflow_flag
+        jump_if_overflow_flag,
+        lshift_op,
     ]
