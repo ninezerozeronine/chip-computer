@@ -19,15 +19,15 @@ from ..data_structures import (
 
 def generate_microcode_templates(alu_op, control_flags):
     """
-    Generate microcode for all the ADD instructions.
+    Generate microcode for a the simple ALU instructions.
 
     Args:
         alu_op (str): The ALU operation to perform - one of the
             ALU_OPERATIONS.
         control_flags (list(str)): List of ALU control flags for this
-            ALU operation. One of the ALU_CONTROL_FLAGS.
+            simple ALU operation. One of the ALU_CONTROL_FLAGS.
     Returns:
-        list(DataTemplate): DataTemplates for all the ADD instructions.
+        list(DataTemplate): DataTemplates for all the simple ALU instructions.
     """
 
     data_templates = []
@@ -44,7 +44,7 @@ def generate_microcode_templates(alu_op, control_flags):
 
 def generate_signatures():
     """
-    Generate all the argument signatures for the ADD operation.
+    Generate all the argument signatures for this simple ALU operation.
 
     Returns:
         list(list(dict)): All possible signatures, See
@@ -71,18 +71,18 @@ def generate_signatures():
 
 def generate_operation_templates(signature, alu_op, control_flags):
     """
-    Create the DataTemplates to define a ADD with the given signature.
+    Create the DataTemplates to define a simple ALU with the given signature.
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular ADD operation to generate
+            specify which particular simple ALU operation to generate
             templates for.
         alu_op (str): The ALU operation to perform - one of the
             ALU_OPERATIONS.
         control_flags (list(str)): List of ALU control flags for this
             ALU operation. One of the ALU_CONTROL_FLAGS.
     Returns:
-        list(DataTemplate) : DataTemplates that define this ADD.
+        list(DataTemplate) : DataTemplates that define this simple ALU operation.
     """
 
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(
@@ -104,7 +104,7 @@ def generate_instruction_byte_bitdefs(signature, alu_op):
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular ADD operation to generate
+            specify which particular simple ALU operation to generate
             the instruction byte bitdefs for.
         alu_op (str): The ALU operation to perform - one of the
             ALU_OPERATIONS.
@@ -134,7 +134,7 @@ def generate_control_steps(signature, control_flags):
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular ADD operation to generate the
+            specify which particular simple ALU operation to generate the
             control steps for.
         control_flags (list(str)): List of ALU control flags for this
             ALU operation. One of the ALU_CONTROL_FLAGS.
@@ -187,7 +187,7 @@ def parse_line(line, name, alu_op):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably a ADD assembly line, return an empty
+    If a line is not identifiably a simple ALU assembly line, return an empty
     list instead.
 
     Args:
