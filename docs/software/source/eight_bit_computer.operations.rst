@@ -7,6 +7,7 @@ Submodules
 .. toctree::
 
    eight_bit_computer.operations.add
+   eight_bit_computer.operations.addc_op
    eight_bit_computer.operations.and_op
    eight_bit_computer.operations.copy_op
    eight_bit_computer.operations.decr_op

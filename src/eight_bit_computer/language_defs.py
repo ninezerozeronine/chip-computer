@@ -191,9 +191,14 @@ ALU_CONTROL_FLAGS = {
         MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
     "A_PLUS_B_PLUS_1": [
-
+        MODULE_CONTROL["ALU"]["S0_HIGH"],
+        MODULE_CONTROL["ALU"]["S1_LOW"],
+        MODULE_CONTROL["ALU"]["S2_LOW"],
+        MODULE_CONTROL["ALU"]["S3_HIGH"],
+        MODULE_CONTROL["ALU"]["M_LOW"],
+        MODULE_CONTROL["ALU"]["WITH_CARRY"],
     ],
-    "A_MINUS_B_MINS_1": [
+    "A_MINUS_B_MINUS_1": [
 
     ],
     "A_AND_B": [
