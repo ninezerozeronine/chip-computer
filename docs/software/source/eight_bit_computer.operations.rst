@@ -10,6 +10,7 @@ Submodules
    eight_bit_computer.operations.and_op
    eight_bit_computer.operations.copy_op
    eight_bit_computer.operations.fetch
+   eight_bit_computer.operations.incr_op
    eight_bit_computer.operations.jump
    eight_bit_computer.operations.jump_if_flag_base
    eight_bit_computer.operations.jump_if_overflow_flag
