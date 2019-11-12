@@ -14,7 +14,7 @@ storage space was required to fit all the ROM bytes on the Arduino.
 
 It is wired up as follows:
 
-.. image:: eeprom_programmer_bb.png
+.. image:: images/eeprom_programmer/eeprom_programmer_bb.png
     :width: 100%
 
 The three buttons from left to right control:
