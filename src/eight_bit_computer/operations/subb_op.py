@@ -1,8 +1,8 @@
 """
-The ADDC operation
+The SUBB operation
 
-Adds a value to the accumulator, adding an extra 1 if the overflow flag
-is set.
+Subtracts a value from the accumulator, subtracting an extra 1 if the
+borrow flag is set.
 """
 
 import copy
@@ -22,14 +22,14 @@ from ..data_structures import (
 )
 
 
-_NAME = "ADDC"
+_NAME = "SUBB"
 
 def generate_microcode_templates():
     """
-    Generate microcode for the ADDC instruction.
+    Generate microcode for the SUBB instruction.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the ADDC instructions.
+        list(DataTemplate): DataTemplates for all the SUBB instructions.
     """
 
     data_templates = []
@@ -44,7 +44,7 @@ def generate_microcode_templates():
 
 def generate_signatures():
     """
-    Generate all the argument signatures for the ADDC operation.
+    Generate all the argument signatures for the SUBB operation.
 
     Returns:
         list(list(dict)): All possible signatures, See
@@ -71,11 +71,11 @@ def generate_signatures():
 
 def generate_operation_templates(signature):
     """
-    Create the DataTemplates to define a ADDC with the given signature.
+    Create the DataTemplates to define a SUBB with the given signature.
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular ADDC operation to generate
+            specify which particular SUBB operation to generate
             templates for.
     Returns:
         list(DataTemplate) : DataTemplates that define the operation
@@ -109,7 +109,7 @@ def get_calculation_control_steps(signature):
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular ADDC operation to generate
+            specify which particular SUBB operation to generate
             templates for.
     Returns:
         list(list(str)): List of list of bitdefs that specify the
@@ -121,7 +121,7 @@ def get_calculation_control_steps(signature):
 
     control_steps = []
 
-    # If we're adding a module to ACC
+    # If we're subtracting a module from ACC
     if signature[0]["value_type"] == "module_name":
         step_0 = [
             MODULE_CONTROL[signature[0]["value"]]["OUT"],
@@ -130,7 +130,7 @@ def get_calculation_control_steps(signature):
         ]
         control_steps.append(step_0)
 
-    # Else if we're adding a constant to ACC
+    # Else if we're subtracting a constant from ACC
     elif signature[0]["value_type"] == "constant":
         step_0 = [
             MODULE_CONTROL["PC"]["OUT"],
@@ -149,7 +149,7 @@ def get_calculation_control_steps(signature):
 
     # Else something odd has happened
     else:
-        raise ValueError("ADDC argument 0 is not a module name or constant")
+        raise ValueError("SUBB argument 0 is not a module name or constant")
 
     return control_steps
 
@@ -157,7 +157,7 @@ def generate_true_data_templates(
         instruction_byte_bitdefs, initial_control_steps
     ):
     """
-    Create datatemplates for an ADDC where an extra bit is needed.
+    Create datatemplates for an SUBB where an extra bit is needed.
 
     Args:
         instruction_byte_bitdefs (list(str)): List of the bitdefs that
@@ -166,12 +166,12 @@ def generate_true_data_templates(
             bitdefs that specify the control steps.
     Returns:
         list(DataTemplate): : List of DataTemplates that describe the
-        ADDC for this signature when the carry flag is high.
+        SUBB for this signature when the carry flag is high.
     """
 
     initial_control_steps_copy = copy.deepcopy(initial_control_steps)
     initial_control_steps_copy[-1].extend(
-        ALU_CONTROL_FLAGS["A_PLUS_B_PLUS_1"]
+        ALU_CONTROL_FLAGS["A_MINUS_B_MINUS_1"]
     )
     update_acc_control_step = [
         MODULE_CONTROL["ALU"]["OUT"],
@@ -184,7 +184,7 @@ def generate_true_data_templates(
 
     return assemble_instruction(
         instruction_byte_bitdefs,
-        [FLAGS["CARRY_BORROW"]["HIGH"]],
+        [FLAGS["CARRY_BORROW"]["LOW"]],
         control_steps
     )
 
@@ -206,7 +206,7 @@ def generate_false_data_templates(
 
     initial_control_steps_copy = copy.deepcopy(initial_control_steps)
     initial_control_steps_copy[-1].extend(
-        ALU_CONTROL_FLAGS["A_PLUS_B"]
+        ALU_CONTROL_FLAGS["A_MINUS_B"]
     )
     update_acc_control_step = [
         MODULE_CONTROL["ALU"]["OUT"],
@@ -219,7 +219,7 @@ def generate_false_data_templates(
 
     return assemble_instruction(
         instruction_byte_bitdefs,
-        [FLAGS["CARRY_BORROW"]["LOW"]],
+        [FLAGS["CARRY_BORROW"]["HIGH"]],
         control_steps
     )
 
@@ -238,13 +238,13 @@ def generate_instruction_byte_bitdefs(signature):
     if signature[0]["value_type"] == "module_name":
         bitdefs = [
             INSTRUCTION_GROUPS["ALU"],
-            ALU_OPERATIONS["ADDC"],
+            ALU_OPERATIONS["SUBB"],
             ALU_OPERANDS[signature[0]["value"]],
         ]
     elif signature[0]["value_type"] == "constant":
         bitdefs = [
             INSTRUCTION_GROUPS["ALU"],
-            ALU_OPERATIONS["ADDC"],
+            ALU_OPERATIONS["SUBB"],
             ALU_OPERANDS["ACC/CONST"],
         ]
 

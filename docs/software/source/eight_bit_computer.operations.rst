@@ -27,6 +27,7 @@ Submodules
    eight_bit_computer.operations.set_op
    eight_bit_computer.operations.simple_alu_op_base
    eight_bit_computer.operations.sub
+   eight_bit_computer.operations.subb_op
    eight_bit_computer.operations.xor_op
 
 Module contents

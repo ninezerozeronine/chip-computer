@@ -33,7 +33,8 @@ def get_all_operations():
         lshift_op,
         incr_op,
         decr_op,
-        addc_op
+        addc_op,
+        subb_op
     )
 
     return [
@@ -54,4 +55,5 @@ def get_all_operations():
         incr_op,
         decr_op,
         addc_op,
+        subb_op,
     ]
