@@ -141,7 +141,7 @@ def generate_instruction_byte_bitdefs(signature):
 
     return [
         INSTRUCTION_GROUPS["ALU"],
-        ALU_OPERATIONS["LSHIFT"],
+        ALU_OPERATIONS["LSHIFTC"],
         alu_operand,
     ]
 
