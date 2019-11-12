@@ -18,6 +18,7 @@ Submodules
    eight_bit_computer.operations.jump_if_overflow_flag
    eight_bit_computer.operations.load
    eight_bit_computer.operations.lshift_op
+   eight_bit_computer.operations.lshiftc_op
    eight_bit_computer.operations.nand_op
    eight_bit_computer.operations.nor_op
    eight_bit_computer.operations.not_op
