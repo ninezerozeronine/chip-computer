@@ -87,6 +87,7 @@ def create_arduino_header(rom_index, file_prefix):
     Create arduino header file
 
     The header file looks like this::
+    
         #ifndef ROM_0_H
         #define ROM_0_H
 

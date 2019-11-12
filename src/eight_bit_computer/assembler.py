@@ -191,7 +191,7 @@ def validate_and_identify_constants(machine_code_bytes):
     function then validates them to make sure they are correct and
     determines what kind of constant they are.
 
-    See :func:`~.get_mc_byte_template` for information on
+    See :func:`~.get_machine_code_byte_template` for information on
     machine code dictionaries from instructions.
 
     This function modifies the passed in machine code templates list
