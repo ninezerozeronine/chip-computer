@@ -65,5 +65,11 @@
         <instance moduleIdRef="74HCT123_25262beaefa4c04033004e637132213b_1" modelIndex="73935" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT123_25262beaefa4c04033004e637132213b_1.fzp">
             <views/>
         </instance>
+        <instance moduleIdRef="74HCT139_bc57491d656680f9ad10e15fd6aba53e_1" modelIndex="73990" path="C:/Users/Andy/Documents/Fritzing/parts/user/74HCT139_bc57491d656680f9ad10e15fd6aba53e_1.fzp">
+            <views/>
+        </instance>
+        <instance moduleIdRef="5641AH_4a26167cec7d2b23577a95ba1ebf312a_1" modelIndex="77216" path="C:/Users/Andy/Documents/Fritzing/parts/user/5641AH_4a26167cec7d2b23577a95ba1ebf312a_1.fzp">
+            <views/>
+        </instance>
     </instances>
 </module>
