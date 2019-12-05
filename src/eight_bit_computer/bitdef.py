@@ -27,6 +27,9 @@ def same_length(bitdefs):
         otherwise
     """
 
+    if len(bitdefs) < 2:
+        return True
+    
     all_same = True
     first_length = length(bitdefs[0])
     for other_bitdef in bitdefs[1:]:

@@ -325,28 +325,29 @@ DISPLAY_OPTIONS = {
 
 
 # This is reversed due to wiring the seven segment digit index
-# activation lines backwards
+# activation lines backwards. Oops.
 CHAR_INDEX_TO_DIGIT_INDEX = {
     0:           rw("... .. 11 .... ...."),
-    1:           rw("... .. 10 .... ....")
-    2:           rw("... .. 01 .... ....")
-    3:           rw("... .. 00 .... ....")
+    1:           rw("... .. 10 .... ...."),
+    2:           rw("... .. 01 .... ...."),
+    3:           rw("... .. 00 .... ...."),
 }
 
 
 SEGMENT_TO_BIT = {
-    "A": rw(".... ...1"),
-    "B": rw(".... ..1."),
-    "C": rw(".... .1.."),
-    "D": rw(".... 1..."),
-    "E": rw("...1 ...."),
-    "F": rw("..1. ...."),
-    "G": rw(".1.. ....")
+    "A":           rw(".... ...1"),
+    "B":           rw(".... ..1."),
+    "C":           rw(".... .1.."),
+    "D":           rw(".... 1..."),
+    "E":           rw("...1 ...."),
+    "F":           rw("..1. ...."),
+    "G":           rw(".1.. ...."),
+    "NO_SEGMENTS": rw(".... ....")
 }
 
 
 CHARACTER_TO_SEGMENTS = {
-    " ": [],
+    " ": ["NO_SEGMENTS"],
     "-": ["G"],
     "0": ["A", "B", "C", "D", "E", "F"],
     "1": ["B", "C"],

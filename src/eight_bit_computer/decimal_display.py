@@ -2,9 +2,12 @@
 Generate the data for the decimal display rom.
 """
 
-from .lanuage_defs import SEGMENT_TO_BIT, CHARACTER_TO_SEGMENTS
-import bitdef
-
+from .language_defs import (
+    SEGMENT_TO_BIT, CHARACTER_TO_SEGMENTS, CHAR_INDEX_TO_DIGIT_INDEX
+    )
+from .number_utils import number_to_bitstring
+from . import bitdef
+from .data_structures import RomData
 
 
 def gen_display_romdatas():
@@ -87,7 +90,7 @@ def to_2s_compliment(value):
         return value
 
 
-def assemble_romdata(raw_value, disp_chars, base, binary_mode):
+def assemble_romdata(raw_value, disp_chars, base_bitdef, binary_mode_bitdef):
     """
     Assemble the romdatas for the given display configuration.
 
@@ -96,22 +99,23 @@ def assemble_romdata(raw_value, disp_chars, base, binary_mode):
             rom values.
         disp_chars (string): The display characters that will make up
             this value on the seven segment displays
-        base (str): A bitdef signifying which base the display should be
-            in - hex or decimal. Forms part of the address of the rom.
-        binary_mode (str): Whether the raw value should be displayed in
-            unsigned or two's compliment interpreted value.
+        base_bitdef (str): A bitdef signifying which base the display
+            should be in - hex or decimal. Forms part of the address of
+            the rom.
+        binary_mode_bitdef (str): Whether the raw value should be
+            displayed in unsigned or two's compliment interpreted value.
     Returns:
         list(RomData): List of the romdatas that make up this display
         configuration.
     """
     romdatas = []
-    for character, index in disp_chars.iteritems():
-        address = bitdef.merge(
+    for index, character in enumerate(disp_chars):
+        address = bitdef.merge([
             value_to_addr_bitdef(raw_value),
-            base,
-            binary_mode,
-            CHAR_INDEX_TO_DIGIT_INDEX(index)
-        )
+            base_bitdef,
+            binary_mode_bitdef,
+            CHAR_INDEX_TO_DIGIT_INDEX[index]
+        ])
         data = character_to_bitdef(character)
         romdatas.append(RomData(address=address, data=data))
     return romdatas
