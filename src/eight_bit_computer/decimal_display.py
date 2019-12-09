@@ -3,7 +3,8 @@ Generate the data for the decimal display rom.
 """
 
 from .language_defs import (
-    SEGMENT_TO_BIT, CHARACTER_TO_SEGMENTS, CHAR_INDEX_TO_DIGIT_INDEX
+    SEGMENT_TO_BIT, CHARACTER_TO_SEGMENTS, CHAR_INDEX_TO_DIGIT_INDEX,
+    DISPLAY_OPTIONS
     )
 from .number_utils import number_to_bitstring
 from . import bitdef
@@ -24,13 +25,13 @@ def gen_display_romdatas():
         twos_comp_raw_value = to_2s_compliment(raw_value)
 
         # Generate unsigned decimal
-        unsigned_decimal_str = "{number:>4d}".format(number=value)
+        unsigned_decimal_str = "{number:>4d}".format(number=raw_value)
         romdatas.extend(
             assemble_romdata(
                 raw_value,
                 unsigned_decimal_str,
-                DISPLAY_OPTIONS("DECIMAL"),
-                DISPLAY_OPTIONS("UNSIGNED"),
+                DISPLAY_OPTIONS["DECIMAL"],
+                DISPLAY_OPTIONS["UNSIGNED"],
             )
         )
 
@@ -42,19 +43,19 @@ def gen_display_romdatas():
             assemble_romdata(
                 raw_value,
                 twos_comp_decimal_str,
-                DISPLAY_OPTIONS("DECIMAL"),
-                DISPLAY_OPTIONS("TWOS_COMP"),
+                DISPLAY_OPTIONS["DECIMAL"],
+                DISPLAY_OPTIONS["TWOS_COMP"],
             )
         )
 
         # Generate unsigned hex
-        unsigned_hex_str = "{number:>4X}".format(number=value)
+        unsigned_hex_str = "{number:>4X}".format(number=raw_value)
         romdatas.extend(
             assemble_romdata(
                 raw_value,
                 unsigned_hex_str,
-                DISPLAY_OPTIONS("HEX"),
-                DISPLAY_OPTIONS("UNSIGNED"),
+                DISPLAY_OPTIONS["HEX"],
+                DISPLAY_OPTIONS["UNSIGNED"],
             )
         )
 
@@ -66,8 +67,8 @@ def gen_display_romdatas():
             assemble_romdata(
                 raw_value,
                 twos_comp_hex_str,
-                DISPLAY_OPTIONS("HEX"),
-                DISPLAY_OPTIONS("TWOS_COMP"),
+                DISPLAY_OPTIONS["HEX"],
+                DISPLAY_OPTIONS["TWOS_COMP"],
             )
         )
 
