@@ -2,18 +2,22 @@
 Functionality to convert data other package friendly formats.
 """
 
+import os
+
 from . import number_utils
 
 
-def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
+def bitstrings_to_arduino_cpp(
+        bitstrings, rom_index, header_filename, rom_var_name
+    ):
     """
     Convert rom bitstrings to arduino header cpp file.
 
     The format of the file is::
 
-        #include "rom_0.h"
+        #include "mc_rom_0.h"
 
-        extern const byte ROM_0[] __attribute__ (( __section__(".fini1") )) = {
+        extern const byte MC_ROM_0[] __attribute__ (( __section__(".fini1") )) = {
             0x00, 0x01, 0x02, 0x03,  0x04, 0x05, 0x06, 0x07,  0x08, 0x09, 0x0A, 0x0B,  0x0C, 0x0D, 0x0E, 0x0F, // 00000
             0x10, 0x11, 0x12, 0x13,  0x14, 0x15, 0x16, 0x17,  0x18, 0x19, 0x1A, 0x1B,  0x1C, 0x1D, 0x1E, 0x1F, // 00016
             ...
@@ -21,28 +25,29 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
             0xE0, 0xE1, 0xE2, 0xE3,  0xE4, 0xE5, 0xE6, 0xE7,  0xE8, 0xE9, 0xEA, 0xEB,  0xEC, 0xED, 0xEE, 0xEF, // 32736
             0xF0, 0xF1, 0xF2, 0xF3,  0xF4, 0xF5, 0xF6, 0xF7,  0xF8, 0xF9, 0xFA, 0xFB,  0xFC, 0xFD, 0xFE        // 32752
         };
-        extern const byte ROM_0_last_byte = 0xFF;
+        extern const byte MC_ROM_0_LAST_BYTE = 0xFF;
 
-    Where:
-    - The rom index is used for the number in the variable names (e.g.
-    ROM_0).
-    - The rom index +1 is used for the index of the fini part.
+    Where the rom index +1 is used for the index of the fini part.
 
     Args:
-        rom_index (int): The index of the rom.
-        file_prefix (str): Prefix for the filename.
         bitstrings (list(str)): This of bitstrings that make up the rom.
+        rom_index (int): Index of the rom beind written (index in the
+            list of all the roms being written to the arduino).
+        header_filename (str): Name of the header file, e.g.
+            "mc_rom_0.h".
+        rom_var_name(str): The variable name used for the rom data in
+            the arduino code.
     Returns:
         str: String ready to be written to cpp file
     """
     cpp_lines = []
-    cpp_lines.append("#include \"{prefix}_{rom_index}.h\"".format(
-        prefix=file_prefix, rom_index=rom_index
+    cpp_lines.append("#include \"{header_filename}\"".format(
+        header_filename=header_filename
     ))
     cpp_lines.append("")
     cpp_lines.append(
-        "extern const byte ROM_{rom_index}[] __attribute__ (( __section__(\".fini{fini_index}\") )) = {{".format(
-            rom_index=rom_index, fini_index=rom_index + 1
+        "extern const byte {rom_var_name}[] __attribute__ (( __section__(\".fini{fini_index}\") )) = {{".format(
+            rom_var_name=rom_var_name, fini_index=rom_index + 1
         )
     )
     data_lines = []
@@ -72,8 +77,8 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
     cpp_lines.extend(data_lines)
     cpp_lines.append("};")
     cpp_lines.append(
-        "extern const byte ROM_{rom_index}_last_byte = 0x{byte};".format(
-            rom_index=rom_index,
+        "extern const byte {rom_var_name}_LAST_BYTE = 0x{byte};".format(
+            rom_var_name=rom_var_name,
             byte=number_utils.bitstring_to_hex_string(bitstrings[-1])
         )
     )
@@ -82,45 +87,48 @@ def bitstrings_to_arduino_cpp(rom_index, file_prefix, bitstrings):
     return cpp_string
 
 
-def create_arduino_header(rom_index, file_prefix):
+def create_arduino_header(header_file_basename, rom_var_name):
     """
     Create arduino header file
 
     The header file looks like this::
-    
-        #ifndef ROM_0_H
-        #define ROM_0_H
+
+        #ifndef MC_ROM_0_H
+        #define MC_ROM_0_H
 
         #include <Arduino.h>
 
-        extern const byte ROM_0[];
-        extern const byte ROM_0_last_byte;
+        extern const byte MC_ROM_0[];
+        extern const byte MC_ROM_0_LAST_BYTE;
 
         #endif
 
     Args:
-        rom_index (int): The index of the rom.
-        file_prefix (str): Prefix for the filename.
+        header_file_basename (str): The basename of the header file.
+            E.g. if the header file is named mc_rom_0.h, the basename is
+            mc_rom_0.
+        rom_var_name(str): The variable name used for the rom data in
+            the arduino code.
     Returns:
         str: String ready to be written to a file.
     """
 
     h_lines = []
-    h_lines.append("#ifndef {prefix}_{rom_index}_H".format(
-        prefix=file_prefix.upper(), rom_index=rom_index
+    h_lines.append("#ifndef {header_file_basename}_H".format(
+        header_file_basename=header_file_basename.upper()
     ))
-    h_lines.append("#define {prefix}_{rom_index}_H".format(
-        prefix=file_prefix.upper(), rom_index=rom_index
+    h_lines.append("#define {header_file_basename}_H".format(
+        header_file_basename=header_file_basename.upper()
     ))
     h_lines.append("")
     h_lines.append("#include <Arduino.h>")
     h_lines.append("")
-    h_lines.append("extern const byte ROM_{rom_index}[];".format(
-        rom_index=rom_index
+    h_lines.append("extern const byte {rom_var_name}[];".format(
+        rom_var_name=rom_var_name
     ))
     h_lines.append(
-        "extern const byte ROM_{rom_index}_last_byte;".format(
-            rom_index=rom_index
+        "extern const byte {rom_var_name}_LAST_BYTE;".format(
+            rom_var_name=rom_var_name
         )
     )
     h_lines.append("")
@@ -177,3 +185,41 @@ def chunker(seq, chunk_size):
     return (
         seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
     )
+
+
+def write_arduino_pair(
+        bitstrings, output_dir, file_basename, rom_var_name, rom_index
+    ):
+    """
+    Write the header and cpp files for the arduino roms.
+
+    Args:
+        bitstrings (list(str)): List of bitstrings that will make up the
+            rom.
+        output_dir (str): Directory (relative or absolute) to output the
+            pair of files into.
+        file_basename (str): Basename of the h and cpp files. The
+            basename is the part of the file without the extention or
+            the period.
+        rom_var_name(str): The variable name used for the rom data in
+            the arduino code.
+        rom_index (int): Index of the rom to be written. This index is
+            the index in the sequence of all roms to be written to the
+            arduino.
+    """
+
+    # Write h
+    h_output = create_arduino_header(file_basename, rom_var_name)
+    h_filename = "{file_basename}.h".format(file_basename=file_basename)
+    h_filepath = os.path.join(output_dir, h_filename)
+    with open(h_filepath, "w") as h_file:
+        h_file.write(h_output)
+
+    # Write cpp
+    cpp_output = bitstrings_to_arduino_cpp(
+        bitstrings, rom_index, h_filename, rom_var_name
+    )
+    cpp_filename = "{file_basename}.cpp".format(file_basename=file_basename)
+    cpp_filepath = os.path.join(output_dir, cpp_filename)
+    with open(cpp_filepath, "w") as cpp_file:
+        cpp_file.write(cpp_output)

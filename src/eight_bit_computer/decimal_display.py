@@ -72,7 +72,7 @@ def gen_display_romdatas():
             )
         )
 
-        return romdatas
+    return romdatas
 
 
 def to_2s_compliment(value):
@@ -152,7 +152,7 @@ def character_to_bitdef(character):
     Bitdefs are mapped to correspond to a 5641AH 7 segment display:
 
        A
-     - - - 
+     - - -
     |     |
    F|     |B
     |  G  |
@@ -160,7 +160,7 @@ def character_to_bitdef(character):
     |     |
    E|     |C
     |     |
-     - - - 
+     - - -
        D
 
     A = 0000 0001
@@ -184,8 +184,8 @@ def character_to_bitdef(character):
         msg = (
             "Cannot convert {input_char} to a bitdef for seven segment "
             "display. Valid characters are:\n {valid_chars}.".format(
-                input_char = character,
-                valid_chars = ", ".join(CHARACTER_TO_SEGMENTS) 
+                input_char=character,
+                valid_chars=", ".join(CHARACTER_TO_SEGMENTS)
                 )
         )
         raise ValueError(msg)

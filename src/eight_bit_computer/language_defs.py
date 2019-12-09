@@ -368,11 +368,10 @@ CHARACTER_TO_SEGMENTS = {
 }
 
 
-
 EMPTY_ADDRESS = rw("........ .... ...")
 MODULE_CONTROLS_DEFAULT = rw("00000000 00000000 00000000 00000000")
 MODULE_CONTROLS_NONE = rw("........ ........ ........ ........")
-
+DECIMAL_ROM_DEFAULT = rw("00000000")
 
 def instruction_byte_from_bitdefs(bitdefs):
     """

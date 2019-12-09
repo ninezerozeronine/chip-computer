@@ -5,7 +5,10 @@ Create and export roms for the computer
 import os
 
 from .operations import get_all_operations, fetch
-from .language_defs import EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT
+from .language_defs import (
+    EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT, DECIMAL_ROM_DEFAULT
+)
+from .decimal_display import gen_display_romdatas
 from .data_structures import RomData
 from . import bitdef
 from . import number_utils
@@ -17,12 +20,15 @@ def get_rom():
 
     Returns:
         list(RomData): All the defined microcode.
+
+    Raises:
+        RuntimeError: When the romdata dataset has duplicate addresses.
     """
 
     language_templates = collect_language_datatemplates()
     romdatas = collapse_datatemplates_to_romdatas(language_templates)
     if romdatas_have_duplicate_addresses(romdatas):
-        raise ValueError("Romdata set has duplicate addresses")
+        raise RuntimeError("Romdata set has duplicate addresses")
     all_addresses = bitdef.collapse(EMPTY_ADDRESS)
     default_data = MODULE_CONTROLS_DEFAULT
     full_rom = populate_empty_addresses(romdatas, all_addresses, default_data)
@@ -209,3 +215,27 @@ def get_romdata_slice(romdatas, end, start):
         sliced_romdata = RomData(address=romdata.address, data=data_slice)
         sliced_romdatas.append(sliced_romdata)
     return sliced_romdatas
+
+
+def get_decimal_rom():
+    """
+    Get complete representation of the decimal rom.
+
+    Returns:
+        list(RomData): All the defined data for the decima rom.
+
+    Raises:
+        RuntimeError: When the decimal romdata dataset has duplicate
+            addresses.
+    """
+
+    decimal_romdatas = gen_display_romdatas()
+    if romdatas_have_duplicate_addresses(decimal_romdatas):
+        raise RuntimeError("Decimal romdata set has duplicate addresses")
+    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
+    default_data = DECIMAL_ROM_DEFAULT
+    full_rom = populate_empty_addresses(
+        decimal_romdatas, all_addresses, default_data
+    )
+    full_rom.sort(key=lambda romdata: romdata.address)
+    return full_rom

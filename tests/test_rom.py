@@ -205,3 +205,8 @@ def test_get_num_bytes(test_input, expected):
 ])
 def test_get_romdata_slice(romdatas, end, start, expected):
     assert rom.get_romdata_slice(romdatas, end, start) == expected
+
+
+def test_get_decimal_rom_doesnt_raise():
+    data = rom.get_decimal_rom()
+    assert True
