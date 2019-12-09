@@ -328,7 +328,7 @@ void go_button_pressed() {
                     verify_eeprom_data(pgm_get_far_address(MC_ROM_3), MC_ROM_3_LAST_BYTE);
                     break;
                 }
-                case 3: {
+                case 4: {
                     write_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
                     verify_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
                     break;
