@@ -3,10 +3,11 @@
 #include <Arduino.h>
 
 #include "button.h"
-#include "rom_0.h"
-#include "rom_1.h"
-#include "rom_2.h"
-#include "rom_3.h"
+#include "mc_rom_0.h"
+#include "mc_rom_1.h"
+#include "mc_rom_2.h"
+#include "mc_rom_3.h"
+#include "decimal_rom.h"
 
 #define ROM_SEL_BUTTON_PIN A0
 #define MODE_SEL_BUTTON_PIN A1
@@ -277,7 +278,7 @@ void set_addresspins_value(unsigned int address) {
 
 void rom_sel_button_pressed() {
     // Update state when rom select button is pressed
-    selected_rom = (selected_rom + 1) % 4;
+    selected_rom = (selected_rom + 1) % 5;
     set_rom_indicator_LED();
 }
 
@@ -308,23 +309,28 @@ void go_button_pressed() {
             Serial.println(selected_rom);
             switch (selected_rom) {
                 case 0: {
-                    write_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
-                    verify_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_0), MC_ROM_0_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_0), MC_ROM_0_LAST_BYTE);
                     break;
                 }
                 case 1: {
-                    write_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
-                    verify_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_1), MC_ROM_1_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_1), MC_ROM_1_LAST_BYTE);
                     break;
                 }                
                 case 2: {
-                    write_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
-                    verify_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_2), MC_ROM_2_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_2), MC_ROM_2_LAST_BYTE);
                     break;
                 }                
                 case 3: {
-                    write_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
-                    verify_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_3), MC_ROM_3_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_3), MC_ROM_3_LAST_BYTE);
+                    break;
+                }
+                case 3: {
+                    write_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
                     break;
                 }
             break;
@@ -336,12 +342,19 @@ void go_button_pressed() {
 
 void set_rom_indicator_LED() {
     // Set the LEDs to indicate which ROM will be written.
-    for (int led_index = 0; led_index < 4; led_index++){
-        if (led_index == selected_rom) {
-            digitalWrite(ROM_INDICATOR_PINS[led_index], HIGH);
-        } else {
-            digitalWrite(ROM_INDICATOR_PINS[led_index], LOW);
-        }
+    if (selected_rom == 4) {
+        digitalWrite(ROM_INDICATOR_PINS[0], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[1], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[2], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[3], HIGH);
+    } else {
+        for (int led_index = 0; led_index < 4; led_index++){
+            if (led_index == selected_rom) {
+                digitalWrite(ROM_INDICATOR_PINS[led_index], HIGH);
+            } else {
+                digitalWrite(ROM_INDICATOR_PINS[led_index], LOW);
+            }
+        }    
     }
 }
 
