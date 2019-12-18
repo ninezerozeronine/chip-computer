@@ -297,8 +297,10 @@ ALU_CONTROL_FLAGS = {
     ],
 }
 
+
 EMPTY_ADDRESS = rw("........ .... ...")
 MODULE_CONTROLS_DEFAULT = rw("00000000 00000000 00000000 00000000")
+MODULE_CONTROLS_NONE = rw("........ ........ ........ ........")
 
 
 def instruction_byte_from_bitdefs(bitdefs):
