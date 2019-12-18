@@ -209,7 +209,6 @@ The possible usages are:
  - ``LOAD [CONST] B``
  - ``LOAD [CONST] C``
 
-
 STORE
 ^^^^^
 
@@ -225,41 +224,56 @@ The possible usages are:
  - ``STORE ACC [A]``
  - ``STORE ACC [B]``
  - ``STORE ACC [C]``
- - ``STORE ACC [CONST]``
  - ``STORE ACC [PC]``
  - ``STORE ACC [SP]``
+ - ``STORE ACC [CONST]``
  - ``STORE A [ACC]``
  - ``STORE A [A]``
  - ``STORE A [B]``
  - ``STORE A [C]``
- - ``STORE A [CONST]``
  - ``STORE A [PC]``
  - ``STORE A [SP]``
+ - ``STORE A [CONST]``
  - ``STORE B [ACC]``
  - ``STORE B [A]``
  - ``STORE B [B]``
  - ``STORE B [C]``
- - ``STORE B [CONST]``
  - ``STORE B [PC]``
  - ``STORE B [SP]``
+ - ``STORE B [CONST]``
  - ``STORE C [ACC]``
  - ``STORE C [A]``
  - ``STORE C [B]``
  - ``STORE C [C]``
- - ``STORE C [CONST]``
  - ``STORE C [PC]``
  - ``STORE C [SP]``
+ - ``STORE C [CONST]``
  - ``STORE PC [ACC]``
  - ``STORE PC [A]``
  - ``STORE PC [B]``
  - ``STORE PC [C]``
- - ``STORE PC [CONST]``
  - ``STORE PC [PC]``
  - ``STORE PC [SP]``
-
+ - ``STORE PC [CONST]``
 
 PROGLOAD
 ^^^^^^^^
+
+The ``PROGLOAD`` operation loads a value from program memory into the ACC module.
+
+It is used by specifying the position in program memory as the single argument.
+The position in memory can be a module or a constant and is encased in square
+parentheses.
+
+The possible usages are:
+
+ - ``PROGLOAD [ACC]``
+ - ``PROGLOAD [A]``
+ - ``PROGLOAD [B]``
+ - ``PROGLOAD [C]``
+ - ``PROGLOAD [PC]``
+ - ``PROGLOAD [SP]``
+ - ``PROGLOAD [CONST]``
 
 PROGSTORE
 ^^^^^^^^^
