@@ -213,6 +213,51 @@ The possible usages are:
 STORE
 ^^^^^
 
+The ``STORE`` operation stores a value from a module in memory.
+
+It is used by specifying the module as the first argument and the
+location in memory as the second. The location in memory can be a module or a
+constant and is encased in square parentheses.
+
+The possible usages are:
+
+ - ``STORE ACC [ACC]``
+ - ``STORE ACC [A]``
+ - ``STORE ACC [B]``
+ - ``STORE ACC [C]``
+ - ``STORE ACC [CONST]``
+ - ``STORE ACC [PC]``
+ - ``STORE ACC [SP]``
+ - ``STORE A [ACC]``
+ - ``STORE A [A]``
+ - ``STORE A [B]``
+ - ``STORE A [C]``
+ - ``STORE A [CONST]``
+ - ``STORE A [PC]``
+ - ``STORE A [SP]``
+ - ``STORE B [ACC]``
+ - ``STORE B [A]``
+ - ``STORE B [B]``
+ - ``STORE B [C]``
+ - ``STORE B [CONST]``
+ - ``STORE B [PC]``
+ - ``STORE B [SP]``
+ - ``STORE C [ACC]``
+ - ``STORE C [A]``
+ - ``STORE C [B]``
+ - ``STORE C [C]``
+ - ``STORE C [CONST]``
+ - ``STORE C [PC]``
+ - ``STORE C [SP]``
+ - ``STORE PC [ACC]``
+ - ``STORE PC [A]``
+ - ``STORE PC [B]``
+ - ``STORE PC [C]``
+ - ``STORE PC [CONST]``
+ - ``STORE PC [PC]``
+ - ``STORE PC [SP]``
+
+
 PROGLOAD
 ^^^^^^^^
 
