@@ -297,8 +297,48 @@ The possible usages are:
 PUSH
 ^^^^
 
+The ``PUSH`` operation takes a value in a module and add it to the top of the stack.
+
+The stack grows downwards in memory, starting at address 255. The SP module is
+used to keep track of the top of the stack. The value in SP points at the current
+top of the stack. SP should be initialised to 0 so that the first push will put
+the value at address 255. The push first decrements SP, then stores the value in
+memory at the new value of SP.
+
+The flags generated while decrementing SP are not stored.
+
+The push operation is used by specifying the module to push onto the stack as the
+first and only argument.
+
+The possible usages are:
+
+ - ``PUSH ACC``
+ - ``PUSH A``
+ - ``PUSH B``
+ - ``PUSH C``
+ - ``PUSH PC``
+
 POP
 ^^^
+
+The ``POP`` operation takes the value from the top of the stack and copies it to
+a module.
+
+The value currently at top of the stack is pointed to by SP. A pop will first copy
+the value at the top of the stack into a module, then increment SP (the stack grows
+downwards in memory from address 255).
+
+The flags generated while incrementing SP are not stored.
+
+The pop is used by specifying the module to pop the value off the stack into as the
+first and only argument.
+
+The possible usages are:
+
+ - ``POP ACC``
+ - ``POP A``
+ - ``POP B``
+ - ``POP C``
 
 SET
 ^^^

@@ -1,7 +1,10 @@
 """
-The INCR operation.
+The PUSH operation.
 
-Adds one to the given argument (in place).
+Decrements PS, then stores a value from a module into memory at the new
+value of SP.
+
+This uses the ALU but the flags generated are not stored.
 """
 
 from itertools import product
@@ -10,8 +13,8 @@ from ..language_defs import (
     INSTRUCTION_GROUPS,
     MODULE_CONTROL,
     ALU_CONTROL_FLAGS,
-    ALU_OPERATIONS,
-    ALU_OPERANDS,
+    SRC_REGISTERS,
+    DEST_REGISTERS,
     FLAGS,
     instruction_byte_from_bitdefs,
 )
@@ -21,7 +24,7 @@ from ..data_structures import (
     get_arg_def_template, get_machine_code_byte_template
 )
 
-_NAME = "INCR"
+_NAME = "PUSH"
 
 
 def generate_signatures():
@@ -34,12 +37,12 @@ def generate_signatures():
     """
 
     signatures = []
-    for register in ("ACC", "A", "B", "C"):
+    for module in ("ACC", "A", "B", "C", "PC"):
         signature = []
 
         arg_def = get_arg_def_template()
         arg_def["value_type"] = "module_name"
-        arg_def["value"] = register
+        arg_def["value"] = module
         signature.append(arg_def)
 
         signatures.append(signature)
@@ -49,10 +52,10 @@ def generate_signatures():
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the INCR operations.
+    Generate microcode for all the PUSH operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the INCR microcode.
+        list(DataTemplate): DataTemplates for all the PUSH microcode.
     """
 
     data_templates = []
@@ -67,33 +70,40 @@ def generate_microcode_templates():
 
 def generate_operation_templates(signature):
     """
-    Create the DataTemplates to define an INCR with the given args.
+    Create the DataTemplates to define a PUSH with the given args.
 
     Args:
         signature (list(dict)): List of argument definitions that
             specify which particular not operation to generate
             templates for.
     Returns:
-        list(DataTemplate) : Datatemplates that define this incr.
+        list(DataTemplate) : Datatemplates that define this push.
     """
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
 
     flags_bitdefs = [FLAGS["ANY"]]
 
     step_0 = [
-        MODULE_CONTROL[signature[0]["value"]]["OUT"],
+        MODULE_CONTROL["SP"]["OUT"],
         MODULE_CONTROL["ALU"]["A_IS_BUS"],
         MODULE_CONTROL["ALU"]["STORE_RESULT"],
-        MODULE_CONTROL["ALU"]["STORE_FLAGS"],
     ]
-    step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+    step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
     step_1 = [
         MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL[signature[0]["value"]]["IN"],
+        MODULE_CONTROL["SP"]["IN"],
+    ]
+    step_2 = [
+        MODULE_CONTROL["SP"]["OUT"],
+        MODULE_CONTROL["MAR"]["IN"],
+    ]
+    step_3 = [
+        MODULE_CONTROL[signature[0]["value"]]["OUT"],
+        MODULE_CONTROL["RAM"]["IN"],
     ]
 
-    control_steps = [step_0, step_1]
+    control_steps = [step_0, step_1, step_2, step_3]
 
     return assemble_instruction(
         instruction_byte_bitdefs, flags_bitdefs, control_steps
@@ -112,15 +122,10 @@ def generate_instruction_byte_bitdefs(signature):
         list(str): Bitdefs that make up the instruction_byte
     """
 
-    if signature[0]["value"] == "ACC":
-        alu_operands = ALU_OPERANDS["ACC/CONST"]
-    else:
-        alu_operands = ALU_OPERANDS[signature[0]["value"]]
-
     return [
-        INSTRUCTION_GROUPS["ALU"],
-        ALU_OPERATIONS["INCR"],
-        alu_operands,
+        INSTRUCTION_GROUPS["STORE"],
+        SRC_REGISTERS[signature[0]["value"]],
+        DEST_REGISTERS["SP+/-"],
     ]
 
 
@@ -128,7 +133,7 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably an INCR assembly line, return an
+    If a line is not identifiably an PUSH assembly line, return an
     empty list instead.
 
     Args:
