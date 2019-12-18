@@ -278,6 +278,22 @@ The possible usages are:
 PROGSTORE
 ^^^^^^^^^
 
+The ``PROGSTORE`` operation stores the value in the ACC module into program memory.
+
+It is used by specifying the position in program memory as the single argument.
+The position in memory can be a module or a constant and is encased in square
+parentheses.
+
+The possible usages are:
+
+ - ``PROGSTORE [ACC]``
+ - ``PROGSTORE [A]``
+ - ``PROGSTORE [B]``
+ - ``PROGSTORE [C]``
+ - ``PROGSTORE [PC]``
+ - ``PROGSTORE [SP]``
+ - ``PROGSTORE [CONST]``
+
 PUSH
 ^^^^
 
