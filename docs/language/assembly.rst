@@ -365,8 +365,24 @@ The possible usages are:
 JUMP_IF_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_ZERO_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in an answer of zero.
+
+The possible usages are:
+
+ - ``JUMP_IF_ZERO_FLAG CONST``
+
 JUMP_IF_NOT_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_NOT_ZERO_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in a non zero answer.
+
+The possible usages are:
+
+ - ``JUMP_IF_NOT_ZERO_FLAG CONST``
 
 CALL
 ^^^^
