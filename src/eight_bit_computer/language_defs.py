@@ -271,7 +271,12 @@ ALU_CONTROL_FLAGS = {
         MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
     "A_PLUS_A_PLUS_1": [
-
+        MODULE_CONTROL["ALU"]["S0_LOW"],
+        MODULE_CONTROL["ALU"]["S1_LOW"],
+        MODULE_CONTROL["ALU"]["S2_HIGH"],
+        MODULE_CONTROL["ALU"]["S3_HIGH"],
+        MODULE_CONTROL["ALU"]["M_LOW"],
+        MODULE_CONTROL["ALU"]["WITH_CARRY"],
     ],
     "COMPARE_LTE_GT_EQ": [
 
@@ -283,7 +288,12 @@ ALU_CONTROL_FLAGS = {
 
     ],
     "ZERO": [
-
+        MODULE_CONTROL["ALU"]["S0_HIGH"],
+        MODULE_CONTROL["ALU"]["S1_HIGH"],
+        MODULE_CONTROL["ALU"]["S2_LOW"],
+        MODULE_CONTROL["ALU"]["S3_LOW"],
+        MODULE_CONTROL["ALU"]["M_HIGH"],
+        MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
 }
 
