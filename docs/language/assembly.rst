@@ -299,14 +299,31 @@ JUMP_IF_EQ_ZERO
 JUMP_IF_POSITIVE_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_POSITIVE_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in a positive value (when read as 2's compliment).
+
+The possible usages are:
+
+ - ``JUMP_IF_POSITIVE_FLAG CONST``
+
 JUMP_IF_NEGATIVE_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_NEGATIVE_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in a negative value (when read as 2's compliment).
+
+The possible usages are:
+
+ - ``JUMP_IF_NEGATIVE_FLAG CONST``
 
 JUMP_IF_OVERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_OVERFLOW_FLAG`` operation will set the program counter to the
-value of a given constant if the overflow flag is high.
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in an overflow.
 
 The possible usages are:
 
@@ -315,17 +332,57 @@ The possible usages are:
 JUMP_IF_NOT_OVERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_OVERFLOW_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for did not result in an overflow.
+
+The possible usages are:
+
+ - ``JUMP_IF_NOT_OVERFLOW_FLAG CONST``
+
 JUMP_IF_UNDERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_UNDERFLOW_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in an underflow.
+
+The possible usages are:
+
+ - ``JUMP_IF_UNDERFLOW_FLAG CONST``
 
 JUMP_IF_NOT_UNDERFLOW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_NOT_UNDERFLOW_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for did not result in an underflow.
+
+The possible usages are:
+
+ - ``JUMP_IF_NOT_UNDERFLOW_FLAG CONST``
+
 JUMP_IF_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_ZERO_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in an answer of zero.
+
+The possible usages are:
+
+ - ``JUMP_IF_ZERO_FLAG CONST``
+
 JUMP_IF_NOT_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_NOT_ZERO_FLAG`` operation will set the program counter to the
+value of a given constant if the last operation that the ALU flags were
+stored for resulted in a non zero answer.
+
+The possible usages are:
+
+ - ``JUMP_IF_NOT_ZERO_FLAG CONST``
 
 CALL
 ^^^^
