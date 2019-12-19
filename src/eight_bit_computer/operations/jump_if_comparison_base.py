@@ -135,7 +135,7 @@ def generate_operation_templates(
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular not operation to generate
+            specify which particular operation to generate
             templates for.
         instruction_group (str): Bitdef representing the instruction
             group for the instruction byte.
@@ -312,7 +312,7 @@ def generate_instruction_byte_bitdefs(
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular not operation to generate
+            specify which particular operation to generate
             the instruction byte bitdefs for.
         instruction_group (str): Bitdef representing the instruction
             group for the instruction byte.
@@ -349,13 +349,13 @@ def generate_true_datatemplates(
     flag_bitdefs
 ):
     """
-    Create DataTemplates to define a conditional jump if condition is false.
+    Create DataTemplates to define a conditional jump if condition is true.
 
     This is the case where no jump happens
 
     Args:
         signature (list(dict)): List of argument definitions that
-            specify which particular not operation to generate
+            specify which particular operation to generate
             templates for.
         instruction_group (str): Bitdef representing the instruction
             group for the instruction byte.
@@ -371,9 +371,9 @@ def generate_true_datatemplates(
             the control flags for the ALU to generate the appropriate
             flags.
         flag_bitdefs (list(str)): List of bitdef that represent the flag
-            state when the condition is false.
+            state when the condition is true.
     Returns:
-        list(DataTemplate) : Datatemplates that define the "false half"
+        list(DataTemplate) : Datatemplates that define the "true half"
         of a JUMP_IF_***_ACC operation.
     """
 
