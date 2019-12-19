@@ -282,7 +282,12 @@ ALU_CONTROL_FLAGS = {
 
     ],
     "COMPARE_LT_GTE": [
-
+        MODULE_CONTROL["ALU"]["S0_LOW"],
+        MODULE_CONTROL["ALU"]["S1_HIGH"],
+        MODULE_CONTROL["ALU"]["S2_HIGH"],
+        MODULE_CONTROL["ALU"]["S3_LOW"],
+        MODULE_CONTROL["ALU"]["M_LOW"],
+        MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
     "A": [
 

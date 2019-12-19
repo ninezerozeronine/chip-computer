@@ -384,6 +384,12 @@ Program Control Operations
 NOOP
 ^^^^
 
+The ``NOOP`` does nothing - no module transfers occur on the bus for one instruction cycle.
+
+The possible usages are:
+
+ - ``NOOP``
+
 JUMP
 ^^^^
 
@@ -407,6 +413,21 @@ The possible usages are:
 
 JUMP_IF_LT_ACC
 ^^^^^^^^^^^^^^
+
+The ``JUMP_IF_LT_ACC`` operation will set the program counter (jump)
+to the value of a given constant (second argument) if the value of the
+first argument (module or constant) is less than the accumulator.
+
+The instruction generates and stores (clobbers) the ALU flags.
+
+The possible usages are:
+
+ - ``JUMP_IF_LT_ACC A CONST``
+ - ``JUMP_IF_LT_ACC B CONST``
+ - ``JUMP_IF_LT_ACC C CONST``
+ - ``JUMP_IF_LT_ACC PC CONST``
+ - ``JUMP_IF_LT_ACC SP CONST``
+ - ``JUMP_IF_LT_ACC CONST CONST``
 
 JUMP_IF_LTE_ACC
 ^^^^^^^^^^^^^^^
