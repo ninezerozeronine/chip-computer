@@ -1,8 +1,8 @@
 """
-The JUMP_IF_LT_ACC operation.
+The JUMP_IF_LTE_ACC operation.
 
 Sets PC (jumps) to a constant if the module passed as an argument is
-less than the value in ACC.
+less than or equal to the value in ACC.
 
 This operation will generate and store (clobber) ALU flags.
 """
@@ -23,22 +23,22 @@ from ..data_structures import (
     get_arg_def_template, get_machine_code_byte_template
 )
 
-_NAME = "JUMP_IF_LT_ACC"
+_NAME = "JUMP_IF_LTE_ACC"
 
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the JUMP_IF_LT_ACC operations.
+    Generate microcode for all the JUMP_IF_LTE_ACC operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the JUMP_IF_LT_ACC
+        list(DataTemplate): DataTemplates for all the JUMP_IF_LTE_ACC
         microcode.
     """
 
     return jump_if_comparison_base.generate_microcode_templates(
         INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS["SP+/-"],
-        DEST_REGISTERS,
+        DEST_REGISTERS["SP+/-"],
+        SRC_REGISTERS,
         ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
         [FLAGS["CARRY_BORROW"]["HIGH"]],
         [FLAGS["CARRY_BORROW"]["LOW"]],
@@ -63,6 +63,6 @@ def parse_line(line):
         line,
         _NAME,
         INSTRUCTION_GROUPS["COPY"],
-        SRC_REGISTERS["SP+/-"],
-        DEST_REGISTERS,
+        DEST_REGISTERS["SP+/-"],
+        SRC_REGISTERS,
     )

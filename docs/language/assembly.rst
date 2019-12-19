@@ -432,6 +432,22 @@ The possible usages are:
 JUMP_IF_LTE_ACC
 ^^^^^^^^^^^^^^^
 
+The ``JUMP_IF_LTE_ACC`` operation will set the program counter (jump)
+to the value of a given constant (second argument) if the value of the
+first argument (module or constant) is less than or equal to the
+accumulator.
+
+The instruction generates and stores (clobbers) the ALU flags.
+
+The possible usages are:
+
+ - ``JUMP_IF_LTE_ACC A CONST``
+ - ``JUMP_IF_LTE_ACC B CONST``
+ - ``JUMP_IF_LTE_ACC C CONST``
+ - ``JUMP_IF_LTE_ACC PC CONST``
+ - ``JUMP_IF_LTE_ACC SP CONST``
+ - ``JUMP_IF_LTE_ACC CONST CONST``
+
 JUMP_IF_EQ_ACC
 ^^^^^^^^^^^^^^
 
