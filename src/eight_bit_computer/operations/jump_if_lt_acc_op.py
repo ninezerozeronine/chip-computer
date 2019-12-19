@@ -9,12 +9,10 @@ This operation will generate and store (clobber) ALU flags.
 
 from ..language_defs import (
     INSTRUCTION_GROUPS,
-    MODULE_CONTROL,
     DEST_REGISTERS,
     SRC_REGISTERS,
     ALU_CONTROL_FLAGS,
     FLAGS,
-    instruction_byte_from_bitdefs,
 )
 
 from . import jump_if_comparison_base
@@ -39,7 +37,7 @@ def generate_microcode_templates():
         INSTRUCTION_GROUPS["COPY"],
         SRC_REGISTERS["SP+/-"],
         DEST_REGISTERS,
-        ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
+        ALU_CONTROL_FLAGS["COMPARE_LT_GTE"],
         [FLAGS["CARRY_BORROW"]["HIGH"]],
         [FLAGS["CARRY_BORROW"]["LOW"]],
     )

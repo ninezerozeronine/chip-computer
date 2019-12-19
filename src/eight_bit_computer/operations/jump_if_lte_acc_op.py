@@ -9,12 +9,10 @@ This operation will generate and store (clobber) ALU flags.
 
 from ..language_defs import (
     INSTRUCTION_GROUPS,
-    MODULE_CONTROL,
     DEST_REGISTERS,
     SRC_REGISTERS,
     ALU_CONTROL_FLAGS,
     FLAGS,
-    instruction_byte_from_bitdefs,
 )
 
 from . import jump_if_comparison_base
@@ -49,8 +47,8 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably an JUMP_IF_LT_ACC assembly line, return an
-    empty list instead.
+    If a line is not identifiably an JUMP_IF_LTE_ACC assembly line,
+    return an empty list instead.
 
     Args:
         line (str): Assembly line to be parsed.

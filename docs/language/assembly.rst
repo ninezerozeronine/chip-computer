@@ -451,7 +451,7 @@ The possible usages are:
 JUMP_IF_EQ_ACC
 ^^^^^^^^^^^^^^
 
-JUMP_IF_GTEQ_ACC
+JUMP_IF_GTE_ACC
 ^^^^^^^^^^^^^^^^
 
 JUMP_IF_GT_ACC
