@@ -50,12 +50,15 @@ def get_all_operations():
         jump_if_not_underflow_flag,
         jump_if_zero_flag,
         jump_if_not_zero_flag,
+        call_op,
+        return_op,
+        halt_op,
         lshift_op,
         lshiftc_op,
         incr_op,
         decr_op,
         addc_op,
-        subb_op
+        subb_op,
     )
 
     return [
@@ -92,6 +95,9 @@ def get_all_operations():
         jump_if_not_underflow_flag,
         jump_if_zero_flag,
         jump_if_not_zero_flag,
+        call_op,
+        return_op,
+        halt_op,
         lshift_op,
         lshiftc_op,
         incr_op,

@@ -612,11 +612,46 @@ The possible usages are:
 CALL
 ^^^^
 
+The ``CALL`` operation will push the current program counter (i.e. the next
+instruction to be executed) onto the stack, then set the program counter (
+i.e. jump) to the value in the given module.
+
+There are not enough instruction cycles to be able to call a constant (e.g
+``CALL @label``) instead a module must be set to the desired constant, then
+that module called. E.g.:
+
+.. code-block:: text
+
+        SET ACC @my_func
+        CALL ACC
+
+The possible usages are:
+
+ - ``CALL ACC``
+ - ``CALL A``
+ - ``CALL B``
+ - ``CALL C``
+
 RETURN
 ^^^^^^
 
+The ``RETURN`` operation will pop the top of the stack into the program counter.
+
+It expects to be used after having arrived at a section of assembly with the
+``CALL`` instruction.
+
+The possible usages are:
+
+ - ``RETURN``
+
 HALT
 ^^^^
+
+The ``HALT`` operation halts execution of the computer by stopping the clock.
+
+The possible usages are:
+
+ - ``HALT``
 
 Logical Operations
 ------------------
