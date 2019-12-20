@@ -363,7 +363,7 @@ The possible usages are:
 .. _setzero:
 
 SET_ZERO
-^^^^^^^
+^^^^^^^^
 
 The ``SET_ZERO`` operation will set a module in the computer to zero.
 
