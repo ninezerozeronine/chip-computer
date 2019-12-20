@@ -19,6 +19,7 @@ Submodules
    eight_bit_computer.bitdef
    eight_bit_computer.cli
    eight_bit_computer.data_structures
+   eight_bit_computer.decimal_display
    eight_bit_computer.exceptions
    eight_bit_computer.export
    eight_bit_computer.language_defs

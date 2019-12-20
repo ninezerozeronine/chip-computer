@@ -166,7 +166,7 @@ Decimal,Hexadecimal,Binary,Instr group bits,Source bits,Dest Bits,ALU op bits,AL
 164,A4,10100100,10,100,100,,,Store,SP,SP,,,JUMP_IF_EQ_ZERO,JUMP_IF_EQ_ZERO SP CONST,
 165,A5,10100101,10,100,101,,,Store,SP,PC,,,JUMP_IF_EQ_ZERO,JUMP_IF_EQ_ZERO PC CONST,
 166,A6,10100110,10,100,110,,,Store,SP,SP+/-,,,,,No sense in comparing SP+/- to zero
-167,A7,10100111,10,100,111,,,Store,,,,,,,Would have been jump if a constant equals zero...
+167,A7,10100111,10,100,111,,,Store,SP,CONST,,,,,Would have been jump if a constant equals zero...
 168,A8,10101000,10,101,000,,,Store,PC,ACC,,,STORE,STORE PC [ACC],
 169,A9,10101001,10,101,001,,,Store,PC,A,,,STORE,STORE PC [A],
 170,AA,10101010,10,101,010,,,Store,PC,B,,,STORE,STORE PC [B],

@@ -149,27 +149,27 @@ def character_to_bitdef(character):
     """
     Generate a bitdef for the given character.
 
-    Bitdefs are mapped to correspond to a 5641AH 7 segment display:
+    Bitdefs are mapped to correspond to a 5641AH 7 segment display::
 
-       A
-     - - -
-    |     |
-   F|     |B
-    |  G  |
-     - - -
-    |     |
-   E|     |C
-    |     |
-     - - -
-       D
+            A
+          - - -
+         |     |
+        F|     |B
+         |  G  |
+          - - -
+         |     |
+        E|     |C
+         |     |
+          - - -
+            D
 
-    A = 0000 0001
-    B = 0000 0010
-    C = 0000 0100
-    D = 0000 1000
-    E = 0001 0000
-    F = 0010 0000
-    G = 0100 0000
+        A = 0000 0001
+        B = 0000 0010
+        C = 0000 0100
+        D = 0000 1000
+        E = 0001 0000
+        F = 0010 0000
+        G = 0100 0000
 
     Args:
         character (str): Character to get the bidef for.
