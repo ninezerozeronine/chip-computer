@@ -755,6 +755,26 @@ The possible usages are:
  - ``NXOR C``
  - ``NXOR CONST``
 
+Miscellaneous Operations
+------------------------
+
+ROT_LEFT
+^^^^^^^^
+
+The ``ROT_LEFT`` operation moves all the bits in the number one place to the
+left (most significant side), adding a 0 on the least significant side. If
+the most significant bit was a 1, then after the rotation this is set back
+on the least significant side.
+
+This operation will generate and store (clobber) ALU flags.
+
+The possible usages are:
+
+ - ``ROT_LEFT ACC``
+ - ``ROT_LEFT A``
+ - ``ROT_LEFT B``
+ - ``ROT_LEFT C``
+
 Constants
 ---------
 

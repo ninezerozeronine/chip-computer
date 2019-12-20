@@ -1,9 +1,11 @@
 // Tests that the copy operation works
 
-$test
+$test_num
+SET ACC #1
+STORE ACC [$test_num]
 
-@zero_test
-    SET_ZERO ACC
+@test_start
+    LOAD [$test_num] ACC
     COPY ACC A
     COPY A ACC
     COPY ACC B
@@ -27,4 +29,10 @@ $test
     COPY B C
     COPY C SP
     COPY SP C
-
+    LOAD [$test_num] ACC
+    JUMP_IF_EQ_ACC C @next_number
+    HALT
+@next_number
+    ROT_LEFT ACC
+    STORE ACC [@test_num]
+    JUMP @test_start

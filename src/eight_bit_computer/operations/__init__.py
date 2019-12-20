@@ -59,6 +59,7 @@ def get_all_operations():
         decr_op,
         addc_op,
         subb_op,
+        rot_left_op,
     )
 
     return [
@@ -104,4 +105,5 @@ def get_all_operations():
         decr_op,
         addc_op,
         subb_op,
+        rot_left_op,
     ]

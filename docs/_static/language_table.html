@@ -556,10 +556,10 @@
     <td>165</td><td>A5</td><td>10100101</td><td>10</td><td>100</td><td>101</td><td></td><td></td><td>Store</td><td>SP</td><td>PC</td><td></td><td></td><td>JUMP_IF_EQ_ZERO</td><td>JUMP_IF_EQ_ZERO PC CONST</td><td></td>
   </tr>
   <tr>
-    <td>166</td><td>A6</td><td>10100110</td><td>10</td><td>100</td><td>110</td><td></td><td></td><td>Store</td><td>SP</td><td>SP+/-</td><td></td><td></td><td></td><td></td><td>No sense in comparing SP+/- to zero</td>
+    <td>166</td><td>A6</td><td>10100110</td><td>10</td><td>100</td><td>110</td><td></td><td></td><td>Store</td><td>SP</td><td>SP+/-</td><td></td><td></td><td>ROT_LEFT</td><td>ROT_LEFT ACC</td><td>No sense in comparing SP+/- to zero</td>
   </tr>
   <tr>
-    <td>167</td><td>A7</td><td>10100111</td><td>10</td><td>100</td><td>111</td><td></td><td></td><td>Store</td><td>SP</td><td>CONST</td><td></td><td></td><td></td><td></td><td>Would have been jump if a constant equals zero...</td>
+    <td>167</td><td>A7</td><td>10100111</td><td>10</td><td>100</td><td>111</td><td></td><td></td><td>Store</td><td>SP</td><td>CONST</td><td></td><td></td><td>ROT_LEFT</td><td>ROT_LEFT A</td><td>Would have been jump if a constant equals zero...</td>
   </tr>
   <tr>
     <td>168</td><td>A8</td><td>10101000</td><td>10</td><td>101</td><td>000</td><td></td><td></td><td>Store</td><td>PC</td><td>ACC</td><td></td><td></td><td>STORE</td><td>STORE PC [ACC]</td><td></td>
@@ -586,7 +586,7 @@
     <td>175</td><td>AF</td><td>10101111</td><td>10</td><td>101</td><td>111</td><td></td><td></td><td>Store</td><td>PC</td><td>CONST</td><td></td><td></td><td>STORE</td><td>STORE PC [CONST]</td><td></td>
   </tr>
   <tr>
-    <td>176</td><td>B0</td><td>10110000</td><td>10</td><td>110</td><td>000</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>ACC</td><td></td><td></td><td></td><td></td><td>No sense in comparing ACC to ACC</td>
+    <td>176</td><td>B0</td><td>10110000</td><td>10</td><td>110</td><td>000</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>ACC</td><td></td><td></td><td>ROT_LEFT</td><td>ROT_LEFT B</td><td>No sense in comparing ACC to ACC</td>
   </tr>
   <tr>
     <td>177</td><td>B1</td><td>10110001</td><td>10</td><td>110</td><td>001</td><td></td><td></td><td>Store</td><td>SP+/-</td><td>A</td><td></td><td></td><td>JUMP_IF_GT_ACC</td><td>JUMP_IF_GT_ACC A CONST</td><td></td>
@@ -628,7 +628,7 @@
     <td>189</td><td>BD</td><td>10111101</td><td>10</td><td>111</td><td>101</td><td></td><td></td><td>Store</td><td>CONST</td><td>PC</td><td></td><td></td><td>PROGSTORE</td><td>PROGSTORE [PC]</td><td></td>
   </tr>
   <tr>
-    <td>190</td><td>BE</td><td>10111110</td><td>10</td><td>111</td><td>110</td><td></td><td></td><td>Store</td><td>CONST</td><td>SP+/-</td><td></td><td></td><td></td><td></td><td>SP+/- doesn't make sense - not much of a PUSH</td>
+    <td>190</td><td>BE</td><td>10111110</td><td>10</td><td>111</td><td>110</td><td></td><td></td><td>Store</td><td>CONST</td><td>SP+/-</td><td></td><td></td><td>ROT_LEFT</td><td>ROT_LEFT C</td><td>SP+/- doesn't make sense - not much of a PUSH</td>
   </tr>
   <tr>
     <td>191</td><td>BF</td><td>10111111</td><td>10</td><td>111</td><td>111</td><td></td><td></td><td>Store</td><td>CONST</td><td>CONST</td><td></td><td></td><td>PROGSTORE</td><td>PROGSTORE [CONST]</td><td></td>
