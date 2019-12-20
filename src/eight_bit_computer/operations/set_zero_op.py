@@ -1,7 +1,7 @@
 """
-The INCR operation.
+The SET_ZERO operation.
 
-Adds one to the given argument (in place).
+Sets the given module to zero.
 """
 
 from itertools import product
@@ -21,7 +21,7 @@ from ..data_structures import (
     get_arg_def_template, get_machine_code_byte_template
 )
 
-_NAME = "INCR"
+_NAME = "SET_ZERO"
 
 
 def generate_signatures():
@@ -49,10 +49,10 @@ def generate_signatures():
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the INCR operations.
+    Generate microcode for all the SET_ZERO operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the INCR microcode.
+        list(DataTemplate): DataTemplates for all the SET_ZERO microcode.
     """
 
     data_templates = []
@@ -67,26 +67,23 @@ def generate_microcode_templates():
 
 def generate_operation_templates(signature):
     """
-    Create the DataTemplates to define an INCR with the given args.
+    Create the DataTemplates to define an SET_ZERO with the given args.
 
     Args:
         signature (list(dict)): List of argument definitions that
             specify which particular not operation to generate
             templates for.
     Returns:
-        list(DataTemplate) : Datatemplates that define this incr.
+        list(DataTemplate) : Datatemplates that define this set_zero.
     """
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
 
     flags_bitdefs = [FLAGS["ANY"]]
 
     step_0 = [
-        MODULE_CONTROL[signature[0]["value"]]["OUT"],
-        MODULE_CONTROL["ALU"]["A_IS_BUS"],
         MODULE_CONTROL["ALU"]["STORE_RESULT"],
-        MODULE_CONTROL["ALU"]["STORE_FLAGS"],
     ]
-    step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+    step_0.extend(ALU_CONTROL_FLAGS["ZERO"])
 
     step_1 = [
         MODULE_CONTROL["ALU"]["OUT"],
@@ -119,7 +116,7 @@ def generate_instruction_byte_bitdefs(signature):
 
     return [
         INSTRUCTION_GROUPS["ALU"],
-        ALU_OPERATIONS["INCR"],
+        ALU_OPERATIONS["ZERO"],
         alu_operands,
     ]
 
@@ -128,7 +125,7 @@ def parse_line(line):
     """
     Parse a line of assembly code to create machine code byte templates.
 
-    If a line is not identifiably an INCR assembly line, return an
+    If a line is not identifiably an SET_ZERO assembly line, return an
     empty list instead.
 
     Args:
