@@ -301,7 +301,7 @@ ALU_CONTROL_FLAGS = {
         MODULE_CONTROL["ALU"]["S1_LOW"],
         MODULE_CONTROL["ALU"]["S2_LOW"],
         MODULE_CONTROL["ALU"]["S3_LOW"],
-        MODULE_CONTROL["ALU"]["M_HIGH"],
+        MODULE_CONTROL["ALU"]["M_LOW"],
         MODULE_CONTROL["ALU"]["NO_CARRY"],
     ],
     "ZERO": [
