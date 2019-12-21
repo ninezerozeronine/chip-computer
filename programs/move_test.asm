@@ -34,5 +34,5 @@ STORE ACC [$test_num]
     HALT
 @next_number
     ROT_LEFT ACC
-    STORE ACC [@test_num]
+    STORE ACC [$test_num]
     JUMP @test_start
