@@ -38,8 +38,8 @@ def generate_microcode_templates():
         SRC_REGISTERS["SP+/-"],
         DEST_REGISTERS,
         ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
-        [FLAGS["CARRY_BORROW"]["LOW"]],
         [FLAGS["CARRY_BORROW"]["HIGH"]],
+        [FLAGS["CARRY_BORROW"]["LOW"]],
     )
 
 

@@ -72,6 +72,32 @@ The output flags are:
 | equality     | When the ALU is in the appropriate mode, this flag indicates the A and B inputs are equal.                                                                                                        |
 +--------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+For the comparison operators, the datasheet states that :
+
+..note::
+    The 'LS181 or 'S181' can be used as a comparator. The A = B outpu is internally
+        decoded from the function outputs (F0, F1, F2, F3) so that when two words of
+        equal magnitude are applied at the A and B inputs, it will assume a high level
+        to indicate equality (A=B). The ALU must be in subtract mode with Cn = H when
+        performing this comparison.
+
+When using active high data this doesn't seem to be the case, the carry input needs to be
+low so that the ALU is in ``A MINUS B MINUS 1`` mode. This endes up making the comparison
+table below the above message in the datasheet as follows:
+
++----------+--------------+-------------------
+| INPUT Cn | OUTPUT C n+4 | ACTIVE HIGH DATA |  
++==========+==============+==================+
+| L        | L            | A <= B           |
++----------+--------------+------------------+
+| L        | H            | A > B            |
++----------+--------------+------------------+
+| H        | L            | A < B            |
++----------+--------------+------------------+
+| H        | H            | A >= B           |
++----------+--------------+------------------+
+
+
 Implementation
 --------------
 
