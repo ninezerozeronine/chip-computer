@@ -74,18 +74,18 @@ The output flags are:
 
 For the comparison operators, the datasheet states that :
 
-..note::
-    The 'LS181 or 'S181' can be used as a comparator. The A = B outpu is internally
-        decoded from the function outputs (F0, F1, F2, F3) so that when two words of
-        equal magnitude are applied at the A and B inputs, it will assume a high level
-        to indicate equality (A=B). The ALU must be in subtract mode with Cn = H when
-        performing this comparison.
+.. note::
+    The 'LS181 or 'S181' can be used as a comparator. The A = B output is internally
+    decoded from the function outputs (F0, F1, F2, F3) so that when two words of
+    equal magnitude are applied at the A and B inputs, it will assume a high level
+    to indicate equality (A=B). The ALU must be in subtract mode with Cn = H when
+    performing this comparison.
 
 When using active high data this doesn't seem to be the case, the carry input needs to be
 low so that the ALU is in ``A MINUS B MINUS 1`` mode. This endes up making the comparison
 table below the above message in the datasheet as follows:
 
-+----------+--------------+-------------------
++----------+--------------+------------------+
 | INPUT Cn | OUTPUT C n+4 | ACTIVE HIGH DATA |  
 +==========+==============+==================+
 | L        | L            | A <= B           |
@@ -120,7 +120,8 @@ carryborrow flag is inverted).
 The following electronics are used:
 
  - 2 x 74LS181 are used for the arithmetic and logic operations.
- - A 74CHT00 is used to AND the two A=B outputs and invert carry_borrow_out.
+ - A 74CHT00 is used to AND the two A=B outputs (unecessary due to A=B
+   outputs being open collector) and invert carry_borrow_out.
  - A 74HCT173 is used to store the flags.
  - 2 x 74HCT32s are used to OR all the bits to check if it's zero.
  - A 74HCT04 is used to invert the result of the OR zero check, the store_flags
