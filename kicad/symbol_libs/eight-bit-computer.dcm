@@ -1,0 +1,13 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 74HCT245
+D 8-bit bus transceiver
+$ENDCMP
+#
+$CMP 74HCT377
+D 8-bit Register
+K TTL REG DFF DFF8
+F http://www.ti.com/lit/gpn/sn74LS377
+$ENDCMP
+#
+#End Doc Library
