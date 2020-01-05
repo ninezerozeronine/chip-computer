@@ -16,12 +16,12 @@ $EndDescr
 $Comp
 L 74xx:74HCT04 U3
 U 3 1 5E0F9A71
-P 6800 3150
-F 0 "U3" H 6800 3467 50  0000 C CNN
-F 1 "74HCT04" H 6800 3376 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6800 3150 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6800 3150 50  0001 C CNN
-	3    6800 3150
+P 6950 3200
+F 0 "U3" H 6950 3517 50  0000 C CNN
+F 1 "74HCT04" H 6950 3426 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6950 3200 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6950 3200 50  0001 C CNN
+	3    6950 3200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -58,100 +58,100 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2500 325
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x01_Female J?
+L Connector:Conn_01x01_Female J1
 U 1 1 5E113C76
 P 1450 5750
-F 0 "J?" H 1550 5750 50  0000 C CNN
+F 0 "J1" H 1550 5750 50  0000 C CNN
 F 1 "LEFT IN" H 1650 5650 50  0000 C CNN
-F 2 "" H 1450 5750 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 1450 5750 50  0001 C CNN
 F 3 "~" H 1450 5750 50  0001 C CNN
 	1    1450 5750
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector:Conn_01x01_Female J?
+L Connector:Conn_01x01_Female J2
 U 1 1 5E114C6F
 P 2000 3250
-F 0 "J?" H 1892 3025 50  0000 C CNN
+F 0 "J2" H 1892 3025 50  0000 C CNN
 F 1 "LEFT OUT" H 1892 3116 50  0000 C CNN
-F 2 "" H 2000 3250 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 2000 3250 50  0001 C CNN
 F 3 "~" H 2000 3250 50  0001 C CNN
 	1    2000 3250
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector:Conn_01x01_Female J?
+L Connector:Conn_01x01_Female J8
 U 1 1 5E115730
-P 6300 3150
-F 0 "J?" H 6192 2925 50  0000 C CNN
-F 1 "RIGHT OUT" H 6192 3016 50  0000 C CNN
-F 2 "" H 6300 3150 50  0001 C CNN
-F 3 "~" H 6300 3150 50  0001 C CNN
-	1    6300 3150
+P 6450 3200
+F 0 "J8" H 6342 2975 50  0000 C CNN
+F 1 "RIGHT OUT" H 6342 3066 50  0000 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 6450 3200 50  0001 C CNN
+F 3 "~" H 6450 3200 50  0001 C CNN
+	1    6450 3200
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector:Conn_01x01_Female J?
+L Connector:Conn_01x01_Female J7
 U 1 1 5E111408
 P 6100 5600
-F 0 "J?" H 6128 5626 50  0000 L CNN
+F 0 "J7" H 6128 5626 50  0000 L CNN
 F 1 "RIGHT IN" H 6128 5535 50  0000 L CNN
-F 2 "" H 6100 5600 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 6100 5600 50  0001 C CNN
 F 3 "~" H 6100 5600 50  0001 C CNN
 	1    6100 5600
 	-1   0    0    1   
 $EndComp
 $Comp
-L Connector:Conn_01x33_Male J?
+L Connector:Conn_01x33_Male J6
 U 1 1 5E1828CF
 P 5300 6650
-F 0 "J?" V 5250 6550 50  0000 R CNN
+F 0 "J6" V 5250 6550 50  0000 R CNN
 F 1 "BACKPLANE" V 5150 6750 50  0000 R CNN
-F 2 "" H 5300 6650 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x34_P2.54mm_Horizontal" H 5300 6650 50  0001 C CNN
 F 3 "~" H 5300 6650 50  0001 C CNN
 	1    5300 6650
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x08_Male J?
+L Connector:Conn_01x08_Male J4
 U 1 1 5E18826F
 P 2900 6750
-F 0 "J?" V 2827 6678 50  0000 C CNN
+F 0 "J4" V 2827 6678 50  0000 C CNN
 F 1 "BUS" V 2736 6678 50  0000 C CNN
-F 2 "" H 2900 6750 50  0001 C CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Horizontal" H 2900 6750 50  0001 C CNN
 F 3 "~" H 2900 6750 50  0001 C CNN
 	1    2900 6750
 	0    1    -1   0   
 $EndComp
 $Comp
-L Device:R_Network08_US RN?
+L Device:R_Network08_US RN1
 U 1 1 5E19B23C
 P 5200 2250
-F 0 "RN?" V 4583 2250 50  0000 C CNN
-F 1 "R_Network08_US" V 4674 2250 50  0000 C CNN
+F 0 "RN1" V 4583 2250 50  0000 C CNN
+F 1 "LEFT RESISTORS" V 4674 2250 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 5675 2250 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 5200 2250 50  0001 C CNN
 	1    5200 2250
 	0    1    1    0   
 $EndComp
 $Comp
-L Connector:Conn_01x16_Female J?
+L Connector:Conn_01x16_Female J5
 U 1 1 5E1A06B6
 P 4400 1100
-F 0 "J?" V 4565 1030 50  0000 C CNN
-F 1 "Conn_01x16_Female" V 4474 1030 50  0000 C CNN
-F 2 "" H 4400 1100 50  0001 C CNN
+F 0 "J5" V 4565 1030 50  0000 C CNN
+F 1 "LEFT LEDS" V 4474 1030 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 4400 1100 50  0001 C CNN
 F 3 "~" H 4400 1100 50  0001 C CNN
 	1    4400 1100
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x08_Female J?
+L Connector:Conn_01x08_Female J3
 U 1 1 5E1A7629
 P 2350 1100
-F 0 "J?" V 2515 1030 50  0000 C CNN
+F 0 "J3" V 2515 1030 50  0000 C CNN
 F 1 "LEFT CONTENT" V 2424 1030 50  0000 C CNN
-F 2 "" H 2350 1100 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Horizontal" H 2350 1100 50  0001 C CNN
 F 3 "~" H 2350 1100 50  0001 C CNN
 	1    2350 1100
 	0    1    -1   0   
@@ -345,23 +345,23 @@ Wire Wire Line
 Wire Wire Line
 	3600 2550 3600 1300
 $Comp
-L Connector:Conn_01x16_Female J?
+L Connector:Conn_01x16_Female J10
 U 1 1 5E22CB5D
 P 8800 1000
-F 0 "J?" V 8965 930 50  0000 C CNN
-F 1 "Conn_01x16_Female" V 8874 930 50  0000 C CNN
-F 2 "" H 8800 1000 50  0001 C CNN
+F 0 "J10" V 8965 930 50  0000 C CNN
+F 1 "RIGHT LEDS" V 8874 930 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 8800 1000 50  0001 C CNN
 F 3 "~" H 8800 1000 50  0001 C CNN
 	1    8800 1000
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x08_Female J?
+L Connector:Conn_01x08_Female J9
 U 1 1 5E22CB67
 P 6750 1000
-F 0 "J?" V 6915 930 50  0000 C CNN
-F 1 "Conn_01x08_Female" V 6824 930 50  0000 C CNN
-F 2 "" H 6750 1000 50  0001 C CNN
+F 0 "J9" V 6915 930 50  0000 C CNN
+F 1 "RIGHT CONTENT" V 6824 930 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Horizontal" H 6750 1000 50  0001 C CNN
 F 3 "~" H 6750 1000 50  0001 C CNN
 	1    6750 1000
 	0    1    -1   0   
@@ -485,11 +485,11 @@ Wire Wire Line
 Wire Wire Line
 	8000 2450 8000 1200
 $Comp
-L Device:R_Network08_US RN?
+L Device:R_Network08_US RN2
 U 1 1 5E199B6E
 P 9600 2150
-F 0 "RN?" V 8983 2150 50  0000 C CNN
-F 1 "R_Network08_US" V 9074 2150 50  0000 C CNN
+F 0 "RN2" V 8983 2150 50  0000 C CNN
+F 1 "RIGHT RESISTORS" V 9074 2150 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 10075 2150 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 9600 2150 50  0001 C CNN
 	1    9600 2150
@@ -728,10 +728,10 @@ Wire Wire Line
 Wire Wire Line
 	4550 4700 4850 4700
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U3
 U 2 1 5E424536
 P 1650 5300
-F 0 "U?" H 1650 5617 50  0000 C CNN
+F 0 "U3" H 1650 5617 50  0000 C CNN
 F 1 "74HCT04" H 1650 5526 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1650 5300 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1650 5300 50  0001 C CNN
@@ -739,14 +739,14 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1650 530
 	0    -1   -1   0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
-U 5 1 5E425697
+L 74xx:74HCT04 U3
+U 4 1 5E425697
 P 6300 5200
-F 0 "U?" H 6300 5517 50  0000 C CNN
+F 0 "U3" H 6300 5517 50  0000 C CNN
 F 1 "74HCT04" H 6300 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6300 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6300 5200 50  0001 C CNN
-	5    6300 5200
+	4    6300 5200
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
@@ -766,10 +766,10 @@ Wire Wire Line
 Wire Wire Line
 	2500 6550 2500 6250
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0101
 U 1 1 5E4A7557
 P 10000 1750
-F 0 "#PWR?" H 10000 1500 50  0001 C CNN
+F 0 "#PWR0101" H 10000 1500 50  0001 C CNN
 F 1 "GND" H 10005 1577 50  0000 C CNN
 F 2 "" H 10000 1750 50  0001 C CNN
 F 3 "" H 10000 1750 50  0001 C CNN
@@ -777,10 +777,10 @@ F 3 "" H 10000 1750 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0102
 U 1 1 5E4A7FC5
 P 5550 1850
-F 0 "#PWR?" H 5550 1600 50  0001 C CNN
+F 0 "#PWR0102" H 5550 1600 50  0001 C CNN
 F 1 "GND" H 5555 1677 50  0000 C CNN
 F 2 "" H 5550 1850 50  0001 C CNN
 F 3 "" H 5550 1850 50  0001 C CNN
@@ -788,45 +788,45 @@ F 3 "" H 5550 1850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C1
 U 1 1 5E4AA7D1
 P 1200 4400
-F 0 "C?" H 1315 4446 50  0000 L CNN
-F 1 "1uF" H 1315 4355 50  0000 L CNN
-F 2 "" H 1238 4250 50  0001 C CNN
+F 0 "C1" H 1315 4446 50  0000 L CNN
+F 1 "100nF" H 1315 4355 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1238 4250 50  0001 C CNN
 F 3 "~" H 1200 4400 50  0001 C CNN
 	1    1200 4400
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C2
 U 1 1 5E4ABF9F
 P 5200 4350
-F 0 "C?" H 5315 4396 50  0000 L CNN
-F 1 "1uF" H 5315 4305 50  0000 L CNN
-F 2 "" H 5238 4200 50  0001 C CNN
+F 0 "C2" H 5315 4396 50  0000 L CNN
+F 1 "100nF" H 5315 4305 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5238 4200 50  0001 C CNN
 F 3 "~" H 5200 4350 50  0001 C CNN
 	1    5200 4350
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C3
 U 1 1 5E4AD02B
 P 5600 4350
-F 0 "C?" H 5715 4396 50  0000 L CNN
-F 1 "1uF" H 5715 4305 50  0000 L CNN
-F 2 "" H 5638 4200 50  0001 C CNN
+F 0 "C3" H 5715 4396 50  0000 L CNN
+F 1 "100nF" H 5715 4305 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5638 4200 50  0001 C CNN
 F 3 "~" H 5600 4350 50  0001 C CNN
 	1    5600 4350
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C4
 U 1 1 5E4AD540
 P 9950 4350
-F 0 "C?" H 10065 4396 50  0000 L CNN
-F 1 "1uF" H 10065 4305 50  0000 L CNN
-F 2 "" H 9988 4200 50  0001 C CNN
+F 0 "C4" H 10065 4396 50  0000 L CNN
+F 1 "100nF" H 10065 4305 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 9988 4200 50  0001 C CNN
 F 3 "~" H 9950 4350 50  0001 C CNN
 	1    9950 4350
 	1    0    0    -1  
@@ -859,12 +859,12 @@ Wire Wire Line
 Wire Wire Line
 	6150 3600 6800 3600
 Wire Wire Line
-	6150 2800 8300 2800
+	6150 2800 7850 2800
 Wire Wire Line
 	8300 2800 8300 3200
 Connection ~ 6150 2800
 Wire Wire Line
-	1750 2800 3700 2800
+	1750 2800 2100 2800
 Wire Wire Line
 	3700 3300 3700 2800
 Connection ~ 3700 3300
@@ -922,11 +922,9 @@ Wire Wire Line
 	5200 3300 5200 4200
 Wire Wire Line
 	5200 4500 5200 5850
-Wire Wire Line
-	4000 5850 5200 5850
 Connection ~ 5200 5850
 Wire Wire Line
-	5200 5850 5600 5850
+	5200 5850 5450 5850
 Wire Wire Line
 	9950 3200 9950 4200
 Wire Wire Line
@@ -961,16 +959,112 @@ Wire Bus Line
 Wire Bus Line
 	850  4100 850  6150
 $Comp
-L eight-bit-computer:74HCT377 U?
+L eight-bit-computer:74HCT377 U1
 U 1 1 5E1359E8
 P 2450 4500
-F 0 "U?" H 2450 5481 50  0000 C CNN
+F 0 "U1" H 2450 5481 50  0000 C CNN
 F 1 "74HCT377" H 2450 5390 50  0000 C CNN
-F 2 "" H 2450 4500 50  0001 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 2450 4500 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2450 4500 50  0001 C CNN
 	1    2450 4500
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	3700 3300 4000 3300
+$Comp
+L eight-bit-computer:74HCT245 U2
+U 1 1 5E124960
+P 4000 4250
+F 0 "U2" H 4000 5381 50  0000 C CNN
+F 1 "74HCT245" H 4000 5290 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 3650 4250 50  0001 C CNN
+F 3 "" H 3650 4250 50  0001 C CNN
+	1    4000 4250
+	1    0    0    -1  
+$EndComp
+Connection ~ 4000 3300
+Wire Wire Line
+	4000 3300 5200 3300
+$Comp
+L eight-bit-computer:74HCT377 U4
+U 1 1 5E125DFF
+P 6800 4400
+F 0 "U4" H 6800 5381 50  0000 C CNN
+F 1 "74HCT377" H 6800 5290 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6800 4400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 6800 4400 50  0001 C CNN
+	1    6800 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8300 3200 8650 3200
+$Comp
+L eight-bit-computer:74HCT245 U5
+U 1 1 5E1273A1
+P 8650 4150
+F 0 "U5" H 8650 5281 50  0000 C CNN
+F 1 "74HCT245" H 8650 5190 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 8300 4150 50  0001 C CNN
+F 3 "" H 8300 4150 50  0001 C CNN
+	1    8650 4150
+	1    0    0    -1  
+$EndComp
+Connection ~ 8650 3200
+Wire Wire Line
+	8650 3200 9950 3200
+Wire Wire Line
+	8100 3750 7850 3750
+Wire Wire Line
+	7850 3750 7850 2800
+Connection ~ 7850 2800
+Wire Wire Line
+	7850 2800 8300 2800
+Wire Wire Line
+	7250 3200 8100 3200
+Wire Wire Line
+	8100 3200 8100 3600
+NoConn ~ 3800 6450
+NoConn ~ 4100 6450
+NoConn ~ 4200 6450
+NoConn ~ 4300 6450
+NoConn ~ 4400 6450
+NoConn ~ 4500 6450
+NoConn ~ 4600 6450
+NoConn ~ 4700 6450
+NoConn ~ 4800 6450
+NoConn ~ 4900 6450
+NoConn ~ 5000 6450
+NoConn ~ 5100 6450
+NoConn ~ 5200 6450
+NoConn ~ 5300 6450
+NoConn ~ 5400 6450
+NoConn ~ 5500 6450
+NoConn ~ 5600 6450
+NoConn ~ 5700 6450
+NoConn ~ 5800 6450
+NoConn ~ 5900 6450
+NoConn ~ 6000 6450
+NoConn ~ 6100 6450
+NoConn ~ 6200 6450
+NoConn ~ 6300 6450
+NoConn ~ 6400 6450
+NoConn ~ 6500 6450
+NoConn ~ 6600 6450
+NoConn ~ 6700 6450
+NoConn ~ 6800 6450
+NoConn ~ 6900 6450
+Text Label 1750 2800 0    50   ~ 0
+VCC
+Text Label 3900 6250 0    50   ~ 0
+VCC
+Text Label 4000 6350 0    50   ~ 0
+GND
+Wire Wire Line
+	4000 5850 4600 5850
+Wire Wire Line
+	4000 6450 4000 6350
+Wire Wire Line
+	3900 6450 3900 6250
 Wire Bus Line
 	9600 4000 9600 6150
 Wire Bus Line
@@ -981,47 +1075,37 @@ Wire Bus Line
 	4950 4100 4950 6150
 Wire Bus Line
 	850  6150 4950 6150
-Wire Wire Line
-	3700 3300 4000 3300
+Text Label 5600 5750 0    50   ~ 0
+GND
 $Comp
-L eight-bit-computer:74HCT245 U?
-U 1 1 5E124960
-P 4000 4250
-F 0 "U?" H 4000 5381 50  0000 C CNN
-F 1 "74HCT245" H 4000 5290 50  0000 C CNN
-F 2 "" H 3650 4250 50  0001 C CNN
-F 3 "" H 3650 4250 50  0001 C CNN
-	1    4000 4250
+L power:PWR_FLAG #FLG0101
+U 1 1 5E3D7019
+P 2100 2800
+F 0 "#FLG0101" H 2100 2875 50  0001 C CNN
+F 1 "PWR_FLAG" H 2100 2973 50  0000 C CNN
+F 2 "" H 2100 2800 50  0001 C CNN
+F 3 "~" H 2100 2800 50  0001 C CNN
+	1    2100 2800
 	1    0    0    -1  
 $EndComp
-Connection ~ 4000 3300
+Connection ~ 2100 2800
 Wire Wire Line
-	4000 3300 5200 3300
+	2100 2800 3700 2800
 $Comp
-L eight-bit-computer:74HCT377 U?
-U 1 1 5E125DFF
-P 6800 4400
-F 0 "U?" H 6800 5381 50  0000 C CNN
-F 1 "74HCT377" H 6800 5290 50  0000 C CNN
-F 2 "" H 6800 4400 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 6800 4400 50  0001 C CNN
-	1    6800 4400
+L power:PWR_FLAG #FLG0102
+U 1 1 5E3D75BE
+P 5450 5850
+F 0 "#FLG0102" H 5450 5925 50  0001 C CNN
+F 1 "PWR_FLAG" H 5450 6023 50  0000 C CNN
+F 2 "" H 5450 5850 50  0001 C CNN
+F 3 "~" H 5450 5850 50  0001 C CNN
+	1    5450 5850
 	1    0    0    -1  
 $EndComp
+Connection ~ 4600 5850
 Wire Wire Line
-	8300 3200 8650 3200
-$Comp
-L eight-bit-computer:74HCT245 U?
-U 1 1 5E1273A1
-P 8650 4150
-F 0 "U?" H 8650 5281 50  0000 C CNN
-F 1 "74HCT245" H 8650 5190 50  0000 C CNN
-F 2 "" H 8300 4150 50  0001 C CNN
-F 3 "" H 8300 4150 50  0001 C CNN
-	1    8650 4150
-	1    0    0    -1  
-$EndComp
-Connection ~ 8650 3200
+	4600 5850 5200 5850
+Connection ~ 5450 5850
 Wire Wire Line
-	8650 3200 9950 3200
+	5450 5850 5600 5850
 $EndSCHEMATC
