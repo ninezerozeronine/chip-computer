@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 3 1 5E0F9A71
 P 6950 3200
-F 0 "U3" H 6950 3517 50  0000 C CNN
+F 0 "U5" H 6950 3517 50  0000 C CNN
 F 1 "74HCT04" H 6950 3426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6950 3200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6950 3200 50  0001 C CNN
@@ -47,10 +47,10 @@ F 3 "" H 1600 2700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 1 1 5E0F8B7C
 P 2500 3250
-F 0 "U3" H 2500 3567 50  0000 C CNN
+F 0 "U5" H 2500 3567 50  0000 C CNN
 F 1 "74HCT04" H 2500 3476 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2500 3250 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2500 3250 50  0001 C CNN
@@ -63,7 +63,7 @@ U 1 1 5E113C76
 P 1450 5750
 F 0 "J1" H 1550 5750 50  0000 C CNN
 F 1 "LEFT IN" H 1650 5650 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 1450 5750 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill0.8mm" H 1450 5750 50  0001 C CNN
 F 3 "~" H 1450 5750 50  0001 C CNN
 	1    1450 5750
 	-1   0    0    1   
@@ -74,7 +74,7 @@ U 1 1 5E114C6F
 P 2000 3250
 F 0 "J2" H 1892 3025 50  0000 C CNN
 F 1 "LEFT OUT" H 1892 3116 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 2000 3250 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill0.8mm" H 2000 3250 50  0001 C CNN
 F 3 "~" H 2000 3250 50  0001 C CNN
 	1    2000 3250
 	-1   0    0    1   
@@ -85,7 +85,7 @@ U 1 1 5E115730
 P 6450 3200
 F 0 "J8" H 6342 2975 50  0000 C CNN
 F 1 "RIGHT OUT" H 6342 3066 50  0000 C CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 6450 3200 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill0.8mm" H 6450 3200 50  0001 C CNN
 F 3 "~" H 6450 3200 50  0001 C CNN
 	1    6450 3200
 	-1   0    0    1   
@@ -96,7 +96,7 @@ U 1 1 5E111408
 P 6100 5600
 F 0 "J7" H 6128 5626 50  0000 L CNN
 F 1 "RIGHT IN" H 6128 5535 50  0000 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x01_Drill1mm" H 6100 5600 50  0001 C CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill0.8mm" H 6100 5600 50  0001 C CNN
 F 3 "~" H 6100 5600 50  0001 C CNN
 	1    6100 5600
 	-1   0    0    1   
@@ -717,10 +717,10 @@ Wire Wire Line
 Wire Wire Line
 	4550 4700 4850 4700
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 2 1 5E424536
 P 1650 5300
-F 0 "U3" H 1650 5617 50  0000 C CNN
+F 0 "U5" H 1650 5617 50  0000 C CNN
 F 1 "74HCT04" H 1650 5526 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1650 5300 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1650 5300 50  0001 C CNN
@@ -728,10 +728,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1650 530
 	0    -1   -1   0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 4 1 5E425697
 P 6300 5200
-F 0 "U3" H 6300 5517 50  0000 C CNN
+F 0 "U5" H 6300 5517 50  0000 C CNN
 F 1 "74HCT04" H 6300 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6300 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 6300 5200 50  0001 C CNN
@@ -967,10 +967,10 @@ Connection ~ 4000 3300
 Wire Wire Line
 	4000 3300 5200 3300
 $Comp
-L eight-bit-computer:74HCT377 U4
+L eight-bit-computer:74HCT377 U3
 U 1 1 5E125DFF
 P 6800 4400
-F 0 "U4" H 6800 5381 50  0000 C CNN
+F 0 "U3" H 6800 5381 50  0000 C CNN
 F 1 "74HCT377" H 6800 5290 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6800 4400 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 6800 4400 50  0001 C CNN
@@ -980,10 +980,10 @@ $EndComp
 Wire Wire Line
 	8300 3200 8650 3200
 $Comp
-L eight-bit-computer:74HCT245 U5
+L eight-bit-computer:74HCT245 U4
 U 1 1 5E1273A1
 P 8650 4150
-F 0 "U5" H 8650 5281 50  0000 C CNN
+F 0 "U4" H 8650 5281 50  0000 C CNN
 F 1 "74HCT245" H 8650 5190 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 8300 4150 50  0001 C CNN
 F 3 "" H 8300 4150 50  0001 C CNN
@@ -1066,10 +1066,10 @@ Connection ~ 3800 5850
 Wire Wire Line
 	3800 5850 4000 5850
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 7 1 5E204B57
 P 1150 7050
-F 0 "U3" H 1150 7367 50  0000 C CNN
+F 0 "U5" H 1150 7367 50  0000 C CNN
 F 1 "74HCT04" H 1150 7276 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1150 7050 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1150 7050 50  0001 C CNN
@@ -1077,10 +1077,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1150 705
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 5 1 5E206221
 P 1700 7050
-F 0 "U3" H 1700 7367 50  0000 C CNN
+F 0 "U5" H 1700 7367 50  0000 C CNN
 F 1 "74HCT04" H 1700 7276 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1700 7050 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1700 7050 50  0001 C CNN
@@ -1088,10 +1088,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1700 705
 	0    -1   -1   0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U3
+L 74xx:74HCT04 U5
 U 6 1 5E2090E4
 P 2200 7050
-F 0 "U3" H 2200 7367 50  0000 C CNN
+F 0 "U5" H 2200 7367 50  0000 C CNN
 F 1 "74HCT04" H 2200 7276 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2200 7050 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2200 7050 50  0001 C CNN
@@ -1178,6 +1178,27 @@ F 3 "~" H 1300 7800 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	850  7800 1150 7800
+$Comp
+L Device:C C5
+U 1 1 5E152FC3
+P 650 7050
+F 0 "C5" H 765 7096 50  0000 L CNN
+F 1 "100nF" H 765 7005 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 688 6900 50  0001 C CNN
+F 3 "~" H 650 7050 50  0001 C CNN
+	1    650  7050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	650  7200 650  7550
+Wire Wire Line
+	650  7550 1150 7550
+Wire Wire Line
+	650  6900 650  6350
+Wire Wire Line
+	650  6350 1150 6350
+Wire Wire Line
+	1150 6350 1150 6550
 Wire Bus Line
 	9600 4000 9600 6150
 Wire Bus Line
