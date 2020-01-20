@@ -1677,7 +1677,7 @@
   )
 
   (module Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal (layer F.Cu) (tedit 5A19A42F) (tstamp 5E118572)
-    (at 226.06 86.36 270)
+    (at 226.06 60.96 270)
     (descr "Through hole angled socket strip, 1x16, 2.54mm pitch, 8.51mm socket length, single row (from Kicad 4.0.7), script generated")
     (tags "Through hole angled socket strip THT 1x16 2.54mm single row")
     (path /5E22CB5D)
@@ -1861,7 +1861,7 @@
   )
 
   (module Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Horizontal (layer F.Cu) (tedit 5A19A421) (tstamp 5E11ACC7)
-    (at 180.34 86.36 270)
+    (at 180.34 60.96 270)
     (descr "Through hole angled socket strip, 1x08, 2.54mm pitch, 8.51mm socket length, single row (from Kicad 4.0.7), script generated")
     (tags "Through hole angled socket strip THT 1x08 2.54mm single row")
     (path /5E22CB67)
@@ -1981,7 +1981,7 @@
   )
 
   (module Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal (layer F.Cu) (tedit 5A19A42F) (tstamp 5E157765)
-    (at 129.54 86.36 270)
+    (at 129.54 60.96 270)
     (descr "Through hole angled socket strip, 1x16, 2.54mm pitch, 8.51mm socket length, single row (from Kicad 4.0.7), script generated")
     (tags "Through hole angled socket strip THT 1x16 2.54mm single row")
     (path /5E1A06B6)
@@ -2318,7 +2318,7 @@
   )
 
   (module Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Horizontal (layer F.Cu) (tedit 5A19A421) (tstamp 5E11817A)
-    (at 83.82 86.36 270)
+    (at 83.82 60.96 270)
     (descr "Through hole angled socket strip, 1x08, 2.54mm pitch, 8.51mm socket length, single row (from Kicad 4.0.7), script generated")
     (tags "Through hole angled socket strip THT 1x08 2.54mm single row")
     (path /5E1A7629)
@@ -2593,10 +2593,10 @@
     )
   )
 
-  (gr_line (start 63.5 127) (end 63.5 76.2) (layer Edge.Cuts) (width 0.05) (tstamp 5E11C9DE))
-  (gr_line (start 228.6 127) (end 63.5 127) (layer Edge.Cuts) (width 0.05))
-  (gr_line (start 228.6 76.2) (end 228.6 127) (layer Edge.Cuts) (width 0.05) (tstamp 5E11C9E3))
-  (gr_line (start 63.5 76.2) (end 228.6 76.2) (layer Edge.Cuts) (width 0.05))
+  (gr_line (start 50.8 127) (end 50.8 50.8) (layer Edge.Cuts) (width 0.05) (tstamp 5E11C9DE))
+  (gr_line (start 228.6 127) (end 50.8 127) (layer Edge.Cuts) (width 0.05))
+  (gr_line (start 228.6 50.8) (end 228.6 127) (layer Edge.Cuts) (width 0.05) (tstamp 5E11C9E3))
+  (gr_line (start 50.8 50.8) (end 228.6 50.8) (layer Edge.Cuts) (width 0.05))
 
   (segment (start 142.24 104.14) (end 142.24 106.68) (width 0.762) (layer B.Cu) (net 1))
   (segment (start 142.24 106.68) (end 145.542 106.68) (width 0.762) (layer B.Cu) (net 1))
