@@ -10,10 +10,12 @@ Button::Button() {
 
 // Constructor
 //
-// pin - the pin the button is connected to
-Button::Button(byte pin_) {
+// pin_ - The pin the button is connected to
+// debounce_time_ - The debounce time for the button.
+Button::Button(byte pin_, byte debounce_time_) {
     constructor_defaults();
     set_pin(pin_);
+    set_debounce_time(debounce_time_);
 }
 
 void Button::constructor_defaults() {
