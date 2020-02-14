@@ -61,6 +61,11 @@ def generate_signatures():
         arg_def["value"] = module
         signatures.append([arg_def])
 
+    const_arg_def = get_arg_def_template()
+    const_arg_def["value_type"] = "constant"
+    const_arg_def["is_memory_location"] = False
+    signatures.append([const_arg_def])
+
     return signatures
 
 
@@ -99,11 +104,15 @@ def generate_instruction_byte_bitdefs(signature):
         list(str): Bitdefs that make up the instruction_byte
     """
 
-    return [
-        INSTRUCTION_GROUPS["LOAD"],
-        SRC_REGISTERS[signature[0]["value"]],
-        DEST_REGISTERS["SP+/-"],
-    ]
+    instruction_byte_bitdefs = []
+    instruction_byte_bitdefs.append(INSTRUCTION_GROUPS["LOAD"])
+    instruction_byte_bitdefs.append(DEST_REGISTERS["SP+/-"])
+    if signature[0]["value_type"] == "module_name":
+        instruction_byte_bitdefs.append(SRC_REGISTERS[signature[0]["value"]])
+    elif signature[0]["value_type"] == "constant":
+        instruction_byte_bitdefs.append(SRC_REGISTERS["CONST"])
+
+    return instruction_byte_bitdefs
 
 
 def generate_control_steps(signature):
@@ -119,35 +128,86 @@ def generate_control_steps(signature):
         control steps.
     """
 
-    decr_sp = [
-        MODULE_CONTROL["SP"]["OUT"],
-        MODULE_CONTROL["ALU"]["A_IS_BUS"],
-        MODULE_CONTROL["ALU"]["STORE_RESULT"],
-    ]
-    decr_sp.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
-    update_sp_set_mar = [
-        MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL["SP"]["IN"],
-        MODULE_CONTROL["MAR"]["IN"],
-    ]
+    if signature[0]["value_type"] == "constant":
+        sp_minus1_into_alu_incr_pc = [
+            MODULE_CONTROL["SP"]["OUT"],
+            MODULE_CONTROL["ALU"]["A_IS_BUS"],
+            MODULE_CONTROL["ALU"]["STORE_RESULT"],
+            MODULE_CONTROL["PC"]["COUNT"],
+        ]
+        sp_minus1_into_alu_incr_pc.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
-    pc_onto_stack = [
-        MODULE_CONTROL["PC"]["OUT"],
-        MODULE_CONTROL["RAM"]["IN"],
-    ]
+        alu_into_mar_and_sp = [
+            MODULE_CONTROL["ALU"]["OUT"],
+            MODULE_CONTROL["SP"]["IN"],
+            MODULE_CONTROL["MAR"]["IN"],
+        ]
 
-    module_into_pc = [
-        MODULE_CONTROL[signature[0]["value"]]["OUT"],
-        MODULE_CONTROL["PC"]["IN"],
-    ]
+        pc_into_data_ram_at_sp = [
+            MODULE_CONTROL["PC"]["OUT"],
+            MODULE_CONTROL["RAM"]["IN"],
+            MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+        ]
 
-    return [
-        decr_sp,
-        update_sp_set_mar,
-        pc_onto_stack,
-        module_into_pc,
-    ]
+        pc_minus1_into_alu = [
+            MODULE_CONTROL["PC"]["OUT"],
+            MODULE_CONTROL["ALU"]["A_IS_BUS"],
+            MODULE_CONTROL["ALU"]["STORE_RESULT"],
+        ]
+        pc_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+
+        alu_into_mar = [
+            MODULE_CONTROL["ALU"]["OUT"],
+            MODULE_CONTROL["MAR"]["IN"],
+        ]
+
+        constant_from_prog_to_pc = [
+            MODULE_CONTROL["RAM"]["OUT"],
+            MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+            MODULE_CONTROL["PC"]["IN"],
+        ]
+
+        return [
+            sp_minus1_into_alu_incr_pc,
+            alu_into_mar_and_sp,
+            pc_into_data_ram_at_sp,
+            pc_minus1_into_alu,
+            alu_into_mar,
+            constant_from_prog_to_pc,
+        ]
+
+    elif signature[0]["value_type"] == "module_name":
+        sp_minus1_into_alu = [
+            MODULE_CONTROL["SP"]["OUT"],
+            MODULE_CONTROL["ALU"]["A_IS_BUS"],
+            MODULE_CONTROL["ALU"]["STORE_RESULT"],
+        ]
+        sp_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+
+        alu_into_mar_and_sp = [
+            MODULE_CONTROL["ALU"]["OUT"],
+            MODULE_CONTROL["SP"]["IN"],
+            MODULE_CONTROL["MAR"]["IN"],
+        ]
+
+        pc_onto_stack = [
+            MODULE_CONTROL["PC"]["OUT"],
+            MODULE_CONTROL["RAM"]["IN"],
+            MODULE_CONTROL["RAM"]["SEL_DATA_MEM"],
+        ]
+
+        module_into_pc = [
+            MODULE_CONTROL[signature[0]["value"]]["OUT"],
+            MODULE_CONTROL["PC"]["IN"],
+        ]
+
+        return [
+            sp_minus1_into_alu,
+            alu_into_mar_and_sp,
+            pc_onto_stack,
+            module_into_pc,
+        ]
 
 
 def parse_line(line):
@@ -175,8 +235,17 @@ def parse_line(line):
         generate_instruction_byte_bitdefs(signature)
     )
 
+    mc_bytes = []
+
     mc_byte = get_machine_code_byte_template()
     mc_byte["byte_type"] = "instruction"
     mc_byte["bitstring"] = instruction_byte
+    mc_bytes.append(mc_byte)
 
-    return [mc_byte]
+    if signature[0]["value_type"] == "constant":
+        const_byte = get_machine_code_byte_template()
+        const_byte["byte_type"] = "constant"
+        const_byte["constant"] = signature[0]["value"]
+        mc_bytes.append(const_byte)
+
+    return mc_bytes

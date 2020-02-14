@@ -614,16 +614,7 @@ CALL
 
 The ``CALL`` operation will push the current program counter (i.e. the next
 instruction to be executed) onto the stack, then set the program counter (
-i.e. jump) to the value in the given module.
-
-There are not enough instruction cycles to be able to call a constant (e.g
-``CALL @label``) instead a module must be set to the desired constant, then
-that module called. E.g.:
-
-.. code-block:: text
-
-        SET ACC @my_func
-        CALL ACC
+i.e. jump) to the value in the given module or constant.
 
 The possible usages are:
 
@@ -631,6 +622,7 @@ The possible usages are:
  - ``CALL A``
  - ``CALL B``
  - ``CALL C``
+ - ``CALL CONST``
 
 RETURN
 ^^^^^^

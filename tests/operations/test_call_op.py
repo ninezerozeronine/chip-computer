@@ -38,6 +38,16 @@ def generate_parse_line_test_data():
     mc["bitstring"] = "01011110"
     ret.append((test_input, [mc]))
 
+    test_input = "CALL @label"
+    mc_0 = get_machine_code_byte_template()
+    mc_0["byte_type"] = "instruction"
+    mc_0["bitstring"] = "01111110"
+
+    mc_1 = get_machine_code_byte_template()
+    mc_1["byte_type"] = "constant"
+    mc_1["constant"] = "@label"
+    ret.append((test_input, [mc_0, mc_1]))
+
     return ret
 
 
@@ -51,7 +61,6 @@ def test_parse_line(test_input, expected):
 @pytest.mark.parametrize("test_input", [
     "CALL",
     "CALL   ",
-    "CALL #123",
     "CALL SP",
     "CALL A B",
     "CALL ACCS",
