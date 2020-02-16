@@ -68,7 +68,7 @@ void Button::init() {
 void Button::update(
     void (*low_to_high_callback)(),
     void (*high_to_low_callback)(),
-    void (*repeat_callback)()
+    void (*repeat_callback)())
     {
 
     // Read state of the button (invert because we're using INPUT_PULLUP)
@@ -80,14 +80,13 @@ void Button::update(
     // If the button is in a different state to the stable state
     if (current_state != stable_state) {
 
-        repeating = false;
-
         // If the button is in the same state as it was last time
         if (current_state == last_read_state) {
 
             // If it's been in this new state for longer that the debounce time, flip the state
             // and call the callbacks
             if (current_time - last_state_change > debounce_time) {
+                repeating = false;
                 stable_state = current_state;
                 if (current_state == HIGH) {
                     if (low_to_high_callback != NULL) {

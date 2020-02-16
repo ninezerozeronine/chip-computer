@@ -12,12 +12,10 @@ class Button {
         void init();
         void set_pin(byte pin_);
         void set_debounce_time(byte debounce_time);
+        void set_repeat_delay(unsigned long repeat_delay_);
+        void set_repeat_frequency(unsigned long repeat_frequency_);
         byte get_state();
-        void update(
-            void (*low_to_high_callback)()=NULL,
-            void (*high_to_low_callback)()=NULL,
-            void (*repeat_callback)()=NULL,
-        );
+        void update(void (*low_to_high_callback)()=NULL, void (*high_to_low_callback)()=NULL, void (*repeat_callback)()=NULL);
 
     private:
         void constructor_defaults();
