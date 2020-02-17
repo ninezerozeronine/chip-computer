@@ -120,3 +120,25 @@ void keypad_key_released(int key) {
     Serial.println(" key on keypad released.");
 }
 
+
+// 12345678901234567890
+
+
+
+// A: 0000111100001111
+//    _
+// D: 00001111 _
+// DEC +/- PRG INC RUN
+
+
+// ADDR   DATA  DEC +/-
+//  123     34  PRG RUN
+// ====   ====  INC 
+// 12_    _     
+
+
+
+// A: _        00001111
+// D:-00001111-00001111
+// 1: Program     2 KHz
+// PRG DEC SIG INC  RUN
