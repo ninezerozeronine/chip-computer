@@ -25,6 +25,8 @@
 #ifndef CPUBRIDGE_H
 #define CPUBRIDGE_H
 
+#define RESET_OUT_PIN
+
 #include "Arduino.h"
 
 class CPUBridge {
@@ -42,14 +44,13 @@ class CPUBridge {
         
         void propose_addr_character();
         void confirm_adddress();
-        void cancel_address();
+        void clear_queued_address();
         void incr_address();
         void decr_address();
 
         void write_data();
-        void cancel_data();
+        void clear_queued_data();
         void propose_data_character();
-        void propose_data_negative_toggle();
 
         void enable_reset();
         void disable_reset();
@@ -60,6 +61,7 @@ class CPUBridge {
         void quarter_step();
         void half_step();
         void full_step();
+        void set_speed(int speed_);
 
 
 
@@ -82,12 +84,17 @@ class CPUBridge {
         bool signed_mode;
         bool address_inc_mode;
 
-        bool reset;
+        bool running;
+
         Lcd lcd;
+
+
 
         void send_mem_type_to_computer();\
 
+        bool queued_data_is_neg;
 
+        void read_and_update_data();
 
 };
 

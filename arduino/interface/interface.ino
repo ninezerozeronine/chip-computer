@@ -142,3 +142,17 @@ void keypad_key_released(int key) {
 // D:-00001111-00001111
 // 1: Program     2 KHz
 // PRG DEC SIG INC  RUN
+
+
+// 12345678901234567890
+// A:  00001111 PRG INC
+//  >  _        DEC SIG
+// D: -00001111 RUN 
+//  >  _        PRGNAME
+
+
+
+// A:       240 PRG INC
+//  >  104_     DEC SIG
+// D:       -34 RUN   1
+//  > -25_      PRGNAME
