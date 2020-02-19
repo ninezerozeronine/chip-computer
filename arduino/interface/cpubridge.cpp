@@ -313,19 +313,19 @@ void CPUBridge::full_step() {
 // 
 void CPUBridge::set_speed(int speed) {
     if (current_speed < 1012) && (speed >= 1012) {
-        switch_from_low_to_high_speed();
+        switch_from_ardiuno_to_crystal_clock();
     if (current_speed >= 1012) && (speed < 1012) {
-        switch_from_high_to_low_speed();
+        switch_from_crystal_to_arduino_clock();
     }
 
     current_speed = speed;
+    float new_frequency = 0.1;
     // Min zone - lock frequency to 1/10 Hz
     if (speed < 12) {
-        frequency_str = ".1";
-
+        new_frequency = 0.1;
     }
 
-    // Min Zone - 1/5 - frequency between 1/10 and 1 Hz
+    // Min Zone - 1/5 - frequency between 1/10 and 0.99 Hz
     if ((speed >= 12) && (speed < 212)) {
         float in_min = 12;
         float in_max = 211;
@@ -334,30 +334,46 @@ void CPUBridge::set_speed(int speed) {
         float new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
     }
 
-    // 1/5 - 2/5 - frequency between 1 and 5 Hz
+    // 1/5 - 2/5 - frequency between 1 and 5.99 Hz
     if ((speed >= 212) && (speed < 412)) {
-
+        float in_min = 212;
+        float in_max = 411;
+        float out_min = 1;
+        float out_max = 5.99;
+        float new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
     }
 
-    // 2/5 - 3/5 - frequency between 5 and 10 Hz
+    // 2/5 - 3/5 - frequency between 6 and 10.99 Hz
     if ((speed >= 412) && (speed < 612)) {
-
+        float in_min = 412;
+        float in_max = 611;
+        float out_min = 6;
+        float out_max = 10.99;
+        float new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
     }
 
-    // 3/5 - 4/5 - frequency between 10 and 100 Hz
+    // 3/5 - 4/5 - frequency between 11 and 100 Hz
     if ((speed >= 612) && (speed < 812)) {
-
+        float new_frequency = float(map(speed, 612, 811, 11, 100));
     }
 
-    // 4/5 - Max Zone - frequency between 100 and 10000 Hz
+    // 4/5 - Max Zone - frequency between 101 and 10000 Hz
     if ((speed >= 812) && (speed < 1012)) {
-
+        float new_frequency = float(map(speed, 812, 1011, 101, 10000));
     }
 
     // Max Zone - lock frequency to 1Mhz
     if (speed >= 1012) {
+        new_frequency = 1000000.0;
+    }
 
-    } 
+
+    lcd.draw_clock_frequency(new_frequency);
+
+    // No need to set if fastest setting, we've already switched to the crytsal.
+    if (new_frequency < 10000) {
+        set_frequency(new_frequency);
+    }
 }
 
 
