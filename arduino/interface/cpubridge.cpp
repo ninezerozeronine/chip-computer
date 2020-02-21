@@ -20,15 +20,17 @@ void CPUBridge::constructor_defaults() {
 
 // Select the next stored program in the list
 void CPUBridge::next_stored_pgm() {
-    // Increment program index
-    program_index = program_index + 1 % num_programs;
-    int pretty_index = program_index + 1;
+    if (!running) {
+        // Increment program index
+        program_index = program_index + 1 % num_programs;
+        int pretty_index = program_index + 1;
 
-    // Update LCD based on current program
-    switch (program_index) {
-        case 0: {
-            update_program_display(pretty_index, prog_name);
-            break;
+        // Update LCD based on current program
+        switch (program_index) {
+            case 0: {
+                lcd.draw_program(pretty_index, program_names[program_index]);
+                break;
+            }
         }
     }
 }
@@ -36,23 +38,54 @@ void CPUBridge::next_stored_pgm() {
 
 // Transfer the selected program to the computer
 void CPUBridge::transfer_stored_pgm() {
-    // Stop any clock pulses (i.e. Pause computer)
+    if (!running) {
 
     // Switch to setup mode
-
-    // Set program memory
+    set_user_ram_control();
 
     // Loop over program bytes, sending to computer (Don't update LCD)
+    if (num_program_bytes[program_index] > 0) {
+
+        // Set program memory
+        set_program_memory_active();
+
+        for (byte index = 0; index < num_program_bytes[program_index]; ++index) {
+            send_address_to_computer(index);
+            send_data_to_computer(program_bytes[program_index][index]);
+            send_data_write();
+        }
 
     // Set data memory
+    set_data_memory_active();
 
     // Loop over data bytes, sending to computer (Don't update LCD)
+    if (num_data_bytes[program_index] > 0) {
+        // Set program memory
+        set_data_memory_active();
 
-    // Set addr and pgm/data mem back to what they were and send to computer
+        for (byte index = 0; index < num_data_bytes[program_index]; ++index) {
+            send_address_to_computer(index);
+            send_data_to_computer(data_bytes[program_index][index]);
+            send_data_write();
+        }
+
+    // Set address to last program byte written, falling back to data byte if no program
+    // bytes
+    // Set the active memory on the LCD here too.
+    if (num_program_bytes[program_index] > 0) {
+        current_address = num_program_bytes[program_index] - 1
+        set_program_memory_active();
+        send_address_to_computer(current_address);
+        lcd.draw_address(current_address, number_base_index);
+
+    } else {
+
+    } 
 
     // Re-read data from computer
 
     // Update data on LCD
+    }
 }
 
 
@@ -181,6 +214,7 @@ void CPUBridge::write_data() {
         if data_str_is_valid(queued_data_str) {
             int data = string_to_value(queued_data_str);
             send_data_to_computer(data);
+            send_data_write();
         }
     }
 }
@@ -273,6 +307,7 @@ void CPUBridge::toggle_run_pause() {
 // Set the computer to be running
 void CPUBridge::set_running() {
     running = true;
+    set_computer_ram_control();
     set_clock_enable(true);
 }
 
@@ -280,6 +315,7 @@ void CPUBridge::set_running() {
 // Set the computer to be paused
 void CPUBridge::set_paused() {
     running = false;
+    set_user_ram_control();
     set_clock_enable(false);
 }
 
@@ -287,7 +323,11 @@ void CPUBridge::set_paused() {
 // Advance the clock a quarter step
 void CPUBridge::quarter_step() {
     if (!running) {
+        set_computer_ram_control();
+        set_clock_enable(true);
         send_clock_pulses(1);
+        set_clock_enable(false);
+        set_user_ram_control();
     }
 }
 
@@ -295,7 +335,11 @@ void CPUBridge::quarter_step() {
 // Advance the clock a half step
 void CPUBridge::half_step() {
     if (!running) {
+        set_computer_ram_control();
+        set_clock_enable(true);
         send_clock_pulses(2);
+        set_clock_enable(false);
+        set_user_ram_control();
     }
 }
 
@@ -303,14 +347,21 @@ void CPUBridge::half_step() {
 // Advance the clock a full step
 void CPUBridge::full_step() {
     if (!running) {
+        set_computer_ram_control();
+        set_clock_enable(true);
         send_clock_pulses(4);
+        set_clock_enable(false);
+        set_user_ram_control();
     }
 }
 
 
 // Set the clock speed
 //
-// 
+// Need to briefly disable the clock when doing this as the frequency change could
+// Trigger clock pulses too close together.
+//
+// speed: value returned from reading the potentiometer. 0 - 1023.
 void CPUBridge::set_speed(int speed) {
     if (current_speed < 1012) && (speed >= 1012) {
         switch_from_ardiuno_to_crystal_clock();

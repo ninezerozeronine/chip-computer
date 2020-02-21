@@ -73,6 +73,11 @@ class CPUBridge {
         void constructor_defaults();
 
         byte num_programs;
+        byte num_program_bytes [];
+        byte num_data_bytes [];
+        byte * program_bytes [];
+        byte * data_bytes [];
+        char * program_names [];
         byte program_index;
 
         byte num_number_bases;
@@ -88,9 +93,13 @@ class CPUBridge {
 
         Lcd lcd;
 
+        void set_user_ram_control();
+        void set_computer_ram_control();
 
+        void set_program_memory_active();
+        void set_data_memory_active();
 
-        void send_mem_type_to_computer();\
+        void send_mem_type_to_computer();
 
         bool queued_data_is_neg;
 
