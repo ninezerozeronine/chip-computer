@@ -1,26 +1,28 @@
 // Provides convenient bridge between user and computer.
 
-#include "cpubridge.h"
+#include "monitor.h"
 
 
 // Constructor
-CPUCPUBridge::CPUBridge() {
+Monitor::Monitor() {
     constructor_defaults();
 }
 
 
-void CPUBridge::constructor_defaults() {
+void Monitor::constructor_defaults() {
+    bridge = HardwareBridge();
     program_index = 0;
     num_programs = 1;
-
-    number_base_index = 0;
-    num_number_bases = 3;
 }
 
 
+void init() {
+    bridge.init();
+}
+
 // Select the next stored program in the list
-void CPUBridge::next_stored_pgm() {
-    if (!running) {
+void Monitor::next_stored_pgm() {
+    if (run_mode == PAUSED && !resetting) {
         // Increment program index
         program_index = program_index + 1 % num_programs;
         int pretty_index = program_index + 1;
@@ -37,72 +39,77 @@ void CPUBridge::next_stored_pgm() {
 
 
 // Transfer the selected program to the computer
-void CPUBridge::transfer_stored_pgm() {
-    if (!running) {
+void Monitor::transfer_stored_pgm() {
+    if (run_mode == PAUSED && !resetting) {
 
-    // Switch to setup mode
-    set_user_ram_control();
+        // Store initial memory region and address
+        e_memory_region initial_ram_region = bridge.get_ram_region();
+        int initial_address = bridge.get_address();
 
-    // Loop over program bytes, sending to computer (Don't update LCD)
-    if (num_program_bytes[program_index] > 0) {
+        // Switch to setup mode
+        bridge.set_ram_control_mode(USER);
 
-        // Set program memory
-        set_program_memory_active();
+        // Loop over program bytes, sending to computer (Don't update LCD)
+        if (num_program_bytes[program_index] > 0) {
 
-        for (byte index = 0; index < num_program_bytes[program_index]; ++index) {
-            send_address_to_computer(index);
-            send_data_to_computer(program_bytes[program_index][index]);
-            send_data_write();
+            // Set program memory
+            bridge.set_ram_region(PROGRAM);
+
+            for (byte index = 0; index < num_program_bytes[program_index]; ++index) {
+                bridge.set_address(index);
+                bridge.set_staged_data(program_bytes[program_index][index]);
+                bridge.send_ram_write_pulse();
+            }
         }
 
-    // Set data memory
-    set_data_memory_active();
+        // Loop over data bytes, sending to computer (Don't update LCD)
+        if (num_data_bytes[program_index] > 0) {
+            // Set program memory
+            bridge.set_ram_region(DATA);
 
-    // Loop over data bytes, sending to computer (Don't update LCD)
-    if (num_data_bytes[program_index] > 0) {
-        // Set program memory
-        set_data_memory_active();
-
-        for (byte index = 0; index < num_data_bytes[program_index]; ++index) {
-            send_address_to_computer(index);
-            send_data_to_computer(data_bytes[program_index][index]);
-            send_data_write();
+            for (byte index = 0; index < num_data_bytes[program_index]; ++index) {
+                bridge.set_address(index);
+                bridge.set_staged_data(data_bytes[program_index][index]);
+                bridge.send_ram_write_pulse();
+            }
         }
 
-    // Set address to last program byte written, falling back to data byte if no program
-    // bytes
-    // Set the active memory on the LCD here too.
-    if (num_program_bytes[program_index] > 0) {
-        current_address = num_program_bytes[program_index] - 1
-        set_program_memory_active();
-        send_address_to_computer(current_address);
-        lcd.draw_address(current_address, number_base_index);
+        // Restore initial address and memory region
+        bridge.set_ram_region(initial_ram_region);
+        bridge.set_address(initial_address);
 
-    } else {
-
-    } 
-
-    // Re-read data from computer
-
-    // Update data on LCD
+        // Update LCD with new data at this address in case it's changed.
+        lcd.draw_data(bridge.get_data(), number_base, signed_mode);
     }
 }
 
 
 // Switch to the next number base and update the LCD
-void CPUBridge::next_number_base() {
-    number_base_index = (number_base_index + 1) % num_number_bases;
+void Monitor::next_number_base() {
+    if (run_mode == PAUSED && !resetting) {
+        switch (number_base) {
+            case BINARY:
+                set_number_base(DECIMAL);
+                break;
+            case DECIMAL:
+                set_number_base(HEXADECIMAL);
+                break;
+            case HEXADECIMAL:
+                set_number_base(BINARY);
+                break;
+        }
 
-    lcd.draw_address(current_address, number_base_index);
-    lcd.draw_data(current_data, number_base_index, signed_mode);
-    lcd.draw_number_base_indicator(number_base_index);
-    _clear_queued_address();
-    _clear_queued_data();
+        lcd.draw_address(address, number_base);
+        lcd.draw_data(bridge.get_data(), number_base, signed_mode);
+        lcd.draw_number_base(number_base);
+        clear_queued_address();
+        clear_queued_data();
+    }
 }
 
 
 // Toggle whether the bridge is in signed mode or not and update LCD
-void CPUBridge::toggle_signed_mode() {
+void Monitor::toggle_signed_mode() {
     signed_mode = !signed_mode;
 
     lcd.draw_data(current_data, number_base_index, signed_mode);
@@ -114,7 +121,7 @@ void CPUBridge::toggle_signed_mode() {
 
 // Toggle whether the bridge will auto increment the address after
 // writing data. Update LCD to reflect this.
-void CPUBridge::toggle_address_inc_mode() {
+void Monitor::toggle_address_inc_mode() {
     address_inc_mode = !address_inc_mode;
 
     lcd.draw_address_inc_mode_indicator(address_inc_mode);
@@ -123,7 +130,7 @@ void CPUBridge::toggle_address_inc_mode() {
 
 // Toggle whether the address is in program or data memory. Send to
 // computer, read new data and update LCD.
-void CPUBridge::toggle_mem_type() {
+void Monitor::toggle_mem_type() {
     mem_type_index = (mem_type_index + 1) % num_mem_types;
 
     send_mem_type_to_computer();
@@ -132,7 +139,7 @@ void CPUBridge::toggle_mem_type() {
 
 
 // Propose a character to add to the queued address
-void CPUBridge::propose_address_character(char character) {
+void Monitor::propose_address_character(char character) {
     if (character_is_valid_for_number_base(character)) {
         if (queued_address_str.length() <= 8) {
             String proposed_address_str = queued_address_str + character;
@@ -146,7 +153,7 @@ void CPUBridge::propose_address_character(char character) {
 }
 
 // Confirm the queued address
-void CPUBridge::confirm_address() {
+void Monitor::confirm_address() {
     if (queued_address_str.length() > 0) {
         // Convert queued address to value
         current_address = string_to_value(queued_address_str);
@@ -167,14 +174,14 @@ void CPUBridge::confirm_address() {
 
 
 // Cancel queued address
-void CPUBridge::clear_queued_address() {
+void Monitor::clear_queued_address() {
     // Clear queued address
     _clear_queued_address();
 }
 
 
 // Increment the address by 1
-void CPUBridge::incr_address() {
+void Monitor::incr_address() {
     // Increment the address
     current_address = (current_address + 1) % 256;
 
@@ -190,7 +197,7 @@ void CPUBridge::incr_address() {
 
 
 // Decrement the address by 1
-void CPUBridge::incr_address() {
+void Monitor::incr_address() {
     // Decrement the address, wrapping round
     current_address -= 1;
     if (current_address < 0) {
@@ -209,7 +216,7 @@ void CPUBridge::incr_address() {
 
 
 // Write the currently queued data to the computer
-void CPUBridge::write_data() {
+void Monitor::write_data() {
     if (computer_not_running) {
         if data_str_is_valid(queued_data_str) {
             int data = string_to_value(queued_data_str);
@@ -221,14 +228,14 @@ void CPUBridge::write_data() {
 
 
 // Clear the currently queued data
-void CPUBridge::clear_queued_data() {
+void Monitor::clear_queued_data() {
     _clear_queued_data();
 }
 
 
 // Add a character to the currently queued data value. If the character is
 // invalid for the current base, 
-void CPUBridge::propose_data_character(char character) {
+void Monitor::propose_data_character(char character) {
     // If its a valid character or a minus
     if (character_is_valid_for_number_base(character) || character == '-') {
         int current_length = queued_data_str.length()
@@ -283,19 +290,19 @@ void CPUBridge::propose_data_character(char character) {
 
 
 // Set the reset signal going to the computer high.
-void CPUBridge::enable_reset(){
+void Monitor::enable_reset(){
     digitalWrite(RESET_OUT_PIN, HIGH);
 }
 
 
 // Set the reset signal going to the computer low
-void CPUBridge::disable_reset(){
+void Monitor::disable_reset(){
     digitalWrite(RESET_OUT_PIN, LOW);
 }
 
 
 // Toggle the computer between run and pause mode
-void CPUBridge::toggle_run_pause() {
+void Monitor::toggle_run_pause() {
     if (running) {
         set_paused();
     } else {
@@ -305,7 +312,7 @@ void CPUBridge::toggle_run_pause() {
 
 
 // Set the computer to be running
-void CPUBridge::set_running() {
+void Monitor::set_running() {
     running = true;
     set_computer_ram_control();
     set_clock_enable(true);
@@ -313,7 +320,7 @@ void CPUBridge::set_running() {
 
 
 // Set the computer to be paused
-void CPUBridge::set_paused() {
+void Monitor::set_paused() {
     running = false;
     set_user_ram_control();
     set_clock_enable(false);
@@ -321,7 +328,7 @@ void CPUBridge::set_paused() {
 
 
 // Advance the clock a quarter step
-void CPUBridge::quarter_step() {
+void Monitor::quarter_step() {
     if (!running) {
         set_computer_ram_control();
         set_clock_enable(true);
@@ -333,7 +340,7 @@ void CPUBridge::quarter_step() {
 
 
 // Advance the clock a half step
-void CPUBridge::half_step() {
+void Monitor::half_step() {
     if (!running) {
         set_computer_ram_control();
         set_clock_enable(true);
@@ -345,7 +352,7 @@ void CPUBridge::half_step() {
 
 
 // Advance the clock a full step
-void CPUBridge::full_step() {
+void Monitor::full_step() {
     if (!running) {
         set_computer_ram_control();
         set_clock_enable(true);
@@ -362,7 +369,7 @@ void CPUBridge::full_step() {
 // Trigger clock pulses too close together.
 //
 // speed: value returned from reading the potentiometer. 0 - 1023.
-void CPUBridge::set_speed(int speed) {
+void Monitor::set_speed(int speed) {
     if (current_speed < 1012) && (speed >= 1012) {
         switch_from_ardiuno_to_crystal_clock();
     if (current_speed >= 1012) && (speed < 1012) {
@@ -428,13 +435,13 @@ void CPUBridge::set_speed(int speed) {
 }
 
 
-void CPUBridge::read_data_update_bridge() {
+void Monitor::read_data_update_bridge() {
     current_data = read_data_from_computer();
     lcd.draw_data(current_data, number_base_index, signed_mode);
 }
 
 
-void CPUBridge::_clear_queued_address() {
+void Monitor::_clear_queued_address() {
     unfinished = true
     queued_address_str = "";
     lcd.draw_queued_address(queued_address_str);

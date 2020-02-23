@@ -1,37 +1,17 @@
 // Provides convenient bridge between user and computer.
 
 
-// Address cancel
-// Address confirm
-// Prog/Data mem
-// Auto Inc
-// Address Up
-// Address Down
-
-// Data cancel
-// Write data
-
-// Reset
-// Run/Pause
-// 1/4 step
-// 1/2 step
-// Full step
-
-// Base select
-// Signed select
-// 
-
-
-#ifndef CPUBRIDGE_H
-#define CPUBRIDGE_H
-
-#define RESET_OUT_PIN
+#ifndef MONITOR_H
+#define MONITOR_H
 
 #include "Arduino.h"
 
-class CPUBridge {
+#include "hardware_bridge.h"
+#include "enums.h"
+
+class Monitor {
     public:
-        CPUBridge();
+        Monitor();
         void constructor_defaults();
 
         void next_stored_pgm();
@@ -40,7 +20,7 @@ class CPUBridge {
         void next_number_base();
         void toggle_signed_mode();
         void toggle_address_inc_mode();
-        void toggle_mem_type();
+        void toggle_ram_region();
         
         void propose_addr_character();
         void confirm_adddress();
@@ -48,16 +28,14 @@ class CPUBridge {
         void incr_address();
         void decr_address();
 
+        void propose_data_character();
         void write_data();
         void clear_queued_data();
-        void propose_data_character();
 
         void enable_reset();
         void disable_reset();
 
         void toggle_run_pause();
-        void set_running();
-        void set_paused();
         void quarter_step();
         void half_step();
         void full_step();
@@ -71,6 +49,8 @@ class CPUBridge {
 
     private:
         void constructor_defaults();
+
+        HardwareBridge bridge;
 
         byte num_programs;
         byte num_program_bytes [];
@@ -105,6 +85,10 @@ class CPUBridge {
 
         void read_and_update_data();
 
+        void set_signed_mode();
+
+        void set_running();
+        void set_paused();
 };
 
 #endif
