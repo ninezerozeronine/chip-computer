@@ -1,5 +1,8 @@
 // Provides convenient bridge between user and computer.
 
+// TODO - change number base to data interpret and add raw mode.
+// TODO - update so that changing base or signed mode doesn't clear.
+// TODO - Delete last queued character rather then clear the whole thing.
 
 #ifndef MONITOR_H
 #define MONITOR_H
@@ -8,27 +11,28 @@
 
 #include "hardware_bridge.h"
 #include "enums.h"
+#include "lcd.h"
 
 class Monitor {
     public:
         Monitor();
-        void constructor_defaults();
+        void init();
 
         void next_stored_pgm();
         void transfer_stored_pgm();
 
         void next_number_base();
-        void toggle_signed_mode();
-        void toggle_address_inc_mode();
+        void toggle_sign_mode();
+        void toggle_address_update_mode();
         void toggle_ram_region();
         
-        void propose_addr_character();
+        void propose_address_character(char character);
         void confirm_adddress();
         void clear_queued_address();
         void incr_address();
         void decr_address();
 
-        void propose_data_character();
+        void propose_data_character(char character);
         void write_data();
         void clear_queued_data();
 
@@ -39,56 +43,37 @@ class Monitor {
         void quarter_step();
         void half_step();
         void full_step();
-        void set_speed(int speed_);
-
-
-
-
-
-        void update();
+        void set_speed(int speed);
 
     private:
         void constructor_defaults();
 
+        Lcd lcd;
         HardwareBridge bridge;
 
         byte num_programs;
-        byte num_program_bytes [];
-        byte num_data_bytes [];
-        byte * program_bytes [];
-        byte * data_bytes [];
-        char * program_names [];
+        byte num_program_bytes [8];
+        byte num_data_bytes [8];
+        byte * program_bytes [8];
+        byte * data_bytes [8];
+        char * program_names [8];
         byte program_index;
 
-        byte num_number_bases;
-        byte number_base_index;
+        char queued_address_str[12];
+        char proposed_adderss_str[12];
+        char queued_data_str[12];
+        char proposed_data_str[12];
 
-        byte num_mem_types;
-        byte mem_type_index;
+        e_run_mode run_mode;
+        e_sign_mode sign_mode;
+        e_number_base number_base;
+        e_address_update_mode address_update_mode;
 
-        bool signed_mode;
-        bool address_inc_mode;
-
-        bool running;
-
-        Lcd lcd;
-
-        void set_user_ram_control();
-        void set_computer_ram_control();
-
-        void set_program_memory_active();
-        void set_data_memory_active();
-
-        void send_mem_type_to_computer();
-
-        bool queued_data_is_neg;
-
-        void read_and_update_data();
-
-        void set_signed_mode();
-
-        void set_running();
-        void set_paused();
+        bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
+        void _add_char_to_string(char existing_string[], char character);
+        int _string_to_value(char in_string[]);
+        bool _is_within_range(int value);
+        void _send_clock_pulses(int num_pulses);
 };
 
 #endif

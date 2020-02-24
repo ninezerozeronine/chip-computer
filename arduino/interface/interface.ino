@@ -52,6 +52,8 @@
 
 #include "button.h"
 #include "keypad.h"
+#include "monitor.h"
+#include "hardware_bridge.h"
 
 const int keypad_values[] = {
     1023,
@@ -77,18 +79,22 @@ const int keypad_values[] = {
 
 Button test_button(BUTTON_PIN);
 Keypad test_keypad(KEYPAD_PIN, keypad_values);
+Monitor test_monitor();
 
 void setup() {
     // Called once at Arduino startup.
 
     test_button.init();
     test_keypad.init();
+    test_monitor.init();
 
     Serial.begin(115200);
     // wait for serial port to connect. Needed for native USB port only
     while (!Serial) {
     ; 
     }
+
+    test_monitor.toggle_sign_mode();
 }
 
 void loop() {
@@ -121,38 +127,3 @@ void keypad_key_released(int key) {
 }
 
 
-// 12345678901234567890
-
-
-
-// A: 0000111100001111
-//    _
-// D: 00001111 _
-// DEC +/- PRG INC RUN
-
-
-// ADDR   DATA  DEC +/-
-//  123     34  PRG RUN
-// ====   ====  INC 
-// 12_    _     
-
-
-
-// A: _        00001111
-// D:-00001111-00001111
-// 1: Program     2 KHz
-// PRG DEC SIG INC  RUN
-
-
-// 12345678901234567890
-// A:  00001111 PRG INC
-//  >  _        DEC SIG
-// D: -00001111 RUN 
-//  >  _        PRGNAME
-
-
-
-// A:       240 PRG INC
-//  >  104_     DEC SIG
-// D:       -34 RUN   1
-//  > -25_      PRGNAME

@@ -1,4 +1,4 @@
-#include "cpubridge.h"
+#include "hardware_bridge.h"
 
 
 HardwareBridge::HardwareBridge() {
@@ -9,11 +9,12 @@ HardwareBridge::HardwareBridge() {
 void HardwareBridge::constructor_defaults() {
     ram_region = PROGRAM;
     ram_control_mode = USER;
-    clock_type = MANUAL;
+    clock_source = ARDUINO_PIN;
+    arduino_clock_type = PULSES
     reset = false;
     clock_enabled = false;
     int address = 0;
-    clock_speed = 0;
+    clock_frequency = 0.1;
 }
 
 
@@ -33,6 +34,16 @@ void HardwareBridge::HardwareBridge::init() {
 
     Timer1.initialize(1000000);
     Timer1.pwm(CLOCK_PIN, 512);
+
+    set_ram_region(ram_region);
+    set_ram_control_mode(ram_control_mode);
+    set_clock_source(clock_source);
+    set_arduino_clock_type(arduino_clock_type);
+    set_reset(reset);
+    set_clock_enabled(clock_enabled);
+    set_address(address);
+    set_staged_data(0);
+    set_clock_frequency(clock_frequency);
 }
 
 
@@ -72,25 +83,38 @@ void HardwareBridge::set_ram_control_mode(e_ram_control_mode ram_control_mode_) 
 }
 
 
-e_clock_type HardwareBridge::get_clock_type() {
-    return clock_type;
+e_clock_source HardwareBridge::get_clock_source() {
+    return clock_source;
 }
 
 
-void HardwareBridge::set_clock_type(e_clock_type clock_type) {
-    clock_type = clock_type_;
-    switch (clock_type) {
+void HardwareBridge::set_clock_source(e_clock_source clock_source_) {
+    clock_source = clock_source_;
+    switch (clock_source) {
+        case ARDUINO_PIN:
+            digitalWrite(CLOCK_SOURCE_PIN, LOW);
+            break;
+        case CRYSTAL:
+            digitalWrite(CLOCK_SOURCE_PIN, HIGH);
+            break;
+    }
+}
+
+
+e_arduino_clock_type HardwareBridge::get_arduino_clock_type() {
+    return arduino_clock_type;
+}
+
+
+void HardwareBridge::set_arduino_clock_type(e_arduino_clock_type arduino_clock_type_) {
+    arduino_clock_type = arduino_clock_type_;
+    switch (arduino_clock_type) {
         case PULSES:
-            digitalWrite(CLOCK_TYPE_PIN, LOW);
             TimerOne.disablePwm(CLOCK_PIN);
             digitalWrite(CLOCK_PIN, LOW);
             break;
         case FREQUENCY:
-            digitalWrite(CLOCK_TYPE_PIN, LOW);
             TimerOne.pwm(CLOCK_PIN, 512);
-            break;
-        case CRYSTAL:
-            digitalWrite(CLOCK_TYPE_PIN, HIGH);
             break;
     }
 }
@@ -171,8 +195,8 @@ float HardwareBridge::get_clock_frequency() {
 //   answer/period 4 times smaller.
 void HardwareBridge::set_clock_frequency(float clock_frequency_) {
     clock_frequency = clock_frequency_;
-    int freq_in_usecs = 250000.0/clock_frequency;
-    TimerOne.setPeriod(freq_in_usecs);
+    int period_in_usecs = 250000.0/clock_frequency;
+    TimerOne.setPeriod(period_in_usecs);
 }
 
 void HardwareBridge::send_clock_pulses(int num_pulses) {

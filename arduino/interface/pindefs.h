@@ -1,0 +1,29 @@
+#ifndef PINDEFS_H
+#define PINDEFS_H
+
+// Hardware Bridge Pins
+#define ADDRESS_SERIAL_LATCH_PIN -1
+#define ADDRESS_SERIAL_CLOCK_PIN -1
+#define ADDRESS_SERIAL_PIN -1
+
+#define STAGED_DATA_SERIAL_LATCH_PIN -1
+#define STAGED_DATA_SERIAL_CLOCK_PIN -1
+#define STAGED_DATA_SERIAL_PIN -1
+
+#define READ_DATA_SERIAL_LATCH_PIN -1
+#define READ_DATA_SERIAL_CLOCK_PIN -1
+#define READ_DATA_SERIAL_PIN -1
+
+#define RAM_REGION_PIN -1
+#define RAM_CONTROL_MODE_PIN -1
+#define RESET_PIN -1
+#define RAM_WRITE_SIGNAL_PIN -1
+#define CLOCK_SOURCE_PIN -1
+#define CLOCK_ENABLED_PIN -1
+#define CLOCK_PIN 9
+
+// LCD Pins
+
+// Monitor Pins
+
+#endif

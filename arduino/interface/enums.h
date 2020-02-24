@@ -6,17 +6,17 @@ enum e_run_mode {
     PAUSED
 };
 
-enum e_mem_region {
+enum e_ram_region {
     PROGRAM,
     DATA
 };
 
-enum e_mem_control_mode {
+enum e_ram_control_mode {
     USER,
     CONTROL_UNIT
 };
 
-enum e_signed_mode {
+enum e_sign_mode {
     SIGNED,
     UNSIGNED
 };
@@ -25,12 +25,21 @@ enum e_number_base {
     BINARY,
     DECIMAL,
     HEXADECIMAL
-}
+};
 
-enum e_clock_type {
+enum e_arduino_clock_type {
     PULSES,
-    FREQUENCY,
-    CRYSTAL
-}
+    FREQUENCY
+};
+
+enum e_clock_source {
+    ARDUINO_PIN,
+    CRYSTAL,
+};
+
+enum e_address_update_mode {
+    AUTO_INC,
+    NO_INC
+};
 
 #endif
