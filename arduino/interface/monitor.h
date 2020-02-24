@@ -12,6 +12,7 @@
 #include "hardware_bridge.h"
 #include "enums.h"
 #include "lcd.h"
+#include "prog_fibonacci.h"
 
 class Monitor {
     public:
@@ -27,7 +28,7 @@ class Monitor {
         void toggle_ram_region();
         
         void propose_address_character(char character);
-        void confirm_adddress();
+        void confirm_address();
         void clear_queued_address();
         void incr_address();
         void decr_address();
@@ -60,7 +61,7 @@ class Monitor {
         byte program_index;
 
         char queued_address_str[12];
-        char proposed_adderss_str[12];
+        char proposed_address_str[12];
         char queued_data_str[12];
         char proposed_data_str[12];
 
@@ -71,7 +72,7 @@ class Monitor {
 
         bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
         void _add_char_to_string(char existing_string[], char character);
-        int _string_to_value(char in_string[]);
+        int _string_to_value(char in_string[], e_number_base number_base_);
         bool _is_within_range(int value);
         void _send_clock_pulses(int num_pulses);
 };

@@ -15,14 +15,14 @@ void Monitor::constructor_defaults() {
     program_index = 0;
     num_programs = 1;
 
-    num_program_bytes[0] = num_fibonacci_prog_bytes;
+    num_program_bytes[0] = num_fibonacci_program_bytes;
     num_data_bytes[0] = num_fibonacci_data_bytes;
     program_bytes[0] = fibonacci_program_bytes;
     data_bytes[0] = fibonacci_data_bytes;
     program_names[0] = fibonacci_program_name;
 
     strcpy(queued_address_str, "");
-    strcpy(proposed_adderss_str, "");
+    strcpy(proposed_address_str, "");
     strcpy(queued_data_str, "");
     strcpy(proposed_data_str, "");
 
@@ -33,7 +33,7 @@ void Monitor::constructor_defaults() {
 }
 
 
-void init() {
+void Monitor::init() {
     bridge.init();
     // Init into paused state
     bridge.set_clock_enabled(false);
@@ -52,7 +52,7 @@ void init() {
     lcd.draw_address_update_mode_indicator(address_update_mode);
     lcd.draw_ram_region_indicator(bridge.get_ram_region());
     lcd.draw_run_mode_indicator(run_mode);
-    lcd.draw_clock_frequency(bridge.get_frequency());
+    lcd.draw_clock_frequency(bridge.get_clock_frequency());
     lcd.draw_program_name(program_names[program_index]);
 }
 
@@ -72,7 +72,7 @@ void Monitor::transfer_stored_pgm() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
 
         // Store initial memory region and address
-        e_memory_region initial_ram_region = bridge.get_ram_region();
+        e_ram_region initial_ram_region = bridge.get_ram_region();
         int initial_address = bridge.get_address();
 
         // Switch to setup mode
@@ -130,12 +130,12 @@ void Monitor::next_number_base() {
 
         lcd.draw_number_base_indicator(number_base);
 
-        lcd.draw_address(address, number_base);
-        queued_address_str = "";
+        lcd.draw_address(bridge.get_address(), number_base);
+        strcpy(queued_address_str, "");
         lcd.draw_queued_address(queued_address_str);
         
         lcd.draw_data(bridge.get_data(), number_base, sign_mode);
-        queued_data_str = "";
+        strcpy(queued_data_str, "");
         lcd.draw_queued_data(queued_data_str);
     }
 }
@@ -148,7 +148,7 @@ void Monitor::toggle_sign_mode() {
             case SIGNED:
                 sign_mode = UNSIGNED;
                 break;
-            case UNSIGNED;
+            case UNSIGNED:
                 sign_mode = SIGNED;
                 break;
         }
@@ -156,10 +156,10 @@ void Monitor::toggle_sign_mode() {
         lcd.draw_data(bridge.get_data(), number_base, sign_mode);
         lcd.draw_sign_mode_indicator(sign_mode);
 
-        queued_address_str = "";
+        strcpy(queued_address_str, "");
         lcd.draw_queued_address(queued_address_str);
 
-        queued_data_str = "";
+        strcpy(queued_data_str, "");
         lcd.draw_queued_data(queued_data_str);
     }
 }
@@ -173,7 +173,7 @@ void Monitor::toggle_address_update_mode() {
             case AUTO_INC:
                 address_update_mode = NO_INC;
                 break;
-            case NO_INC;
+            case NO_INC:
                 address_update_mode = AUTO_INC;
                 break;
         }
@@ -187,17 +187,18 @@ void Monitor::toggle_address_update_mode() {
 // computer, read new data and update LCD.
 void Monitor::toggle_ram_region() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        switch (ram_region) {
+        e_ram_region new_ram_region;
+        switch (bridge.get_ram_region()) {
             case PROGRAM:
-                ram_region = DATA;
+                new_ram_region = DATA;
                 break;
-            case DATA;
-                ram_region = PROGRAM;
+            case DATA:
+                new_ram_region = PROGRAM;
                 break;
         }
 
-    bridge.set_ram_region(ram_region);
-    lcd.draw_ram_region_indicator(ram_region);
+    bridge.set_ram_region(new_ram_region);
+    lcd.draw_ram_region_indicator(new_ram_region);
     lcd.draw_data(bridge.get_data(), number_base, sign_mode);
     }
 }
@@ -211,7 +212,7 @@ void Monitor::propose_address_character(char character) {
                 strcpy(proposed_address_str, queued_address_str);
                 _add_char_to_string(proposed_address_str, character);
                 int proposed_address_value = _string_to_value(proposed_address_str, number_base);
-                if _is_within_range(proposed_address_value) {
+                if (_is_within_range(proposed_address_value)) {
                     strcpy(queued_address_str, proposed_address_str);
                     lcd.draw_queued_address(queued_address_str);
                 }
@@ -237,7 +238,7 @@ void Monitor::confirm_address() {
             lcd.draw_data(bridge.get_data(), number_base, sign_mode);
 
             // Clear queued address
-            queued_address_str = "";
+            strcpy(queued_address_str, "");
 
             // Update queued address on LCD
             lcd.draw_queued_address(queued_address_str);
@@ -249,7 +250,7 @@ void Monitor::confirm_address() {
 // Cancel queued address
 void Monitor::clear_queued_address() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        queued_address_str = "";
+        strcpy(queued_address_str, "");
         lcd.draw_queued_address(queued_address_str);
     }
 }
@@ -299,14 +300,14 @@ void Monitor::decr_address() {
 void Monitor::propose_data_character(char character) {
     if (run_mode == PAUSED && !bridge.get_reset()) {
         // If its a valid character or a minus
-        if (_character_is_valid_for_number_base(character) || character == '-') {
+        if (_character_is_valid_for_number_base(character, number_base) || character == '-') {
             int current_length = strlen(queued_data_str);
 
             // If theres nothing queued
             if (current_length == 0) {
 
                 // Add it!
-                queued_data_str += character;
+                _add_char_to_string(queued_data_str, character);
                 lcd.draw_queued_data(queued_data_str);
 
             // Else there's something queued
@@ -325,7 +326,7 @@ void Monitor::propose_data_character(char character) {
                             strcpy(proposed_data_str, queued_data_str);
                             _add_char_to_string(proposed_data_str, character);
                             int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                            if _is_within_range(proposed_data_value) {
+                            if (_is_within_range(proposed_data_value)) {
                                 strcpy(queued_data_str, proposed_data_str);
                                 lcd.draw_queued_data(queued_data_str);
                             }
@@ -341,7 +342,7 @@ void Monitor::propose_data_character(char character) {
                             strcpy(proposed_data_str, queued_data_str);
                             _add_char_to_string(proposed_data_str, character);
                             int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                            if _is_within_range(proposed_data_value) {
+                            if (_is_within_range(proposed_data_value)) {
                                 strcpy(queued_data_str, proposed_data_str);
                                 lcd.draw_queued_data(queued_data_str);
                             }
@@ -357,11 +358,13 @@ void Monitor::propose_data_character(char character) {
 // Write the currently queued data to the computer
 void Monitor::write_data() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        if _data_str_is_valid(queued_data_str) {
-            int data = _string_to_value(queued_data_str);
+        int string_length = strlen(queued_data_str);
+        // If the string isn't empty or just a minus sign
+        if ((string_length > 1) || ((string_length == 1) && (queued_data_str[0] != '-'))) {
+            int data = _string_to_value(queued_data_str, number_base);
             bridge.set_staged_data(data);
             bridge.send_ram_write_pulse();
-            queued_data_str = "";
+            strcpy(queued_data_str, "");
             lcd.draw_queued_data(queued_data_str);
             if (address_update_mode == AUTO_INC ) {
                 incr_address();
@@ -376,7 +379,7 @@ void Monitor::write_data() {
 // Clear the currently queued data
 void Monitor::clear_queued_data() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        queued_data_str = "";
+        strcpy(queued_data_str, "");
         lcd.draw_queued_data(queued_data_str);
     }
 }
@@ -508,11 +511,10 @@ void Monitor::set_speed(int speed) {
 
         delayMicroseconds(5);
 
-
-        if (bridge.get_clock_frequency() <= 10000.0) && (new_frequency > 10000.0) {
+        if ((bridge.get_clock_frequency() <= 10000.0) && (new_frequency > 10000.0)) {
             bridge.set_clock_source(CRYSTAL);
         }
-        if (bridge.get_clock_frequency() > 10000.0) && (new_frequency <= 10000.0) {
+        if ((bridge.get_clock_frequency() > 10000.0) && (new_frequency <= 10000.0)) {
             bridge.set_clock_source(ARDUINO_PIN);
         }
 

@@ -12,19 +12,19 @@ class Lcd {
 
         void draw_address(int address, e_number_base number_base);
         void draw_queued_address(char queued_address_str[]);
-        void draw_data(int data, e_number_base number_base, e_sign_mode, sign_mode);
+        void draw_data(int data, e_number_base number_base, e_sign_mode sign_mode);
         void draw_queued_data(char queued_data_str[]);
         void draw_number_base_indicator(e_number_base number_base);
-        void draw_sign_mode_indicator(e_sign_mode, sign_mode);
-        void draw_address_update_mode_indicator(e_address_update_mode, address_update_mode);
-        void draw_ram_region_indicator(e_ram_region, ram_region);
-        void draw_run_mode_indicator(e_run_mode, run_mode);
+        void draw_sign_mode_indicator(e_sign_mode sign_mode);
+        void draw_address_update_mode_indicator(e_address_update_mode address_update_mode);
+        void draw_ram_region_indicator(e_ram_region ram_region);
+        void draw_run_mode_indicator(e_run_mode run_mode);
         void draw_clock_frequency(float frequency);
         void draw_program_name(char program_name[]);
 
     private:
         void constructor_defaults();
-}
+};
 
 #endif
 

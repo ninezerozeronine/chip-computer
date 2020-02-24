@@ -14,7 +14,7 @@ class HardwareBridge {
         HardwareBridge();
         void init();
 
-        e_mem_region get_ram_region();
+        e_ram_region get_ram_region();
         void set_ram_region(e_ram_region ram_region_);
 
         e_ram_control_mode get_ram_control_mode();
@@ -48,7 +48,7 @@ class HardwareBridge {
     private:
         void constructor_defaults();
 
-        e_mem_region ram_region;
+        e_ram_region ram_region;
         e_ram_control_mode ram_control_mode;
         e_clock_source clock_source;
         e_arduino_clock_type arduino_clock_type;

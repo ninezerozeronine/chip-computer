@@ -34,7 +34,7 @@ enum e_arduino_clock_type {
 
 enum e_clock_source {
     ARDUINO_PIN,
-    CRYSTAL,
+    CRYSTAL
 };
 
 enum e_address_update_mode {

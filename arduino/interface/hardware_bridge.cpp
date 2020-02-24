@@ -10,7 +10,7 @@ void HardwareBridge::constructor_defaults() {
     ram_region = PROGRAM;
     ram_control_mode = USER;
     clock_source = ARDUINO_PIN;
-    arduino_clock_type = PULSES
+    arduino_clock_type = PULSES;
     reset = false;
     clock_enabled = false;
     int address = 0;
@@ -21,14 +21,21 @@ void HardwareBridge::constructor_defaults() {
 void HardwareBridge::HardwareBridge::init() {
     pinMode(RAM_REGION_PIN, OUTPUT);
     pinMode(RAM_CONTROL_MODE_PIN, OUTPUT);
-    pinMode(CLOCK_TYPE_PIN, OUTPUT);
+    pinMode(CLOCK_SOURCE_PIN, OUTPUT);
     pinMode(RESET_PIN, OUTPUT);
-    pinMode(ADDRESS_SERIAL_LATCH_PIN, OUTPUT);
+
     pinMode(ADDRESS_SERIAL_CLOCK_PIN, OUTPUT);
-    pinMode(ADDRESS_SERIAL_PIN, OUTPUT);
+    pinMode(ADDRESS_SERIAL_DATA_PIN, OUTPUT);
     pinMode(ADDRESS_SERIAL_LATCH_PIN, OUTPUT);
-    pinMode(DATA_SERIAL_CLOCK_PIN, OUTPUT);
-    pinMode(DATA_SERIAL_PIN, INPUT);
+
+    pinMode(READ_DATA_SERIAL_CLOCK_PIN, OUTPUT);
+    pinMode(READ_DATA_SERIAL_DATA_PIN, OUTPUT);
+    pinMode(READ_DATA_SERIAL_LATCH_PIN, OUTPUT);
+
+    pinMode(STAGED_DATA_SERIAL_CLOCK_PIN, OUTPUT);
+    pinMode(STAGED_DATA_SERIAL_DATA_PIN, OUTPUT);
+    pinMode(STAGED_DATA_SERIAL_LATCH_PIN, OUTPUT);
+
     pinMode(CLOCK_ENABLED_PIN, OUTPUT);
     pinMode(CLOCK_PIN, OUTPUT);
 
@@ -56,10 +63,10 @@ void HardwareBridge::set_ram_region(e_ram_region ram_region_) {
     ram_region = ram_region_;
     switch (ram_region) {
         case PROGRAM:
-            digitalWrite(MEM_REGION_PIN, LOW);
+            digitalWrite(RAM_REGION_PIN, LOW);
             break;
         case DATA:
-            digitalWrite(MEM_REGION_PIN, HIGH);
+            digitalWrite(RAM_REGION_PIN, HIGH);
             break;
     }
 }
@@ -110,11 +117,11 @@ void HardwareBridge::set_arduino_clock_type(e_arduino_clock_type arduino_clock_t
     arduino_clock_type = arduino_clock_type_;
     switch (arduino_clock_type) {
         case PULSES:
-            TimerOne.disablePwm(CLOCK_PIN);
+            Timer1.disablePwm(CLOCK_PIN);
             digitalWrite(CLOCK_PIN, LOW);
             break;
         case FREQUENCY:
-            TimerOne.pwm(CLOCK_PIN, 512);
+            Timer1.pwm(CLOCK_PIN, 512);
             break;
     }
 }
@@ -196,7 +203,7 @@ float HardwareBridge::get_clock_frequency() {
 void HardwareBridge::set_clock_frequency(float clock_frequency_) {
     clock_frequency = clock_frequency_;
     int period_in_usecs = 250000.0/clock_frequency;
-    TimerOne.setPeriod(period_in_usecs);
+    Timer1.setPeriod(period_in_usecs);
 }
 
 void HardwareBridge::send_clock_pulses(int num_pulses) {

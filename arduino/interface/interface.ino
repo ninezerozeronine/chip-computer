@@ -53,7 +53,6 @@
 #include "button.h"
 #include "keypad.h"
 #include "monitor.h"
-#include "hardware_bridge.h"
 
 const int keypad_values[] = {
     1023,
@@ -79,7 +78,7 @@ const int keypad_values[] = {
 
 Button test_button(BUTTON_PIN);
 Keypad test_keypad(KEYPAD_PIN, keypad_values);
-Monitor test_monitor();
+Monitor test_monitor;
 
 void setup() {
     // Called once at Arduino startup.
