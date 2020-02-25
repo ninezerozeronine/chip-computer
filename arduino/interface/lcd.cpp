@@ -64,3 +64,13 @@ void Lcd::draw_program_name(char program_name[]){
     // int name_length = strlen_P(program_name);
     // char name_char = pgm_read_byte_near(program_name + index);
 }
+
+
+void Lcd::set_input_field(e_input_field input_field) {
+
+}
+
+
+void Lcd::update() {
+
+}

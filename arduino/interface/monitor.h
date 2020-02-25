@@ -26,16 +26,14 @@ class Monitor {
         void toggle_sign_mode();
         void toggle_address_update_mode();
         void toggle_ram_region();
+        void toggle_input_field();
         
-        void propose_address_character(char character);
-        void confirm_address();
-        void clear_queued_address();
+        void propose_character(char character);
+        void confirm_current_field();
+        void clear_curent_field();
+
         void incr_address();
         void decr_address();
-
-        void propose_data_character(char character);
-        void write_data();
-        void clear_queued_data();
 
         void enable_reset();
         void disable_reset();
@@ -45,6 +43,8 @@ class Monitor {
         void half_step();
         void full_step();
         void set_speed(int speed);
+
+        void update();
 
     private:
         void constructor_defaults();
@@ -69,12 +69,20 @@ class Monitor {
         e_sign_mode sign_mode;
         e_number_base number_base;
         e_address_update_mode address_update_mode;
+        e_input_field input_field;
 
         bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
         void _add_char_to_string(char existing_string[], char character);
         int _string_to_value(char in_string[], e_number_base number_base_);
         bool _is_within_range(int value);
         void _send_clock_pulses(int num_pulses);
+
+        void _propose_address_character(char character);
+        void _confirm_address();
+        void _clear_queued_address();
+        void _propose_data_character(char character);
+        void _write_data();
+        void _clear_queued_data();
 };
 
 #endif

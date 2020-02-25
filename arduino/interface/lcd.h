@@ -21,6 +21,9 @@ class Lcd {
         void draw_run_mode_indicator(e_run_mode run_mode);
         void draw_clock_frequency(float frequency);
         void draw_program_name(char program_name[]);
+        void set_input_field(e_input_field input_field);
+
+        void update();
 
     private:
         void constructor_defaults();

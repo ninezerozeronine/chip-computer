@@ -30,6 +30,7 @@ void Monitor::constructor_defaults() {
     sign_mode = UNSIGNED;
     number_base = DECIMAL;
     address_update_mode = AUTO_INC;
+    input_field = ADDRESS_FIELD;
 }
 
 
@@ -204,54 +205,59 @@ void Monitor::toggle_ram_region() {
 }
 
 
-// Propose a character to add to the queued address
-void Monitor::propose_address_character(char character) {
+void Monitor::toggle_input_field() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        if (_character_is_valid_for_number_base(character, number_base)) {
-            if (strlen(queued_address_str) < 8) {
-                strcpy(proposed_address_str, queued_address_str);
-                _add_char_to_string(proposed_address_str, character);
-                int proposed_address_value = _string_to_value(proposed_address_str, number_base);
-                if (_is_within_range(proposed_address_value)) {
-                    strcpy(queued_address_str, proposed_address_str);
-                    lcd.draw_queued_address(queued_address_str);
-                }
-            }
+        switch (input_field) {
+            case ADDRESS_FIELD:
+                input_field = DATA_FIELD;
+                break;
+            case DATA_FIELD:
+                input_field = ADDRESS_FIELD;
+                break;
         }
+    lcd.set_input_field(input_field);
     }
 }
 
-// Confirm the queued address
-void Monitor::confirm_address() {
+
+void Monitor::propose_character(char character) {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        if (strlen(queued_address_str) > 0) {
-            // Convert queued address to value
-            int new_address = _string_to_value(queued_address_str, number_base);
-
-            // Update LCD
-            lcd.draw_address(new_address, number_base);
-
-            // Send address to computer
-            bridge.set_address(new_address);
-
-            // Read data and update LCD
-            lcd.draw_data(bridge.get_data(), number_base, sign_mode);
-
-            // Clear queued address
-            strcpy(queued_address_str, "");
-
-            // Update queued address on LCD
-            lcd.draw_queued_address(queued_address_str);
+        switch (input_field) {
+            case ADDRESS_FIELD:
+                _propose_address_character(character);
+                break;
+            case DATA_FIELD:
+                _propose_data_character(character);
+                break;
         }
     }
 }
 
 
-// Cancel queued address
-void Monitor::clear_queued_address() {
+void Monitor::confirm_current_field() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        strcpy(queued_address_str, "");
-        lcd.draw_queued_address(queued_address_str);
+        switch (input_field) {
+            case ADDRESS_FIELD:
+                _confirm_address();
+                break;
+            case DATA_FIELD:
+                _write_data();
+                break;
+        }
+    }
+}
+
+
+void Monitor::clear_curent_field() {
+    if (run_mode == PAUSED && !bridge.get_reset()) {
+        switch (input_field) {
+            case ADDRESS_FIELD:
+                _clear_queued_address();
+                break;
+            case DATA_FIELD:
+                _clear_queued_data();
+                break;
+        }
     }
 }
 
@@ -291,96 +297,6 @@ void Monitor::decr_address() {
 
         // Read data and update bridge
         lcd.draw_data(bridge.get_data(), number_base, sign_mode);
-    }
-}
-
-
-// Add a character to the currently queued data value. If the character is
-// invalid for the current base, 
-void Monitor::propose_data_character(char character) {
-    if (run_mode == PAUSED && !bridge.get_reset()) {
-        // If its a valid character or a minus
-        if (_character_is_valid_for_number_base(character, number_base) || character == '-') {
-            int current_length = strlen(queued_data_str);
-
-            // If theres nothing queued
-            if (current_length == 0) {
-
-                // Add it!
-                _add_char_to_string(queued_data_str, character);
-                lcd.draw_queued_data(queued_data_str);
-
-            // Else there's something queued
-            } else {
-
-                // If the character isnt a dash
-                if (character != '-') {
-
-                    // If there's a dash in the queued value
-                    if (strchr(queued_data_str, '-') != NULL) {
-
-                        // If there's less than 9 charartcers
-                        if (current_length < 9) {
-
-                            // Test the proposed update and add it if it's good
-                            strcpy(proposed_data_str, queued_data_str);
-                            _add_char_to_string(proposed_data_str, character);
-                            int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                            if (_is_within_range(proposed_data_value)) {
-                                strcpy(queued_data_str, proposed_data_str);
-                                lcd.draw_queued_data(queued_data_str);
-                            }
-                        }
-
-                    // Else there's no dash
-                    } else {
-
-                        // If there's less than 8 characters
-                        if (current_length < 8) {
-
-                            // Test the proposed update and add it if it's good
-                            strcpy(proposed_data_str, queued_data_str);
-                            _add_char_to_string(proposed_data_str, character);
-                            int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                            if (_is_within_range(proposed_data_value)) {
-                                strcpy(queued_data_str, proposed_data_str);
-                                lcd.draw_queued_data(queued_data_str);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-
-// Write the currently queued data to the computer
-void Monitor::write_data() {
-    if (run_mode == PAUSED && !bridge.get_reset()) {
-        int string_length = strlen(queued_data_str);
-        // If the string isn't empty or just a minus sign
-        if ((string_length > 1) || ((string_length == 1) && (queued_data_str[0] != '-'))) {
-            int data = _string_to_value(queued_data_str, number_base);
-            bridge.set_staged_data(data);
-            bridge.send_ram_write_pulse();
-            strcpy(queued_data_str, "");
-            lcd.draw_queued_data(queued_data_str);
-            if (address_update_mode == AUTO_INC ) {
-                incr_address();
-            } else {
-                lcd.draw_data(bridge.get_data(), number_base, sign_mode);
-            }
-        }
-    }
-}
-
-
-// Clear the currently queued data
-void Monitor::clear_queued_data() {
-    if (run_mode == PAUSED && !bridge.get_reset()) {
-        strcpy(queued_data_str, "");
-        lcd.draw_queued_data(queued_data_str);
     }
 }
 
@@ -534,6 +450,11 @@ void Monitor::set_speed(int speed) {
 }
 
 
+void Monitor::update() {
+    lcd.update();
+}
+
+
 bool Monitor::_character_is_valid_for_number_base(char character, e_number_base number_base_) {
     switch (number_base_) {
         case BINARY:
@@ -603,4 +524,135 @@ void Monitor::_send_clock_pulses(int num_pulses) {
     bridge.set_clock_enabled(false);
     bridge.set_clock_source(initial_clock_source);
     bridge.set_ram_control_mode(USER);
+}
+
+
+// Propose a character to add to the queued address
+void Monitor::_propose_address_character(char character) {
+    if (_character_is_valid_for_number_base(character, number_base)) {
+        if (strlen(queued_address_str) < 8) {
+            strcpy(proposed_address_str, queued_address_str);
+            _add_char_to_string(proposed_address_str, character);
+            int proposed_address_value = _string_to_value(proposed_address_str, number_base);
+            if (_is_within_range(proposed_address_value)) {
+                strcpy(queued_address_str, proposed_address_str);
+                lcd.draw_queued_address(queued_address_str);
+            }
+        }
+    }
+}
+
+
+// Confirm the queued address
+void Monitor::_confirm_address() {
+    if (strlen(queued_address_str) > 0) {
+        // Convert queued address to value
+        int new_address = _string_to_value(queued_address_str, number_base);
+
+        // Update LCD
+        lcd.draw_address(new_address, number_base);
+
+        // Send address to computer
+        bridge.set_address(new_address);
+
+        // Read data and update LCD
+        lcd.draw_data(bridge.get_data(), number_base, sign_mode);
+
+        // Clear queued address
+        strcpy(queued_address_str, "");
+
+        // Update queued address on LCD
+        lcd.draw_queued_address(queued_address_str);
+    }
+}
+
+
+// Cancel queued address
+void Monitor::_clear_queued_address() {
+    strcpy(queued_address_str, "");
+    lcd.draw_queued_address(queued_address_str);
+}
+
+
+// Add a character to the currently queued data value. If the character is
+// invalid for the current base, 
+void Monitor::_propose_data_character(char character) {
+    // If its a valid character or a minus
+    if (_character_is_valid_for_number_base(character, number_base) || character == '-') {
+        int current_length = strlen(queued_data_str);
+
+        // If theres nothing queued
+        if (current_length == 0) {
+
+            // Add it!
+            _add_char_to_string(queued_data_str, character);
+            lcd.draw_queued_data(queued_data_str);
+
+        // Else there's something queued
+        } else {
+
+            // If the character isnt a dash
+            if (character != '-') {
+
+                // If there's a dash in the queued value
+                if (strchr(queued_data_str, '-') != NULL) {
+
+                    // If there's less than 9 charartcers
+                    if (current_length < 9) {
+
+                        // Test the proposed update and add it if it's good
+                        strcpy(proposed_data_str, queued_data_str);
+                        _add_char_to_string(proposed_data_str, character);
+                        int proposed_data_value = _string_to_value(proposed_data_str, number_base);
+                        if (_is_within_range(proposed_data_value)) {
+                            strcpy(queued_data_str, proposed_data_str);
+                            lcd.draw_queued_data(queued_data_str);
+                        }
+                    }
+
+                // Else there's no dash
+                } else {
+
+                    // If there's less than 8 characters
+                    if (current_length < 8) {
+
+                        // Test the proposed update and add it if it's good
+                        strcpy(proposed_data_str, queued_data_str);
+                        _add_char_to_string(proposed_data_str, character);
+                        int proposed_data_value = _string_to_value(proposed_data_str, number_base);
+                        if (_is_within_range(proposed_data_value)) {
+                            strcpy(queued_data_str, proposed_data_str);
+                            lcd.draw_queued_data(queued_data_str);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+// Write the currently queued data to the computer
+void Monitor::_write_data() {
+    int string_length = strlen(queued_data_str);
+    // If the string isn't empty or just a minus sign
+    if ((string_length > 1) || ((string_length == 1) && (queued_data_str[0] != '-'))) {
+        int data = _string_to_value(queued_data_str, number_base);
+        bridge.set_staged_data(data);
+        bridge.send_ram_write_pulse();
+        strcpy(queued_data_str, "");
+        lcd.draw_queued_data(queued_data_str);
+        if (address_update_mode == AUTO_INC ) {
+            incr_address();
+        } else {
+            lcd.draw_data(bridge.get_data(), number_base, sign_mode);
+        }
+    }
+}
+
+
+// Clear the currently queued data
+void Monitor::_clear_queued_data() {
+    strcpy(queued_data_str, "");
+    lcd.draw_queued_data(queued_data_str);
 }

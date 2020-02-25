@@ -42,4 +42,9 @@ enum e_address_update_mode {
     NO_INC
 };
 
+enum e_input_field {
+    ADDRESS_FIELD,
+    DATA_FIELD
+};
+
 #endif
