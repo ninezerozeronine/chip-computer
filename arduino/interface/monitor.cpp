@@ -30,7 +30,6 @@ void Monitor::constructor_defaults() {
     sign_mode = UNSIGNED;
     number_base = DECIMAL;
     address_update_mode = AUTO_INC;
-    input_field = ADDRESS_FIELD;
 }
 
 
@@ -207,22 +206,21 @@ void Monitor::toggle_ram_region() {
 
 void Monitor::toggle_input_field() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        switch (input_field) {
+        switch (lcd.get_input_field()) {
             case ADDRESS_FIELD:
-                input_field = DATA_FIELD;
+                lcd.set_input_field(DATA_FIELD);
                 break;
             case DATA_FIELD:
-                input_field = ADDRESS_FIELD;
+                lcd.set_input_field(ADDRESS_FIELD);
                 break;
         }
-    lcd.set_input_field(input_field);
     }
 }
 
 
 void Monitor::propose_character(char character) {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        switch (input_field) {
+        switch (lcd.get_input_field()) {
             case ADDRESS_FIELD:
                 _propose_address_character(character);
                 break;
@@ -236,7 +234,7 @@ void Monitor::propose_character(char character) {
 
 void Monitor::confirm_current_field() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        switch (input_field) {
+        switch (lcd.get_input_field()) {
             case ADDRESS_FIELD:
                 _confirm_address();
                 break;
@@ -250,7 +248,7 @@ void Monitor::confirm_current_field() {
 
 void Monitor::clear_curent_field() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
-        switch (input_field) {
+        switch (lcd.get_input_field()) {
             case ADDRESS_FIELD:
                 _clear_queued_address();
                 break;

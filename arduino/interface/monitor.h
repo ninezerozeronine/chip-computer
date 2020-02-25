@@ -69,7 +69,6 @@ class Monitor {
         e_sign_mode sign_mode;
         e_number_base number_base;
         e_address_update_mode address_update_mode;
-        e_input_field input_field;
 
         bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
         void _add_char_to_string(char existing_string[], char character);

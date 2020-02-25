@@ -2,8 +2,14 @@
 #define LCD_H
 
 #include "Arduino.h"
+#include <LiquidCrystal_I2C.h>
 
 #include "enums.h"
+
+#define CURSOR_BLINK_INTERVAL 750
+
+// LCD cursor is defined with rows and columns starting top left
+// e.g. setCursor(12, 2) sets the cursor on the 13 column, 3rd row.
 
 class Lcd {
     public:
@@ -21,48 +27,27 @@ class Lcd {
         void draw_run_mode_indicator(e_run_mode run_mode);
         void draw_clock_frequency(float frequency);
         void draw_program_name(char program_name[]);
+        e_input_field get_input_field();
         void set_input_field(e_input_field input_field);
 
         void update();
 
     private:
-        void constructor_defaults();
+        LiquidCrystal_I2C display;
+        e_input_field input_field;
+
+        byte address_cursor_row;
+        byte address_cursor_column;
+        byte data_cursor_row;
+        byte data_cursor_column;
+
+        unsigned long last_cursor_toggle;
+        bool cursor_on;
+
+        char print_buf[16];
+
+        void _draw_static_elements();
+        void _reset_cursor();
 };
 
 #endif
-
-// 12345678901234567890
-
-
-
-// A: 0000111100001111
-//    _
-// D: 00001111 _
-// DEC +/- PRG INC RUN
-
-
-// ADDR   DATA  DEC +/-
-//  123     34  PRG RUN
-// ====   ====  INC 
-// 12_    _     
-
-
-
-// A: _        00001111
-// D:-00001111-00001111
-// 1: Program     2 KHz
-// PRG DEC SIG INC  RUN
-
-
-// 12345678901234567890
-// A:  00001111 PRG INC
-//  >  _        DEC SIG
-// D: -00001111 RUN 
-//  >  _        PRGNAME
-
-
-
-// A:       240 PRG INC
-//  >  104_     DEC SIG
-// D:       -34 RUN   1
-//  > -25_      PRGNAME
