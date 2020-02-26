@@ -502,6 +502,16 @@ int Monitor::_string_to_value(char in_string[], e_number_base number_base_) {
 }
 
 
+byte Monitor::_string_to_raw_value(char in_string[], e_number_base number_base_) {
+    int value = _string_to_value(in_string, number_base_);
+    if (value <= 127) {
+        return value;
+    } else {
+        return -1 * (256 - value);
+    }
+}
+
+
 bool Monitor::_is_within_range(int value){
     return ((value >= -128) && (value <= 127));
 }
@@ -635,7 +645,7 @@ void Monitor::_write_data() {
     int string_length = strlen(queued_data_str);
     // If the string isn't empty or just a minus sign
     if ((string_length > 1) || ((string_length == 1) && (queued_data_str[0] != '-'))) {
-        int data = _string_to_value(queued_data_str, number_base);
+        int data = _string_to_raw_value(queued_data_str, number_base);
         bridge.set_staged_data(data);
         bridge.send_ram_write_pulse();
         strcpy(queued_data_str, "");

@@ -17,10 +17,10 @@
 
 Lcd::Lcd() : display(0x27, 20, 4) {
     input_field = ADDRESS_FIELD;
-    address_cursor_row = 1;
-    address_cursor_column = 4;
-    data_cursor_row = 3;
-    data_cursor_column = 4;
+    queued_address_cursor_row = 1;
+    queued_address_cursor_column = 4;
+    queued_data_cursor_row = 3;
+    queued_data_cursor_column = 4;
     cursor_on = true;
     last_cursor_toggle = 0;
     strcpy(print_buf, "");
@@ -38,23 +38,43 @@ void Lcd::init() {
 void Lcd::draw_address(int address, e_number_base number_base) {
     switch (number_base) {
         case BINARY:
-            sprintf(print_buf, "%08");
+            _byte_to_binary(address, print_buf);
+            break;
+        case DECIMAL:
+            sprintf(print_buf, "%8d", address);
+            break;
+        case HEXADECIMAL:
+            sprintf(print_buf, "%8X", address);
+            break;
+    }
+    display.setCursor(4,0);
+    display.print(print_buf);
+    _reset_cursor();
+}
+
+
+void Lcd::draw_queued_address(char queued_address_str[]) {
+    sprintf(print_buf, "%-8s", queued_address_str);
+    display.setCursor(4,1);
+    display.print(print_buf);
+    queued_address_cursor_column = 4 + strlen(queued_address_str);
+    _reset_cursor();
+}
+
+// A:       240 PRG INC
+//  >  104_     DEC SIG
+// D:       -34 RUN   1
+//  > -25_      PRGNAME
+void Lcd::draw_data(int data, e_number_base number_base, e_sign_mode sign_mode) {
+    int display_equiv = _data_to_signed_equiv(data, sign_mode);
+    switch (number_base) {
+        case BINARY:
             break;
         case DECIMAL:
             break;
         case HEXADECIMAL:
             break;
     }
-}
-
-
-void Lcd::draw_queued_address(char queued_address_str[]) {
-
-}
-
-
-void Lcd::draw_data(int data, e_number_base number_base, e_sign_mode sign_mode) {
-
 }
 
 
@@ -149,10 +169,35 @@ void Lcd::_draw_static_elements() {
 void Lcd::_reset_cursor() {
     switch (input_field) {
         case ADDRESS_FIELD:
-            display.setCursor(address_cursor_column, address_cursor_row);
+            display.setCursor(queued_address_cursor_column, queued_address_cursor_row);
             break;
         case DATA_FIELD:
-            display.setCursor(data_cursor_column, data_cursor_row);
+            display.setCursor(queued_data_cursor_column, queued_data_cursor_row);
             break;
+    }
+}
+
+
+void Lcd::_byte_to_binary(byte value, char buffer[]) {
+    for (int bit_index = 7; bit_index >=0; bit_index--) {
+        if ((value >> bit_index) & 1) {
+            buffer[7 - bit_index] = '1';
+        } else {
+            buffer[7 - bit_index] = '0';
+        }
+    buffer[8] = '\0';
+    }
+}
+
+
+int Lcd::_data_to_signed_equiv(byte data, e_sign_mode sign_mode) {
+    if (sign_mode == SIGNED) {
+        if (data <= 127) {
+            return data;
+        } else {
+            return -1 * (256 - data);
+        }
+    } else {
+        return data;
     }
 }

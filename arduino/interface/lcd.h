@@ -36,10 +36,10 @@ class Lcd {
         LiquidCrystal_I2C display;
         e_input_field input_field;
 
-        byte address_cursor_row;
-        byte address_cursor_column;
-        byte data_cursor_row;
-        byte data_cursor_column;
+        byte queued_address_cursor_row;
+        byte queued_address_cursor_column;
+        byte queued_data_cursor_row;
+        byte queued_data_cursor_column;
 
         unsigned long last_cursor_toggle;
         bool cursor_on;
@@ -48,6 +48,8 @@ class Lcd {
 
         void _draw_static_elements();
         void _reset_cursor();
+        void _byte_to_binary(byte value, char buffer[]);
+        int _data_to_signed_equiv(byte data, e_sign_mode sign_mode);
 };
 
 #endif

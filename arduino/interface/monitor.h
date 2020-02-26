@@ -1,8 +1,9 @@
 // Provides convenient bridge between user and computer.
 
-// TODO - change number base to data interpret and add raw mode.
-// TODO - update so that changing base or signed mode doesn't clear.
+// TODO - Change number base to data interpret and add raw mode.
+// TODO - Update so that changing base or signed mode doesn't clear.
 // TODO - Delete last queued character rather then clear the whole thing.
+// TODO - Change places that deal with the raw data to return an int to remind that it can't be negative!
 
 #ifndef MONITOR_H
 #define MONITOR_H
@@ -73,6 +74,7 @@ class Monitor {
         bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
         void _add_char_to_string(char existing_string[], char character);
         int _string_to_value(char in_string[], e_number_base number_base_);
+        byte _string_to_raw_value(char in_string[], e_number_base number_base_);
         bool _is_within_range(int value);
         void _send_clock_pulses(int num_pulses);
 
