@@ -3,7 +3,8 @@
 // TODO - Change number base to data interpret and add raw mode.
 // TODO - Update so that changing base or signed mode doesn't clear.
 // TODO - Delete last queued character rather then clear the whole thing.
-// TODO - Change places that deal with the raw data to return an int to remind that it can't be negative!
+// TODO - Change places that deal with the raw data to return a byte to remind that it can't be negative!
+// TODO - Might need to change drawing routine if fully updating queued data on character entry is too noisy.
 
 #ifndef MONITOR_H
 #define MONITOR_H

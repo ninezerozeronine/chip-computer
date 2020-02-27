@@ -48,8 +48,12 @@ class Lcd {
 
         void _draw_static_elements();
         void _reset_cursor();
-        void _byte_to_binary(byte value, char buffer[]);
+        void _byte_to_binary_string(byte value, char buffer[]);
         int _data_to_signed_equiv(byte data, e_sign_mode sign_mode);
+        void _clear_address_area();
+        void _clear_queued_address_area();
+        void _clear_data_area();
+        void _clear_queued_data_area();
 };
 
 #endif
