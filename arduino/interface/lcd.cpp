@@ -24,6 +24,7 @@ Lcd::Lcd() : display(0x27, 20, 4) {
     cursor_on = true;
     last_cursor_toggle = 0;
     strcpy(print_buf, "");
+    strcpy(freq_buf, "");
 }
 
 
@@ -88,11 +89,6 @@ void Lcd::draw_data(int data, e_number_base number_base, e_sign_mode sign_mode) 
 }
 
 
-
-// A:       240 PRG INC
-//  >  104_     DEC SIG
-// D:       -34 RUN   1
-//  > -25_      PRGNAME
 void Lcd::draw_queued_data(char queued_data_str[]) {
     _clear_queued_data_area();
     byte string_length = strlen(queued_data_str);
@@ -130,38 +126,144 @@ void Lcd::draw_queued_data(char queued_data_str[]) {
 
 
 void Lcd::draw_number_base_indicator(e_number_base number_base) {
-
+    display.setCursor(13, 1);
+    switch (number_base) {
+        case BINARY:
+            display.print("BIN");
+            break;
+        case DECIMAL:
+            display.print("DEC");
+            break;
+        case HEXADECIMAL:
+            display.print("HEX");
+            break;
+    }
+    _reset_cursor();
 }
 
 
+// A:       240 PRG INC
+//  >  104_     DEC SIG
+// D:       -34 RUN   1
+//  > -25_      PRGNAME
 void Lcd::draw_sign_mode_indicator(e_sign_mode sign_mode) {
-
+    display.setCursor(17, 1);
+    switch (sign_mode) {
+        case SIGNED:
+            display.print("SIG");
+            break;
+        case UNSIGNED:
+            display.print("UNS");
+            break;
+    }
+    _reset_cursor();
 }
 
 
 void Lcd::draw_address_update_mode_indicator(e_address_update_mode address_update_mode) {
-
+    display.setCursor(17, 0);
+    switch (address_update_mode) {
+        case AUTO_INC:
+            display.print("INC");
+            break;
+        case NO_INC:
+            display.print("STA");
+            break;
+    }
+    _reset_cursor();
 }
 
 
 void Lcd::draw_ram_region_indicator(e_ram_region ram_region) {
-
+    display.setCursor(13, 0);
+    switch (ram_region) {
+        case PROGRAM:
+            display.print("PRG");
+            break;
+        case DATA:
+            display.print("DAT");
+            break;
+    }
+    _reset_cursor();
 }
 
 
 void Lcd::draw_run_mode_indicator(e_run_mode run_mode) {
-
+    display.setCursor(13, 2);
+    switch (run_mode) {
+        case RUNNING:
+            display.print("RUN");
+            break;
+        case PAUSED:
+            display.print("PSD");
+            break;
+    }
+    _reset_cursor();
 }
 
 
 void Lcd::draw_clock_frequency(float frequency) {
+    // 0.0 - 9.9
+    if (frequency < 10.0) {
+        int mult_frequency = frequency * 10;
+        sprintf(freq_buf, "%-02d", mult_frequency);
+        print_buf[0] = freq_buf[0];
+        print_buf[1] = '.';
+        print_buf[2] = freq_buf[1];
+        print_buf[3] = '\0';
+        display.setCursor(17, 2);
+        display.print(print_buf);
+        _reset_cursor();
 
+    // 10 - 999
+    } else if (frequency < 1000.0) {
+        sprintf(freq_buf, "%3ld", (long) frequency);
+        strncpy(print_buf, freq_buf, 3);
+        print_buf[3] = '\0';
+        display.setCursor(17, 2);
+        display.print(print_buf);
+        _reset_cursor();
+
+    // 1K - 99K
+    } else if (frequency < 99999.999) {
+        sprintf(freq_buf, "%5ld", (long) frequency);
+        strncpy(print_buf, freq_buf, 3);
+        print_buf[2] = 'K';
+        print_buf[3] = '\0';
+        display.setCursor(17, 2);
+        display.print(print_buf);
+        _reset_cursor();
+
+    // .1M - .9M
+    } else if (frequency < 999999.999) {
+        sprintf(freq_buf, "%6ld", (long) frequency);
+        print_buf[0] = '.';
+        print_buf[1] = freq_buf[0];
+        print_buf[2] = 'M';
+        print_buf[3] = '\0';
+        display.setCursor(17, 2);
+        display.print(print_buf);
+        _reset_cursor();
+
+    // 1M - ??
+    } else {
+        sprintf(freq_buf, "%8ld", (long) frequency);
+        strncpy(print_buf, freq_buf, 3);
+        print_buf[2] = 'M';
+        print_buf[3] = '\0';
+        display.setCursor(17, 2);
+        display.print(print_buf);
+        _reset_cursor();
+    }
 }
 
 
 void Lcd::draw_program_name(char program_name[]){
-    // int name_length = strlen_P(program_name);
-    // char name_char = pgm_read_byte_near(program_name + index);
+    display.setCursor(13, 3);
+    display.print("       ");
+    display.setCursor(13, 3);
+    display.print(program_name);
+    _reset_cursor();
 }
 
 
@@ -250,17 +352,21 @@ int Lcd::_data_to_signed_equiv(byte data, e_sign_mode sign_mode) {
 
 
 void Lcd::_clear_address_area() {
-
+    display.setCursor(4,0);
+    display.print("        ");
 }
 
 void Lcd::_clear_queued_address_area() {
-
+    display.setCursor(4,1);
+    display.print("        ");
 }
 
 void Lcd::_clear_data_area() {
-
+    display.setCursor(3,2);
+    display.print("         ");
 }
 
 void Lcd::_clear_queued_data_area() {
-
+    display.setCursor(3,3);
+    display.print("         ");
 }

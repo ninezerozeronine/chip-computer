@@ -12,4 +12,4 @@ extern const byte fibonacci_data_bytes[] PROGMEM = {
 };
 
 
-extern const char fibonacci_program_name[] PROGMEM = "Fbnacci";
+extern const char fibonacci_program_name[] = "Fbnacci";

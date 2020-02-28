@@ -45,6 +45,7 @@ class Lcd {
         bool cursor_on;
 
         char print_buf[16];
+        char freq_buf[16];
 
         void _draw_static_elements();
         void _reset_cursor();
