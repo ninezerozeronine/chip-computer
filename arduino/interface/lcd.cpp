@@ -31,13 +31,13 @@ Lcd::Lcd() : display(0x27, 20, 4) {
 void Lcd::init() {
     display.init();
     display.clear();
+    display.backlight();
     _draw_static_elements();
     last_cursor_toggle = millis();
 }
 
 
 void Lcd::draw_address(int address, e_number_base number_base) {
-    _clear_address_area();
     switch (number_base) {
         case BINARY:
             _byte_to_binary_string(address, print_buf);
@@ -56,7 +56,6 @@ void Lcd::draw_address(int address, e_number_base number_base) {
 
 
 void Lcd::draw_queued_address(char queued_address_str[]) {
-    _clear_queued_address_area();
     sprintf(print_buf, "%-8s", queued_address_str);
     display.setCursor(4,1);
     display.print(print_buf);
@@ -66,7 +65,6 @@ void Lcd::draw_queued_address(char queued_address_str[]) {
 
 
 void Lcd::draw_data(int data, e_number_base number_base, e_sign_mode sign_mode) {
-    _clear_data_area();
     int display_equiv = _data_to_signed_equiv(data, sign_mode);
     switch (number_base) {
         case BINARY:
@@ -74,49 +72,69 @@ void Lcd::draw_data(int data, e_number_base number_base, e_sign_mode sign_mode) 
                 _byte_to_binary_string((display_equiv * -1), print_buf);
                 display.setCursor(3, 2);
                 display.print("-");
+            } else {
+                _byte_to_binary_string(display_equiv, print_buf);
+                display.setCursor(3, 2);
+                display.print(" ");
             }
+            display.setCursor(4, 2);
+            display.print(print_buf);
+            _reset_cursor();
             break;
         case DECIMAL:
-            sprintf(print_buf, "%8d", display_equiv);
+            sprintf(print_buf, "%9d", display_equiv);
+            display.setCursor(3, 2);
+            display.print(print_buf);
+            _reset_cursor();
             break;
         case HEXADECIMAL:
-            sprintf(print_buf, "%8X", display_equiv);
+            sprintf(print_buf, "%9X", display_equiv);
+            display.setCursor(3, 2);
+            display.print(print_buf);
+            _reset_cursor();
             break;
     }
-    display.setCursor(4, 2);
-    display.print(print_buf);
-    _reset_cursor();
 }
 
-
+// A:       240 PRG INC
+//  >  104_     DEC SIG
+// D:       -34 RUN   1
+// 01234567890123456789
+//  > -25_      PRGNAME
 void Lcd::draw_queued_data(char queued_data_str[]) {
-    _clear_queued_data_area();
     byte string_length = strlen(queued_data_str);
     if (string_length == 0) {
-        ;
+        display.setCursor(3, 3);
+        display.print("         ");
+        queued_data_cursor_column = 4;
+        _reset_cursor();
     } else {
         bool starts_with_minus = queued_data_str[0] == '-';
         if (string_length == 1) {
             if (starts_with_minus) {
+                sprintf(print_buf, "%-9s", queued_data_str);
                 display.setCursor(3, 3);
-                display.print(queued_data_str);
+                display.print(print_buf);
                 queued_data_cursor_column = 4;
                 _reset_cursor();
             } else {
+                sprintf(print_buf, "%-9s", queued_data_str);
                 display.setCursor(4, 3);
-                display.print(queued_data_str);
+                display.print(print_buf);
                 queued_data_cursor_column = 5;
                 _reset_cursor();
             }
         } else {
             if (starts_with_minus) {
+                sprintf(print_buf, "%-9s", queued_data_str);
                 display.setCursor(3, 3);
-                display.print(queued_data_str);
+                display.print(print_buf);
                 queued_data_cursor_column = string_length + 3;
                 _reset_cursor();
             } else {
-                display.setCursor(3, 4);
-                display.print(queued_data_str);
+                sprintf(print_buf, "%-9s", queued_data_str);
+                display.setCursor(4, 3);
+                display.print(print_buf);
                 queued_data_cursor_column = string_length + 4;
                 _reset_cursor();
             }
@@ -142,10 +160,6 @@ void Lcd::draw_number_base_indicator(e_number_base number_base) {
 }
 
 
-// A:       240 PRG INC
-//  >  104_     DEC SIG
-// D:       -34 RUN   1
-//  > -25_      PRGNAME
 void Lcd::draw_sign_mode_indicator(e_sign_mode sign_mode) {
     display.setCursor(17, 1);
     switch (sign_mode) {
@@ -195,7 +209,7 @@ void Lcd::draw_run_mode_indicator(e_run_mode run_mode) {
             display.print("RUN");
             break;
         case PAUSED:
-            display.print("PSD");
+            display.print("PSE");
             break;
     }
     _reset_cursor();
@@ -348,25 +362,4 @@ int Lcd::_data_to_signed_equiv(byte data, e_sign_mode sign_mode) {
     } else {
         return data;
     }
-}
-
-
-void Lcd::_clear_address_area() {
-    display.setCursor(4,0);
-    display.print("        ");
-}
-
-void Lcd::_clear_queued_address_area() {
-    display.setCursor(4,1);
-    display.print("        ");
-}
-
-void Lcd::_clear_data_area() {
-    display.setCursor(3,2);
-    display.print("         ");
-}
-
-void Lcd::_clear_queued_data_area() {
-    display.setCursor(3,3);
-    display.print("         ");
 }

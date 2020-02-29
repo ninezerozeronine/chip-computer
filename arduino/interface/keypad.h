@@ -6,7 +6,7 @@
 #include "Arduino.h"
 
 #define NUM_KEYPAD_VALUES 16
-#define KEYPAD_DELTA 5
+#define KEYPAD_DELTA 6
 
 class Keypad {
     public:
