@@ -15,6 +15,7 @@
 #include "enums.h"
 #include "lcd.h"
 #include "prog_fibonacci.h"
+#include "prog_foobar.h"
 
 class Monitor {
     public:
@@ -72,11 +73,11 @@ class Monitor {
         e_number_base number_base;
         e_address_update_mode address_update_mode;
 
-        bool _character_is_valid_for_number_base(char character, e_number_base number_base_);
+        bool _character_is_valid_for_input_settings(char character, e_number_base number_base_, e_sign_mode sign_mode_);
         void _add_char_to_string(char existing_string[], char character);
         int _string_to_value(char in_string[], e_number_base number_base_);
         byte _string_to_raw_value(char in_string[], e_number_base number_base_);
-        bool _is_within_range(int value);
+        bool _is_within_range(int value, e_sign_mode sign_mode_);
         void _send_clock_pulses(int num_pulses);
 
         void _propose_address_character(char character);
@@ -85,6 +86,7 @@ class Monitor {
         void _propose_data_character(char character);
         void _write_data();
         void _clear_queued_data();
+        float _map_pot_val_to_frequency(int pot_val);
 };
 
 #endif

@@ -13,13 +13,19 @@ void Monitor::constructor_defaults() {
     bridge = HardwareBridge();
     lcd = Lcd();
     program_index = 0;
-    num_programs = 1;
+    num_programs = 2;
 
     num_program_bytes[0] = num_fibonacci_program_bytes;
     num_data_bytes[0] = num_fibonacci_data_bytes;
     program_bytes[0] = fibonacci_program_bytes;
     data_bytes[0] = fibonacci_data_bytes;
     program_names[0] = fibonacci_program_name;
+
+    num_program_bytes[1] = num_foobar_program_bytes;
+    num_data_bytes[1] = num_foobar_data_bytes;
+    program_bytes[1] = foobar_program_bytes;
+    data_bytes[1] = foobar_data_bytes;
+    program_names[1] = foobar_program_name;
 
     strcpy(queued_address_str, "");
     strcpy(proposed_address_str, "");
@@ -60,7 +66,7 @@ void Monitor::init() {
 void Monitor::next_stored_pgm() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
 
-        program_index = program_index + 1 % num_programs;
+        program_index = (program_index + 1) % num_programs;
 
         lcd.draw_program_name(program_names[program_index]);
     }
@@ -371,54 +377,13 @@ void Monitor::full_step() {
 // speed: value returned from reading the potentiometer. 0 - 1023.
 void Monitor::set_speed(int speed) {
     if (!bridge.get_reset()) {
-        float new_frequency = 0.1;
-        // Min zone - lock frequency to 1/10 Hz
-        if (speed < 12) {
-            new_frequency = 0.1;
-        }
+        float new_frequency = _map_pot_val_to_frequency(speed);
 
-        // Min Zone - 1/5 - frequency between 1/10 and 0.99 Hz
-        if ((speed >= 12) && (speed < 212)) {
-            float in_min = 12;
-            float in_max = 211;
-            float out_min = 0.1;
-            float out_max = 0.99;
-            new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
-        }
+        lcd.draw_clock_frequency(new_frequency);
 
-        // 1/5 - 2/5 - frequency between 1 and 5.99 Hz
-        if ((speed >= 212) && (speed < 412)) {
-            float in_min = 212;
-            float in_max = 411;
-            float out_min = 1;
-            float out_max = 5.99;
-            new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
-        }
-
-        // 2/5 - 3/5 - frequency between 6 and 10.99 Hz
-        if ((speed >= 412) && (speed < 612)) {
-            float in_min = 412;
-            float in_max = 611;
-            float out_min = 6;
-            float out_max = 10.99;
-            new_frequency = ((float(speed) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
-        }
-
-        // 3/5 - 4/5 - frequency between 11 and 100 Hz
-        if ((speed >= 612) && (speed < 812)) {
-            new_frequency = float(map(speed, 612, 811, 11, 100));
-        }
-
-        // 4/5 - Max Zone - frequency between 101 and 10000 Hz
-        if ((speed >= 812) && (speed < 1012)) {
-            new_frequency = float(map(speed, 812, 1011, 101, 10000));
-        }
-
-        // Max Zone - lock frequency to 1Mhz
-        if (speed >= 1012) {
-            new_frequency = 1000000.0;
-        }
-
+        // If the compuer is running temporarily disable the clock so
+        // noisy pulses don't make it to the computer while we change
+        // frequency.
         if (run_mode == RUNNING) {
             bridge.set_clock_enabled(false);
         }
@@ -432,18 +397,14 @@ void Monitor::set_speed(int speed) {
             bridge.set_clock_source(ARDUINO_PIN);
         }
 
-        // No need to set if fastest setting, we've already switched to the crytsal.
-        if (new_frequency <= 10000) {
-            bridge.set_clock_frequency(new_frequency);
-        }
+        bridge.set_clock_frequency(new_frequency);
 
         delayMicroseconds(5);
 
+        // Re enable clock now all the frequency changing business is done.
         if (run_mode == RUNNING) {
             bridge.set_clock_enabled(true);
         }
-
-        lcd.draw_clock_frequency(new_frequency);
     }
 }
 
@@ -453,7 +414,10 @@ void Monitor::update() {
 }
 
 
-bool Monitor::_character_is_valid_for_number_base(char character, e_number_base number_base_) {
+bool Monitor::_character_is_valid_for_input_settings(char character, e_number_base number_base_, e_sign_mode sign_mode_) {
+    if ((sign_mode_ == UNSIGNED) && (character == '-')) {
+        return false;
+    }
     switch (number_base_) {
         case BINARY:
             if ((character == '-') || (character == '0') || (character == '1')) {
@@ -512,8 +476,13 @@ byte Monitor::_string_to_raw_value(char in_string[], e_number_base number_base_)
 }
 
 
-bool Monitor::_is_within_range(int value){
-    return ((value >= -128) && (value <= 127));
+bool Monitor::_is_within_range(int value, e_sign_mode sign_mode_){
+    if (sign_mode_ == SIGNED) {
+        return ((value >= -128) && (value <= 127));
+    } else {
+        return ((value >= 0) && (value <= 255));
+    }
+    
 }
 
 
@@ -537,14 +506,16 @@ void Monitor::_send_clock_pulses(int num_pulses) {
 
 // Propose a character to add to the queued address
 void Monitor::_propose_address_character(char character) {
-    if (_character_is_valid_for_number_base(character, number_base)) {
-        if (strlen(queued_address_str) < 8) {
-            strcpy(proposed_address_str, queued_address_str);
-            _add_char_to_string(proposed_address_str, character);
-            int proposed_address_value = _string_to_value(proposed_address_str, number_base);
-            if (_is_within_range(proposed_address_value)) {
-                strcpy(queued_address_str, proposed_address_str);
-                lcd.draw_queued_address(queued_address_str);
+    if (_character_is_valid_for_input_settings(character, number_base, sign_mode)) {
+        if (character != '-') {
+            if (strlen(queued_address_str) < 8) {
+                strcpy(proposed_address_str, queued_address_str);
+                _add_char_to_string(proposed_address_str, character);
+                int proposed_address_value = _string_to_value(proposed_address_str, number_base);
+                if (proposed_address_value <= 255) {
+                    strcpy(queued_address_str, proposed_address_str);
+                    lcd.draw_queued_address(queued_address_str);
+                }
             }
         }
     }
@@ -586,15 +557,17 @@ void Monitor::_clear_queued_address() {
 // invalid for the current base, 
 void Monitor::_propose_data_character(char character) {
     // If its a valid character or a minus
-    if (_character_is_valid_for_number_base(character, number_base) || character == '-') {
+    if (_character_is_valid_for_input_settings(character, number_base, sign_mode) || character == '-') {
         int current_length = strlen(queued_data_str);
 
         // If theres nothing queued
         if (current_length == 0) {
 
-            // Add it!
-            _add_char_to_string(queued_data_str, character);
-            lcd.draw_queued_data(queued_data_str);
+            // Add it unless it's a minus and we're in unsigned mode
+            if ( !((character == '-') && (sign_mode == UNSIGNED)) ) {
+                _add_char_to_string(queued_data_str, character);
+                lcd.draw_queued_data(queued_data_str);
+            }
 
         // Else there's something queued
         } else {
@@ -612,7 +585,7 @@ void Monitor::_propose_data_character(char character) {
                         strcpy(proposed_data_str, queued_data_str);
                         _add_char_to_string(proposed_data_str, character);
                         int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                        if (_is_within_range(proposed_data_value)) {
+                        if (_is_within_range(proposed_data_value, sign_mode)) {
                             strcpy(queued_data_str, proposed_data_str);
                             lcd.draw_queued_data(queued_data_str);
                         }
@@ -628,7 +601,7 @@ void Monitor::_propose_data_character(char character) {
                         strcpy(proposed_data_str, queued_data_str);
                         _add_char_to_string(proposed_data_str, character);
                         int proposed_data_value = _string_to_value(proposed_data_str, number_base);
-                        if (_is_within_range(proposed_data_value)) {
+                        if (_is_within_range(proposed_data_value, sign_mode)) {
                             strcpy(queued_data_str, proposed_data_str);
                             lcd.draw_queued_data(queued_data_str);
                         }
@@ -663,4 +636,57 @@ void Monitor::_write_data() {
 void Monitor::_clear_queued_data() {
     strcpy(queued_data_str, "");
     lcd.draw_queued_data(queued_data_str);
+}
+
+
+float Monitor::_map_pot_val_to_frequency(int pot_val) {
+    float new_frequency = 0.1;
+    // Min zone - lock frequency to 1/10 Hz
+    if (pot_val < 24) {
+        new_frequency = 0.1;
+    }
+
+    // Min Zone - 1/5 - frequency between 1/10 and 1 Hz
+    if ((pot_val >= 24) && (pot_val < 212)) {
+        float in_min = 12;
+        float in_max = 211;
+        float out_min = 0.1;
+        float out_max = 0.99;
+        new_frequency = ((float(pot_val) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
+    }
+
+    // 1/5 - 2/5 - frequency between 1 and 10 Hz
+    if ((pot_val >= 212) && (pot_val < 412)) {
+        float in_min = 212;
+        float in_max = 411;
+        float out_min = 1.0;
+        float out_max = 10;
+        new_frequency = ((float(pot_val) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
+    }
+
+    // 2/5 - 3/5 - frequency between 10 and 100 Hz
+    if ((pot_val >= 412) && (pot_val < 612)) {
+        float in_min = 412;
+        float in_max = 611;
+        float out_min = 10;
+        float out_max = 100;
+        new_frequency = ((float(pot_val) - in_min) * (out_max - out_min) / (in_max - in_min)) + out_min;
+    }
+
+    // 3/5 - 4/5 - frequency between 100 and 1000 Hz
+    if ((pot_val >= 612) && (pot_val < 812)) {
+        new_frequency = float(map(pot_val, 612, 811, 100, 1000));
+    }
+
+    // 4/5 - Max Zone - frequency between 2000 and 10000 Hz
+    if ((pot_val >= 812) && (pot_val < 1000)) {
+        new_frequency = float(map(pot_val, 812, 1011, 1000, 10000));
+    }
+
+    // Max Zone - lock frequency to 1Mhz
+    if (pot_val >= 1000) {
+        new_frequency = 1000000.0;
+    }
+
+    return new_frequency;
 }

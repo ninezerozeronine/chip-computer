@@ -25,18 +25,29 @@
 #define CTL_KEY_FULL_STEP 15
 
 const int data_keypad_values[] = {
-    1015,  923,  846,  781,
-     671,  630,  593,  560,
-     501,  478,  456,  437,
-     400,  322,  270,  232
+    1010,  918,  842,  778,
+     668,  627,  590,  558,
+     499,  476,  455,  435,
+     399,  321,  269,  232
 };
 
 const int control_keypad_values[] = {
-    1015,  921,  846,  782,
-     671,  630,  594,  561,
-     502,  479,  457,  437,
-     401,  323,  271,  233
+    1010,  918,  842,  778,
+     668,  627,  590,  558,
+     499,  476,  455,  435,
+     399,  321,  269,  232
 };
+
+    // 1010,  918,  842,  778,
+    //  668,  627,  590,  558,
+    //  499,  476,  455,  435,
+    //  399,  321,  269,  232
+
+//     1015,  921,  846,  782,
+//      671,  630,  594,  561,
+//      502,  479,  457,  437,
+//      401,  323,  271,  233
+
 
 
 Monitor monitor;
@@ -60,6 +71,8 @@ void setup() {
     control_keypad.init();
     speed_pot.init();
     minus_button.init();
+    monitor.set_speed(speed_pot.get_value());
+
 }
 
 void loop() {
@@ -148,10 +161,10 @@ void speed_value_changed(int new_value) {
 
 
 void minus_button_pressed() {
-    // Serial.print("Data: ");
-    // Serial.println(analogRead(A0));
-    // Serial.print("Control: ");
-    // Serial.println(analogRead(A1));
+    Serial.print("Data: ");
+    Serial.println(analogRead(A0));
+    Serial.print("Control: ");
+    Serial.println(analogRead(A1));
     monitor.propose_character('-');
 }
 

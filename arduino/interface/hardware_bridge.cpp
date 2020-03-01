@@ -13,8 +13,9 @@ void HardwareBridge::constructor_defaults() {
     arduino_clock_type = PULSES;
     reset = false;
     clock_enabled = false;
-    int address = 0;
+    address = 0;
     clock_frequency = 0.1;
+    adjusted_period_in_usecs = 1000000;
 }
 
 
@@ -39,9 +40,10 @@ void HardwareBridge::HardwareBridge::init() {
     pinMode(CLOCK_ENABLED_PIN, OUTPUT);
     pinMode(CLOCK_PIN, OUTPUT);
 
-    Timer1.initialize(1000000);
-    Timer1.pwm(CLOCK_PIN, 512);
+    Timer1.initialize(adjusted_period_in_usecs);
+    Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
 
+    set_clock_frequency(clock_frequency);
     set_ram_region(ram_region);
     set_ram_control_mode(ram_control_mode);
     set_clock_source(clock_source);
@@ -50,7 +52,6 @@ void HardwareBridge::HardwareBridge::init() {
     set_clock_enabled(clock_enabled);
     set_address(address);
     set_staged_data(0);
-    set_clock_frequency(clock_frequency);
 }
 
 
@@ -121,7 +122,7 @@ void HardwareBridge::set_arduino_clock_type(e_arduino_clock_type arduino_clock_t
             digitalWrite(CLOCK_PIN, LOW);
             break;
         case FREQUENCY:
-            Timer1.pwm(CLOCK_PIN, 512);
+            Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
             break;
     }
 }
@@ -202,8 +203,14 @@ float HardwareBridge::get_clock_frequency() {
 //   answer/period 4 times smaller.
 void HardwareBridge::set_clock_frequency(float clock_frequency_) {
     clock_frequency = clock_frequency_;
-    int period_in_usecs = 250000.0/clock_frequency;
-    Timer1.setPeriod(period_in_usecs);
+    // If the frequency is higher than 10000 the monitor has already
+    // switched to the crystal.
+    if (clock_frequency <= 10000) {
+        adjusted_period_in_usecs = 250000.0/clock_frequency;
+        if (arduino_clock_type == FREQUENCY) {
+            Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
+        }
+    }
 }
 
 void HardwareBridge::send_clock_pulses(int num_pulses) {

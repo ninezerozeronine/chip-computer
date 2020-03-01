@@ -56,6 +56,7 @@ class HardwareBridge {
         bool clock_enabled;
         int address;
         float clock_frequency;
+        long adjusted_period_in_usecs;
 };
 
 #endif

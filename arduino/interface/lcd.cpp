@@ -220,7 +220,7 @@ void Lcd::draw_clock_frequency(float frequency) {
     // 0.0 - 9.9
     if (frequency < 10.0) {
         int mult_frequency = frequency * 10;
-        sprintf(freq_buf, "%-02d", mult_frequency);
+        sprintf(freq_buf, "%02d", mult_frequency);
         print_buf[0] = freq_buf[0];
         print_buf[1] = '.';
         print_buf[2] = freq_buf[1];
