@@ -5,6 +5,8 @@
 // TODO - Delete last queued character rather then clear the whole thing.
 // TODO - Change places that deal with the raw data to return a byte to remind that it can't be negative!
 // TODO - Might need to change drawing routine if fully updating queued data on character entry is too noisy.
+// TODO - Change to use a few shift registers to handle all the outputs so a mini can be used for the arduino
+// TODO - Improve logic around setting clock speed. When pin is outputting frequency, run/pause, sending pulses, pinmode needs to be taken into account.
 
 #ifndef MONITOR_H
 #define MONITOR_H

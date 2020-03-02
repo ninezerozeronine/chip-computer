@@ -57,6 +57,9 @@ class HardwareBridge {
         int address;
         float clock_frequency;
         long adjusted_period_in_usecs;
+
+        byte _shift_in(byte data_pin, byte clock_pin, byte shiftload_pin);
+        byte _shift_out(byte data_pin, byte clock_pin, byte latchout_pin);
 };
 
 #endif

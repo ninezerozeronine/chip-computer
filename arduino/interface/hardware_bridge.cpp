@@ -27,15 +27,15 @@ void HardwareBridge::HardwareBridge::init() {
 
     pinMode(ADDRESS_SERIAL_CLOCK_PIN, OUTPUT);
     pinMode(ADDRESS_SERIAL_DATA_PIN, OUTPUT);
-    pinMode(ADDRESS_SERIAL_LATCH_PIN, OUTPUT);
+    pinMode(ADDRESS_SERIAL_LATCHOUT_PIN, OUTPUT);
 
     pinMode(READ_DATA_SERIAL_CLOCK_PIN, OUTPUT);
-    pinMode(READ_DATA_SERIAL_DATA_PIN, OUTPUT);
-    pinMode(READ_DATA_SERIAL_LATCH_PIN, OUTPUT);
+    pinMode(READ_DATA_SERIAL_DATA_PIN, INPUT);
+    pinMode(READ_DATA_SERIAL_SHIFTLOAD_PIN, OUTPUT);
 
     pinMode(STAGED_DATA_SERIAL_CLOCK_PIN, OUTPUT);
     pinMode(STAGED_DATA_SERIAL_DATA_PIN, OUTPUT);
-    pinMode(STAGED_DATA_SERIAL_LATCH_PIN, OUTPUT);
+    pinMode(STAGED_DATA_SERIAL_LATCHOUT_PIN, OUTPUT);
 
     pinMode(CLOCK_ENABLED_PIN, OUTPUT);
     pinMode(CLOCK_PIN, OUTPUT);
@@ -165,23 +165,17 @@ int HardwareBridge::get_address() {
 
 void HardwareBridge::set_address(int address_) {
     address = address_;
-    digitalWrite(ADDRESS_SERIAL_LATCH_PIN, LOW);
-    shiftOut(ADDRESS_SERIAL_DATA_PIN, ADDRESS_SERIAL_CLOCK_PIN, LSBFIRST, address);
-    digitalWrite(ADDRESS_SERIAL_LATCH_PIN, HIGH);
+    _shift_out(ADDRESS_SERIAL_DATA_PIN, ADDRESS_SERIAL_CLOCK_PIN, ADDRESS_SERIAL_LATCHOUT_PIN);
 }
 
 
 int HardwareBridge::get_data() {
-    digitalWrite(READ_DATA_SERIAL_CLOCK_PIN, LOW);
-    delayMicroseconds(5);
-    return shiftIn(READ_DATA_SERIAL_DATA_PIN, READ_DATA_SERIAL_CLOCK_PIN, MSBFIRST);
+    return _shift_in(READ_DATA_SERIAL_DATA_PIN, READ_DATA_SERIAL_CLOCK_PIN, READ_DATA_SERIAL_SHIFTLOAD_PIN);
 }
 
 
 void HardwareBridge::set_staged_data(int _data) {
-    digitalWrite(STAGED_DATA_SERIAL_LATCH_PIN, LOW);
-    shiftOut(STAGED_DATA_SERIAL_DATA_PIN, STAGED_DATA_SERIAL_CLOCK_PIN, LSBFIRST, _data);
-    digitalWrite(STAGED_DATA_SERIAL_LATCH_PIN, HIGH);
+    _shift_out(STAGED_DATA_SERIAL_DATA_PIN, STAGED_DATA_SERIAL_CLOCK_PIN, STAGED_DATA_SERIAL_LATCHOUT_PIN);
 }
 
 
@@ -227,4 +221,39 @@ void HardwareBridge::send_ram_write_pulse() {
     delayMicroseconds(5);
     digitalWrite(RAM_WRITE_SIGNAL_PIN, LOW);
     delayMicroseconds(5);
+}
+
+
+byte HardwareBridge::_shift_in(byte data_pin, byte clock_pin, byte shiftload_pin) {
+    byte current_bit = 0;
+    byte result = 0;
+
+    digitalWrite(clock_pin, LOW);
+
+    digitalWrite(shiftload_pin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(shiftload_pin, HIGH);
+
+    for(int bit_index = 0; bit_index < 8; ++bit_index) {
+        current_bit = digitalRead(data_pin);
+        result |= current_bit << bit_index;
+        digitalWrite(clock_pin, HIGH);
+        delayMicroseconds(5);
+        digitalWrite(clock_pin, LOW);
+    }
+
+    return result;
+}
+
+
+byte HardwareBridge::_shift_out(byte data_pin, byte clock_pin, byte latchout_pin) {
+    digitalWrite(latchout_pin, LOW);
+    digitalWrite(clock_pin, LOW);
+    delayMicroseconds(5);
+    shiftOut(data_pin, clock_pin, LSBFIRST, _data);
+    digitalWrite(clock_pin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(latchout_pin, HIGH);
+    delayMicroseconds(5);
+    digitalWrite(latchout_pin, LOW);
 }
