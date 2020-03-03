@@ -12,35 +12,35 @@ def test_bitstrings_to_arduino_cpp():
     ]
     expected = textwrap.dedent(
         """\
-        #include "rom_0.h"
+        #include "example_header.h"
 
-        extern const byte ROM_0[] __attribute__ (( __section__(".fini1") )) = {
+        extern const byte EXAMPLE_VAR_NAME[] __attribute__ (( __section__(".fini1") )) = {
             0xBE, 0xEF, 0xFA, 0xCE,  0xBE, 0xEF, 0xFA, 0xCE,  0xBE, 0xEF, 0xFA, 0xCE,  0xBE, 0xEF, 0xFA, 0xCE, // 00000
             0x00, 0xFF, 0xAA, 0x55,  0xBE, 0xEF, 0xFA, 0xCE,  0xBE, 0xEF, 0xFA, 0xCE,  0xBE, 0xEF, 0xFA        // 00016
         };
-        extern const byte ROM_0_last_byte = 0xCE;
+        extern const byte EXAMPLE_VAR_NAME_LAST_BYTE = 0xCE;
         """
     )
 
-    assert export.bitstrings_to_arduino_cpp(0, "rom", test_data) == expected
+    assert export.bitstrings_to_arduino_cpp(test_data, 0, "example_header.h", "EXAMPLE_VAR_NAME") == expected
 
 
 def test_create_arduino_header():
     expected = textwrap.dedent(
         """\
-        #ifndef ROM_0_H
-        #define ROM_0_H
+        #ifndef HEADER_FILENAME_H
+        #define HEADER_FILENAME_H
 
         #include <Arduino.h>
 
-        extern const byte ROM_0[];
-        extern const byte ROM_0_last_byte;
+        extern const byte EXAMPLE_VAR_NAME[];
+        extern const byte EXAMPLE_VAR_NAME_LAST_BYTE;
 
         #endif
         """
     )
 
-    assert export.create_arduino_header(0, "rom") == expected
+    assert export.create_arduino_header("header_filename", "EXAMPLE_VAR_NAME") == expected
 
 
 def test_bitstrings_to_logisim():
@@ -78,6 +78,6 @@ def generator_tester(generator_iterator_to_test, expected_values):
     ([0, 1, 2, 3, 4, 5, 6, 7],   10, [[0, 1, 2, 3, 4, 5, 6, 7]]),
     ([0, 1, 2, 3, 4, 5, 6, 7],   3, [[0, 1, 2], [3, 4, 5], [6, 7]]),
 ])
-def test_number_to_bitstring(seq, chunk_size, expected):
+def test_chunker(seq, chunk_size, expected):
     generator = export.chunker(seq, chunk_size)
     generator_tester(generator, expected)

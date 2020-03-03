@@ -28,6 +28,7 @@ def assembly_lines():
             LOAD [$variable0] C
         $variable4
         // comment
+         JUMP_IF_LT_ACC #85 @label1 
         """
     ).splitlines()
 
@@ -203,6 +204,27 @@ def gen_processed_assembly_lines_data():
     line["clean"] = ""
     lines.append(line)
 
+    # " JUMP_IF_LT_ACC #85 @label1 "
+    line = get_assembly_line_template()
+    line["line_no"] = 15
+    line["raw"] = " JUMP_IF_LT_ACC #85 @label1 "
+    line["clean"] = "JUMP_IF_LT_ACC #85 @label1"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
+    line_mc_0["bitstring"] = "00110111"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
+    line_mc_1["constant"] = "#85"
+    line_mc_1["constant_type"] = "number"
+    line_mc_1["number_value"] = 85
+    line_mc_2 = get_machine_code_byte_template()
+    line_mc_2["byte_type"] = "constant"
+    line_mc_2["constant"] = "@label1"
+    line_mc_2["constant_type"] = "label"
+    line["mc_bytes"] = [line_mc_0, line_mc_1, line_mc_2]
+    line["has_machine_code"] = True
+    lines.append(line)
+
     return lines
 
 
@@ -254,6 +276,13 @@ def gen_assembly_line_infos_data():
     full_line_info[11]["mc_bytes"][0]["index"] = 10
     full_line_info[11]["mc_bytes"][1]["bitstring"] = "00000000"
     full_line_info[11]["mc_bytes"][1]["index"] = 11
+
+    # JUMP_IF_LT_ACC #85 @label1
+    full_line_info[14]["mc_bytes"][0]["index"] = 12
+    full_line_info[14]["mc_bytes"][1]["bitstring"] = "01010101"
+    full_line_info[14]["mc_bytes"][1]["index"] = 13
+    full_line_info[14]["mc_bytes"][2]["bitstring"] = "00000000"
+    full_line_info[14]["mc_bytes"][2]["index"] = 14
 
     return full_line_info
 
@@ -407,6 +436,26 @@ def assembly_summary_data():
     summary_line = get_summary_entry_template()
     summary_line["has_assembly"] = True
     summary_line["assembly"]["info"] = deepcopy(asm_line_infos[13])
+    summary_lines.append(summary_line)
+
+    # JUMP_IF_LT_ACC #85 @label1
+    # byte0
+    summary_line = get_summary_entry_template()
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[14]["mc_bytes"][0])
+
+    summary_line["has_assembly"] = True
+    summary_line["assembly"]["info"] = deepcopy(asm_line_infos[14])
+    summary_lines.append(summary_line)
+    # byte1
+    summary_line = get_summary_entry_template()
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[14]["mc_bytes"][1])
+    summary_lines.append(summary_line)
+    # byte2
+    summary_line = get_summary_entry_template()
+    summary_line["has_mc_byte"] = True
+    summary_line["mc_byte"]["info"] = deepcopy(asm_line_infos[14]["mc_bytes"][2])
     summary_lines.append(summary_line)
 
     return summary_lines

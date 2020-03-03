@@ -276,7 +276,10 @@ def test_resolve_labels(processed_assembly_lines):
     processed_assembly_lines[10]["assigned_label"] = "@label3"
     processed_assembly_lines[10]["has_label_assigned"] = True
     expected_lines = deepcopy(processed_assembly_lines)
+    # JUMP @label1
     expected_lines[6]["mc_bytes"][1]["bitstring"] = "00000000"
+    # JUMP_IF_LT_ACC #85 @label1
+    expected_lines[14]["mc_bytes"][2]["bitstring"] = "00000000"
     assembler.resolve_labels(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 
@@ -300,6 +303,7 @@ def test_label_map(processed_assembly_lines):
 def test_resolve_numbers(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
     expected_lines[8]["mc_bytes"][1]["bitstring"] = "01111011"
+    expected_lines[14]["mc_bytes"][1]["bitstring"] = "01010101"
     assembler.resolve_numbers(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 

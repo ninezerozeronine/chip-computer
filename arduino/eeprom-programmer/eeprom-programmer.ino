@@ -3,7 +3,11 @@
 #include <Arduino.h>
 
 #include "button.h"
-#include "roms.h"
+#include "mc_rom_0.h"
+#include "mc_rom_1.h"
+#include "mc_rom_2.h"
+#include "mc_rom_3.h"
+#include "decimal_rom.h"
 
 #define ROM_SEL_BUTTON_PIN A0
 #define MODE_SEL_BUTTON_PIN A1
@@ -129,7 +133,7 @@ void write_eeprom_data(unsigned long data_pointer, byte last_byte) {
 
     byte value = 0;
     int chunk = 1;
-    for (unsigned int address = 0; address < NUM_ADDRESSES; address++) {
+    for (unsigned int address = 0; address < NUM_ADDRESSES - 1; address++) {
 
         // Delay after every 64 bytes to give time for the page write to happen.
         if (((address % 64) == 0 ) and (address != 0)) {
@@ -167,6 +171,73 @@ void write_eeprom_data(unsigned long data_pointer, byte last_byte) {
 
     set_datapins_value(0);
     set_datapins_mode(INPUT);
+
+    // Delay so the chip is ready for whatever happens next.
+    delay(12);
+}
+
+
+void verify_eeprom_data(unsigned long data_pointer, byte last_byte) {
+    // Read the rom and verify that the data inside is correct.
+    //
+    // Args:
+    //     data_pointer: Address of the start of the array of bytes. 
+    //     last_byte: The last byte to write
+
+    byte read_value = 0;
+    byte correct_value = 0;
+    int chunk = 1;
+
+    digitalWrite(_OE_PIN, LOW);
+    set_datapins_mode(INPUT);
+
+    for (unsigned int address = 0; address < NUM_ADDRESSES - 1; address++) {
+
+        if ((address % 256) == 0) {
+            char buf[40];
+            sprintf(buf, "Verifying chunk %03d of 128.", chunk);
+            Serial.println(buf);
+            chunk += 1;
+        }
+
+        delayMicroseconds(5);
+        set_addresspins_value(address);
+        delayMicroseconds(5);
+        read_value = read_current_byte();
+        correct_value = pgm_read_byte_far(data_pointer + address);
+        
+        if (read_value != correct_value) {
+            char err_buf[80];
+            sprintf(err_buf,
+                "Incorrect value at %05d (%04X hex). Read %02X but it should be %02X.",
+                address,
+                address,
+                read_value,
+                correct_value
+            );
+            Serial.println(err_buf);
+        }
+    }
+
+    // Verify the last byte
+    delayMicroseconds(5);
+    set_addresspins_value(NUM_ADDRESSES - 1);
+    delayMicroseconds(5);
+    read_value = read_current_byte();
+
+    if (read_value != last_byte) {
+        char err_buf[80];
+        sprintf(err_buf,
+            "Incorrect value at %05d (%04X hex). Read %02X but it should be %02X.",
+            32767, // sprintf doesn't like (NUM_ADDRESSES - 1) for some reason
+            32767,
+            read_value,
+            last_byte
+        );
+        Serial.println(err_buf);
+    }
+
+    digitalWrite(_OE_PIN, HIGH);
 }
 
 
@@ -207,7 +278,7 @@ void set_addresspins_value(unsigned int address) {
 
 void rom_sel_button_pressed() {
     // Update state when rom select button is pressed
-    selected_rom = (selected_rom + 1) % 4;
+    selected_rom = (selected_rom + 1) % 5;
     set_rom_indicator_LED();
 }
 
@@ -220,7 +291,7 @@ void mode_sel_button_pressed() {
 
 
 void go_button_pressed() {
-    // Perform the correct action base on the current mode and rom
+    // Perform the correct action based on the current mode and rom
     //
     // We get the address here because the pgm_get_far_address needs a compile
     // time constant to work correctly otherwise you get compilation errors.
@@ -238,19 +309,28 @@ void go_button_pressed() {
             Serial.println(selected_rom);
             switch (selected_rom) {
                 case 0: {
-                    write_eeprom_data(pgm_get_far_address(ROM_0), ROM_0_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_0), MC_ROM_0_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_0), MC_ROM_0_LAST_BYTE);
                     break;
                 }
                 case 1: {
-                    write_eeprom_data(pgm_get_far_address(ROM_1), ROM_1_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_1), MC_ROM_1_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_1), MC_ROM_1_LAST_BYTE);
                     break;
                 }                
                 case 2: {
-                    write_eeprom_data(pgm_get_far_address(ROM_2), ROM_2_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_2), MC_ROM_2_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_2), MC_ROM_2_LAST_BYTE);
                     break;
                 }                
                 case 3: {
-                    write_eeprom_data(pgm_get_far_address(ROM_3), ROM_3_last_byte);
+                    write_eeprom_data(pgm_get_far_address(MC_ROM_3), MC_ROM_3_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(MC_ROM_3), MC_ROM_3_LAST_BYTE);
+                    break;
+                }
+                case 4: {
+                    write_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
+                    verify_eeprom_data(pgm_get_far_address(DECIMAL_ROM), DECIMAL_ROM_LAST_BYTE);
                     break;
                 }
             break;
@@ -262,12 +342,19 @@ void go_button_pressed() {
 
 void set_rom_indicator_LED() {
     // Set the LEDs to indicate which ROM will be written.
-    for (int led_index = 0; led_index < 4; led_index++){
-        if (led_index == selected_rom) {
-            digitalWrite(ROM_INDICATOR_PINS[led_index], HIGH);
-        } else {
-            digitalWrite(ROM_INDICATOR_PINS[led_index], LOW);
-        }
+    if (selected_rom == 4) {
+        digitalWrite(ROM_INDICATOR_PINS[0], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[1], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[2], HIGH);
+        digitalWrite(ROM_INDICATOR_PINS[3], HIGH);
+    } else {
+        for (int led_index = 0; led_index < 4; led_index++){
+            if (led_index == selected_rom) {
+                digitalWrite(ROM_INDICATOR_PINS[led_index], HIGH);
+            } else {
+                digitalWrite(ROM_INDICATOR_PINS[led_index], LOW);
+            }
+        }    
     }
 }
 

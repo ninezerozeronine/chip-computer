@@ -37,7 +37,9 @@ def generate_microcode_templates():
         INSTRUCTION_GROUPS["STORE"],
         SRC_REGISTERS["SP+/-"],
         DEST_REGISTERS,
-        ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
+        # Note that we're comparing the argument against ACC, i.e. B
+        # against A so this is the "opposite" comparison mode.
+        ALU_CONTROL_FLAGS["COMPARE_LT_GTE"],
         [FLAGS["CARRY_BORROW"]["LOW"]],
         [FLAGS["CARRY_BORROW"]["HIGH"]],
     )

@@ -614,16 +614,7 @@ CALL
 
 The ``CALL`` operation will push the current program counter (i.e. the next
 instruction to be executed) onto the stack, then set the program counter (
-i.e. jump) to the value in the given module.
-
-There are not enough instruction cycles to be able to call a constant (e.g
-``CALL @label``) instead a module must be set to the desired constant, then
-that module called. E.g.:
-
-.. code-block:: text
-
-        SET ACC @my_func
-        CALL ACC
+i.e. jump) to the value in the given module or constant.
 
 The possible usages are:
 
@@ -631,6 +622,7 @@ The possible usages are:
  - ``CALL A``
  - ``CALL B``
  - ``CALL C``
+ - ``CALL CONST``
 
 RETURN
 ^^^^^^
@@ -755,6 +747,26 @@ The possible usages are:
  - ``NXOR C``
  - ``NXOR CONST``
 
+Miscellaneous Operations
+------------------------
+
+ROT_LEFT
+^^^^^^^^
+
+The ``ROT_LEFT`` operation moves all the bits in the number one place to the
+left (most significant side), adding a 0 on the least significant side. If
+the most significant bit was a 1, then after the rotation this is set back
+on the least significant side.
+
+This operation will generate and store (clobber) ALU flags.
+
+The possible usages are:
+
+ - ``ROT_LEFT ACC``
+ - ``ROT_LEFT A``
+ - ``ROT_LEFT B``
+ - ``ROT_LEFT C``
+
 Constants
 ---------
 
@@ -814,7 +826,7 @@ variables as they are encountered in the file. E.g. for the following assembly:
         LOAD [$variable2] A
 
 variable1 is predeclared, variable2 is declared as it's used. Once assembled,
-variable1 is an alias for 0, variable2 is an alias for 2.
+variable1 is an alias for 0, variable2 is an alias for 1.
 
 A variable is a token that starts with the ``$`` character followed by any letter or
 an underscore, then any alphanumeric or an underscore. E.g.:

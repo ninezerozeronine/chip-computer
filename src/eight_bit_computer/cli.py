@@ -92,11 +92,17 @@ def gen_roms():
     """
     parser = get_gen_roms_parser()
     args = parser.parse_args()
-    main.gen_roms(
-        output_dir=args.output_dir,
-        rom_prefix=args.rom_prefix,
-        output_format=args.output_format,
-    )
+    if args.file_prefix:
+        main.gen_roms(
+            output_dir=args.output_dir,
+            file_prefix=args.file_prefix,
+            output_format=args.output_format,
+        )
+    else:
+        main.gen_roms(
+            output_dir=args.output_dir,
+            output_format=args.output_format,
+        )
 
 
 def get_gen_roms_parser():
@@ -117,9 +123,8 @@ def get_gen_roms_parser():
     )
     parser.add_argument(
         "-p",
-        "--rom_prefix",
+        "--file_prefix",
         help="Prefix for the ROM files.",
-        default="rom",
     )
     parser.add_argument(
         "-f",

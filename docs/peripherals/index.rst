@@ -7,4 +7,5 @@ Peripherals
 
    eeprom_programmer
    address_data_input
-   control_panel
+   user_control
+   user_control_debounce

@@ -145,7 +145,6 @@ def generate_nonconditional_steps(signature):
         MODULE_CONTROL[signature[0]["value"]]["OUT"],
         MODULE_CONTROL["ALU"]["A_IS_BUS"],
         MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-        MODULE_CONTROL["PC"]["COUNT"],
     ]
     gen_flags_step_0.extend(ALU_CONTROL_FLAGS["A"])
     control_steps.append(gen_flags_step_0)

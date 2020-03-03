@@ -126,23 +126,10 @@ def generate_false_datatemplates(signature):
 
     control_steps = generate_nonconditional_steps(signature)
 
-    if signature[0]["value_type"] == "constant":
-
-        jump_step_0 = [
-            MODULE_CONTROL["PC"]["COUNT"],
-        ]
-        control_steps.append(jump_step_0)
-
-        jump_step_1 = [
-            MODULE_CONTROL["PC"]["COUNT"],
-        ]
-        control_steps.append(jump_step_1)
-
-    else:
-        jump_step_0 = [
-            MODULE_CONTROL["PC"]["COUNT"],
-        ]
-        control_steps.append(jump_step_0)
+    jump_step_0 = [
+        MODULE_CONTROL["PC"]["COUNT"],
+    ]
+    control_steps.append(jump_step_0)
 
     instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
     flags_bitdefs = [FLAGS["EQUAL"]["LOW"]]
@@ -189,7 +176,6 @@ def generate_nonconditional_steps(signature):
         gen_flags_step_0 = [
             MODULE_CONTROL[signature[0]["value"]]["OUT"],
             MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-            MODULE_CONTROL["PC"]["COUNT"],
         ]
         gen_flags_step_0.extend(ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"])
         control_steps.append(gen_flags_step_0)

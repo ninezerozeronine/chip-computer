@@ -47,6 +47,7 @@ Submodules
    eight_bit_computer.operations.progstore_op
    eight_bit_computer.operations.push_op
    eight_bit_computer.operations.return_op
+   eight_bit_computer.operations.rot_left_op
    eight_bit_computer.operations.set_op
    eight_bit_computer.operations.set_zero_op
    eight_bit_computer.operations.simple_alu_op_base
