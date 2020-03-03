@@ -397,6 +397,8 @@ void Monitor::set_speed(int speed) {
             bridge.set_clock_source(ARDUINO_PIN);
         }
 
+        // This will end up setting the clock pin back to pwm mode which is kind of messy
+        // pwm should be off when paused.
         bridge.set_clock_frequency(new_frequency);
 
         delayMicroseconds(5);
