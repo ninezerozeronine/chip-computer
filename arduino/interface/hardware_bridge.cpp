@@ -165,7 +165,7 @@ int HardwareBridge::get_address() {
 
 void HardwareBridge::set_address(int address_) {
     address = address_;
-    _shift_out(ADDRESS_SERIAL_DATA_PIN, ADDRESS_SERIAL_CLOCK_PIN, ADDRESS_SERIAL_LATCHOUT_PIN);
+    _shift_out(address_, ADDRESS_SERIAL_DATA_PIN, ADDRESS_SERIAL_CLOCK_PIN, ADDRESS_SERIAL_LATCHOUT_PIN);
 }
 
 
@@ -174,8 +174,8 @@ int HardwareBridge::get_data() {
 }
 
 
-void HardwareBridge::set_staged_data(int _data) {
-    _shift_out(STAGED_DATA_SERIAL_DATA_PIN, STAGED_DATA_SERIAL_CLOCK_PIN, STAGED_DATA_SERIAL_LATCHOUT_PIN);
+void HardwareBridge::set_staged_data(int data) {
+    _shift_out(data, STAGED_DATA_SERIAL_DATA_PIN, STAGED_DATA_SERIAL_CLOCK_PIN, STAGED_DATA_SERIAL_LATCHOUT_PIN);
 }
 
 
@@ -246,11 +246,11 @@ byte HardwareBridge::_shift_in(byte data_pin, byte clock_pin, byte shiftload_pin
 }
 
 
-byte HardwareBridge::_shift_out(byte data_pin, byte clock_pin, byte latchout_pin) {
+byte HardwareBridge::_shift_out(byte data, byte data_pin, byte clock_pin, byte latchout_pin) {
     digitalWrite(latchout_pin, LOW);
     digitalWrite(clock_pin, LOW);
     delayMicroseconds(5);
-    shiftOut(data_pin, clock_pin, LSBFIRST, _data);
+    shiftOut(data_pin, clock_pin, LSBFIRST, data);
     digitalWrite(clock_pin, LOW);
     delayMicroseconds(5);
     digitalWrite(latchout_pin, HIGH);
