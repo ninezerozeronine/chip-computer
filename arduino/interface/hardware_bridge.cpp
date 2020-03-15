@@ -10,7 +10,6 @@ void HardwareBridge::constructor_defaults() {
     ram_region = PROGRAM;
     ram_control_mode = USER;
     clock_source = ARDUINO_PIN;
-    arduino_clock_type = PULSES;
     reset = false;
     clock_enabled = false;
     address = 0;
@@ -40,14 +39,11 @@ void HardwareBridge::HardwareBridge::init() {
     pinMode(CLOCK_ENABLED_PIN, OUTPUT);
     pinMode(CLOCK_PIN, OUTPUT);
 
-    Timer1.initialize(adjusted_period_in_usecs);
-    Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
+    Timer1.initialize(1000000);
 
-    set_clock_frequency(clock_frequency);
     set_ram_region(ram_region);
     set_ram_control_mode(ram_control_mode);
     set_clock_source(clock_source);
-    set_arduino_clock_type(arduino_clock_type);
     set_reset(reset);
     set_clock_enabled(clock_enabled);
     set_address(address);
@@ -109,25 +105,6 @@ void HardwareBridge::set_clock_source(e_clock_source clock_source_) {
 }
 
 
-e_arduino_clock_type HardwareBridge::get_arduino_clock_type() {
-    return arduino_clock_type;
-}
-
-
-void HardwareBridge::set_arduino_clock_type(e_arduino_clock_type arduino_clock_type_) {
-    arduino_clock_type = arduino_clock_type_;
-    switch (arduino_clock_type) {
-        case PULSES:
-            Timer1.disablePwm(CLOCK_PIN);
-            digitalWrite(CLOCK_PIN, LOW);
-            break;
-        case FREQUENCY:
-            Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
-            break;
-    }
-}
-
-
 bool HardwareBridge::get_reset() {
     return reset;
 }
@@ -179,34 +156,6 @@ void HardwareBridge::set_staged_data(int data) {
 }
 
 
-float HardwareBridge::get_clock_frequency() {
-    return clock_frequency;
-}
-
-
-// Set the clock frequency in hertz
-//
-// The magic 250000 comes from:
-// * TimerOne needs a period in micro seconds not a frequency in Hz
-// * There are 1000000 microseconds in a second so dividing this by
-//   the frequency in Hz gives us the period in micro seconds.
-// * The clock mechanics mean that the output frequency (between
-//   rising edges of the data clock) is 4 times slower than the 
-//   input frequency.
-// * Dividing 250000 rather than 1000000 by the frequency gives us an
-//   answer/period 4 times smaller.
-void HardwareBridge::set_clock_frequency(float clock_frequency_) {
-    clock_frequency = clock_frequency_;
-    // If the frequency is higher than 10000 the monitor has already
-    // switched to the crystal.
-    if (clock_frequency <= 10000) {
-        adjusted_period_in_usecs = 250000.0/clock_frequency;
-        if (arduino_clock_type == FREQUENCY) {
-            Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
-        }
-    }
-}
-
 void HardwareBridge::send_clock_pulses(int num_pulses) {
     for (int i = 0; i < num_pulses; ++i) {
         digitalWrite(CLOCK_PIN, HIGH);
@@ -221,6 +170,28 @@ void HardwareBridge::send_ram_write_pulse() {
     delayMicroseconds(5);
     digitalWrite(RAM_WRITE_SIGNAL_PIN, LOW);
     delayMicroseconds(5);
+}
+
+
+void HardwareBridge::set_clock_to_pulse_mode() {
+    Timer1.disablePwm(CLOCK_PIN);
+    digitalWrite(CLOCK_PIN, LOW);
+}
+
+// Set the clock to pwn mode with a frequency in hertz
+//
+// The magic 250000 comes from:
+// * TimerOne needs a period in micro seconds not a frequency in Hz
+// * There are 1000000 microseconds in a second so dividing this by
+//   the frequency in Hz gives us the period in micro seconds.
+// * The clock mechanics mean that the output frequency (between
+//   rising edges of the data clock) is 4 times slower than the 
+//   input frequency.
+// * Dividing 250000 rather than 1000000 by the frequency gives us an
+//   answer/period 4 times smaller.
+void HardwareBridge::set_clock_to_pwm_mode(float frequency) {
+    unsigned long adjusted_period_in_usecs = 250000.0/frequency;
+    Timer1.pwm(CLOCK_PIN, 512, adjusted_period_in_usecs);
 }
 
 

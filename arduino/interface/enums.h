@@ -27,11 +27,6 @@ enum e_number_base {
     HEXADECIMAL
 };
 
-enum e_arduino_clock_type {
-    PULSES,
-    FREQUENCY
-};
-
 enum e_clock_source {
     ARDUINO_PIN,
     CRYSTAL

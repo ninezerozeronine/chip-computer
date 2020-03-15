@@ -64,6 +64,7 @@ class Monitor {
         byte * data_bytes [8];
         char * program_names [8];
         byte program_index;
+        float clock_frequency;
 
         char queued_address_str[12];
         char proposed_address_str[12];
@@ -89,6 +90,9 @@ class Monitor {
         void _write_data();
         void _clear_queued_data();
         float _map_pot_val_to_frequency(int pot_val);
+        void _set_clock_to_frequency(float frequency);
+        void _set_paused();
+        void _set_running();
 };
 
 #endif

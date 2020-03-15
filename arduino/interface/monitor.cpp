@@ -14,6 +14,7 @@ void Monitor::constructor_defaults() {
     lcd = Lcd();
     program_index = 0;
     num_programs = 2;
+    clock_frequency = 0.1;
 
     num_program_bytes[0] = num_fibonacci_program_bytes;
     num_data_bytes[0] = num_fibonacci_data_bytes;
@@ -41,14 +42,10 @@ void Monitor::constructor_defaults() {
 
 void Monitor::init() {
     bridge.init();
-    // Init into paused state
-    bridge.set_clock_enabled(false);
-    delayMicroseconds(5);
-    bridge.set_arduino_clock_type(PULSES);
-    delayMicroseconds(5);
-    bridge.set_ram_control_mode(USER);
-
     lcd.init();
+    // Init into paused state
+    _set_paused();
+
     lcd.draw_address(bridge.get_address(), number_base);
     lcd.draw_queued_address(queued_address_str);
     lcd.draw_data(bridge.get_data(), number_base, sign_mode);
@@ -58,7 +55,7 @@ void Monitor::init() {
     lcd.draw_address_update_mode_indicator(address_update_mode);
     lcd.draw_ram_region_indicator(bridge.get_ram_region());
     lcd.draw_run_mode_indicator(run_mode);
-    lcd.draw_clock_frequency(bridge.get_clock_frequency());
+    lcd.draw_clock_frequency(clock_frequency);
     lcd.draw_program_name(program_names[program_index]);
 }
 
@@ -322,25 +319,11 @@ void Monitor::toggle_run_pause() {
     if (!bridge.get_reset()) {
         switch (run_mode) {
             case RUNNING:
-                run_mode = PAUSED;
-                bridge.set_clock_enabled(false);
-                delayMicroseconds(5);
-                bridge.set_arduino_clock_type(PULSES);
-                delayMicroseconds(5);
-                bridge.set_ram_control_mode(USER);
-                delayMicroseconds(5);
-                lcd.draw_data(bridge.get_data(), number_base, sign_mode);
+                _set_paused();
                 break;
             case PAUSED:
-                run_mode = RUNNING;
-                bridge.set_ram_control_mode(CONTROL_UNIT);
-                delayMicroseconds(5);
-                bridge.set_arduino_clock_type(FREQUENCY);
-                delayMicroseconds(5);
-                bridge.set_clock_enabled(true);
-                break;
+                _set_running();
         }
-        lcd.draw_run_mode_indicator(run_mode);
     }
 }
 
@@ -371,41 +354,24 @@ void Monitor::full_step() {
 
 // Set the clock speed
 //
-// Need to briefly disable the clock when doing this as the frequency change could
-// Trigger clock pulses too close together.
-//
 // speed: value returned from reading the potentiometer. 0 - 1023.
 void Monitor::set_speed(int speed) {
     if (!bridge.get_reset()) {
-        float new_frequency = _map_pot_val_to_frequency(speed);
+        clock_frequency = _map_pot_val_to_frequency(speed);
+        lcd.draw_clock_frequency(clock_frequency);
 
-        lcd.draw_clock_frequency(new_frequency);
-
-        // If the compuer is running temporarily disable the clock so
-        // noisy pulses don't make it to the computer while we change
-        // frequency.
+        // Need to briefly disable to clock to avoid noisy/out of spec
+        // clock frequency pulses making it to the computer while
+        // changing frequency/clock sources
         if (run_mode == RUNNING) {
             bridge.set_clock_enabled(false);
-        }
+            delayMicroseconds(5);
 
-        delayMicroseconds(5);
+            _set_clock_to_frequency(clock_frequency);
+            delayMicroseconds(5);
 
-        if ((bridge.get_clock_frequency() <= 10000.0) && (new_frequency > 10000.0)) {
-            bridge.set_clock_source(CRYSTAL);
-        }
-        if ((bridge.get_clock_frequency() > 10000.0) && (new_frequency <= 10000.0)) {
-            bridge.set_clock_source(ARDUINO_PIN);
-        }
-
-        // This will end up setting the clock pin back to pwm mode which is kind of messy
-        // pwm should be off when paused.
-        bridge.set_clock_frequency(new_frequency);
-
-        delayMicroseconds(5);
-
-        // Re enable clock now all the frequency changing business is done.
-        if (run_mode == RUNNING) {
             bridge.set_clock_enabled(true);
+            delayMicroseconds(5);
         }
     }
 }
@@ -490,19 +456,18 @@ bool Monitor::_is_within_range(int value, e_sign_mode sign_mode_){
 
 // Send clock pulses to advance the computer
 //
-// Temporarily puts the computer back into run mode.
+// Temporarily puts the computer back into a semi run mode.
 void Monitor::_send_clock_pulses(int num_pulses) {
-    e_clock_source initial_clock_source = bridge.get_clock_source();
-
     bridge.set_ram_control_mode(CONTROL_UNIT);
-    bridge.set_arduino_clock_type(PULSES);
-    bridge.set_clock_source(ARDUINO_PIN);
+    delayMicroseconds(5);
     bridge.set_clock_enabled(true);
     delayMicroseconds(5);
     bridge.send_clock_pulses(num_pulses);
-    bridge.set_clock_enabled(false);
-    bridge.set_clock_source(initial_clock_source);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    bridge.set_clock_enabled(false);
+    delayMicroseconds(5);
 }
 
 
@@ -627,9 +592,8 @@ void Monitor::_write_data() {
         lcd.draw_queued_data(queued_data_str);
         if (address_update_mode == AUTO_INC ) {
             incr_address();
-        } else {
-            lcd.draw_data(bridge.get_data(), number_base, sign_mode);
         }
+        lcd.draw_data(bridge.get_data(), number_base, sign_mode);
     }
 }
 
@@ -680,7 +644,7 @@ float Monitor::_map_pot_val_to_frequency(int pot_val) {
         new_frequency = float(map(pot_val, 612, 811, 100, 1000));
     }
 
-    // 4/5 - Max Zone - frequency between 2000 and 10000 Hz
+    // 4/5 - Max Zone - frequency between 1000 and 10000 Hz
     if ((pot_val >= 812) && (pot_val < 1000)) {
         new_frequency = float(map(pot_val, 812, 1011, 1000, 10000));
     }
@@ -692,3 +656,40 @@ float Monitor::_map_pot_val_to_frequency(int pot_val) {
 
     return new_frequency;
 }
+
+
+void Monitor::_set_clock_to_frequency(float frequency) {
+    if (frequency > 10000) {
+        bridge.set_clock_source(CRYSTAL);
+    } else {
+        bridge.set_clock_source(ARDUINO_PIN);
+        bridge.set_clock_to_pwm_mode(frequency);
+    }
+}
+
+
+void Monitor::_set_paused() {
+    run_mode = PAUSED;
+    bridge.set_clock_enabled(false);
+    delayMicroseconds(5);
+    bridge.set_clock_to_pulse_mode();
+    delayMicroseconds(5);
+    bridge.set_clock_source(ARDUINO_PIN);
+    delayMicroseconds(5);
+    bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    lcd.draw_data(bridge.get_data(), number_base, sign_mode);
+    lcd.draw_run_mode_indicator(run_mode);
+}
+
+
+void Monitor::_set_running() {
+    run_mode = RUNNING;
+    bridge.set_ram_control_mode(CONTROL_UNIT);
+    delayMicroseconds(5);
+    _set_clock_to_frequency(clock_frequency);
+    delayMicroseconds(5);
+    bridge.set_clock_enabled(true);
+    lcd.draw_run_mode_indicator(run_mode);
+}
+        

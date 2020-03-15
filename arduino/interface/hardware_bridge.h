@@ -23,9 +23,6 @@ class HardwareBridge {
         e_clock_source get_clock_source();
         void set_clock_source(e_clock_source clock_source_);
 
-        e_arduino_clock_type get_arduino_clock_type();
-        void set_arduino_clock_type(e_arduino_clock_type arduino_clock_type_);
-
         bool get_reset();
         void set_reset(bool reset_);
 
@@ -38,12 +35,12 @@ class HardwareBridge {
         int get_data();
         void set_staged_data(int _data);
 
-        float get_clock_frequency();
-        void set_clock_frequency(float clock_frequency_);
-
         void send_clock_pulses(int num_pulses);
 
         void send_ram_write_pulse();
+
+        void set_clock_to_pulse_mode();
+        void set_clock_to_pwm_mode(float frequency);
 
     private:
         void constructor_defaults();
@@ -51,7 +48,6 @@ class HardwareBridge {
         e_ram_region ram_region;
         e_ram_control_mode ram_control_mode;
         e_clock_source clock_source;
-        e_arduino_clock_type arduino_clock_type;
         bool reset;
         bool clock_enabled;
         int address;
