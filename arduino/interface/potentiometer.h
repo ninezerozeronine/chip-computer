@@ -34,6 +34,8 @@ class Potentiometer {
         unsigned long _last_update;
 
         bool all_readings_same_as(uint16_t new_value);
+
+        uint16_t avg_reading_value();
 };
 
 #endif

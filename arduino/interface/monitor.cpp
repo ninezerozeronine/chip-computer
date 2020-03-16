@@ -612,6 +612,7 @@ void Monitor::_write_data() {
         if (address_update_mode == AUTO_INC ) {
             incr_address();
         }
+        _clear_queued_data();
         lcd.draw_data(bridge.get_data(), number_base, sign_mode);
     }
 }
@@ -714,7 +715,7 @@ void Monitor::_set_running() {
 
 void Monitor::_erase_last_queued_address_char() {
     int current_length = strlen(queued_address_str);
-    if (current_length > 1) {
+    if (current_length >= 1) {
         queued_address_str[current_length - 1] = '\0';
         lcd.draw_queued_address(queued_address_str);
     }
@@ -723,8 +724,8 @@ void Monitor::_erase_last_queued_address_char() {
 
 void Monitor::_erase_last_queued_data_char() {
     int current_length = strlen(queued_data_str);
-    if (current_length > 1) {
+    if (current_length >= 1) {
         queued_data_str[current_length - 1] = '\0';
-        lcd.draw_queued_address(queued_data_str);
+        lcd.draw_queued_data(queued_data_str);
     }
 }

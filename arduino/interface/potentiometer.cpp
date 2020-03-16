@@ -61,6 +61,15 @@ bool Potentiometer::all_readings_same_as(uint16_t new_value){
 }
 
 
+uint16_t Potentiometer::avg_reading_value() {
+    float total = 0;
+    for (uint8_t index = 0; index < NUM_READINGS; ++index) {
+        total += _readings[index];
+    }
+    return total / float(NUM_READINGS);
+}
+
+
 // Update the potentiometer
 //
 // To be called once every time the main loop runs
@@ -83,15 +92,31 @@ void Potentiometer::update(void (*val_change_callback)(uint16_t)) {
         // Store the reading in the array
         _readings[_newest_reading_index] = value;
 
-        // find difference to last stable reading
-        int8_t diff = value - _value;
+        // Get new average
+        uint16_t new_average = avg_reading_value();
+
+        // Find diff to last stable value
+        int diff = value - new_average;
         diff = abs(diff);
 
-        if ( ((value != _value) && all_readings_same_as(value)) || diff > 2) {
+        // If it's different enough, update the new stable value
+        if (diff >= 3) {
             _value = value;
             if (val_change_callback != NULL) {
                 val_change_callback(_value);
             }
         }
+
+        // // find difference to last stable reading
+        // int8_t diff = value - _value;
+        // diff = abs(diff);
+
+        // if ( ((value != _value) && all_readings_same_as(value)) && diff >= 2) {
+        // // if ( (value != _value) && all_readings_same_as(value)) {
+        //     _value = value;
+        //     if (val_change_callback != NULL) {
+        //         val_change_callback(_value);
+        //     }
+        // }
     }
 }

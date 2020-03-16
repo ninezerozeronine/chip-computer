@@ -26,9 +26,7 @@ https://playground.arduino.cc/Code/Timer1/
 // N/A SCA is pin 20 and SCL pin 21 on a Mega (A4 and A5 on a Nano/Uno)
 
 // Monitor Pins
-#define DATA_KEYPAD_PIN A0
 #define MINUS_BUTTON_PIN 22
-#define CONTROL_KEYPAD_PIN A1
-#define SPEED_POT_PIN A2
+#define SPEED_POT_PIN A0
 
 #endif

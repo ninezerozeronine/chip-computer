@@ -1,67 +1,33 @@
 // Code to make interfacing with the eight bit computer easier
+// 47036 loops per sec
 
 #include <Arduino.h>
+#include <Keypad.h>
 
 #include "button.h"
-#include "keypad.h"
 #include "potentiometer.h"
 #include "monitor.h"
 
-#define CTL_KEY_NEXT_STORED_PRG 0
-#define CTL_KEY_TRANSFER_STORED_PGM 1
-#define CTL_KEY_BASE 2
-#define CTL_KEY_SIGNED 3
-#define CTL_KEY_AUTO_INC_ADDR 4
-#define CTL_KEY_RAM_REGION 5
-#define CTL_KEY_CONFIRM 6
-#define CTL_KEY_CLEAR 7 
-#define CTL_KEY_INPUT_FIELD 8
-#define CTL_KEY_INCR_ADDR 9
-#define CTL_KEY_DECR_ADDR 10
-#define CTL_KEY_RESET 11
-#define CTL_KEY_RUN_PAUSE 12
-#define CTL_KEY_QUARTER_STEP 13
-#define CTL_KEY_HALF_STEP 14
-#define CTL_KEY_FULL_STEP 15
 
-const int data_keypad_values[] = {
-    1004,  913,  842,  779,
-     672,  631,  596,  564,
-     508,  485,  465,  445,
-     412,  336,  284,  247
+#define NUM_ROWS 4
+#define NUM_COLS 8
+char keymap[NUM_ROWS][NUM_COLS] = {
+    {'a','b','c','d', '0','1','2','3'},
+    {'e','f','g','h', '4','5','6','7'},
+    {'i','j','k','l', '8','9','A','B'},
+    {'m','n','o','p', 'C','D','E','F'},
 };
-
-const int control_keypad_values[] = {
-    1004,  913,  842,  779,
-     672,  631,  596,  564,
-     508,  485,  465,  445,
-     412,  336,  284,  247
-};
-
-    // 1010,  918,  842,  778,
-    //  668,  627,  590,  558,
-    //  499,  476,  455,  435,
-    //  399,  321,  269,  232
-
-    // 1015,  921,  846,  782,
-    //  671,  630,  594,  561,
-    //  502,  479,  457,  437,
-    //  401,  323,  271,  233
-
-    // 1004,  913,  842,  779,
-    //  672,  631,  596,  564,
-    //  508,  485,  465,  445,
-    //  412,  336,  284,  247
-
-
-
+byte rowPins[NUM_ROWS] = {30, 32, 34, 36};
+byte colPins[NUM_COLS] = {38, 40, 42, 44, 46, 48, 50, 52};
+Keypad keypad(makeKeymap(keymap), rowPins, colPins, NUM_ROWS, NUM_COLS);
 
 Monitor monitor;
-Keypad data_keypad(DATA_KEYPAD_PIN, data_keypad_values);
 Button minus_button(MINUS_BUTTON_PIN);
-Keypad control_keypad(CONTROL_KEYPAD_PIN, control_keypad_values);
-Potentiometer speed_pot(SPEED_POT_PIN, 10);
+Potentiometer speed_pot(SPEED_POT_PIN, 50);
 char key_convert_buffer[8];
+
+unsigned long loopCount = 0;
+unsigned long timer_ms = 0;
 
 void setup() {
     // Called once at Arduino startup.
@@ -72,90 +38,142 @@ void setup() {
     ; 
     }
 
+    keypad.begin(makeKeymap(keymap));
+    keypad.setDebounceTime(100);
+    keypad.addEventListener(keypad_event);
     monitor.init();
-    data_keypad.init();
-    control_keypad.init();
     speed_pot.init();
     minus_button.init();
     monitor.set_speed(speed_pot.get_value());
-
 }
 
 void loop() {
     // Main loop function for arduino.
-    data_keypad.update(&data_keypad_key_pressed, NULL);
-    control_keypad.update(&control_keypad_key_pressed, &control_keypad_key_released);
+    // Required to trigger callbacks
+    keypad.getKey();
     speed_pot.update(&speed_value_changed);
     minus_button.update(&minus_button_pressed, NULL, NULL);
     monitor.update();
-}
 
-
-void data_keypad_key_pressed(int key) {
-    if ((key >= 0) && (key <= 15)) {
-        sprintf(key_convert_buffer, "%X", key);
-        monitor.propose_character(key_convert_buffer[0]);
+    if ((millis() - timer_ms) > 1000) {
+        Serial.print("Your loop code ran ");
+        Serial.print(loopCount);
+        Serial.println(" times over the last second");
+        loopCount = 0;
+        timer_ms = millis();
     }
+    loopCount++;
 }
 
 
-void control_keypad_key_pressed(int key) {
-    switch (key) {
-        case CTL_KEY_NEXT_STORED_PRG:
-            monitor.next_stored_pgm();
+void keypad_event(KeypadEvent key_event) {
+    switch (keypad.getState()) {
+        case PRESSED:
+            switch (key_event) {
+                case 'a':
+                    monitor.next_stored_pgm();
+                    break;
+                case 'b':
+                    monitor.transfer_stored_pgm();
+                    break;
+                case 'c':
+                    monitor.next_number_base();
+                    break;
+                case 'd':
+                    monitor.toggle_sign_mode();
+                    break;
+                case 'e':
+                    monitor.toggle_address_update_mode();
+                    break;
+                case 'f':
+                    monitor.toggle_ram_region();
+                    break;
+                case 'g':
+                    monitor.confirm_current_field();
+                    break;
+                case 'h':
+                    monitor.erase_last_char();
+                    break;
+                case 'i':
+                    monitor.toggle_input_field();
+                    break;
+                case 'j':
+                    monitor.incr_address();
+                    break;
+                case 'k':
+                    monitor.decr_address();
+                    break;
+                case 'l':
+                    monitor.enable_reset();
+                    break;
+                case 'm':
+                    monitor.toggle_run_pause();
+                    break;
+                case 'n':
+                    monitor.quarter_step();
+                    break;
+                case 'o':
+                    monitor.half_step();
+                    break;
+                case 'p':
+                    monitor.full_step();
+                    break;
+                case '0':
+                    monitor.propose_character(key_event);
+                    break;
+                case '1':
+                    monitor.propose_character(key_event);
+                    break;
+                case '2':
+                    monitor.propose_character(key_event);
+                    break;
+                case '3':
+                    monitor.propose_character(key_event);
+                    break;
+                case '4':
+                    monitor.propose_character(key_event);
+                    break;
+                case '5':
+                    monitor.propose_character(key_event);
+                    break;
+                case '6':
+                    monitor.propose_character(key_event);
+                    break;
+                case '7':
+                    monitor.propose_character(key_event);
+                    break;
+                case '8':
+                    monitor.propose_character(key_event);
+                    break;
+                case '9':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'A':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'B':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'C':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'D':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'E':
+                    monitor.propose_character(key_event);
+                    break;
+                case 'F':
+                    monitor.propose_character(key_event);
+                    break;
+            }
             break;
-        case CTL_KEY_TRANSFER_STORED_PGM:
-            monitor.transfer_stored_pgm();
-            break;
-        case CTL_KEY_BASE:
-            monitor.next_number_base();
-            break;
-        case CTL_KEY_SIGNED:
-            monitor.toggle_sign_mode();
-            break;
-        case CTL_KEY_AUTO_INC_ADDR:
-            monitor.toggle_address_update_mode();
-            break;
-        case CTL_KEY_RAM_REGION:
-            monitor.toggle_ram_region();
-            break;
-        case CTL_KEY_CONFIRM:
-            monitor.confirm_current_field();
-            break;
-        case CTL_KEY_CLEAR:
-            monitor.erase_last_char();
-            break;
-        case CTL_KEY_INPUT_FIELD:
-            monitor.toggle_input_field();
-            break;
-        case CTL_KEY_INCR_ADDR:
-            monitor.incr_address();
-            break;
-        case CTL_KEY_DECR_ADDR:
-            monitor.decr_address();
-            break;
-        case CTL_KEY_RESET:
-            monitor.enable_reset();
-            break;
-        case CTL_KEY_RUN_PAUSE:
-            monitor.toggle_run_pause();
-            break;
-        case CTL_KEY_QUARTER_STEP:
-            monitor.quarter_step();
-            break;
-        case CTL_KEY_HALF_STEP:
-            monitor.half_step();
-            break;
-        case CTL_KEY_FULL_STEP:
-            monitor.full_step();
-            break;
-    }
-}
-
-
-void control_keypad_key_released(int key) {
-    if (key == CTL_KEY_RESET) {
-        monitor.disable_reset();
+        case RELEASED :
+            switch (key_event) {
+                case 'l':
+                    monitor.disable_reset();
+                    break;
+            }
     }
 }
 
@@ -167,10 +185,6 @@ void speed_value_changed(int new_value) {
 
 
 void minus_button_pressed() {
-    Serial.print("Data: ");
-    Serial.println(analogRead(A0));
-    Serial.print("Control: ");
-    Serial.println(analogRead(A1));
     monitor.propose_character('-');
 }
 
