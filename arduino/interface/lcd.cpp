@@ -60,6 +60,7 @@ void Lcd::draw_queued_address(char queued_address_str[]) {
     display.setCursor(4,1);
     display.print(print_buf);
     queued_address_cursor_column = 4 + strlen(queued_address_str);
+    queued_address_cursor_column = min(queued_address_cursor_column, 11);
     _reset_cursor();
 }
 
@@ -130,12 +131,14 @@ void Lcd::draw_queued_data(char queued_data_str[]) {
                 display.setCursor(3, 3);
                 display.print(print_buf);
                 queued_data_cursor_column = string_length + 3;
+                queued_data_cursor_column = min(queued_data_cursor_column, 11);
                 _reset_cursor();
             } else {
                 sprintf(print_buf, "%-9s", queued_data_str);
                 display.setCursor(4, 3);
                 display.print(print_buf);
                 queued_data_cursor_column = string_length + 4;
+                queued_data_cursor_column = min(queued_data_cursor_column, 11);
                 _reset_cursor();
             }
         }

@@ -25,17 +25,17 @@
 #define CTL_KEY_FULL_STEP 15
 
 const int data_keypad_values[] = {
-    1010,  918,  842,  778,
-     668,  627,  590,  558,
-     499,  476,  455,  435,
-     399,  321,  269,  232
+    1004,  913,  842,  779,
+     672,  631,  596,  564,
+     508,  485,  465,  445,
+     412,  336,  284,  247
 };
 
 const int control_keypad_values[] = {
-    1010,  918,  842,  778,
-     668,  627,  590,  558,
-     499,  476,  455,  435,
-     399,  321,  269,  232
+    1004,  913,  842,  779,
+     672,  631,  596,  564,
+     508,  485,  465,  445,
+     412,  336,  284,  247
 };
 
     // 1010,  918,  842,  778,
@@ -43,10 +43,16 @@ const int control_keypad_values[] = {
     //  499,  476,  455,  435,
     //  399,  321,  269,  232
 
-//     1015,  921,  846,  782,
-//      671,  630,  594,  561,
-//      502,  479,  457,  437,
-//      401,  323,  271,  233
+    // 1015,  921,  846,  782,
+    //  671,  630,  594,  561,
+    //  502,  479,  457,  437,
+    //  401,  323,  271,  233
+
+    // 1004,  913,  842,  779,
+    //  672,  631,  596,  564,
+    //  508,  485,  465,  445,
+    //  412,  336,  284,  247
+
 
 
 
@@ -117,7 +123,7 @@ void control_keypad_key_pressed(int key) {
             monitor.confirm_current_field();
             break;
         case CTL_KEY_CLEAR:
-            monitor.clear_curent_field();
+            monitor.erase_last_char();
             break;
         case CTL_KEY_INPUT_FIELD:
             monitor.toggle_input_field();
@@ -155,7 +161,7 @@ void control_keypad_key_released(int key) {
 
 
 void speed_value_changed(int new_value) {
-    // Serial.println(new_value);
+    Serial.println(new_value);
     monitor.set_speed(new_value);
 }
 

@@ -76,7 +76,7 @@ void Monitor::transfer_stored_pgm() {
 
         // Store initial memory region and address
         e_ram_region initial_ram_region = bridge.get_ram_region();
-        int initial_address = bridge.get_address();
+        byte initial_address = bridge.get_address();
 
         // Switch to setup mode
         bridge.set_ram_control_mode(USER);
@@ -249,14 +249,14 @@ void Monitor::confirm_current_field() {
 }
 
 
-void Monitor::clear_curent_field() {
+void Monitor::erase_last_char() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
         switch (lcd.get_input_field()) {
             case ADDRESS_FIELD:
-                _clear_queued_address();
+                _erase_last_queued_address_char();
                 break;
             case DATA_FIELD:
-                _clear_queued_data();
+                _erase_last_queued_data_char();
                 break;
         }
     }
@@ -267,7 +267,7 @@ void Monitor::clear_curent_field() {
 void Monitor::incr_address() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
         // Increment the address
-        int new_address = (bridge.get_address() + 1) % 256;
+        byte new_address = (bridge.get_address() + 1) % 256;
 
         // Update LCD
         lcd.draw_address(new_address, number_base);
@@ -285,10 +285,7 @@ void Monitor::incr_address() {
 void Monitor::decr_address() {
     if (run_mode == PAUSED && !bridge.get_reset()) {
         // Decrement the address, wrapping round
-        int new_address = bridge.get_address() - 1;
-        if (new_address < 0) {
-            new_address = 255;
-        }
+        byte new_address = bridge.get_address() - 1;
 
         // Update LCD
         lcd.draw_address(new_address, number_base);
@@ -433,13 +430,37 @@ int Monitor::_string_to_value(char in_string[], e_number_base number_base_) {
     }
 }
 
-
+// Convert a string representation of a value (e.g. "-37") to it's equivalent 
+// value if the bits are to be read as an unsigned 8 bit value.
+// 
+// Uses 2's complement where necessary
+//
+// E.g. 
+// 10   = 00001010 = 10
+// -1   = 11111111 = 255
+// -128 = 10000000 = 128
+// -37  = 11011011 = 219
+// 255  = 11111111 = 255
+// 0    = 00000000 = 0
+//
+// Returns 0 if -128 <= number <= 255
+//
+//  2 0000 0010 2
+//  1 0000 0001 1
+//  0 0000 0000 0
+// -1 1111 1111 255
+// -2 1111 1110 254
+// -3 1111 1101 253
 byte Monitor::_string_to_raw_value(char in_string[], e_number_base number_base_) {
     int value = _string_to_value(in_string, number_base_);
-    if (value <= 127) {
+    if ((value >= 0) && (value <= 255)) {
         return value;
     } else {
-        return -1 * (256 - value);
+        if (value >= -128) {
+            return 256 - (value * - 1);
+        } else {
+            return 0;
+        }
     }
 }
 
@@ -585,11 +606,9 @@ void Monitor::_write_data() {
     int string_length = strlen(queued_data_str);
     // If the string isn't empty or just a minus sign
     if ((string_length > 1) || ((string_length == 1) && (queued_data_str[0] != '-'))) {
-        int data = _string_to_raw_value(queued_data_str, number_base);
+        byte data = _string_to_raw_value(queued_data_str, number_base);
         bridge.set_staged_data(data);
         bridge.send_ram_write_pulse();
-        strcpy(queued_data_str, "");
-        lcd.draw_queued_data(queued_data_str);
         if (address_update_mode == AUTO_INC ) {
             incr_address();
         }
@@ -692,4 +711,20 @@ void Monitor::_set_running() {
     bridge.set_clock_enabled(true);
     lcd.draw_run_mode_indicator(run_mode);
 }
-        
+
+void Monitor::_erase_last_queued_address_char() {
+    int current_length = strlen(queued_address_str);
+    if (current_length > 1) {
+        queued_address_str[current_length - 1] = '\0';
+        lcd.draw_queued_address(queued_address_str);
+    }
+}
+
+
+void Monitor::_erase_last_queued_data_char() {
+    int current_length = strlen(queued_data_str);
+    if (current_length > 1) {
+        queued_data_str[current_length - 1] = '\0';
+        lcd.draw_queued_address(queued_data_str);
+    }
+}

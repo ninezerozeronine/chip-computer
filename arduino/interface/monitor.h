@@ -35,7 +35,7 @@ class Monitor {
         
         void propose_character(char character);
         void confirm_current_field();
-        void clear_curent_field();
+        void erase_last_char();
 
         void incr_address();
         void decr_address();
@@ -93,6 +93,9 @@ class Monitor {
         void _set_clock_to_frequency(float frequency);
         void _set_paused();
         void _set_running();
+        void _erase_last_queued_address_char();
+        void _erase_last_queued_data_char();
+
 };
 
 #endif
