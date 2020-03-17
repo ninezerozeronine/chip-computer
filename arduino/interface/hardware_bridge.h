@@ -7,9 +7,9 @@
 #include "pindefs.h"
 #include "enums.h"
 
-#define CLOCK_SOURCE_BIT_INDEX 0
+#define CLOCK_SOURCE_BIT_INDEX 2
 #define CLOCK_ENABLE_BIT_INDEX 1
-#define RESET_BIT_INDEX 2
+#define RESET_BIT_INDEX 0
 #define RAM_WRITE_BIT_INDEX 3
 #define RAM_CONTROL_BIT_INDEX 4
 #define RAM_REGION_BIT_INDEX 5

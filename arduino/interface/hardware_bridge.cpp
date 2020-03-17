@@ -70,7 +70,7 @@ e_ram_control_mode HardwareBridge::get_ram_control_mode() {
 
 
 void HardwareBridge::set_ram_control_mode(e_ram_control_mode ram_control_mode_) {
-    if (ram_control_mode != ram_control_mode) {
+    if (ram_control_mode != ram_control_mode_) {
         ram_control_mode = ram_control_mode_;
         switch (ram_control_mode) {
             case USER:
