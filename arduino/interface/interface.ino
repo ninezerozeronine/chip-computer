@@ -17,8 +17,8 @@ char keymap[NUM_ROWS][NUM_COLS] = {
     {'i','j','k','l', '8','9','A','B'},
     {'m','n','o','p', 'C','D','E','F'},
 };
-byte rowPins[NUM_ROWS] = {30, 32, 34, 36};
-byte colPins[NUM_COLS] = {38, 40, 42, 44, 46, 48, 50, 52};
+byte rowPins[NUM_ROWS] = {52, 50, 48, 46};
+byte colPins[NUM_COLS] = {44, 42, 40, 38, 36, 34, 32, 30};
 Keypad keypad(makeKeymap(keymap), rowPins, colPins, NUM_ROWS, NUM_COLS);
 
 Monitor monitor;
@@ -45,6 +45,9 @@ void setup() {
     speed_pot.init();
     minus_button.init();
     monitor.set_speed(speed_pot.get_value());
+    monitor.enable_reset();
+    delayMicroseconds(10);
+    monitor.disable_reset();
 }
 
 void loop() {

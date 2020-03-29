@@ -66,6 +66,11 @@ class HardwareBridge {
         byte _shift_in(byte data_pin, byte clock_pin, byte shiftload_pin);
         byte _shift_out(byte data, byte data_pin, byte clock_pin, byte latchout_pin, bool latchout);
         void _update_shift_outs();
+        void _set_ram_region_control_bits();
+        void _set_ram_control_mode_control_bits();
+        void _set_clock_source_control_bits();
+        void _set_reset_control_bits();
+        void _set_clock_enabled_control_bits();
 };
 
 #endif

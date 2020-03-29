@@ -16,6 +16,11 @@ void HardwareBridge::constructor_defaults() {
     clock_frequency = 0.1;
     adjusted_period_in_usecs = 1000000;
     control_bits = 0;
+    _set_ram_region_control_bits();
+    _set_ram_control_mode_control_bits();
+    _set_clock_source_control_bits();
+    _set_reset_control_bits();
+    _set_clock_enabled_control_bits();
 }
 
 
@@ -39,6 +44,12 @@ void HardwareBridge::HardwareBridge::init() {
     digitalWrite(SHIFT_FROM_CPU_CLOCK_PIN, LOW);
     digitalWrite(SHIFT_FROM_CPU_SHIFTLOAD_PIN, HIGH);
 
+    _set_ram_region_control_bits();
+    _set_ram_control_mode_control_bits();
+    _set_clock_source_control_bits();
+    _set_reset_control_bits();
+    _set_clock_enabled_control_bits();
+
     _update_shift_outs();
 }
 
@@ -51,14 +62,7 @@ e_ram_region HardwareBridge::get_ram_region() {
 void HardwareBridge::set_ram_region(e_ram_region ram_region_) {
     if (ram_region != ram_region_) {
         ram_region = ram_region_;
-        switch (ram_region) {
-            case PROGRAM:
-                bitWrite(control_bits, RAM_REGION_BIT_INDEX, 0);
-                break;
-            case DATA:
-                bitWrite(control_bits, RAM_REGION_BIT_INDEX, 1);
-                break;
-        }
+        _set_ram_region_control_bits();
         _update_shift_outs();
     }
 }
@@ -72,14 +76,7 @@ e_ram_control_mode HardwareBridge::get_ram_control_mode() {
 void HardwareBridge::set_ram_control_mode(e_ram_control_mode ram_control_mode_) {
     if (ram_control_mode != ram_control_mode_) {
         ram_control_mode = ram_control_mode_;
-        switch (ram_control_mode) {
-            case USER:
-                bitWrite(control_bits, RAM_CONTROL_BIT_INDEX, 0);
-                break;
-            case CONTROL_UNIT:
-                bitWrite(control_bits, RAM_CONTROL_BIT_INDEX, 1);
-                break;
-        }
+        _set_ram_control_mode_control_bits();
         _update_shift_outs();
     }
 }
@@ -93,14 +90,7 @@ e_clock_source HardwareBridge::get_clock_source() {
 void HardwareBridge::set_clock_source(e_clock_source clock_source_) {
     if (clock_source != clock_source_) {
         clock_source = clock_source_;
-        switch (clock_source) {
-            case ARDUINO_PIN:
-                bitWrite(control_bits, CLOCK_SOURCE_BIT_INDEX, 0);
-                break;
-            case CRYSTAL:
-                bitWrite(control_bits, CLOCK_SOURCE_BIT_INDEX, 1);
-                break;
-        }
+        _set_clock_source_control_bits();
         _update_shift_outs();
     }
 }
@@ -114,11 +104,7 @@ bool HardwareBridge::get_reset() {
 void HardwareBridge::set_reset(bool reset_) {
     if (reset != reset_) {
         reset = reset_;
-        if (reset) {
-            bitWrite(control_bits, RESET_BIT_INDEX, 1);
-        } else {
-            bitWrite(control_bits, RESET_BIT_INDEX, 0);
-        }
+        _set_reset_control_bits();
         _update_shift_outs();
     }
 }
@@ -132,11 +118,7 @@ bool HardwareBridge::get_clock_enabled() {
 void HardwareBridge::set_clock_enabled(bool clock_enabled_) {
     if (clock_enabled != clock_enabled_) {
         clock_enabled = clock_enabled_;
-        if (clock_enabled) {
-            bitWrite(control_bits, CLOCK_ENABLE_BIT_INDEX, 1);
-        } else {
-            bitWrite(control_bits, CLOCK_ENABLE_BIT_INDEX, 0);
-        }
+        _set_clock_enabled_control_bits();
         _update_shift_outs();
     }
 }
@@ -241,8 +223,63 @@ byte HardwareBridge::_shift_out(byte data, byte data_pin, byte clock_pin, byte l
     }
 }
 
+
 void HardwareBridge::_update_shift_outs() {
     _shift_out(control_bits, SHIFT_TO_CPU_DATA_PIN, SHIFT_TO_CPU_CLOCK_PIN, SHIFT_TO_CPU_LATCHOUT_PIN, false);
     _shift_out(address, SHIFT_TO_CPU_DATA_PIN, SHIFT_TO_CPU_CLOCK_PIN, SHIFT_TO_CPU_LATCHOUT_PIN, false);
     _shift_out(staged_data, SHIFT_TO_CPU_DATA_PIN, SHIFT_TO_CPU_CLOCK_PIN, SHIFT_TO_CPU_LATCHOUT_PIN, true);
+}
+
+
+void HardwareBridge::_set_ram_region_control_bits() {
+    switch (ram_region) {
+        case PROGRAM:
+            bitWrite(control_bits, RAM_REGION_BIT_INDEX, 0);
+            break;
+        case DATA:
+            bitWrite(control_bits, RAM_REGION_BIT_INDEX, 1);
+            break;
+    }
+}
+
+
+void HardwareBridge::_set_ram_control_mode_control_bits() {
+    switch (ram_control_mode) {
+        case USER:
+            bitWrite(control_bits, RAM_CONTROL_BIT_INDEX, 1);
+            break;
+        case CONTROL_UNIT:
+            bitWrite(control_bits, RAM_CONTROL_BIT_INDEX, 0);
+            break;
+    }
+}
+
+
+void HardwareBridge::_set_clock_source_control_bits() {
+    switch (clock_source) {
+        case ARDUINO_PIN:
+            bitWrite(control_bits, CLOCK_SOURCE_BIT_INDEX, 0);
+            break;
+        case CRYSTAL:
+            bitWrite(control_bits, CLOCK_SOURCE_BIT_INDEX, 1);
+            break;
+    }
+}
+
+
+void HardwareBridge::_set_reset_control_bits() {
+    if (reset) {
+        bitWrite(control_bits, RESET_BIT_INDEX, 1);
+    } else {
+        bitWrite(control_bits, RESET_BIT_INDEX, 0);
+    }
+}
+
+
+void HardwareBridge::_set_clock_enabled_control_bits() {
+    if (clock_enabled) {
+        bitWrite(control_bits, CLOCK_ENABLE_BIT_INDEX, 1);
+    } else {
+        bitWrite(control_bits, CLOCK_ENABLE_BIT_INDEX, 0);
+    }
 }
