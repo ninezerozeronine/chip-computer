@@ -8,6 +8,7 @@
 #include "potentiometer.h"
 #include "monitor.h"
 
+#define DEBUG_PRINTS
 
 #define NUM_ROWS 4
 #define NUM_COLS 8
@@ -28,15 +29,19 @@ char key_convert_buffer[8];
 
 unsigned long loopCount = 0;
 unsigned long timer_ms = 0;
+unsigned long last_blink = 0;
+bool led_on = true;
 
 void setup() {
     // Called once at Arduino startup.
 
-    Serial.begin(9600);
-    // Wait for serial port to connect. Needed for native USB port only
-    while (!Serial) {
-    ; 
-    }
+    #ifdef DEBUG_PRINTS
+        Serial.begin(9600);
+        // Wait for serial port to connect. Needed for native USB port only
+        while (!Serial) {
+        ; 
+        }
+    #endif
 
     keypad.begin(makeKeymap(keymap));
     keypad.setDebounceTime(100);
@@ -48,6 +53,7 @@ void setup() {
     monitor.enable_reset();
     delayMicroseconds(10);
     monitor.disable_reset();
+    pinMode(13, OUTPUT);
 }
 
 void loop() {
@@ -58,14 +64,23 @@ void loop() {
     minus_button.update(&minus_button_pressed, NULL, NULL);
     monitor.update();
 
-    if ((millis() - timer_ms) > 1000) {
-        Serial.print("Your loop code ran ");
-        Serial.print(loopCount);
-        Serial.println(" times over the last second");
-        loopCount = 0;
-        timer_ms = millis();
+    #ifdef DEBUG_PRINTS
+        if ((millis() - timer_ms) > 1000) {
+            Serial.print("Your loop code ran ");
+            Serial.print(loopCount);
+            Serial.println(" times over the last second");
+            loopCount = 0;
+            timer_ms = millis();
+        }
+        loopCount++;
+    #endif
+
+    if ((millis() - last_blink) > 1000) {
+        led_on = !led_on;
+        digitalWrite(13, led_on);
+        last_blink = millis();
     }
-    loopCount++;
+
 }
 
 
@@ -182,7 +197,10 @@ void keypad_event(KeypadEvent key_event) {
 
 
 void speed_value_changed(int new_value) {
-    Serial.println(new_value);
+    #ifdef DEBUG_PRINTS
+        Serial.println(new_value);
+    #endif
+
     monitor.set_speed(new_value);
 }
 
@@ -190,179 +208,3 @@ void speed_value_changed(int new_value) {
 void minus_button_pressed() {
     monitor.propose_character('-');
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Test code
-
-// #define KEYPAD_PIN A0
-// #define BUTTON_PIN 2
-
-// #include <Arduino.h>
-
-// #include "button.h"
-// #include "keypad.h"
-// #include "monitor.h"
-
-// const int keypad_values[] = {
-//     1023,
-//     930,
-//     853,
-//     787,
-
-//     675,
-//     633,
-//     596,
-//     563,
-
-//     504,
-//     480,
-//     459,
-//     439,
-
-//     402,
-//     323,
-//     270,
-//     232
-// };
-
-// Button test_button(BUTTON_PIN);
-// Keypad test_keypad(KEYPAD_PIN, keypad_values);
-// Monitor test_monitor;
-
-// void setup() {
-//     // Called once at Arduino startup.
-
-//     test_button.init();
-//     test_keypad.init();
-//     test_monitor.init();
-
-//     Serial.begin(115200);
-//     // wait for serial port to connect. Needed for native USB port only
-//     while (!Serial) {
-//     ; 
-//     }
-
-//     test_monitor.toggle_sign_mode();
-// }
-
-// void loop() {
-//     // Main loop function for arduino.
-//     test_button.update(&button_pressed, &button_released, &button_repeating);
-//     test_keypad.update(&keypad_key_pressed, &keypad_key_released);
-// }
-
-// void button_pressed() {
-//     Serial.println("Button pressed.");
-//     Serial.println(analogRead(A0));
-// }
-
-// void button_released() {
-//     Serial.println("Button released.");
-// }
-
-// void button_repeating() {
-//     Serial.println("Button repeating.");
-// }
-
-// void keypad_key_pressed(int key) {
-//     Serial.print(key);
-//     Serial.println(" key on keypad pressed.");
-// }
-
-// void keypad_key_released(int key) {
-//     Serial.print(key);
-//     Serial.println(" key on keypad released.");
-// }
-
-
