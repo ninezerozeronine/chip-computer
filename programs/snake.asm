@@ -11,7 +11,6 @@ $SNAKE_ROW_POSNS
 $SNAKE_COL_POSNS
 $CURR_SNAKE_LEN
 $MAX_SNAKE_LEN
-$SNAKE_HEAD_OFFSET
 $SNAKE_COLOUR
 
 $APPLE_COL_POSNS
@@ -28,7 +27,7 @@ $CONTROLLER_RIGHT
 $CONTROLLER_DOWN
 $CONTROLLER_LEFT
 
-
+$COLLISION_CHECK
 
 
 @draw_bg
@@ -96,51 +95,51 @@ $CONTROLLER_LEFT
     RETURN
 
 
-
 @draw_snake
-    // Copy current head offset into A. A is now the current snake offset.
-    LOAD [$SNAKE_HEAD_OFFSET] A
-
-    // Copy current snake len into B. B is now remaining snake len
-    LOAD [$CURR_SNAKE_LEN] B
+    SET_ZERO A
 
 @draw_snake_loop
-    // Decrement remaining length
-    DECR B
-
-    // If there's no more snake to draw, we're done
-    JUMP_IF_UNDERFLOW_FLAG @draw_snake_done
-
-    // Otherwise, add the current snake offset to the start of the row position array
+    // Set ACC to start of snake row posns
     SET ACC $SNAKE_ROW_POSNS
+
+    // Add the loop index
     ADD A
 
-    // Set the video row
+    // Load the row posn into ACC
+    LOAD [ACC] ACC
+
+    // Store in video row coord
     STORE ACC [$VIDEO_ROW]
 
-    // Add the current snake offset to the start of the column position array
+    // Set ACC to start of snake col posns
     SET ACC $SNAKE_COL_POSNS
+
+    // Add the loop index
     ADD A
 
-    // Set the video column
+    // Load the col posn into ACC
+    LOAD [ACC] ACC
+
+    // Store in video col coord
     STORE ACC [$VIDEO_COL]
 
-    // Draw snake
-    LOAD [$SNAKE_COLOUR] ACC
+    // Set ACC to the colour
+    SET ACC $SNAKE_COL
+
+    // Write pixel
     STORE ACC [$VIDEO_DATA]
 
-    // Decrement snake offset
-    DECR C
-    JUMP_IF_NOT_UNDERFLOW_FLAG @draw_snake_loop
+    // Increment loop count
+    INCR A
 
-    // Wrap snake offset
-    LOAD [$MAX_SNAKE_LEN] A
-    DECR A
-    JUMP @draw_snake_loop
+    // Set ACC to snake len
+    SET ACC $CURRENT_SNAKE_LEN
 
-@draw_snake_done
+    // Jump to top of loop if less than snake len
+    JUMP_IF_LT_ACC A @draw_snake_loop
+
+    // Otherwise we're done
     RETURN
-
 
 
 
@@ -172,7 +171,6 @@ $CONTROLLER_LEFT
 
     // Otherwise set to eat colour and draw pixel
     SET C $APPLE_TO_EAT_COLOUR
-    JUMP @draw_apples_draw_pixel 
 
 @draw_apples_draw_pixel
     // Add loop index to row array start
@@ -204,88 +202,90 @@ $CONTROLLER_LEFT
     RETURN
 
 
-@set_next_snake_pos
-    // Increment snake head offset
-    LOAD [$SNAKE_HEAD_OFFSET] ACC
 
-    // Store current offset in B
-    COPY ACC B
+@set_next_snake_pos
+    LOAD [$MAX_SNAKE_LEN] A
+    DECR A
+    DECR A
+
+@set_next_snake_pos_shuffle_loop
+    // Load row pos address into ACC
+    SET ACC $SNAKE_ROW_POSNS
+
+    // Add offset
+    ADD A
+
+    // Load row into B
+    LOAD [ACC] B
+
+    // Add one to address
+    INCR ACC
+
+    // Store B in new addr
+    STORE B [ACC]
+
+    // Load col pos address into ACC
+    SET ACC $SNAKE_COL_POSNS
+
+    // Add offset
+    ADD A
+
+    // Load row into B
+    LOAD [ACC] B
+
+    // Add one to address
+    INCR ACC
+
+    // Store B in new addr
+    STORE B [ACC]
+
+    // Decrement counter
+    DECR A
+
+    // Jump to next part if underflow
+    JUMP_IF_UNDERFLOW_FLAG @set_next_snake_pos_new_head
+
+    // Otherwise jump to next loop
+    JUMP @set_next_snake_pos_shuffle_loop
+
+@set_next_snake_pos_new_head
+    // Load row pos address into ACC
+    SET ACC $SNAKE_ROW_POSNS
 
     // Add one
     INCR ACC
 
-    // Load the max len
-    LOAD [$MAX_SNAKE_LEN] A
-
-    // If offset is less than the max length, jump to set the next pos
-    JUMP_IF_LT_ACC A @set_next_snake_pos_add_vel
-
-    // Otherwise loop the head offset
-    SET_ZERO ACC
-
-@set_next_snake_pos_add_vel
-    // Store the new offset in C
-    COPY ACC C
-
-    //
-    // Update Row
-    //
-    // Set ACC to the address of the start of the row position array
-    SET ACC $SNAKE_ROW_POSNS
-
-    // Add current offset to the start
-    ADD B
-
-    // Load curent row into ACC
+    // Load old head row pos into ACC
     LOAD [ACC] ACC
 
     // Load row vel into A
     LOAD [$SNAKE_ROW_VEL] A
 
-    // Add vel to current row, store in A
+    // Add vel to position
     ADD A
-    COPY ACC A
 
-    // Set ACC to the address of the start of the row position array
-    SET ACC $SNAKE_ROW_POSNS
+    // Store updated row position
+    STORE ACC [$SNAKE_ROW_POSNS]
 
-    // Add new offset to the start
-    ADD C
-
-    // Store the updated row in the new slot
-    STORE A [ACC]
-
-    //
-    // Update Col
-    //
-    // Set ACC to the address of the start of the col position array
+    // Load col pos address into ACC
     SET ACC $SNAKE_COL_POSNS
 
-    // Add current offset to the start
-    ADD B
+    // Add one
+    INCR ACC
 
-    // Load curent col into ACC
+    // Load old head col pos into ACC
     LOAD [ACC] ACC
 
     // Load col vel into A
     LOAD [$SNAKE_COL_VEL] A
 
-    // Add vel to current col, store in A
+    // Add vel to position
     ADD A
-    COPY ACC A
 
-    // Set ACC to the address of the start of the col position array
-    SET ACC $SNAKE_COL_POSNS
+    // Store updated col position
+    STORE ACC [$SNAKE_COL_POSNS]
 
-    // Add new offset to the start
-    ADD C
-
-    // Store the updated col in the new slot
-    STORE A [ACC]
-
-    // Done
     RETURN
-
 
 
 @update_snake_velocity
@@ -328,72 +328,104 @@ $CONTROLLER_LEFT
 
 
 
+@apple_collisions
+    // Set A to zero - this is the loop index
+    SET_ZERO A
+
+@apple_collisions_loop
+    // If loop index equal to next apple index, skip to next loop
+    LOAD [$NEXT_APPLE_INDEX] ACC
+    JUMP_IF_EQ_ACC A @apple_collisions_next_loop
+
+    // If loop index equal to num apples, we're done
+    LOAD [$NUM_APPLES] ACC
+    JUMP_IF_EQ_ACC A @apple_collisions_done
+
+    // Add loop index to row array start
+    SET ACC $APPLE_ROW_POSNS
+    ADD A
+
+    // Load this apples row into ACC
+    LOAD [ACC] ACC
+
+    // Load snake head row (at start of array) into B
+    LOAD [$SNAKE_ROW_POSNS] B
+
+    // If the rows match, continue
+    JUMP_IF_EQ_ACC B @apple_collisions_col_check
+
+    // Otherwise, next loop
+    JUMP @apple_collisions_next_loop
+
+@apple_collisions_col_check
+    // Add loop index to col array start
+    SET ACC $APPLE_COL_POSNS
+    ADD A
+
+    // Load this apples col into ACC
+    LOAD [ACC] ACC
+
+    // Load snake head col (at start of array) into B
+    LOAD [$SNAKE_COL_POSNS] B
+
+    // If the cols match, set flag, exit
+    JUMP_IF_EQ_ACC B @apple_collisions_set_collision_flag_exit
+
+    // Otherwise carry on to next loop 
+
+@apple_collisions_next_loop
+    // Increment index and loop
+    INCR A
+    JUMP @apple_collisions_loop
+
+@apple_collisions_done
+    RETURN
+
+@apple_collisions_set_collision_flag_exit
+    SET ACC #1
+    STORE ACC [$COLLISION_CHECK]
+    RETURN
 
 
 
+@wall_collisions
+    // Load head row into A
+    LOAD [$SNAKE_ROW_POSNS] A
 
+    // Set flag if head row == 29
+    SET ACC #29
+    JUMP_IF_EQ_ACC A @wall_collisions_set_flag_exit
 
+    // Set flag if head row == 0
+    JUMP_IF_EQ_ZERO A @wall_collisions_set_flag_exit
 
+    // Load head col into A
+    LOAD [$SNAKE_COL_POSNS] A
 
-// @apple_collisions
-//     // Set A to zero - this is the loop index
-//     SET_ZERO A
-// 
-// @apple_collisions_loop
-//     // If loop index equal to next apple index, skip to next loop
-//     LOAD [$NEXT_APPLE_INDEX] ACC
-//     JUMP_IF_EQ_ACC A @apple_collisions_next_loop
-// 
-//     // If loop index equal to num apples, we're done
-//     LOAD [$NUM_APPLES] ACC
-//     JUMP_IF_EQ_ACC A @apple_collisions_done
-// 
-// @apple_collisions_check
-// 
-// 
-// 
-//     // Add loop index to row array start
-//     SET ACC $APPLE_ROW_POSNS
-//     ADD A
-// 
-//     // Load this apples row into ACC
-//     LOAD [ACC] ACC
-// 
-//     // Load snake row into B
-//     LOAD [$SNAKE_ROW]
-//     STORE B [$VIDEO_ROW]
-// 
-//     // Add loop index to row array start
-//     SET ACC $APPLE_COL_POSNS
-//     ADD A
-// 
-//     // Set the video row position
-//     LOAD [ACC] B
-//     STORE B [$VIDEO_COL]
-// 
-//     // Store the previously set colour in C
-//     STORE C [$VIDEO_DATA]
-// 
-//     // Increment loop index
-//     INCR A
-// 
-//     // Back to top of loop
-//     JUMP @draw_apples_loop
-// 
-// @apple_collisions_next_loop
-//     // Increment index and loop
-//     INCR A
-//     JUMP @check_apple_collisions_loop
-// 
-// @apple_collisions_done
-//     RETURN
+    // Set flag if head col == 39
+    SET ACC #39
+    JUMP_IF_EQ_ACC A @wall_collisions_set_flag_exit
 
+    // Set flag is head col == 0
+    JUMP_IF_EQ_ZERO A @wall_collisions_set_flag_exit
+
+    // No collisions, return
+    RETURN
+
+@wall_collisions_set_flag_exit
+    SET ACC #1
+    STORE ACC [$COLLISION_CHECK]
+    RETURN
 
 
 
 // @draw_bg
 // @draw_apples
 // @draw_snake
+// 
+// set collision flag to 0
+// wall collisions
+// apple collisions
 // 
 // if collision
 //     game over
