@@ -1,0 +1,23 @@
+    
+
+!CONST #123   
+
+@ #123
+$memloc0 
+$memloc1 #1
+$memloc2 #1 #2 !CONST
+
+@ #0
+%label
+    LOAD #123 A
+    SET A !CONST
+    STORE #123 $memloc0
+
+
+Tokens:
+    Constant name (!CONST)
+    Number (#123)
+    Instruction (LOAD, ADD)
+    Module (A, B)
+    Location name (@location)
+    memloc name ($memloc)
