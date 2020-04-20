@@ -69,8 +69,8 @@ def copy_op():
 
 def load_op():
     sigs = []
-    srcs = ["ACC", "A", "B", "C", "SP", "CONST_8"]
-    dests = ["ACC", "A", "B", "C"]
+    srcs = ["CONST_16"]
+    dests = ["ACC", "A", "B", "C", "SP"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["LOAD", "[{0}]".format(src), dest])
     return sigs
@@ -79,7 +79,7 @@ def load_op():
 def store_op():
     sigs = []
     srcs = ["ACC", "A", "B", "C"]
-    dests = ["ACC", "A", "B", "C", "CONST_8"]
+    dests = ["CONST_16"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["STORE", src, "[{0}]".format(dest)])
     return sigs
@@ -130,6 +130,7 @@ def comparison_jump_ops():
         "JUMP_IF_LT_ACC",
         "JUMP_IF_LT_EQ_ACC",
         "JUMP_IF_EQ_ACC",
+        "JUMP_IF_NEQ_ACC",
         "JUMP_IF_GT_EQ_ACC",
         "JUMP_IF_GT_ACC",
     ]
@@ -146,6 +147,9 @@ def comparison_jump_ops():
     for arg in ["ACC", "A", "B", "C", "SP"]:
         sigs.append(["JUMP_IF_EQ_ZERO", arg, "CONST_16"])
 
+    for arg in ["ACC", "A", "B", "C", "SP"]:
+        sigs.append(["JUMP_IF_NEQ_ZERO", arg, "CONST_16"])
+
     return sigs
 
 
@@ -161,6 +165,35 @@ def jump_if_flag_ops():
         ]
     for op in ops:
         sigs.append([op, "CONST_16"])
+    return sigs
+
+
+def skip_if_ops():
+    sigs = []
+    ops = [
+        "SKIP_IF_LT_ACC",
+        "SKIP_IF_LT_EQ_ACC",
+        "SKIP_IF_EQ_ACC",
+        "SKIP_IF_NEQ_ACC",
+        "SKIP_IF_GT_EQ_ACC",
+        "SKIP_IF_GT_ACC",
+    ]
+    args = [
+        "A",
+        "B",
+        "C",
+        "SP",
+        "CONST_8",
+    ]
+    for op, arg in itertools.product(ops, args):
+        sigs.append([op, arg])
+
+    for arg in ["ACC", "A", "B", "C", "SP"]:
+        sigs.append(["SKIP_IF_EQ_ZERO", arg])
+
+    for arg in ["ACC", "A", "B", "C", "SP"]:
+        sigs.append(["SKIP_IF_NEQ_ZERO", arg])
+
     return sigs
 
 
@@ -225,6 +258,7 @@ def get_all_instructions():
         jump_op,
         comparison_jump_ops,
         jump_if_flag_ops,
+        skip_if_ops,
         call_op,
         ret_op,
         halt_op,
