@@ -3,21 +3,30 @@
 !CONST #123   
 
 @ #123
-$memloc0 
-$memloc1 #1
-$memloc2 #1 #2 !CONST
+$memloc_a 
+$memloc_b #1
+$memloc_c #1 #2 !CONST
 
 @ #0
 %label
     LOAD #123 A
     SET A !CONST
-    STORE #123 $memloc0
+    STORE #123 $memloc_a
+    JUMP %label
 
 
 Tokens:
-    Constant name (!CONST)
+    Constant (!CONST)
     Number (#123)
     Instruction (LOAD, ADD)
     Module (A, B)
-    Location name (@location)
-    memloc name ($memloc)
+    Anchor (@ #123)
+    memloc ($ball_pos_x)
+    Label (%loop_start)
+
+
+constant number
+anchor number
+memloc [number number ...]
+label
+intruction [module/number/memloc/anchor module/number]
