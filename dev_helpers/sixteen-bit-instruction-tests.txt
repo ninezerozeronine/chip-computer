@@ -1,0 +1,70 @@
+FETCH
+PC_HI_OUT       MAR_HI_IN
+PC_LO_OUT       MAR_LO_IN
+MEM_OUT         IR_IN        PC_COUNT
+
+
+
+
+
+JUMP ##
+
+PC_HI_OUT       MAR_HI_IN
+PC_LO_OUT       MAR_LO_IN
+MEM_OUT         ALU_IN        PC_COUNT
+PC_HI_OUT       MAR_HI_IN
+PC_LO_OUT       MAR_LO_IN
+MEM_OUT         PC_HI_IN
+ALU_OUT         PC_LO_IN
+
+
+
+PUSH A
+
+ALU_TO_1        ALU_IN          SP_COUNT_ENABLE         SP_DOWN
+ALU_OUT         MAR_HI_IN
+SP_OUT          MAR_LO_IN
+A_OUT           MEM_IN
+
+
+CALL ##
+
+FF 01 CALL_OPCODE
+FF 02 HI_BYTE
+FF 03 LO_BYTE
+FF 04 NEXT INSTR
+
+// If MAR is incrementable
+//
+// Set ALU to FF, Decrement SP, increment PC          ALU_TO_1            ALU_IN          SP_COUNT_ENABLE         SP_DOWN      PC_COUNT_ENABLE         PC_UP
+// ALU into MAR_HI, increment PC                      ALU_OUT             MAR_HI_IN       PC_COUNT_ENABLE         PC_UP
+// SP into MAR_LO                                     SP_OUT              MAR_LO_IN
+// PC_HI into mem, SP Decrement                       PC_HI_OUT           MEM_IN          SP_COUNT_ENABLE         SP_DOWN
+// MAR Decrement                                      MAR_COUNT_ENABLE    MAR_DOWN
+// PC_LO into mem                                     PC_LO_OUT           MEM_IN
+// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
+// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
+// PC_HI into MAR_HI                                  PC_HI_OUT           MAR_HI_IN
+// PC_LO into MAR_LO                                  PC_LO_OUT           MAR_LO_IN
+// MEM into PC_HI                                     MEM_OUT             PC_HI_IN
+// MAR increment                                      MAR_COUNT_ENABLE    MAR_UP
+// MEM into PC_LO                                     MEM_OUT             PC_LO_IN
+
+
+// If MAR is not incrementable
+// 
+// Set ALU to FF, Decrement SP, increment PC          ALU_TO_1            ALU_IN          SP_COUNT_ENABLE         SP_DOWN      PC_COUNT_ENABLE         PC_UP
+// ALU into MAR_HI, increment PC                      ALU_OUT             MAR_HI_IN       PC_COUNT_ENABLE         PC_UP
+// SP into MAR_LO                                     SP_OUT              MAR_LO_IN
+// PC_HI into mem, SP Decrement                       PC_HI_OUT           MEM_IN          SP_COUNT_ENABLE         SP_DOWN
+// SP into MAR_LO                                     SP_OUT              MAR_LO_IN
+// PC_LO into mem                                     PC_LO_OUT           MEM_IN
+// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
+// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
+// PC_HI into MAR_HI                                  PC_HI_OUT           MAR_HI_IN
+// PC_LO into MAR_LO                                  PC_LO_OUT           MAR_LO_IN
+// Mem into ALU, increment PC                         MEM_OUT             ALU_IN        PC_COUNT
+// PC_HI into MAR_HI                                  PC_HI_OUT           MAR_HI_IN
+// PC_LO into MAR_LO                                  PC_LO_OUT           MAR_LO_IN
+// MEM into PC_HI                                     MEM_OUT             PC_HI_IN
+// ALU into PC_LO                                     ALU_OUT             PC_LO_IN

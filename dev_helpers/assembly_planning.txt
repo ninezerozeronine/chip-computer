@@ -1,0 +1,69 @@
+!CONST #123   
+
+@ #123
+$memloc_a 
+$memloc_b #1
+$memloc_c #1 #2 !CONST
+
+@ #0
+%label_a
+    LOAD #123 A
+    SET A !CONST
+%label_b
+    STORE #123 $memloc_a
+    JUMP %label
+
+
+
+Tokens:
+    Constant (!CONST)
+    8 bit number (#123)
+    16 bit bumber (##1865)
+    Instruction (LOAD, ADD)
+    Module (A, B)
+    Anchor (@ #123)
+    memloc ($ball_pos_x)
+    Label (%loop_start)
+
+
+constant number
+anchor number
+memloc [number number ...]
+label
+intruction [module/number/memloc/anchor module/number]
+
+token
+    type
+    value
+
+assembly_line
+    raw_line
+    line_no
+    tokens
+
+
+build_const_map
+
+resolve_consts
+
+parse tokens
+    Takes a line and determines if it's a:
+        * Instruction (With placeholders for any constants, labels or variables)
+        * Label
+        * Anchor
+        * Variable
+        * Constant definition
+
+
+
+
+def assemble
+    for line in assembly_file:
+        tokenised_lines.append(tokenise_line(line))
+
+
+make a new assembly chunk for each @ anchor
+
+Variable positions also need to be resolved reltive to thier anchor
+
+%label_b can only be resolved once the instructions have been resolved to machine code bytes
