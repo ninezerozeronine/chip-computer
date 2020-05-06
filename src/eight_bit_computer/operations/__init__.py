@@ -58,6 +58,7 @@ def get_all_operations():
         incr_op,
         decr_op,
         addc_op,
+        sub_op,
         subb_op,
         rot_left_op,
     )
@@ -104,6 +105,7 @@ def get_all_operations():
         incr_op,
         decr_op,
         addc_op,
+        sub_op,
         subb_op,
         rot_left_op,
     ]
