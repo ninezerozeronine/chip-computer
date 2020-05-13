@@ -12,11 +12,11 @@
 
 
 // This function needs to keep track of a few things:
-// * Current box index 
+// * Current box index (C)
 // * Width progress
 // * Height progress (B)
 // * Resultant row
-// * Resultant column (C)
+// * Resultant column
 
 // box_index = num_boxes - 1
 // while box_index > 0
@@ -45,21 +45,16 @@
 @draw_boxes
     SET_ZERO A
     STORE A [$player_collision]
-    LOAD [$num_boxes] A
-    STORE A [$box_index]
+    LOAD [$num_boxes] C
             
 @draw_boxes_box_loop
     // Decrement box index and jump to done if all boxes drawn (result negative)
-    LOAD [$box_index] A
-    DECR A
+    DECR C
     JUMP_IF_NEGATIVE_FLAG @draw_boxes_done
-
-    // Store new box index
-    STORE A [$box_index]
 
     // Index into box widths array
     SET ACC $box_widths
-    ADD A
+    ADD C
 
     // Load this box's width into ACC, then store in the row counter
     LOAD [ACC] ACC
@@ -76,8 +71,7 @@
 
     // Index into box rows array
     SET ACC $box_rows
-    LOAD [$box_index] A
-    ADD A
+    ADD C
 
     // Load this boxs row into ACC
     LOAD [ACC] ACC
@@ -97,8 +91,7 @@
 
     // Index into box heights array 
     SET ACC $box_heights
-    LOAD [$box_index] A
-    ADD A
+    ADD C
 
     // Load this boxs column into B (B will contain this box's height, and is the column counter)
     LOAD [ACC] B
@@ -110,15 +103,14 @@
 
     // Index into box columns array
     SET ACC $box_columns
-    LOAD [$box_index] A
-    ADD A
+    ADD C
 
     // Load this box's column into ACC
     LOAD [ACC] ACC
 
     // Add the column counter (ACC will contain the pixel column)
     ADD B
-    COPY ACC C
+    STORE ACC [$column_counter]
 
     // Jump to next pixel in the row if column < 0
     JUMP_IF_LT_ACC #0 @draw_boxes_column_loop
@@ -131,10 +123,9 @@
     STORE A [$video_row]
     STORE ACC [$video_column]
 
-    // Index into box columns array
+    // Index into box colours array
     SET ACC $box_colours
-    LOAD [$box_index] A
-    ADD A
+    ADD C
 
     // Load this box's colour into ACC
     LOAD [ACC] ACC
@@ -146,7 +137,7 @@
     JUMP_IF_EQ_ACC A @draw_boxes_column_loop
 
     // Otherwise Jump to next pixel in the row if player not in same column
-    COPY C ACC
+    LOAD [$column_counter] ACC
     LOAD [$player_column] A
     JUMP_IF_EQ_ACC A @draw_boxes_column_loop
 
@@ -328,3 +319,14 @@
 
 @move_boxes_done
     RETURN
+
+
+
+// Things left to do
+// Update on tick only
+// Reset player if collision
+// Colour player if win
+
+
+
+
