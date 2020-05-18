@@ -31,6 +31,21 @@ $ball_pos_check_res
 
 
 
+// paddle posns are in an array:
+// 
+// left_paddle_start
+// left_paddle_end
+// right_paddle_start
+// right_paddle_end
+//
+// This ends up taking more instruction bytes than direct memory ref loads because of the incrs :(
+
+
+
+
+
+
+
 
 @check_proposed_ball_pos
     // Sets ACC to 0 if there's no collision, 1 if there is.
@@ -58,7 +73,7 @@ $ball_pos_check_res
 
 
 @check_proposed_ball_pos_right_paddle
-    // Check if in In right paddle
+    // Check if in in right paddle
     // If col == 39
     // Skip to next check if col is not 39
     COPY B ACC
@@ -106,6 +121,17 @@ $ball_pos_check_res
 @check_proposed_ball_pos_collision
     SET ACC #1
     RETURN
+
+
+
+
+
+
+
+
+
+
+
 
 
 @update_ball
@@ -168,7 +194,7 @@ $ball_pos_check_res
     RETURN
 
 @calc_new_col
-    // Puts the proposed row in B
+    // Puts the proposed col in B
     LOAD [$ball_col_pos] ACC
     LOAD [$ball_col_dir] A
     ADD A
@@ -190,14 +216,17 @@ $ball_pos_check_res
     RETURN
 
 
-@move_paddles
+
+
+
+@update_paddles
     // Copy left controller and paddles to sideless vars
     LOAD [$left_controller] A
     LOAD [$left_paddle_start] B
     LOAD [$left_paddle_end] C
 
     // Call sideless move
-    CALL @move_paddle
+    CALL @update_paddle
 
     // Copy sideless vars back to left
     STORE B [$left_paddle_start]
@@ -209,57 +238,117 @@ $ball_pos_check_res
     LOAD [$right_paddle_end] C
 
     // Call sideless move
-    CALL @move_paddle
+    CALL @update_paddle
 
     // Copy sideless vars back to right
     STORE B [$right_paddle_start]
     STORE C [$right_paddle_end]
 
-@move_paddle
+@update_paddle
     // A = controller value
     // B = paddle start
     // C = paddle end
     // If up is pressed
     COPY A ACC
     AND #0b00001000
-    JUMP_IF_EQ_ACC #0b00001000 @move_paddle_up
+    JUMP_IF_EQ_ACC #0b00001000 @update_paddle_up
 
     // If down is pressed
     COPY A ACC
     AND #0b00000100
-    JUMP_IF_EQ_ACC A @move_paddle_down
+    JUMP_IF_EQ_ACC A @update_paddle_down
 
     // Otherwise don't move
     RETURN
 
-@move_paddle_up
+@update_paddle_up
     // Decrease row by one
     COPY B ACC
     DECR ACC
 
     // Skip to invalid if now negative
-    JUMP_IF_NEGATIVE_FLAG @move_paddle_invalid_move
+    JUMP_IF_NEGATIVE_FLAG @update_paddle_invalid_move
 
     // Otherwise update start and end
     COPY ACC B
     DECR C
     RETURN
 
-@move_paddle_down
+@update_paddle_down
     // Increase row by one
     COPY C ACC
     INCR ACC
 
     // Skip to invalid move if end of paddle now > 39
-    JUMP_IF_LT_ACC #39 @move_paddle_invalid_move
+    JUMP_IF_LT_ACC #39 @update_paddle_invalid_move
 
     // Otherwise update start and end
     COPY ACC C
     INCR B
     RETURN
 
-@move_paddle_invalid_move
+@update_paddle_invalid_move
     RETURN
+
+
+
+
+
+
+
+
+
+
+@draw
+    // A is current row
+    // B is current column
+    SET_ZERO A
+    SET_ZERO B
+
+@draw_draw_bg_pixel
+    STORE A [$video_row]
+    STORE B [$video_col]
+    SET_ZERO ACC
+    STORE ACC [$video_data]
+
+    // Next column
+    INCR B
+
+    // Go to next row if we're past the last column
+    SET ACC #39
+    JUMP_IF_LT_ACC B @draw_next_row
+
+    // Otherwise draw next pixel
+    JUMP @draw_draw_bg_pixel
+
+@draw_next_row
+    // Increment row
+    INCR A
+
+    // Finish bg if we're past the last row
+    SET ACC #29
+    JUMP_IF_LT_ACC B @draw_draw_ball
+
+    // Otherwise start drawing next row
+    JUMP @draw_draw_bg_pixel
+
+@draw_draw_ball
+    LOAD [$ball_row_pos] ACC
+    STORE ACC [$video_row]
+    LOAD [$ball_col_pos] ACC
+    STORE ACC [$video_col]
+    SET ACC #0b00110000
+    STORE ACC [$video_data]
+
+
+
+
+
+
+
+
+
+
 
 
 @loop
@@ -286,15 +375,35 @@ $ball_pos_check_res
     SET ACC #12
     STORE ACC [$ball_tick_counter]
 
+    // Also check end condition
+
 @loop_paddles_counter
     // decrement paddles counter
+    LOAD [$paddle_tick_counter] ACC
+    DECR ACC
 
-    // If underflow, update paddles and reset counter
+    // If not underflow, go to next check
+    JUMP_IF_NOT_UNDERFLOW_FLAG @loop_draw_counter
 
+    // Otherwise call ball update and reset counter
+    CALL @update_paddles
+    SET ACC #8
+    STORE ACC [$paddle_tick_counter]
+
+@loop_draw_counter
     // decrement draw counter
+    LOAD [$draw_tick_counter] ACC
+    DECR ACC
 
-    // If underflow, draw and reset counter
+    // If not underflow, go to next check
+    JUMP_IF_NOT_UNDERFLOW_FLAG @loop_end_of_loop
 
+    // Otherwise call ball update and reset counter
+    CALL @draw
+    SET ACC #20
+    STORE ACC [$draw_tick_counter]
+
+@loop_end_of_loop
     // Go back to start of loop
     LOAD [$last_timecheck] A
     JUMP @loop
