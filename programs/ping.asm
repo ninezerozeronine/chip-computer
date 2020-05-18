@@ -34,15 +34,17 @@ $ball_pos_check_res
 
 @check_proposed_ball_pos
     // Sets ACC to 0 if there's no collision, 1 if there is.
+    // Assumes:
+    // - A contains the proposed row
+    // - B contains the proposed column
 
     // Check if in left paddle
     // Skip to next check if col is not zero
-    LOAD [$ball_proposed_col] ACC
+    COPY B ACC
     JUMP_IF_LT_ACC #0 @check_proposed_ball_pos_right_paddle
 
     // Otherwise check if in the paddle
     LOAD [$left_paddle_start] ACC
-    LOAD [$ball_proposed_row] A
 
     // Skip if pos is less than min
     JUMP_IF_LT_ACC A @check_proposed_ball_pos_right_paddle
@@ -59,12 +61,11 @@ $ball_pos_check_res
     // Check if in In right paddle
     // If col == 39
     // Skip to next check if col is not 39
-    LOAD [$ball_proposed_col] ACC
+    COPY B ACC
     JUMP_IF_GT_ACC #39 @check_proposed_ball_pos_below_floor
 
     // Otherwise check if in the paddle
     LOAD [$right_paddle_start] ACC
-    LOAD [$ball_proposed_row] A
 
     // Skip if pos is less than min
     JUMP_IF_LT_ACC A @check_proposed_ball_pos_below_floor
@@ -79,7 +80,7 @@ $ball_pos_check_res
 
 @check_proposed_ball_pos_below_floor
     // Below floor (< 0)
-    LOAD [$ball_proposed_row] ACC
+    COPY A ACC
     DECR ACC
 
     // Skip if above the floor
@@ -90,7 +91,7 @@ $ball_pos_check_res
 
 @check_proposed_ball_pos_above_ceiling
     // Above ceiling (> 29)
-    LOAD [$ball_proposed_row] ACC
+    COPY A ACC
 
     // Skip if below ceiling
     JUMP_IF_LTE_ACC #29 @check_proposed_ball_pos_no_collision
@@ -110,8 +111,7 @@ $ball_pos_check_res
 @update_ball
     // Calculate new ball pos for row change
     CALL @calc_new_row
-    LOAD [$ball_col_pos] ACC
-    STORE ACC [$ball_proposed_col]
+    LOAD [$ball_col_pos] B
 
     // Check the new row pos
     CALL @check_proposed_ball_pos
@@ -126,8 +126,7 @@ $ball_pos_check_res
 @update_ball_col_check  
     // Calculate new ball pos for col change
     CALL @calc_new_col
-    LOAD [$ball_row_pos] ACC
-    STORE ACC [$ball_proposed_row]
+    LOAD [$ball_row_pos] A
 
     // Check the new row pos
     CALL @check_proposed_ball_pos
@@ -156,24 +155,24 @@ $ball_pos_check_res
     JUMP @update_ball
 
 @update_ball_update_pos
-    LOAD [$ball_proposed_row] ACC
-    STORE ACC [$ball_row_pos]
-    LOAD [$ball_proposed_col] ACC
-    STORE ACC [$ball_col_pos]
+    STORE A [$ball_row_pos]
+    STORE B [$ball_col_pos]
     RETURN
 
 @calc_new_row
+    // Puts the proposed row in A
     LOAD [$ball_row_pos] ACC
     LOAD [$ball_row_dir] A
     ADD A
-    STORE A [$ball_proposed_row]
+    COPY ACC A
     RETURN
 
 @calc_new_col
+    // Puts the proposed row in B
     LOAD [$ball_col_pos] ACC
     LOAD [$ball_col_dir] A
     ADD A
-    STORE A [$ball_proposed_col]
+    COPY ACC B
     RETURN
 
 @flip_row_dir
@@ -264,4 +263,38 @@ $ball_pos_check_res
 
 
 @loop
-    // If it's been 1/128 of a second
+    // If 1/128 of a second has passed - tick the program
+    LOAD [$timer] ACC
+    AND #0b00100000
+
+    // Loop if 1/128 of a second hasn't passed
+    JUMP_IF_EQ_ACC A @loop
+
+    // Otherwise tick
+    // Store the current time check pattern for the next loop
+    STORE ACC [$last_timecheck]
+
+    // decrement ball counter
+    LOAD [$ball_tick_counter] ACC
+    DECR ACC
+
+    // If not underflow, go to next check
+    JUMP_IF_NOT_UNDERFLOW_FLAG @loop_paddles_counter
+
+    // Otherwise call ball update and reset counter
+    CALL @update_ball
+    SET ACC #12
+    STORE ACC [$ball_tick_counter]
+
+@loop_paddles_counter
+    // decrement paddles counter
+
+    // If underflow, update paddles and reset counter
+
+    // decrement draw counter
+
+    // If underflow, draw and reset counter
+
+    // Go back to start of loop
+    LOAD [$last_timecheck] A
+    JUMP @loop
