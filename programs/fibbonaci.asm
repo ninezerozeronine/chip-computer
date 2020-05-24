@@ -6,7 +6,7 @@
     COPY A ACC
     ADD B
     JUMP_IF_OVERFLOW_FLAG @set_initial
-    COPY ACC C // To display
+    STORE ACC [#0xFF] // To display
     COPY B A
     COPY ACC B
     JUMP @fib_loop
