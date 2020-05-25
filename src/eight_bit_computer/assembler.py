@@ -84,10 +84,12 @@ def process_line(line):
         assembly_line["defines_label"] = True
         assembly_line["defined_label"] = cleaned_line
 
-    line_is_variable = token_utils.is_variable(cleaned_line)
+    line_is_variable, name, value, location = get_variable_info_from_line(cleaned_line)
     if line_is_variable:
         assembly_line["defines_variable"] = True
-        assembly_line["defined_variable"] = cleaned_line
+        assembly_line["defined_variable"] = name
+        assembly_line["defined_variable_value"] = value
+        assembly_line["defined_variable_location"] = location
 
     if not (line_is_variable or line_is_label):
         mc_bytes = machine_code_bytes_from_line(cleaned_line)
@@ -97,6 +99,43 @@ def process_line(line):
 
     return assembly_line
 
+
+def get_variable_info_from_line(cleaned_line):
+    tokens = token_utils.get_tokens_from_line(cleaned_line)
+
+    # If there's not 3 tokens, not a variable def
+    if len(tokens) != 3:
+        return False, None, None, None
+
+    # If the first token isn't a variable, not a variable def
+    if not token_utils.is_variable(tokens[0]):
+        return False, None, None, None
+
+    # If the second token isn't a memory index, not a variable def
+    if not token_utils.is_memory_index(tokens[1]):
+        return False, None, None, None
+
+    # If thing inside memory index isn't a number, not a variable def
+    mem_index_contents = token_utils.extract_memory_position(tokens[1])
+    if not token_utils.is_number(mem_index_contents):
+        return False, None, None, None
+
+    # If mem index value isn't between 0 and 255, not a variable def
+    variable_position = token_utils.number_constant_value(mem_index_contents)
+    if not (variable_position >= 0 and mem_index_value <= 255):
+        return False, None, None, None
+
+    # If third token not a number, not a variable def
+    if not token_utils.is_number(tokens[2]):
+        return False, None, None, None
+
+    # If number wont fit in 8 bits, not a variable def 
+    variable_value = token_utils.number_constant_value(tokens[2])
+    if not number_is_within_bit_limit(variable_value, bit_width=8):
+        return False, None, None, None
+
+    # Otherwise, passes all tests!
+    return True, tokens[0], variable_position, variable_value
 
 def clean_line(line):
     """
@@ -111,8 +150,7 @@ def clean_line(line):
         str: The cleaned line.
     """
     no_comments = remove_comments(line)
-    no_excess_whitespace = remove_excess_whitespace(no_comments)
-    return no_excess_whitespace
+    return = remove_excess_whitespace(no_comments)
 
 
 def remove_comments(line):

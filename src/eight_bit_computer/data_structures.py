@@ -108,6 +108,8 @@ def get_assembly_line_template():
 
         "defines_variable": False,
         "defined_variable": "",
+        "defined_variable_value": -1,
+        "defined_variable_location": -1,
 
         "has_machine_code": False,
         "mc_bytes": [],
