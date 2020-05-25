@@ -186,6 +186,32 @@ def test_check_multiple_variable_def_does_not_raise(processed_assembly_lines):
     assert True
 
 
+def test_check_undefined_variable_ref_raises():
+    lines = []
+
+    # "    LOAD [$variable1] A"
+    line = get_assembly_line_template()
+    line["line_no"] = 1
+    line["raw"] = "    LOAD [$variable1] A"
+    line["clean"] = "LOAD [$variable1] A"
+    line_mc_0 = get_machine_code_byte_template()
+    line_mc_0["byte_type"] = "instruction"
+    line_mc_0["bitstring"] = "11111111"
+    line_mc_1 = get_machine_code_byte_template()
+    line_mc_1["byte_type"] = "constant"
+    line_mc_1["constant"] = "$variable1"
+    line_mc_1["constant_type"] = "variable"
+    line["mc_bytes"] = [line_mc_0, line_mc_1]
+    line["has_machine_code"] = True
+    lines.append(line)
+
+    with pytest.raises(AssemblyError):
+        assembly_validity.check_undefined_variable_ref(lines)
+
+def test_check_undefined_variable_ref_does_not_raise(processed_assembly_lines):
+    assembly_validity.check_undefined_variable_ref(processed_assembly_lines)
+    assert True
+
 def test_check_num_variables_raises():
     lines = []
     for num in range(1, 301):

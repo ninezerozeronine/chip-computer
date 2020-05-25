@@ -173,6 +173,46 @@ def check_multiple_variable_def(asm_line_infos):
                 variable_lines[variable] = asm_line_info["line_no"]
 
 
+def check_undefined_variable_ref(asm_line_infos):
+    """
+    Check instructions don't reference undefined variables
+
+    Args:
+        asm_line_infos (list(dict)): List of dictionaries (conforming to
+            :func:`~.get_assembly_line_template`) with information about all
+            the lines in the assembly file.
+    Raises:
+        AssemblyError: If a variable is referenced but not defined.
+    """
+
+    # Get the names of all the defined variables
+    variables = set()
+    for asm_line_info in asm_line_infos:
+        if asm_line_info["defines_variable"]:
+            variables.add(asm_line_info["defined_variable"])
+
+
+    # Check the variables used in instructions
+    for asm_line_info in asm_line_infos:
+        if asm_line_info["has_machine_code"]:
+            for mc_byte_info in asm_line_info["mc_bytes"]:
+                if (mc_byte_info["byte_type"] == "constant"
+                        and mc_byte_info["constant_type"] == "variable"
+                        and mc_byte_info["constant"] not in variables):
+                    details = (
+                        "The variable: \"{variable}\" has not been defined".format(
+                            variable=mc_byte_info["constant"]
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=asm_line_info["line_no"],
+                        line=asm_line_info["raw"],
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+
+
+
 def check_num_variables(asm_line_infos, variable_start_offset):
     """
     Check there are more variables defined than will fit in data mem.
@@ -191,35 +231,25 @@ def check_num_variables(asm_line_infos, variable_start_offset):
             in data memory.
     """
 
-    variables = []
-    for asm_line_info in asm_line_infos:
+    variables = set()
+    last_variable = None
+    too_many_variables = False
 
+    for asm_line_info in asm_line_infos:
         # Check for defined variable
         if asm_line_info["defines_variable"]:
-            variable = asm_line_info["defined_variable"]
-            if variable not in variables:
-                variables.append(asm_line_info["defined_variable"])
+            last_variable = asm_line_info["defined_variable"]
+            variables.add(last_variable)
+            if len(variables) + variable_start_offset > 255:
+                too_many_variables = True
+                break
 
-                if len(variables) + variable_start_offset > 255:
-                    break
-
-        # Check for used variables
-        if asm_line_info["has_machine_code"]:
-            for mc_byte_info in asm_line_info["mc_bytes"]:
-                if (mc_byte_info["byte_type"] == "constant"
-                        and mc_byte_info["constant_type"] == "variable"
-                        and mc_byte_info["constant"] not in variables):
-                    variables.append(mc_byte_info["constant"])
-
-                if len(variables) + variable_start_offset > 255:
-                    break
-
-    if len(variables) + variable_start_offset > 255:
+    if too_many_variables:
         details = (
             "No more data memory is available for the declaration of "
             "variable: \"{variable}\". The max is 255 and a variable "
             "start offset of {variable_start_offset} was used.".format(
-                variable=variable,
+                variable=last_variable,
                 variable_start_offset=variable_start_offset,
             )
         )

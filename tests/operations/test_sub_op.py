@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer.operations import sub
+from eight_bit_computer.operations import sub_op
 from eight_bit_computer.data_structures import get_machine_code_byte_template
 from eight_bit_computer.exceptions import OperationParsingError
 
@@ -53,7 +53,7 @@ def generate_parse_line_test_data():
     "test_input,expected", generate_parse_line_test_data()
 )
 def test_parse_line(test_input, expected):
-    assert sub.parse_line(test_input) == expected
+    assert sub_op.parse_line(test_input) == expected
 
 
 @pytest.mark.parametrize("test_input", [
@@ -66,4 +66,4 @@ def test_parse_line(test_input, expected):
 ])
 def test_parse_line_raises(test_input):
     with pytest.raises(OperationParsingError):
-        sub.parse_line(test_input)
+        sub_op.parse_line(test_input)

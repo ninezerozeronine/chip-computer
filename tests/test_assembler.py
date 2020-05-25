@@ -258,28 +258,28 @@ def test_validate_and_identify_constants_raises(test_input):
 
 def test_assign_labels(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
-    expected_lines[2]["assigned_label"] = "@label1"
-    expected_lines[2]["has_label_assigned"] = True
-    expected_lines[5]["assigned_label"] = "@label2"
-    expected_lines[5]["has_label_assigned"] = True
-    expected_lines[10]["assigned_label"] = "@label3"
-    expected_lines[10]["has_label_assigned"] = True
+    expected_lines[3]["assigned_label"] = "@label1"
+    expected_lines[3]["has_label_assigned"] = True
+    expected_lines[6]["assigned_label"] = "@label2"
+    expected_lines[6]["has_label_assigned"] = True
+    expected_lines[11]["assigned_label"] = "@label3"
+    expected_lines[11]["has_label_assigned"] = True
     assembler.assign_labels(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 
 
 def test_resolve_labels(processed_assembly_lines):
-    processed_assembly_lines[2]["assigned_label"] = "@label1"
-    processed_assembly_lines[2]["has_label_assigned"] = True
-    processed_assembly_lines[5]["assigned_label"] = "@label2"
-    processed_assembly_lines[5]["has_label_assigned"] = True
-    processed_assembly_lines[10]["assigned_label"] = "@label3"
-    processed_assembly_lines[10]["has_label_assigned"] = True
+    processed_assembly_lines[3]["assigned_label"] = "@label1"
+    processed_assembly_lines[3]["has_label_assigned"] = True
+    processed_assembly_lines[6]["assigned_label"] = "@label2"
+    processed_assembly_lines[6]["has_label_assigned"] = True
+    processed_assembly_lines[11]["assigned_label"] = "@label3"
+    processed_assembly_lines[11]["has_label_assigned"] = True
     expected_lines = deepcopy(processed_assembly_lines)
     # JUMP @label1
-    expected_lines[6]["mc_bytes"][1]["bitstring"] = "00000000"
+    expected_lines[7]["mc_bytes"][1]["bitstring"] = "00000000"
     # JUMP_IF_LT_ACC #85 @label1
-    expected_lines[14]["mc_bytes"][2]["bitstring"] = "00000000"
+    expected_lines[15]["mc_bytes"][2]["bitstring"] = "00000000"
     assembler.resolve_labels(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 
@@ -302,28 +302,28 @@ def test_label_map(processed_assembly_lines):
 
 def test_resolve_numbers(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
-    expected_lines[8]["mc_bytes"][1]["bitstring"] = "01111011"
-    expected_lines[14]["mc_bytes"][1]["bitstring"] = "01010101"
+    expected_lines[9]["mc_bytes"][1]["bitstring"] = "01111011"
+    expected_lines[15]["mc_bytes"][1]["bitstring"] = "01010101"
     assembler.resolve_numbers(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 
 
 def test_resolve_variables_no_offset(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
-    expected_lines[2]["mc_bytes"][1]["bitstring"] = "00000001"
-    expected_lines[5]["mc_bytes"][1]["bitstring"] = "00000010"
-    expected_lines[10]["mc_bytes"][1]["bitstring"] = "00000011"
-    expected_lines[11]["mc_bytes"][1]["bitstring"] = "00000000"
+    expected_lines[3]["mc_bytes"][1]["bitstring"] = "00000000"
+    expected_lines[6]["mc_bytes"][1]["bitstring"] = "00000001"
+    expected_lines[11]["mc_bytes"][1]["bitstring"] = "00000010"
+    expected_lines[12]["mc_bytes"][1]["bitstring"] = "00000000"
     assembler.resolve_variables(processed_assembly_lines, 0)
     assert processed_assembly_lines == expected_lines
 
 
 def test_resolve_variables_with_offset(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
-    expected_lines[2]["mc_bytes"][1]["bitstring"] = "00001001"
-    expected_lines[5]["mc_bytes"][1]["bitstring"] = "00001010"
-    expected_lines[10]["mc_bytes"][1]["bitstring"] = "00001011"
-    expected_lines[11]["mc_bytes"][1]["bitstring"] = "00001000"
+    expected_lines[3]["mc_bytes"][1]["bitstring"] = "00001000"
+    expected_lines[6]["mc_bytes"][1]["bitstring"] = "00001001"
+    expected_lines[11]["mc_bytes"][1]["bitstring"] = "00001010"
+    expected_lines[12]["mc_bytes"][1]["bitstring"] = "00001000"
     assembler.resolve_variables(processed_assembly_lines, 8)
     assert processed_assembly_lines == expected_lines
 
@@ -333,8 +333,6 @@ def test_create_variable_map_no_offset(processed_assembly_lines):
         "$variable0": "00000000",
         "$variable1": "00000001",
         "$variable2": "00000010",
-        "$variable3": "00000011",
-        "$variable4": "00000100",
     }
     variable_map = assembler.create_variable_map(processed_assembly_lines, 0)
     assert variable_map == exected_variable_map
@@ -345,8 +343,6 @@ def test_create_variable_map_with_offset(processed_assembly_lines):
         "$variable0": "00001000",
         "$variable1": "00001001",
         "$variable2": "00001010",
-        "$variable3": "00001011",
-        "$variable4": "00001100",
     }
     variable_map = assembler.create_variable_map(processed_assembly_lines, 8)
     assert variable_map == exected_variable_map
