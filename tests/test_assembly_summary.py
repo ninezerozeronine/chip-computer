@@ -11,8 +11,8 @@ def test_get_assembly_summary_data(assembly_line_infos, assembly_summary_data):
 
 def test_generate_assembly_summary_lines(assembly_line_infos):
     expected = [
-        " 1 $variable0                   |",
-        " 2 $variable1                   |",
+        " 1 $variable0 [#0] #123         |",
+        " 2 $variable1 [#1] #-45         |",
         " 3 @label1                      |",
         " 4     LOAD [$variable0] A      |  0 00 00000000 - @label1 255 FF 11111111",
         "                                |  1 01 00000001 -           0 00 00000000 $variable0",
@@ -30,7 +30,7 @@ def test_generate_assembly_summary_lines(assembly_line_infos):
         "                                |  9 09 00001001 -           2 02 00000010 $variable2",
         "13     LOAD [$variable0] C      | 10 0A 00001010 -         255 FF 11111111",
         "                                | 11 0B 00001011 -           0 00 00000000 $variable0",
-        "14 $variable2                   |",
+        "14 $variable2 [#2] #42          |",
         "15 // comment                   |",
         "16  JUMP_IF_LT_ACC #85 @label1  | 12 0C 00001100 -          55 37 00110111",
         "                                | 13 0D 00001101 -          85 55 01010101 #85",

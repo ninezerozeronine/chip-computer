@@ -14,8 +14,8 @@ from eight_bit_computer.data_structures import (
 def assembly_lines():
     return textwrap.dedent(
         """\
-        $variable0
-        $variable1
+        $variable0 [#0] #123
+        $variable1 [#1] #-45
         @label1
             LOAD [$variable0] A
 
@@ -27,7 +27,7 @@ def assembly_lines():
         @label3
             LOAD [$variable2] B
             LOAD [$variable0] C
-        $variable2
+        $variable2 [#2] #42
         // comment
          JUMP_IF_LT_ACC #85 @label1 
         """
@@ -46,22 +46,26 @@ def gen_processed_assembly_lines_data():
 
     lines = []
 
-    # "$variable0"
+    # "$variable0 [#0] #123"
     line = get_assembly_line_template()
     line["line_no"] = 1
-    line["raw"] = "$variable0"
-    line["clean"] = "$variable0"
+    line["raw"] = "$variable0 [#0] #123"
+    line["clean"] = "$variable0 [#0] #123"
     line["defines_variable"] = True
     line["defined_variable"] = "$variable0"
+    line["defined_variable_location"] = 0
+    line["defined_variable_value"] = 123
     lines.append(line)
 
-    # "$variable1"
+    # "$variable1 [#1] #-45"
     line = get_assembly_line_template()
     line["line_no"] = 2
-    line["raw"] = "$variable1"
-    line["clean"] = "$variable1"
+    line["raw"] = "$variable1 [#1] #-45"
+    line["clean"] = "$variable1 [#1] #-45"
     line["defines_variable"] = True
     line["defined_variable"] = "$variable1"
+    line["defined_variable_location"] = 1
+    line["defined_variable_value"] = -45
     lines.append(line)
 
     # "@label1"
@@ -198,13 +202,15 @@ def gen_processed_assembly_lines_data():
     line["has_machine_code"] = True
     lines.append(line)
 
-    # "$variable2"
+    # "$variable2 [#2] #42"
     line = get_assembly_line_template()
     line["line_no"] = 14
-    line["raw"] = "$variable2"
-    line["clean"] = "$variable2"
+    line["raw"] = "$variable2 [#2] #42"
+    line["clean"] = "$variable2 [#2] #42"
     line["defined_variable"] = "$variable2"
     line["defines_variable"] = True
+    line["defined_variable_location"] = 2
+    line["defined_variable_value"] = 42
     lines.append(line)
 
     # "// comment"

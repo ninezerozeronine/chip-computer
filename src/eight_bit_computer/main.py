@@ -13,8 +13,7 @@ from . import rom
 
 def assemble(
         input_filepath,
-        output_filepath=None,
-        variable_start_offset=0,
+        output_filepath=None
         ):
     """
     Read an assembly file and write out equivalent machine code.
@@ -24,8 +23,6 @@ def assemble(
         output_filepath (str) (optional): The location to write out the
             machine code. If nothing is passed, the output path will be
             the input path with the extension changed to mc.
-        variable_start_offset (int) (optional): How far to offset the
-            first variable in data memory from 0.
     """
 
     # Does input file exist
@@ -56,9 +53,7 @@ def assemble(
     # Do assembly
     lines = filepath_to_lines(input_filepath)
     try:
-        assembly_line_infos = process_assembly_lines(
-            lines, variable_start_offset=variable_start_offset
-        )
+        assembly_line_infos = process_assembly_lines(lines)
     except AssemblyError as inst:
         print inst.args[0]
         return

@@ -14,15 +14,13 @@ from . import number_utils
 from . import token_utils
 
 
-def process_assembly_lines(lines, variable_start_offset=0):
+def process_assembly_lines(lines):
     """
     Parse, assemble and generate machine code.
 
     Args:
         lines (list(str)): The lines that made up the assembly file to
             be assembled.
-        variable_start_offset (int) (optional): How far to offset the
-            first variable in data memory from 0.
     Returns:
         list(dict): The assembly file converted to an equivalent list of
         dictionaries with information about what each line was resolved
@@ -48,12 +46,12 @@ def process_assembly_lines(lines, variable_start_offset=0):
         assembly_line["line_no"] = line_no
         assembly_lines.append(assembly_line)
 
-    check_structure_validity(assembly_lines, variable_start_offset)
+    check_structure_validity(assembly_lines)
     assign_machine_code_byte_indexes(assembly_lines)
     assign_labels(assembly_lines)
     resolve_labels(assembly_lines)
     resolve_numbers(assembly_lines)
-    resolve_variables(assembly_lines, variable_start_offset)
+    resolve_variables(assembly_lines)
 
     return assembly_lines
 
@@ -84,12 +82,12 @@ def process_line(line):
         assembly_line["defines_label"] = True
         assembly_line["defined_label"] = cleaned_line
 
-    line_is_variable, name, value, location = get_variable_info_from_line(cleaned_line)
+    line_is_variable, name, location, value = get_variable_info_from_line(cleaned_line)
     if line_is_variable:
         assembly_line["defines_variable"] = True
         assembly_line["defined_variable"] = name
-        assembly_line["defined_variable_value"] = value
         assembly_line["defined_variable_location"] = location
+        assembly_line["defined_variable_value"] = value
 
     if not (line_is_variable or line_is_label):
         mc_bytes = machine_code_bytes_from_line(cleaned_line)
@@ -101,6 +99,22 @@ def process_line(line):
 
 
 def get_variable_info_from_line(cleaned_line):
+    """
+    Get variable info from the line (if any).
+
+    Looks ata line to determine whether or not it's a variable
+    definition.
+
+    Expects the passed in line to be a valid line of machine code. That
+    is, the passed in line should be translatable to valid machine code.
+
+    Args:
+        line (cleaned_line): Line to parse.
+    Returns:
+        (bool, str, int, int): Whether the line is a variable def, the
+        variable defined, the value of the variable and it's location.
+    """
+
     tokens = token_utils.get_tokens_from_line(cleaned_line)
 
     # If there's not 3 tokens, not a variable def
@@ -120,9 +134,9 @@ def get_variable_info_from_line(cleaned_line):
     if not token_utils.is_number(mem_index_contents):
         return False, None, None, None
 
-    # If mem index value isn't between 0 and 255, not a variable def
+    # If variable position isn't between 0 and 255, not a variable def
     variable_position = token_utils.number_constant_value(mem_index_contents)
-    if not (variable_position >= 0 and mem_index_value <= 255):
+    if not (variable_position >= 0 and variable_position <= 255):
         return False, None, None, None
 
     # If third token not a number, not a variable def
@@ -131,7 +145,7 @@ def get_variable_info_from_line(cleaned_line):
 
     # If number wont fit in 8 bits, not a variable def 
     variable_value = token_utils.number_constant_value(tokens[2])
-    if not number_is_within_bit_limit(variable_value, bit_width=8):
+    if not number_utils.number_is_within_bit_limit(variable_value, bit_width=8):
         return False, None, None, None
 
     # Otherwise, passes all tests!
@@ -150,7 +164,7 @@ def clean_line(line):
         str: The cleaned line.
     """
     no_comments = remove_comments(line)
-    return = remove_excess_whitespace(no_comments)
+    return remove_excess_whitespace(no_comments)
 
 
 def remove_comments(line):
@@ -388,7 +402,7 @@ def resolve_numbers(assembly_lines):
                     )
 
 
-def resolve_variables(assembly_lines, variable_start_offset):
+def resolve_variables(assembly_lines):
     """
     Resolve variable constants to indexes in data memory.
 
@@ -397,10 +411,8 @@ def resolve_variables(assembly_lines, variable_start_offset):
     Args:
         assembly_lines (list(dict)): List of assembly lines to resolve
             variables in.
-        variable_start_offset (int): An offset into data
-            memory for where to start storing the variables.
     """
-    variable_map = create_variable_map(assembly_lines, variable_start_offset)
+    variable_map = create_variable_map(assembly_lines)
     for assembly_line in assembly_lines:
         if assembly_line["has_machine_code"]:
             for mc_byte in assembly_line["mc_bytes"]:
@@ -410,22 +422,19 @@ def resolve_variables(assembly_lines, variable_start_offset):
                     mc_byte["bitstring"] = variable_map[variable]
 
 
-def create_variable_map(assembly_lines, variable_start_offset):
+def create_variable_map(assembly_lines):
     """
     Create a map of variables to indexes in data memory.
 
     Args:
         assembly_lines (list(dict)): List of assembly lines to create a
             variable map for.
-        variable_start_offset (int): An offset into data
-            memory for where to start storing the variables.
     Returns:
         dict(str:str): Dictionary of variable names to machine code
         indexes.
     """
 
     variable_map = {}
-    variable_index = variable_start_offset
     for assembly_line in assembly_lines:
 
         # Check for defined variable
@@ -434,23 +443,8 @@ def create_variable_map(assembly_lines, variable_start_offset):
             if variable in variable_map:
                 continue
             variable_map[variable] = number_utils.number_to_bitstring(
-                variable_index
+                assembly_line["defined_variable_location"]
             )
-            variable_index += 1
             continue
 
-        # Check for variable in machine code
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                if mc_byte["byte_type"] != "constant":
-                    continue
-                if mc_byte["constant_type"] != "variable":
-                    continue
-                variable = mc_byte["constant"]
-                if variable in variable_map:
-                    continue
-                variable_map[variable] = number_utils.number_to_bitstring(
-                    variable_index
-                )
-                variable_index += 1
     return variable_map

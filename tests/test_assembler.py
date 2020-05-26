@@ -8,19 +8,14 @@ from eight_bit_computer.data_structures import (
 from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
 
 
-@pytest.mark.parametrize("test_input,variable_start_offset", [
+@pytest.mark.parametrize("test_input", [
     (
-        [
-            "fegwkefjghwfjkhgwekjfgh",
-        ],
-        0,
+        "fegwkefjghwfjkhgwekjfgh",
     )
 ])
-def test_process_assembly_lines_raises(test_input, variable_start_offset):
+def test_process_assembly_lines_raises(test_input):
     with pytest.raises(AssemblyError):
-        assembler.process_assembly_lines(
-            test_input, variable_start_offset=variable_start_offset
-        )
+        assembler.process_assembly_lines(test_input)
 
 
 def get_test_process_line_data():
@@ -45,12 +40,14 @@ def get_test_process_line_data():
     test_output["defines_label"] = True
     tests.append((test_input, test_output))
 
-    test_input = "$variable"
+    test_input = "$variable [#23] #-1"
     test_output = get_assembly_line_template()
-    test_output["raw"] = "$variable"
-    test_output["clean"] = "$variable"
-    test_output["defined_variable"] = "$variable"
+    test_output["raw"] = "$variable [#23] #-1"
+    test_output["clean"] = "$variable [#23] #-1"
     test_output["defines_variable"] = True
+    test_output["defined_variable"] = "$variable"
+    test_output["defined_variable_location"] = 23
+    test_output["defined_variable_value"] = -1
     tests.append((test_input, test_output))
 
     test_input = "    @label // comment"
@@ -61,12 +58,14 @@ def get_test_process_line_data():
     test_output["defines_label"] = True
     tests.append((test_input, test_output))
 
-    test_input = "    $variable // comment"
+    test_input = "    $variable [#44]    #11// comment"
     test_output = get_assembly_line_template()
-    test_output["raw"] = "    $variable // comment"
-    test_output["clean"] = "$variable"
-    test_output["defined_variable"] = "$variable"
+    test_output["raw"] = "    $variable [#44]    #11// comment"
+    test_output["clean"] = "$variable [#44] #11"
     test_output["defines_variable"] = True
+    test_output["defined_variable"] = "$variable"
+    test_output["defined_variable_location"] = 44
+    test_output["defined_variable_value"] = 11
     tests.append((test_input, test_output))
 
     return tests
@@ -308,41 +307,21 @@ def test_resolve_numbers(processed_assembly_lines):
     assert processed_assembly_lines == expected_lines
 
 
-def test_resolve_variables_no_offset(processed_assembly_lines):
+def test_resolve_variables(processed_assembly_lines):
     expected_lines = deepcopy(processed_assembly_lines)
     expected_lines[3]["mc_bytes"][1]["bitstring"] = "00000000"
     expected_lines[6]["mc_bytes"][1]["bitstring"] = "00000001"
     expected_lines[11]["mc_bytes"][1]["bitstring"] = "00000010"
     expected_lines[12]["mc_bytes"][1]["bitstring"] = "00000000"
-    assembler.resolve_variables(processed_assembly_lines, 0)
+    assembler.resolve_variables(processed_assembly_lines)
     assert processed_assembly_lines == expected_lines
 
 
-def test_resolve_variables_with_offset(processed_assembly_lines):
-    expected_lines = deepcopy(processed_assembly_lines)
-    expected_lines[3]["mc_bytes"][1]["bitstring"] = "00001000"
-    expected_lines[6]["mc_bytes"][1]["bitstring"] = "00001001"
-    expected_lines[11]["mc_bytes"][1]["bitstring"] = "00001010"
-    expected_lines[12]["mc_bytes"][1]["bitstring"] = "00001000"
-    assembler.resolve_variables(processed_assembly_lines, 8)
-    assert processed_assembly_lines == expected_lines
-
-
-def test_create_variable_map_no_offset(processed_assembly_lines):
+def test_create_variable_map(processed_assembly_lines):
     exected_variable_map = {
         "$variable0": "00000000",
         "$variable1": "00000001",
         "$variable2": "00000010",
     }
-    variable_map = assembler.create_variable_map(processed_assembly_lines, 0)
-    assert variable_map == exected_variable_map
-
-
-def test_create_variable_map_with_offset(processed_assembly_lines):
-    exected_variable_map = {
-        "$variable0": "00001000",
-        "$variable1": "00001001",
-        "$variable2": "00001010",
-    }
-    variable_map = assembler.create_variable_map(processed_assembly_lines, 8)
+    variable_map = assembler.create_variable_map(processed_assembly_lines)
     assert variable_map == exected_variable_map

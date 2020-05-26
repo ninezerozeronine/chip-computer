@@ -1,3 +1,22 @@
+$timer                      [#255] #0
+$left_controller            [#254] #0
+$right_controller           [#253] #0
+$video_row                  [#252] #0
+$video_col                  [#251] #0
+$video_data                 [#250] #0
+
+$last_timecheck             [#0] #0
+$ball_tick_counter          [#1] #0
+$zones_tick_counter         [#2] #0
+$draw_tick_counter          [#3] #0
+
+$ball_dir                   [#10] #0
+$ball_pos                   [#11] #0
+
+$left_zone_press_state      [#21] #0
+$right_zone_press_state     [#22] #0
+
+
 @loop
     // If 1/128 of a second has passed - tick the program
     LOAD [$timer] ACC
@@ -68,7 +87,6 @@
     LOAD [$ball_pos] ACC
     ADD A
     STORE ACC [$ball_pos]
-    $ball_pos
 
     // If ball > 39, jump to ball left win
     JUMP_IF_LT_ACC #39 @update_ball_left_win
@@ -119,7 +137,7 @@
     JUMP_IF_EQ_ZERO A @update_zones_end_left
 
     // Otherwise, it is pressed. If it was pressed last time, skip to end of left
-    LOAD [$left_zone_pres_state] ACC
+    LOAD [$left_zone_press_state] ACC
     SET B #0b00100000
     JUMP_IF_EQ_ACC B @update_zones_end_left
 
@@ -155,7 +173,7 @@
     STORE B [$ball_dir]
 
 @update_zones_end_right
-    STORE A [$last_right_zone_press_state]
+    STORE A [$right_zone_press_state]
     RETURN
 
 

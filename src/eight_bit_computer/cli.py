@@ -12,7 +12,6 @@ def assemble():
     main.assemble(
         args.asm_filepath,
         output_filepath=args.output_filepath,
-        variable_start_offset=args.variable_start_offset,
     )
 
 
@@ -42,48 +41,8 @@ def get_assemble_parser():
             "current directory is optional."
         )
     )
-    parser.add_argument(
-        "-s",
-        "--variable_start_offset",
-        type=positive_int,
-        help=(
-            "Index in data memory to start assigning automatically "
-            "assigned variables at."
-        ),
-        default=0,
-    )
 
     return parser
-
-
-def positive_int(value):
-    """
-    Validate a string is an int greater than or equal to zero.
-
-    Used for the type argument in an
-    argparse.ArgumentParser.add_argument call.
-
-    Args:
-        value (str): Value to be tested.
-    Returns:
-        int: Value as an integer if it was >= 0.
-    Raises:
-        argparse.ArgumentTypeError: If the value was not greater than or
-            equal to zero.
-    """
-    error_template = "{value} is not an integer greater than or equal to 0."
-
-    # Check if it's an int.
-    try:
-        int_val = int(value)
-    except ValueError:
-        raise argparse.ArgumentTypeError(error_template.format(value=value))
-
-    # Check if it's a positive int.
-    if int_val < 0:
-        raise argparse.ArgumentTypeError(error_template.format(value=value))
-
-    return int_val
 
 
 def gen_roms():

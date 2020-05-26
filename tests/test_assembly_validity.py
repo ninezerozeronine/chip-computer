@@ -212,40 +212,35 @@ def test_check_undefined_variable_ref_does_not_raise(processed_assembly_lines):
     assembly_validity.check_undefined_variable_ref(processed_assembly_lines)
     assert True
 
-def test_check_num_variables_raises():
+def test_check_overlapping_variables_raises():
     lines = []
-    for num in range(1, 301):
-        var = "$variable{num}".format(num=num)
-        line = get_assembly_line_template()
-        line["line_no"] = num
-        line["raw"] = var
-        line["clean"] = var
-        line["defines_variable"] = True
-        line["defined_variable"] = var
-        lines.append(line)
+
+    line = get_assembly_line_template()
+    line["line_no"] = 1
+    line["raw"] = "$var0"
+    line["clean"] = "$var0"
+    line["defines_variable"] = True
+    line["defined_variable"] = "$var0"
+    line["defined_variable_location"] = 23
+    line["defined_variable_value"] = 6
+    lines.append(line)
+
+    line = get_assembly_line_template()
+    line["line_no"] = 2
+    line["raw"] = "$var1"
+    line["clean"] = "$var1"
+    line["defines_variable"] = True
+    line["defined_variable"] = "$var1"
+    line["defined_variable_location"] = 23
+    line["defined_variable_value"] = 13
+    lines.append(line)
 
     with pytest.raises(AssemblyError):
-        assembly_validity.check_num_variables(lines, 0)
+        assembly_validity.check_overlapping_variables(lines)
 
 
-def test_check_num_variables_offset_raises():
-    lines = []
-    for num in range(1, 11):
-        var = "$variable{num}".format(num=num)
-        line = get_assembly_line_template()
-        line["line_no"] = num
-        line["raw"] = var
-        line["clean"] = var
-        line["defines_variable"] = True
-        line["defined_variable"] = var
-        lines.append(line)
-
-    with pytest.raises(AssemblyError):
-        assembly_validity.check_num_variables(lines, 250)
-
-
-def test_check_num_variables_does_not_raise(processed_assembly_lines):
-    assembly_validity.check_num_variables(processed_assembly_lines, 0)
+def test_check_overlapping_variables_does_not_raise(processed_assembly_lines):
+    assembly_validity.check_overlapping_variables(processed_assembly_lines)
     assert True
 
 

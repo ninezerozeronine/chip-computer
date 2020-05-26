@@ -86,6 +86,9 @@ def get_assembly_line_template():
     - defines_variable: Whether or not this line is a variable
       definition.
     - defined_variable: The variable that this line defines.
+    - defined_variable_value: The value of the variable in data memory.
+    - defined_variable_location: The location of the variable in data
+      memory.
     - has_machine_code: Whether or not this line results in machine
       code. E.g. a comment has no machine code.
     - mc_bytes: List of machine code byte templates (with
