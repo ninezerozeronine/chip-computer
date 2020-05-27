@@ -7,6 +7,7 @@ import os
 from .assembler import process_assembly_lines
 from .assembly_summary import generate_assembly_summary
 from .exceptions import AssemblyError
+from .number_utils import number_to_bitstring
 from . import export
 from . import rom
 
@@ -68,7 +69,9 @@ def assemble(
 
     # Convert to correct format
     mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
-    output = export.bitstrings_to_logisim(mc_byte_bitstrings)
+    variable_bitstrings = extract_variables(assembly_line_infos)
+    combined_bitstrings = combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings)
+    output = export.bitstrings_to_logisim(combined_bitstrings)
 
     # Write file.
     with open(output_filepath, "w") as file:
@@ -124,6 +127,56 @@ def extract_machine_code(assembly_lines):
             for mc_byte in assembly_line["mc_bytes"]:
                 machine_code.append(mc_byte["bitstring"])
     return machine_code
+
+
+def extract_variables(assembly_lines):
+    """
+    Extract variables from assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+    Returns:
+        list(str): List of bit strings for the machine code. Empty
+        list if there's no variables
+    """
+
+    # Extract all the variables and their positions
+    pos_to_value_map = {}
+    for assembly_line in assembly_lines:
+        if assembly_line["defines_variable"]:
+            bitstring = number_to_bitstring(assembly_line["defined_variable_value"])
+            pos_to_value_map[assembly_line["defined_variable_position"]] = bitstring
+
+    # Put the variables into a list, filling empty positions with zeroes.
+    ret = []
+    if pos_to_value_map:
+        biggest = min(pos_to_value_map)
+        for position in range(biggest + 1):
+            if position in pos_to_value_map:
+                ret.append(pos_to_value_map[position])
+            else
+                ret.append(number_to_bitstring(0))
+
+    return ret
+
+
+def combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings):
+    """
+    Combine machine code and variables into a single appropriately padded list.
+
+    Args:
+        mc_byte_bitstrings (list(str)): List of bitstrings that make
+            up the machine code.
+        variable_bitstrings (list(str)): List of bitstrings that
+            represent the variables.
+    Returns:
+        list(str): List of the machine code and variable bitstrings,
+        padded to that the variables begin at byte 257.
+    """
+    pass
 
 
 def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
