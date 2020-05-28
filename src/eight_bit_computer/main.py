@@ -148,16 +148,16 @@ def extract_variables(assembly_lines):
     for assembly_line in assembly_lines:
         if assembly_line["defines_variable"]:
             bitstring = number_to_bitstring(assembly_line["defined_variable_value"])
-            pos_to_value_map[assembly_line["defined_variable_position"]] = bitstring
+            pos_to_value_map[assembly_line["defined_variable_location"]] = bitstring
 
     # Put the variables into a list, filling empty positions with zeroes.
     ret = []
     if pos_to_value_map:
-        biggest = min(pos_to_value_map)
+        biggest = max(pos_to_value_map)
         for position in range(biggest + 1):
             if position in pos_to_value_map:
                 ret.append(pos_to_value_map[position])
-            else
+            else:
                 ret.append(number_to_bitstring(0))
 
     return ret
@@ -176,7 +176,15 @@ def combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings):
         list(str): List of the machine code and variable bitstrings,
         padded to that the variables begin at byte 257.
     """
-    pass
+    
+    if not variable_bitstrings:
+        return mc_byte_bitstrings
+
+    # Pad the machine code bytes up to 256 bytes
+    num_mc_bytes = len(mc_byte_bitstrings)
+    padded_mc_bytes = mc_byte_bitstrings + [number_to_bitstring(0)] * (256 - num_mc_bytes)
+
+    return padded_mc_bytes + variable_bitstrings
 
 
 def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):

@@ -1,20 +1,20 @@
-$timer                      [#255] #0
-$left_controller            [#254] #0
-$right_controller           [#253] #0
-$video_row                  [#252] #0
-$video_col                  [#251] #0
-$video_data                 [#250] #0
+$timer                      [#255] #1
+$left_controller            [#254] #1
+$right_controller           [#253] #1
+$video_row                  [#252] #1
+$video_col                  [#251] #1
+$video_data                 [#250] #1
 
-$last_timecheck             [#0] #0
-$ball_tick_counter          [#1] #0
-$zones_tick_counter         [#2] #0
-$draw_tick_counter          [#3] #0
+$last_timecheck             [#0] #1
+$ball_tick_counter          [#1] #1
+$zones_tick_counter         [#2] #1
+$draw_tick_counter          [#3] #1
 
-$ball_dir                   [#10] #0
-$ball_pos                   [#11] #0
+$ball_dir                   [#16] #1
+$ball_pos                   [#17] #1
 
-$left_zone_press_state      [#21] #0
-$right_zone_press_state     [#22] #0
+$left_zone_press_state      [#32] #1
+$right_zone_press_state     [#33] #1
 
 
 @loop
