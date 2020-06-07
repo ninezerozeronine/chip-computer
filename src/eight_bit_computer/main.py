@@ -13,17 +13,24 @@ from . import rom
 
 
 def assemble(
-        input_filepath,
-        output_filepath=None
-        ):
+        input_filepath, 
+        output_filename=None, 
+        output_dir=None, 
+        output_format="logisim"
+    ):
     """
     Read an assembly file and write out equivalent machine code.
 
     Args:
         input_filepath (str): The location of the assembly file.
-        output_filepath (str) (optional): The location to write out the
-            machine code. If nothing is passed, the output path will be
-            the input path with the extension changed to mc.
+        output_filename (str) (optional): The location to write out the
+            machine code (without extension). If nothing is passed,
+            the output path will be the input filename with the
+            extension changed to mc.
+        output_dir (str) (optional): The directory to write the
+            assembled code into.
+        output_format (str) (optional): How to format the output.
+            ``logisim`` or ``arduino``.
     """
 
     # Does input file exist
@@ -37,15 +44,24 @@ def assemble(
         print "Input file must have a .asm extension."
         return
 
-    # Validate/generate output filepath
-    if output_filepath is None:
-        output_filepath = get_mc_filepath(input_filepath)
-    output_dir = os.path.dirname(output_filepath)
-    if output_dir == "":
-        output_filepath = "./{output_filepath}".format(
-            output_filepath=output_filepath
+    # Is output format correct
+    output_formats = ["logisim", "arduino"]
+    if output_format not in output_formats:
+        formats_str = " ".join(["'{name}'".format(name=name) for name in output_formats])
+        print "Output format must be one of: {output_formats}.".format(
+            output_formats=formats_str
         )
-    elif not os.path.isdir(output_dir):
+        return
+
+    # Generate output filename
+    if output_filename is None:
+        output_filename = get_mc_filename(input_filepath)
+
+    # Generate output dir
+    if output_dir is None:
+        output_dir = "./"
+    else
+        if not os.path.isdir(output_dir):
         print "Output directory: {output_dir} does not exist.".format(
             output_dir=output_dir
         )
@@ -59,23 +75,73 @@ def assemble(
         print inst.args[0]
         return
 
-    # Success message and summary
-    completion_msg = (
-        "Assembly complete. Assembly file written to: {output_filepath}."
-        "\n\nAssembly summary:\n".format(output_filepath=output_filepath)
-    )
-    print completion_msg
+    if output_format == "logisim":
+        write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename)
+
+
+    print "\n\nAssembly summary:\n"
     print generate_assembly_summary(assembly_line_infos)
 
-    # Convert to correct format
-    mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
-    variable_bitstrings = extract_variables(assembly_line_infos)
-    combined_bitstrings = combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings)
-    output = export.bitstrings_to_logisim(combined_bitstrings)
 
-    # Write file.
-    with open(output_filepath, "w") as file:
-        file.write(output)
+def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename):
+    """
+    Write machine code and variable bitstrings to logisim format.
+
+    Args:
+        assembly_line_infos (list(dict)): List of dictionaries of information
+            about the parsed assembly.
+        output_dir (str): The directory to write the assembled code into.
+        output_filename (str): the basename (no extension) for the logisim
+            file.
+    """
+
+    file_contents = export.gen_logisim_program_file(assembly_line_infos)
+    file_name = output_filename + ".mc"
+    file_path = os.path.join(output_dir, file_name)
+
+    with open(file_path, "w") as file:
+        file.write(file_contents)
+
+    completion_msg = (
+        "Assembly complete. Assembly file written to: {output_filepath}.".format(
+            output_filepath=file_path
+        )
+    )
+    print completion_msg
+
+
+def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename):
+    
+    """
+    Write machine code and variable bitstrings to arduino format.
+
+    Args:
+        assembly_line_infos (list(dict)): List of dictionaries of information
+            about the parsed assembly.
+        output_dir (str): The directory to write the assembled code into.
+        output_filename (str): the basename (no extension) for the logisim
+            file.
+    """
+    
+    h_filename = "prog_{}.h".format(output_filename)
+    cpp_filename = "prog_{}.cpp".format(output_filename)
+
+    h_file_contents = export.gen_arduino_h_program_file(assembly_line_infos, h_filename)
+    cpp_file_contents = export.gen_arduino_cpp_program_file(assembly_line_infos, h_filename)
+
+    h_filepath = os.path.join(output_dir, h_filename)
+    cpp_filepath = os.path.join(output_dir, cpp_filename)
+
+    with open(h_filepath, "w") as h_file:
+        h_file.write(h_file_contents)
+    with open(cpp_filepath, "w") as cpp_file:
+        cpp_file.write(cpp_file_contents)
+
+    completion_msg = (
+        "Assembly complete. Assembly files written to: {h_filepath} and ."
+        "{cpp_filepath}".format(h_filepath=h_filepath, cpp_filepath=cpp_filepath)
+        )
+    print completion_msg
 
 
 def filepath_to_lines(input_filepath):
@@ -94,97 +160,25 @@ def filepath_to_lines(input_filepath):
     return lines
 
 
-def get_mc_filepath(asm_path):
+def get_mc_filename(asm_path):
     """
-    Get the filepath for the machine code.
+    Get the filename for the machine code.
 
-    This is the assembly filepath with .asm replaced with .mc
+    This is the assembly filename with .asm replaced with .mc
 
     Args:
         asm_path (str): Path to the assembly file.
     Returns:
         str: Path to the machine code file.
     """
-
-    return "{basepath}.mc".format(basepath=asm_path[:-4])
-
-
-def extract_machine_code(assembly_lines):
-    """
-    Extract machine code from assembly line dictionaries.
-
-    Args:
-        assembly_lines (list(dict)): List of assembly line info
-            dictionaries to extract machine code from. See
-            :func:`~.get_assembly_line_template` for details on what
-            those dictionaries contain.
-    Returns:
-        list(str): List of bit strings for the machine code.
-    """
-    machine_code = []
-    for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                machine_code.append(mc_byte["bitstring"])
-    return machine_code
+    filename = os.path.split(asm_path)
+    return "{basename}.mc".format(basename=filename[:-4])
 
 
-def extract_variables(assembly_lines):
-    """
-    Extract variables from assembly line dictionaries.
-
-    Args:
-        assembly_lines (list(dict)): List of assembly line info
-            dictionaries to extract variables from. See
-            :func:`~.get_assembly_line_template` for details on what
-            those dictionaries contain.
-    Returns:
-        list(str): List of bit strings for the machine code. Empty
-        list if there's no variables
-    """
-
-    # Extract all the variables and their positions
-    pos_to_value_map = {}
-    for assembly_line in assembly_lines:
-        if assembly_line["defines_variable"]:
-            bitstring = number_to_bitstring(assembly_line["defined_variable_value"])
-            pos_to_value_map[assembly_line["defined_variable_location"]] = bitstring
-
-    # Put the variables into a list, filling empty positions with zeroes.
-    ret = []
-    if pos_to_value_map:
-        biggest = max(pos_to_value_map)
-        for position in range(biggest + 1):
-            if position in pos_to_value_map:
-                ret.append(pos_to_value_map[position])
-            else:
-                ret.append(number_to_bitstring(0))
-
-    return ret
 
 
-def combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings):
-    """
-    Combine machine code and variables into a single appropriately padded list.
 
-    Args:
-        mc_byte_bitstrings (list(str)): List of bitstrings that make
-            up the machine code.
-        variable_bitstrings (list(str)): List of bitstrings that
-            represent the variables.
-    Returns:
-        list(str): List of the machine code and variable bitstrings,
-        padded to that the variables begin at byte 257.
-    """
-    
-    if not variable_bitstrings:
-        return mc_byte_bitstrings
 
-    # Pad the machine code bytes up to 256 bytes
-    num_mc_bytes = len(mc_byte_bitstrings)
-    padded_mc_bytes = mc_byte_bitstrings + [number_to_bitstring(0)] * (256 - num_mc_bytes)
-
-    return padded_mc_bytes + variable_bitstrings
 
 
 def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):

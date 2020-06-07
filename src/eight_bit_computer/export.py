@@ -137,37 +137,6 @@ def create_arduino_header(header_file_basename, rom_var_name):
     return "\n".join(h_lines)
 
 
-def bitstrings_to_logisim(bitstrings):
-    """
-    Convert bitstrigs to a logising RAM/ROM file format.
-
-    Used to convert ROMs and machine code.
-
-    Args:
-        bitstrings (list(str)): List of bitstrings to convert to a
-            logisim friendly format.
-    Returns:
-        str: String ready to be written to a file.
-
-    """
-    logisim_lines = ["v2.0 raw"]
-    for line_bytes in chunker(bitstrings, 16):
-        line_parts = []
-        for line_chunk_bytes in chunker(line_bytes, 4):
-            hex_strings = [
-                number_utils.bitstring_to_hex_string(bit_string)
-                for bit_string
-                in line_chunk_bytes
-            ]
-            four_hex_bytes = " ".join(hex_strings)
-            line_parts.append(four_hex_bytes)
-        line = "  ".join(line_parts)
-        logisim_lines.append(line)
-    logisim_string = "\n".join(logisim_lines)
-    logisim_string += "\n"
-    return logisim_string
-
-
 def chunker(seq, chunk_size):
     """
     Take a larger sequence and split it into smaller chunks.
@@ -223,3 +192,145 @@ def write_arduino_pair(
     cpp_filepath = os.path.join(output_dir, cpp_filename)
     with open(cpp_filepath, "w") as cpp_file:
         cpp_file.write(cpp_output)
+
+
+def gen_logisim_program_file(mc_byte_bitstrings, variable_bitstrings):
+    """
+    Generate contents for logisim files holding a program.
+
+    Args:
+        assembly_line_infos (list(dict)): List of dictionaries of information
+            about the parsed assembly.
+    Returns:
+        str: Content of the logisim file.
+    """
+
+    mc_byte_bitstrings = extract_machine_code(assembly_line_infos)
+    variable_bitstrings = extract_variables(assembly_line_infos)
+    combined_bitstrings = combine_mc_and_variable_bitstrings(
+        mc_byte_bitstrings, variable_bitstrings
+    )
+    return bitstrings_to_logisim(combined_bitstrings)
+
+
+def extract_machine_code(assembly_lines):
+    """
+    Extract machine code from assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly line info
+            dictionaries to extract machine code from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+    Returns:
+        list(str): List of bit strings for the machine code.
+    """
+    machine_code = []
+    for assembly_line in assembly_lines:
+        if assembly_line["has_machine_code"]:
+            for mc_byte in assembly_line["mc_bytes"]:
+
+                machine_code.append(mc_byte["bitstring"])
+    return machine_code
+
+
+def extract_variables(assembly_lines):
+    """
+    Extract variables from assembly line dictionaries.
+
+    Args:
+        assembly_lines (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+    Returns:
+        list(str): List of bit strings for the machine code. Empty
+        list if there's no variables
+    """
+
+    # Extract all the variables and their positions
+    pos_to_value_map = {}
+    for assembly_line in assembly_lines:
+        if assembly_line["defines_variable"]:
+            bitstring = number_to_bitstring(assembly_line["defined_variable_value"])
+            pos_to_value_map[assembly_line["defined_variable_location"]] = bitstring
+
+    # Put the variables into a list, filling empty positions with zeroes.
+    ret = []
+    if pos_to_value_map:
+        biggest = max(pos_to_value_map)
+        for position in range(biggest + 1):
+            if position in pos_to_value_map:
+                ret.append(pos_to_value_map[position])
+            else:
+                ret.append(number_to_bitstring(0))
+
+    return ret
+
+
+def combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings):
+    """
+    Combine machine code and variables into a single appropriately padded list.
+
+    Args:
+        mc_byte_bitstrings (list(str)): List of bitstrings that make
+            up the machine code.
+        variable_bitstrings (list(str)): List of bitstrings that
+            represent the variables.
+    Returns:
+        list(str): List of the machine code and variable bitstrings,
+        padded to that the variables begin at byte 257.
+    """
+    
+    if not variable_bitstrings:
+        return mc_byte_bitstrings
+
+    # Pad the machine code bytes up to 256 bytes
+    num_mc_bytes = len(mc_byte_bitstrings)
+    padded_mc_bytes = mc_byte_bitstrings + [number_to_bitstring(0)] * (256 - num_mc_bytes)
+
+    return padded_mc_bytes + variable_bitstrings
+
+
+def bitstrings_to_logisim(bitstrings):
+    """
+    Convert bitstrigs to a logisim RAM/ROM file format.
+
+    Used to convert ROMs and machine code.
+
+    Args:
+        bitstrings (list(str)): List of bitstrings to convert to a
+            logisim friendly format.
+    Returns:
+        str: String ready to be written to a file.
+
+    """
+    logisim_lines = ["v2.0 raw"]
+    for line_bytes in chunker(bitstrings, 16):
+        line_parts = []
+        for line_chunk_bytes in chunker(line_bytes, 4):
+            hex_strings = [
+                number_utils.bitstring_to_hex_string(bit_string)
+                for bit_string
+                in line_chunk_bytes
+            ]
+            four_hex_bytes = " ".join(hex_strings)
+            line_parts.append(four_hex_bytes)
+        line = "  ".join(line_parts)
+        logisim_lines.append(line)
+    logisim_string = "\n".join(logisim_lines)
+    logisim_string += "\n"
+    return logisim_string
+
+
+def gen_arduino_h_program_file(assembly_line_infos, h_filename):
+    """
+
+    """
+    pass
+
+def gen_arduino_cpp_program_file(assembly_line_infos, h_filename):
+    """
+
+    """
+    pass
