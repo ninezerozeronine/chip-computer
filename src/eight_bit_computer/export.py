@@ -229,7 +229,6 @@ def extract_machine_code(assembly_lines):
     for assembly_line in assembly_lines:
         if assembly_line["has_machine_code"]:
             for mc_byte in assembly_line["mc_bytes"]:
-
                 machine_code.append(mc_byte["bitstring"])
     return machine_code
 
@@ -323,13 +322,221 @@ def bitstrings_to_logisim(bitstrings):
     return logisim_string
 
 
-def gen_arduino_h_program_file(assembly_line_infos, h_filename):
+def gen_arduino_program_h_file(assembly_line_infos, h_basename):
+    """
+    Generate header file for program for Arduino.
+
+    The header file looks like this::
+
+        #ifndef PROG_FIBONACCI_H
+        #define PROG_FIBONACCI_H
+
+        #include "Arduino.h"
+
+        extern const byte num_fibonacci_program_bytes;
+        extern const byte fibonacci_program_bytes[];
+
+        extern const byte num_fibonacci_data_bytes;
+        extern const byte fibonacci_data_bytes[];
+
+        extern const char fibonacci_program_name[];
+
+        #endif
+
+    Args:
+        assembly_line_infos (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+        h_basename (str): The filename (with no extension) for the file.
+
+    Returns:
+        str: String ready to be written to a file.
     """
 
-    """
-    pass
+    h_lines = []
+    h_lines.append("#ifndef PROG_{h_basename}_H".format(
+        h_basename=h_basename.upper()
+    ))
+    h_lines.append("#define {h_basename}_H".format(
+        h_basename=h_basename.upper()
+    ))
+    h_lines.append("")
+    h_lines.append("#include <Arduino.h>")
+    h_lines.append("")
+    h_lines.append("extern const byte num_{h_basename}_program_bytes;".format(
+        h_basename=h_basename
+    ))
+    h_lines.append("extern const byte {h_basename}_program_bytes[];".format(
+        h_basename=h_basename
+    ))
+    h_lines.append("")
+    h_lines.append("extern const byte num_{h_basename}_data_bytes;".format(
+        h_basename=h_basename
+    ))
+    h_lines.append("extern const byte {h_basename}_data_bytes[];".format(
+        h_basename=h_basename
+    ))
+    h_lines.append("")
+    h_lines.append("extern const char {h_basename}_program_name[];".format(
+        h_basename=h_basename
+    ))
+    h_lines.append("")
+    h_lines.append("#endif")
+    h_lines.append("")
 
-def gen_arduino_cpp_program_file(assembly_line_infos, h_filename):
+    return "\n".join(h_lines)
+
+
+def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename):
+    """
+    Generate cpp file for program for Arduino.
+
+    The cpp file looks like this::
+
+        #include "prog_fibonacci.h"
+
+        extern const byte num_fibonacci_program_bytes = 13;
+        extern const byte fibonacci_program_bytes[] PROGMEM = {
+            0x39, // SET A #1 (@set_initial)
+            0x01, // (1)
+            0x3A, // SET B #1
+            0x01, // (1)
+            0x08, // COPY A ACC (@fib_loop)
+            0xCE, // ADD B
+            0x24, // JUMP_IF_OVERFLOW_FLAG @set_initial
+            0x00, // (0)
+            0x03, // COPY ACC C (to display)
+            0x11, // COPY B A
+            0x02, // COPY ACC B
+            0x3D, // JUMP @fib_loop
+            0x04  // (4)
+        };
+
+        extern const byte num_fibonacci_data_bytes = 0;
+
+        // Needs to be at least 1 byte in this array
+        extern const byte fibonacci_data_bytes[] PROGMEM = {
+            0x00 // Placeholder.
+        };
+
+        // Max of seven characters
+        extern const char fibonacci_program_name[] = "Fbnacci";
+
+    Args:
+        assembly_line_infos (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+        filename_base (str): The basename (no extension) for the file.
+            Also used as a general identifier.
+        h_filename (str): The filename of the headerfile (including extension).
+
+    Returns:
+        str: String ready to be written to a file.
+    """
+
+    machinecode_info = extract_program_file_machinecode_info(assembly_line_infos)
+    num_prog_bytes = len(machinecode_info)
+
+    cpp_lines = []
+    cpp_lines.append("#include \"{h_filename}\"".format(h_filename=h_filename))
+    cpp_lines.append("")
+
+    cpp_lines.append(
+        "extern const byte num_{filename_base}_program_bytes "
+        "= {num_prog_bytes};".format(
+            filename_base=filename_base, num_prog_bytes=num_prog_bytes
+        )
+    )
+    cpp_lines.append(
+        "extern const byte {filename_base}_program_bytes[] "
+        "PROGMEM = {".format(filename_base=filename_base)
+    )
+
+    # Generate machine code bytes
+    for byte_index, byte_info in enumerate(machinecode_info):
+        line = "    0x{hex_byte}".format(
+            number_utils.bitstring_to_hex_string(byte_info["bitstring"])
+        )
+        if byte_index != (num_prog_bytes - 1):
+            line += ', '
+        else:
+            line += '  '
+        line += byte_info["comment"]
+        cpp_lines.append(line)
+    cpp_lines.append("};")
+
+    databyte_info = extract_program_file_databyte_info(assembly_line_infos)
+    num_data_bytes = len(databyte_info)
+
+    cpp_lines.append(
+        "extern const byte num_{filename_base}_data_bytes "
+        "= {num_data_bytes};".format(
+            filename_base=filename_base, num_data_bytes=num_data_bytes
+        )
+    )
+    cpp_lines.append("")
+    cpp_lines.append("// Needs to be at least 1 byte in this array")
+    cpp_lines.append(
+        "extern const byte {filename_base}_data_bytes[] PROGMEM = {".format(
+            filename_base=filename_base)
+        )
+
+    # Generate data (variable) bytes
+    if num_data_bytes == 0:
+        cpp_lines.append("    0x00 // Placeholder.")
+    else:
+        
+    cpp_lines.append("};")
+
+
+def extract_program_file_machinecode_info(assembly_line_infos):
+    """
+    Get necessary machine code info for arduino cpp file.
+
+    Args:
+        assembly_line_infos (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+    Returns:
+        list(dict(str:str)): Bitstring and relevant comment for each
+        machinecode byte.
+    """
+
+    mc_byte_infos = []
+    byte_index = 0
+    for assembly_line in assembly_lines:
+        if assembly_line["has_machine_code"]:
+            for mc_byte in assembly_line["mc_bytes"]:
+                byte_data = {}
+                byte_data["bitstring"] = mc_byte["bitstring"]
+                comment = "// {byte_index:03d}".format(byte_index=byte_index)
+
+                if mc_byte["byte_type"] == "instruction":
+                    comment = "{comment} {raw_line}".format(
+                        raw_line=assembly_line["raw"]
+                    )
+                    if assembly_line["has_label_assigned"]:
+                        comment = "{comment} ({label})".format(
+                            assembly_line["assigned_label"]
+                        )
+
+                elif mc_byte["byte_type"] == "constant":
+                    comment = "{comment} ({constant})".format(
+                        constant=number_utils.bitstring_to_number(mc_byte["bitstring"])
+                    )
+                    pass
+
+                byte_data["comment"] = comment
+                mc_byte_infos.append(byte_data)
+                byte_index += 1
+
+    return mc_byte_infos
+
+
+def extract_program_file_variable_info(assembly_line_infos):
     """
 
     """

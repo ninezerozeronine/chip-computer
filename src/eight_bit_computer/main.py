@@ -14,7 +14,7 @@ from . import rom
 
 def assemble(
         input_filepath, 
-        output_filename=None, 
+        output_filename_base=None, 
         output_dir=None, 
         output_format="logisim"
     ):
@@ -23,7 +23,7 @@ def assemble(
 
     Args:
         input_filepath (str): The location of the assembly file.
-        output_filename (str) (optional): The location to write out the
+        output_filename_base (str) (optional): The location to write out the
             machine code (without extension). If nothing is passed,
             the output path will be the input filename with the
             extension changed to mc.
@@ -54,8 +54,8 @@ def assemble(
         return
 
     # Generate output filename
-    if output_filename is None:
-        output_filename = get_mc_filename(input_filepath)
+    if output_filename_base is None:
+        output_filename_base = get_mc_filename(input_filepath)
 
     # Generate output dir
     if output_dir is None:
@@ -76,14 +76,14 @@ def assemble(
         return
 
     if output_format == "logisim":
-        write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename)
+        write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename_base)
 
 
     print "\n\nAssembly summary:\n"
     print generate_assembly_summary(assembly_line_infos)
 
 
-def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename):
+def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename_base):
     """
     Write machine code and variable bitstrings to logisim format.
 
@@ -91,12 +91,12 @@ def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename
         assembly_line_infos (list(dict)): List of dictionaries of information
             about the parsed assembly.
         output_dir (str): The directory to write the assembled code into.
-        output_filename (str): the basename (no extension) for the logisim
+        output_filename_base (str): the basename (no extension) for the logisim
             file.
     """
 
     file_contents = export.gen_logisim_program_file(assembly_line_infos)
-    file_name = output_filename + ".mc"
+    file_name = output_filename_base + ".mc"
     file_path = os.path.join(output_dir, file_name)
 
     with open(file_path, "w") as file:
@@ -110,7 +110,7 @@ def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename
     print completion_msg
 
 
-def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename):
+def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename_base):
     
     """
     Write machine code and variable bitstrings to arduino format.
@@ -119,15 +119,14 @@ def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename
         assembly_line_infos (list(dict)): List of dictionaries of information
             about the parsed assembly.
         output_dir (str): The directory to write the assembled code into.
-        output_filename (str): the basename (no extension) for the logisim
-            file.
+        output_filename_base (str): The filename (with no extension) for the file.
     """
     
-    h_filename = "prog_{}.h".format(output_filename)
-    cpp_filename = "prog_{}.cpp".format(output_filename)
+    h_filename = "prog_{}.h".format(output_filename_base)
+    cpp_filename = "prog_{}.cpp".format(output_filename_base)
 
-    h_file_contents = export.gen_arduino_h_program_file(assembly_line_infos, h_filename)
-    cpp_file_contents = export.gen_arduino_cpp_program_file(assembly_line_infos, h_filename)
+    h_file_contents = export.gen_arduino_program_h_file(assembly_line_infos, output_filename_base)
+    cpp_file_contents = export.gen_arduino_program_cpp_file(assembly_line_infos, output_filename_base, h_filename)
 
     h_filepath = os.path.join(output_dir, h_filename)
     cpp_filepath = os.path.join(output_dir, cpp_filename)
@@ -173,12 +172,6 @@ def get_mc_filename(asm_path):
     """
     filename = os.path.split(asm_path)
     return "{basename}.mc".format(basename=filename[:-4])
-
-
-
-
-
-
 
 
 def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
