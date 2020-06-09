@@ -413,10 +413,10 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
             0x04  // (4)
         };
 
-        extern const byte num_fibonacci_data_bytes = 0;
+        extern const byte num_fibonacci_variable_bytes = 0;
 
         // Needs to be at least 1 byte in this array
-        extern const byte fibonacci_data_bytes[] PROGMEM = {
+        extern const byte fibonacci_variable_bytes[] PROGMEM = {
             0x00 // Placeholder.
         };
 
@@ -467,29 +467,59 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
         cpp_lines.append(line)
     cpp_lines.append("};")
 
-    databyte_info = extract_program_file_databyte_info(assembly_line_infos)
-    num_data_bytes = len(databyte_info)
+    variable_info = extract_program_file_variable_info(assembly_line_infos)
+    num_variable_bytes = len(variable_info)
 
     cpp_lines.append(
         "extern const byte num_{filename_base}_data_bytes "
-        "= {num_data_bytes};".format(
-            filename_base=filename_base, num_data_bytes=num_data_bytes
+        "= {num_variable_bytes};".format(
+            filename_base=filename_base, num_variable_bytes=num_variable_bytes
         )
     )
     cpp_lines.append("")
     cpp_lines.append("// Needs to be at least 1 byte in this array")
     cpp_lines.append(
-        "extern const byte {filename_base}_data_bytes[] PROGMEM = {".format(
+        "extern const byte {filename_base}_variable_bytes[] PROGMEM = {".format(
             filename_base=filename_base)
         )
 
     # Generate data (variable) bytes
-    if num_data_bytes == 0:
+    if num_variable_bytes == 0:
         cpp_lines.append("    0x00 // Placeholder.")
     else:
-        
-    cpp_lines.append("};")
+        for variable_index, variable in enumerate(variable_info):
 
+            if variable_index != (num_variable_bytes - 1):
+                joiner = ', '
+            else:
+                joiner = '  '
+
+            if variable["name"] is None:
+                cpp_lines.append(
+                    "    0x00{joiner}// {variable_index:03d} (placeholder).".format(
+                        joiner=joiner,
+                        variable_index=variable_index
+                    )
+                )
+            else:
+                cpp_lines.append(
+                    "    0x{value:02X}{joiner}// {variable_index:03d} {name}".format(
+                        value=variable["value"],
+                        joiner=joiner,
+                        variable_index=variable_index,
+                        name=variable["name"]
+                    )
+                )
+    cpp_lines.append("};")
+    cpp_lines.append("")
+    cpp_lines.append("// Max of seven characters")
+    cpp_lines.append("extern const char {filename_base}_program_name[] = \"{filename_short}\";".format(
+        filename_base=filename_base,
+        filename_short=filename_base[:7]
+    ))
+    cpp_lines.append("")
+    
+    return "\n".join(cpp_lines)
 
 def extract_program_file_machinecode_info(assembly_line_infos):
     """
@@ -527,7 +557,6 @@ def extract_program_file_machinecode_info(assembly_line_infos):
                     comment = "{comment} ({constant})".format(
                         constant=number_utils.bitstring_to_number(mc_byte["bitstring"])
                     )
-                    pass
 
                 byte_data["comment"] = comment
                 mc_byte_infos.append(byte_data)
@@ -538,6 +567,39 @@ def extract_program_file_machinecode_info(assembly_line_infos):
 
 def extract_program_file_variable_info(assembly_line_infos):
     """
+    Pull out the info to write variables to program arduino cpp file.
 
+    Args:
+        assembly_line_infos (list(dict)): List of assembly line info
+            dictionaries to extract variables from. See
+            :func:`~.get_assembly_line_template` for details on what
+            those dictionaries contain.
+    Returns:
+        list(dict): List of variable values and names. Spots with no
+        variables are filled with placeholders.
     """
-    pass
+
+    # Extract all the variables and their positions
+    variable_infos = {}
+    for assembly_line in assembly_line_infos:
+        if assembly_line["defines_variable"]:
+            variable_infos[variable_info["location"]] = {
+                "value" : assembly_line["defined_variable_value"],
+                "name" : assembly_line["defined_variable"]
+            }
+            variable_infos.append(variable_info)
+
+    # Put the variables into a list, filling empty positions with zeroes.
+    ret = []
+    if variable_infos:
+        biggest = max(variable_infos)
+        for position in range(biggest + 1):
+            if position in variable_infos:
+                ret.append(variable_infos[position])
+            else:
+                ret.append({
+                    "value" : 0,
+                    "name" : None
+                })
+
+    return ret
