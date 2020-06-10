@@ -3,6 +3,9 @@ import textwrap
 import pytest
 
 from eight_bit_computer import export
+from eight_bit_computer.data_structures import (
+    get_assembly_line_template, get_machine_code_byte_template
+)
 
 
 def test_bitstrings_to_arduino_cpp():
@@ -81,3 +84,159 @@ def generator_tester(generator_iterator_to_test, expected_values):
 def test_chunker(seq, chunk_size, expected):
     generator = export.chunker(seq, chunk_size)
     generator_tester(generator, expected)
+
+
+def gen_test_extract_variables_data():
+    ret = []
+
+    lines = []
+    line1 = get_assembly_line_template()
+    line1["defines_variable"] = True
+    line1["defined_variable"] = "$var1"
+    line1["defined_variable_location"] = 0
+    line1["defined_variable_value"] = 1
+    lines.append(line1)
+
+    res = ["00000001"]
+
+    ret.append((lines, res))
+
+
+    lines = []
+    line1 = get_assembly_line_template()
+    line1["defines_variable"] = True
+    line1["defined_variable"] = "$var1"
+    line1["defined_variable_location"] = 0
+    line1["defined_variable_value"] = 1
+    lines.append(line1)
+
+    line2 = get_assembly_line_template()
+    line2["defines_variable"] = True
+    line2["defined_variable"] = "$var2"
+    line2["defined_variable_location"] = 1
+    line2["defined_variable_value"] = 5
+    lines.append(line2)
+
+    res = ["00000001", "00000101"]
+
+    ret.append((lines, res))
+
+    lines = []
+    line1 = get_assembly_line_template()
+    line1["defines_variable"] = True
+    line1["defined_variable"] = "$var1"
+    line1["defined_variable_location"] = 2
+    line1["defined_variable_value"] = 255
+    lines.append(line1)
+
+    res = ["00000000", "00000000", "11111111"]
+
+    ret.append((lines, res))
+
+    return ret
+
+
+@pytest.mark.parametrize(
+    "test_input,expected", gen_test_extract_variables_data()
+)
+def test_extract_variables(test_input, expected):
+    assert export.extract_variables(test_input) == expected
+
+
+def gen_test_combine_mc_and_variable_bitstrings_data():
+    ret = []
+
+    mc_bitstrings = []
+    variable_bitstrings = []
+    res = []
+    ret.append((mc_bitstrings, variable_bitstrings, res))
+
+    mc_bitstrings = ["00001000"]
+    variable_bitstrings = []
+    res = ["00001000"]
+    ret.append((mc_bitstrings, variable_bitstrings, res))
+
+    mc_bitstrings = ["00001000", "00001001"]
+    variable_bitstrings = []
+    res = ["00001000", "00001001"]
+    ret.append((mc_bitstrings, variable_bitstrings, res))
+
+    mc_bitstrings = ["00001000", "00001001"]
+    variable_bitstrings = ["00001111"]
+    res = (["00001000", "00001001"] + ["00000000"] * 254) + ["00001111"]
+    ret.append((mc_bitstrings, variable_bitstrings, res))
+
+    return ret
+
+
+@pytest.mark.parametrize(
+    "mc_bitstrings,variable_bitstrings,expected",
+    gen_test_combine_mc_and_variable_bitstrings_data()
+)
+def test_combine_mc_and_variable_bitstrings(mc_bitstrings, variable_bitstrings, expected):
+    assert export.combine_mc_and_variable_bitstrings(mc_bitstrings, variable_bitstrings) == expected
+
+
+def test_gen_arduino_program_h_file():
+    expected = textwrap.dedent(
+        """\
+        #ifndef PROG_FIBONACCI_H
+        #define PROG_FIBONACCI_H
+
+        #include <Arduino.h>
+
+        extern const byte num_fibonacci_program_bytes;
+        extern const byte fibonacci_program_bytes[];
+
+        extern const byte num_fibonacci_data_bytes;
+        extern const byte fibonacci_data_bytes[];
+
+        extern const char fibonacci_program_name[];
+
+        #endif
+        """
+    )
+
+    assert export.gen_arduino_program_h_file("fibonacci") == expected
+
+
+def test_gen_arduino_program_cpp_file(assembly_line_infos):
+    expected = textwrap.dedent(
+        """\
+        #include "prog_fibonacci.h"
+
+        extern const byte num_fibonacci_program_bytes = 15;
+        extern const byte fibonacci_program_bytes[] PROGMEM = {
+            0xFF, // 000 LOAD [$variable0] A (@label1)
+            0x00, // 001 (0)
+            0xFF, // 002 LOAD [$variable1] A (@label2)
+            0x01, // 003 (1)
+            0xFF, // 004 JUMP @label1
+            0x00, // 005 (0)
+            0xFF, // 006 STORE A [#123]
+            0x7B, // 007 (123)
+            0xFF, // 008 LOAD [$variable2] B (@label3)
+            0x02, // 009 (2)
+            0xFF, // 010 LOAD [$variable0] C
+            0x00, // 011 (0)
+            0x37, // 012 JUMP_IF_LT_ACC #85 @label1
+            0x55, // 013 (85)
+            0x00  // 014 (0)
+        };
+
+        extern const byte num_fibonacci_variable_bytes = 3;
+
+        // Needs to be at least 1 byte in this array
+        extern const byte fibonacci_variable_bytes[] PROGMEM = {
+            0x7B, // 000 $variable0
+            0xD3, // 001 $variable1
+            0x2A  // 002 $variable2
+        };
+
+        // Max of seven characters
+        extern const char fibonacci_program_name[] = "fibonac";
+        """
+    )
+
+    assert export.gen_arduino_program_cpp_file(
+        assembly_line_infos, "fibonacci", "prog_fibonacci.h") == expected

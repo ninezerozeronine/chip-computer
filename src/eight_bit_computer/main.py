@@ -55,17 +55,17 @@ def assemble(
 
     # Generate output filename
     if output_filename_base is None:
-        output_filename_base = get_mc_filename(input_filepath)
+        output_filename_base = os.path.splitext(os.path.basename(input_filepath))[0]
 
     # Generate output dir
     if output_dir is None:
         output_dir = "./"
-    else
+    else:
         if not os.path.isdir(output_dir):
-        print "Output directory: {output_dir} does not exist.".format(
-            output_dir=output_dir
-        )
-        return
+            print "Output directory: {output_dir} does not exist.".format(
+                output_dir=output_dir
+            )
+            return
 
     # Do assembly
     lines = filepath_to_lines(input_filepath)
@@ -77,7 +77,8 @@ def assemble(
 
     if output_format == "logisim":
         write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename_base)
-
+    if output_format == "arduino":
+        write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename_base)
 
     print "\n\nAssembly summary:\n"
     print generate_assembly_summary(assembly_line_infos)
@@ -125,7 +126,7 @@ def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename
     h_filename = "prog_{}.h".format(output_filename_base)
     cpp_filename = "prog_{}.cpp".format(output_filename_base)
 
-    h_file_contents = export.gen_arduino_program_h_file(assembly_line_infos, output_filename_base)
+    h_file_contents = export.gen_arduino_program_h_file(output_filename_base)
     cpp_file_contents = export.gen_arduino_program_cpp_file(assembly_line_infos, output_filename_base, h_filename)
 
     h_filepath = os.path.join(output_dir, h_filename)
@@ -170,7 +171,7 @@ def get_mc_filename(asm_path):
     Returns:
         str: Path to the machine code file.
     """
-    filename = os.path.split(asm_path)
+    filename = os.path.basename(asm_path)
     return "{basename}.mc".format(basename=filename[:-4])
 
 

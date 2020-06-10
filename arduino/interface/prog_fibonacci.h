@@ -1,7 +1,7 @@
 #ifndef PROG_FIBONACCI_H
 #define PROG_FIBONACCI_H
 
-#include "Arduino.h"
+#include <Arduino.h>
 
 extern const byte num_fibonacci_program_bytes;
 extern const byte fibonacci_program_bytes[];

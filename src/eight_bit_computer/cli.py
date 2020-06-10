@@ -11,7 +11,9 @@ def assemble():
     args = parser.parse_args()
     main.assemble(
         args.asm_filepath,
-        output_filepath=args.output_filepath,
+        output_filename_base=args.output_filename_base,
+        output_dir=args.output_directory,
+        output_format=args.output_format
     )
 
 
@@ -34,12 +36,27 @@ def get_assemble_parser():
     )
     parser.add_argument(
         "-o",
-        "--output_filepath",
+        "--output_filename_base",
         help=(
-            "Filepath to write the machine code to. E.g. "
-            "\"../machine_code.mc\". Including ./ for a file in the "
-            "current directory is optional."
+            "Filename base for the assembled file. E.g. "
+            "\"myfile\" or \"fibonacci\". Do not include "
+            "an extension."
         )
+    )
+    parser.add_argument(
+        "-d",
+        "--output_directory",
+        help=(
+            "Directory for the output filed. Defaults to current "
+            "directory."
+        )
+    )
+    parser.add_argument(
+        "-f",
+        "--output_format",
+        choices=["logisim", "arduino"],
+        help="Format to write the assembled code in.",
+        default="logisim",
     )
 
     return parser

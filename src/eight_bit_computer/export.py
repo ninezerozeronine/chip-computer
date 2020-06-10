@@ -251,7 +251,7 @@ def extract_variables(assembly_lines):
     pos_to_value_map = {}
     for assembly_line in assembly_lines:
         if assembly_line["defines_variable"]:
-            bitstring = number_to_bitstring(assembly_line["defined_variable_value"])
+            bitstring = number_utils.number_to_bitstring(assembly_line["defined_variable_value"])
             pos_to_value_map[assembly_line["defined_variable_location"]] = bitstring
 
     # Put the variables into a list, filling empty positions with zeroes.
@@ -262,7 +262,7 @@ def extract_variables(assembly_lines):
             if position in pos_to_value_map:
                 ret.append(pos_to_value_map[position])
             else:
-                ret.append(number_to_bitstring(0))
+                ret.append(number_utils.number_to_bitstring(0))
 
     return ret
 
@@ -286,7 +286,7 @@ def combine_mc_and_variable_bitstrings(mc_byte_bitstrings, variable_bitstrings):
 
     # Pad the machine code bytes up to 256 bytes
     num_mc_bytes = len(mc_byte_bitstrings)
-    padded_mc_bytes = mc_byte_bitstrings + [number_to_bitstring(0)] * (256 - num_mc_bytes)
+    padded_mc_bytes = mc_byte_bitstrings + [number_utils.number_to_bitstring(0)] * (256 - num_mc_bytes)
 
     return padded_mc_bytes + variable_bitstrings
 
@@ -322,7 +322,7 @@ def bitstrings_to_logisim(bitstrings):
     return logisim_string
 
 
-def gen_arduino_program_h_file(assembly_line_infos, h_basename):
+def gen_arduino_program_h_file(h_basename):
     """
     Generate header file for program for Arduino.
 
@@ -331,7 +331,7 @@ def gen_arduino_program_h_file(assembly_line_infos, h_basename):
         #ifndef PROG_FIBONACCI_H
         #define PROG_FIBONACCI_H
 
-        #include "Arduino.h"
+        #include <Arduino.h>
 
         extern const byte num_fibonacci_program_bytes;
         extern const byte fibonacci_program_bytes[];
@@ -344,10 +344,6 @@ def gen_arduino_program_h_file(assembly_line_infos, h_basename):
         #endif
 
     Args:
-        assembly_line_infos (list(dict)): List of assembly line info
-            dictionaries to extract variables from. See
-            :func:`~.get_assembly_line_template` for details on what
-            those dictionaries contain.
         h_basename (str): The filename (with no extension) for the file.
 
     Returns:
@@ -358,7 +354,7 @@ def gen_arduino_program_h_file(assembly_line_infos, h_basename):
     h_lines.append("#ifndef PROG_{h_basename}_H".format(
         h_basename=h_basename.upper()
     ))
-    h_lines.append("#define {h_basename}_H".format(
+    h_lines.append("#define PROG_{h_basename}_H".format(
         h_basename=h_basename.upper()
     ))
     h_lines.append("")
@@ -398,19 +394,19 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
 
         extern const byte num_fibonacci_program_bytes = 13;
         extern const byte fibonacci_program_bytes[] PROGMEM = {
-            0x39, // SET A #1 (@set_initial)
-            0x01, // (1)
-            0x3A, // SET B #1
-            0x01, // (1)
-            0x08, // COPY A ACC (@fib_loop)
-            0xCE, // ADD B
-            0x24, // JUMP_IF_OVERFLOW_FLAG @set_initial
-            0x00, // (0)
-            0x03, // COPY ACC C (to display)
-            0x11, // COPY B A
-            0x02, // COPY ACC B
-            0x3D, // JUMP @fib_loop
-            0x04  // (4)
+            0x39, // 000 SET A #1 (@set_initial)
+            0x01, // 001 (1)
+            0x3A, // 002 SET B #1
+            0x01, // 003 (1)
+            0x08, // 004 COPY A ACC (@fib_loop)
+            0xCE, // 005 ADD B
+            0x24, // 006 JUMP_IF_OVERFLOW_FLAG @set_initial
+            0x00, // 007 (0)
+            0x03, // 008 COPY ACC C (to display)
+            0x11, // 009 COPY B A
+            0x02, // 010 COPY ACC B
+            0x3D, // 011 JUMP @fib_loop
+            0x04  // 012 (4)
         };
 
         extern const byte num_fibonacci_variable_bytes = 0;
@@ -451,13 +447,13 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
     )
     cpp_lines.append(
         "extern const byte {filename_base}_program_bytes[] "
-        "PROGMEM = {".format(filename_base=filename_base)
+        "PROGMEM = {{".format(filename_base=filename_base)
     )
 
     # Generate machine code bytes
     for byte_index, byte_info in enumerate(machinecode_info):
         line = "    0x{hex_byte}".format(
-            number_utils.bitstring_to_hex_string(byte_info["bitstring"])
+            hex_byte=number_utils.bitstring_to_hex_string(byte_info["bitstring"])
         )
         if byte_index != (num_prog_bytes - 1):
             line += ', '
@@ -466,12 +462,13 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
         line += byte_info["comment"]
         cpp_lines.append(line)
     cpp_lines.append("};")
-
+    cpp_lines.append("")
+    
     variable_info = extract_program_file_variable_info(assembly_line_infos)
     num_variable_bytes = len(variable_info)
 
     cpp_lines.append(
-        "extern const byte num_{filename_base}_data_bytes "
+        "extern const byte num_{filename_base}_variable_bytes "
         "= {num_variable_bytes};".format(
             filename_base=filename_base, num_variable_bytes=num_variable_bytes
         )
@@ -479,7 +476,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
     cpp_lines.append("")
     cpp_lines.append("// Needs to be at least 1 byte in this array")
     cpp_lines.append(
-        "extern const byte {filename_base}_variable_bytes[] PROGMEM = {".format(
+        "extern const byte {filename_base}_variable_bytes[] PROGMEM = {{".format(
             filename_base=filename_base)
         )
 
@@ -504,7 +501,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
             else:
                 cpp_lines.append(
                     "    0x{value:02X}{joiner}// {variable_index:03d} {name}".format(
-                        value=variable["value"],
+                        value=number_utils.get_positive_equivalent(variable["value"]),
                         joiner=joiner,
                         variable_index=variable_index,
                         name=variable["name"]
@@ -518,7 +515,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
         filename_short=filename_base[:7]
     ))
     cpp_lines.append("")
-    
+
     return "\n".join(cpp_lines)
 
 def extract_program_file_machinecode_info(assembly_line_infos):
@@ -537,7 +534,7 @@ def extract_program_file_machinecode_info(assembly_line_infos):
 
     mc_byte_infos = []
     byte_index = 0
-    for assembly_line in assembly_lines:
+    for assembly_line in assembly_line_infos:
         if assembly_line["has_machine_code"]:
             for mc_byte in assembly_line["mc_bytes"]:
                 byte_data = {}
@@ -545,16 +542,19 @@ def extract_program_file_machinecode_info(assembly_line_infos):
                 comment = "// {byte_index:03d}".format(byte_index=byte_index)
 
                 if mc_byte["byte_type"] == "instruction":
-                    comment = "{comment} {raw_line}".format(
-                        raw_line=assembly_line["raw"]
+                    comment = "{comment} {clean_line}".format(
+                        comment=comment,
+                        clean_line=assembly_line["clean"]
                     )
                     if assembly_line["has_label_assigned"]:
                         comment = "{comment} ({label})".format(
-                            assembly_line["assigned_label"]
+                            comment=comment,
+                            label=assembly_line["assigned_label"]
                         )
 
                 elif mc_byte["byte_type"] == "constant":
                     comment = "{comment} ({constant})".format(
+                        comment=comment,
                         constant=number_utils.bitstring_to_number(mc_byte["bitstring"])
                     )
 
@@ -583,11 +583,10 @@ def extract_program_file_variable_info(assembly_line_infos):
     variable_infos = {}
     for assembly_line in assembly_line_infos:
         if assembly_line["defines_variable"]:
-            variable_infos[variable_info["location"]] = {
+            variable_infos[assembly_line["defined_variable_location"]] = {
                 "value" : assembly_line["defined_variable_value"],
                 "name" : assembly_line["defined_variable"]
             }
-            variable_infos.append(variable_info)
 
     # Put the variables into a list, filling empty positions with zeroes.
     ret = []
