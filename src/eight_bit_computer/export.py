@@ -194,7 +194,7 @@ def write_arduino_pair(
         cpp_file.write(cpp_output)
 
 
-def gen_logisim_program_file(mc_byte_bitstrings, variable_bitstrings):
+def gen_logisim_program_file(assembly_line_infos):
     """
     Generate contents for logisim files holding a program.
 

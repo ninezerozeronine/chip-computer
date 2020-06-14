@@ -46,22 +46,6 @@ def test_create_arduino_header():
     assert export.create_arduino_header("header_filename", "EXAMPLE_VAR_NAME") == expected
 
 
-def test_bitstrings_to_logisim():
-    test_data = [
-        "10111110",
-        "11101111",
-        "11111010",
-        "11001110",
-    ]
-    expected = textwrap.dedent(
-        """\
-        v2.0 raw
-        BE EF FA CE
-        """
-    )
-    assert export.bitstrings_to_logisim(test_data) == expected
-
-
 def generator_tester(generator_iterator_to_test, expected_values):
     """
     https://stackoverflow.com/questions/34346182/testing-a-generator-in-python
@@ -84,6 +68,58 @@ def generator_tester(generator_iterator_to_test, expected_values):
 def test_chunker(seq, chunk_size, expected):
     generator = export.chunker(seq, chunk_size)
     generator_tester(generator, expected)
+
+
+def test_gen_logisim_program_file(assembly_line_infos):
+    expected = textwrap.dedent(
+        """\
+        v2.0 raw
+        FF 00 FF 01  FF 00 FF 7B  FF 02 FF 00  37 55 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        00 00 00 00  00 00 00 00  00 00 00 00  00 00 00 00
+        7B D3 2A
+        """
+    )
+
+    assert export.gen_logisim_program_file(assembly_line_infos) == expected
+
+
+def test_extract_machine_code(assembly_line_infos):
+    expected = [
+        "11111111",
+        "00000000",
+        "11111111",
+        "00000001",
+
+        "11111111",
+        "00000000",
+        "11111111",
+        "01111011",
+
+        "11111111",
+        "00000010",
+        "11111111",
+        "00000000",
+
+        "00110111",
+        "01010101",
+        "00000000"
+    ]
+    assert export.extract_machine_code(assembly_line_infos) == expected
+
 
 
 def gen_test_extract_variables_data():
@@ -177,6 +213,22 @@ def test_combine_mc_and_variable_bitstrings(mc_bitstrings, variable_bitstrings, 
     assert export.combine_mc_and_variable_bitstrings(mc_bitstrings, variable_bitstrings) == expected
 
 
+def test_bitstrings_to_logisim():
+    test_data = [
+        "10111110",
+        "11101111",
+        "11111010",
+        "11001110",
+    ]
+    expected = textwrap.dedent(
+        """\
+        v2.0 raw
+        BE EF FA CE
+        """
+    )
+    assert export.bitstrings_to_logisim(test_data) == expected
+
+
 def test_gen_arduino_program_h_file():
     expected = textwrap.dedent(
         """\
@@ -240,3 +292,94 @@ def test_gen_arduino_program_cpp_file(assembly_line_infos):
 
     assert export.gen_arduino_program_cpp_file(
         assembly_line_infos, "fibonacci", "prog_fibonacci.h") == expected
+
+
+def test_extract_program_file_machinecode_info(assembly_line_infos):
+    expected = [
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 000 LOAD [$variable0] A (@label1)" 
+        },
+        {
+            "bitstring" : "00000000",
+            "comment" : "// 001 (0)"
+        },
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 002 LOAD [$variable1] A (@label2)"
+        },
+        {
+            "bitstring" : "00000001",
+            "comment" : "// 003 (1)"
+        },
+
+
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 004 JUMP @label1"
+        },
+        {
+            "bitstring" : "00000000",
+            "comment" : "// 005 (0)"
+        },
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 006 STORE A [#123]"
+        },
+        {
+            "bitstring" : "01111011",
+            "comment" : "// 007 (123)"
+        },
+
+
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 008 LOAD [$variable2] B (@label3)"
+        },
+        {
+            "bitstring" : "00000010",
+            "comment" : "// 009 (2)"
+        },
+        {
+            "bitstring" : "11111111",
+            "comment" : "// 010 LOAD [$variable0] C"
+        },
+        {
+            "bitstring" : "00000000",
+            "comment" : "// 011 (0)"
+        },
+
+
+        {
+            "bitstring" : "00110111",
+            "comment" : "// 012 JUMP_IF_LT_ACC #85 @label1"
+        },
+        {
+            "bitstring" : "01010101",
+            "comment" : "// 013 (85)"
+        },
+        {
+            "bitstring" : "00000000",
+            "comment" : "// 014 (0)"
+        },
+    ]
+
+    assert export.extract_program_file_machinecode_info(assembly_line_infos) == expected
+
+def test_extract_program_file_variable_info(assembly_line_infos):
+    expected = [
+        {
+            "value" : 123,
+            "name" : "$variable0"
+        },
+        {
+            "value" : -45,
+            "name" : "$variable1"
+        },
+        {
+            "value" : 42,
+            "name" : "$variable2"
+        },
+    ]
+
+    assert export.extract_program_file_variable_info(assembly_line_infos) == expected
