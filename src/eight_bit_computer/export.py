@@ -409,10 +409,10 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
             0x04  // 012 (4)
         };
 
-        extern const byte num_fibonacci_variable_bytes = 0;
+        extern const byte num_fibonacci_data_bytes = 0;
 
         // Needs to be at least 1 byte in this array
-        extern const byte fibonacci_variable_bytes[] PROGMEM = {
+        extern const byte fibonacci_data_bytes[] PROGMEM = {
             0x00 // Placeholder.
         };
 
@@ -468,7 +468,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
     num_variable_bytes = len(variable_info)
 
     cpp_lines.append(
-        "extern const byte num_{filename_base}_variable_bytes "
+        "extern const byte num_{filename_base}_data_bytes "
         "= {num_variable_bytes};".format(
             filename_base=filename_base, num_variable_bytes=num_variable_bytes
         )
@@ -476,7 +476,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
     cpp_lines.append("")
     cpp_lines.append("// Needs to be at least 1 byte in this array")
     cpp_lines.append(
-        "extern const byte {filename_base}_variable_bytes[] PROGMEM = {{".format(
+        "extern const byte {filename_base}_data_bytes[] PROGMEM = {{".format(
             filename_base=filename_base)
         )
 

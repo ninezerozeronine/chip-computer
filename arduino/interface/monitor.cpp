@@ -13,8 +13,14 @@ void Monitor::constructor_defaults() {
     bridge = HardwareBridge();
     lcd = Lcd();
     program_index = 0;
-    num_programs = 2;
+    num_programs = 5;
     clock_frequency = 0.1;
+
+    // num_program_bytes[0] = num_foobar_program_bytes;
+    // num_data_bytes[0] = num_foobar_data_bytes;
+    // program_bytes[0] = foobar_program_bytes;
+    // data_bytes[0] = foobar_data_bytes;
+    // program_names[0] = foobar_program_name;
 
     num_program_bytes[0] = num_fibonacci_program_bytes;
     num_data_bytes[0] = num_fibonacci_data_bytes;
@@ -22,11 +28,29 @@ void Monitor::constructor_defaults() {
     data_bytes[0] = fibonacci_data_bytes;
     program_names[0] = fibonacci_program_name;
 
-    num_program_bytes[1] = num_foobar_program_bytes;
-    num_data_bytes[1] = num_foobar_data_bytes;
-    program_bytes[1] = foobar_program_bytes;
-    data_bytes[1] = foobar_data_bytes;
-    program_names[1] = foobar_program_name;
+    num_program_bytes[1] = num_test_rot_program_bytes;
+    num_data_bytes[1] = num_test_rot_data_bytes;
+    program_bytes[1] = test_rot_program_bytes;
+    data_bytes[1] = test_rot_data_bytes;
+    program_names[1] = test_rot_program_name;
+
+    num_program_bytes[2] = num_test_comparisons_program_bytes;
+    num_data_bytes[2] = num_test_comparisons_data_bytes;
+    program_bytes[2] = test_comparisons_program_bytes;
+    data_bytes[2] = test_comparisons_data_bytes;
+    program_names[2] = test_comparisons_program_name;
+
+    num_program_bytes[3] = num_test_copy_program_bytes;
+    num_data_bytes[3] = num_test_copy_data_bytes;
+    program_bytes[3] = test_copy_program_bytes;
+    data_bytes[3] = test_copy_data_bytes;
+    program_names[3] = test_copy_program_name;
+
+    num_program_bytes[4] = num_test_copy_thorough_program_bytes;
+    num_data_bytes[4] = num_test_copy_thorough_data_bytes;
+    program_bytes[4] = test_copy_thorough_program_bytes;
+    data_bytes[4] = test_copy_thorough_data_bytes;
+    program_names[4] = test_copy_thorough_program_name;
 
     strcpy(queued_address_str, "");
     strcpy(proposed_address_str, "");

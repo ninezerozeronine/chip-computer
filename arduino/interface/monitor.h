@@ -17,7 +17,10 @@
 #include "enums.h"
 #include "lcd.h"
 #include "prog_fibonacci.h"
-#include "prog_foobar.h"
+#include "prog_test_rot.h"
+#include "prog_test_comparisons.h"
+#include "prog_test_copy.h"
+#include "prog_test_copy_thorough.h"
 
 class Monitor {
     public:

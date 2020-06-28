@@ -276,10 +276,10 @@ def test_gen_arduino_program_cpp_file(assembly_line_infos):
             0x00  // 014 (0)
         };
 
-        extern const byte num_fibonacci_variable_bytes = 3;
+        extern const byte num_fibonacci_data_bytes = 3;
 
         // Needs to be at least 1 byte in this array
-        extern const byte fibonacci_variable_bytes[] PROGMEM = {
+        extern const byte fibonacci_data_bytes[] PROGMEM = {
             0x7B, // 000 $variable0
             0xD3, // 001 $variable1
             0x2A  // 002 $variable2
