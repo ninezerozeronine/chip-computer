@@ -21,6 +21,9 @@
 #include "prog_test_comparisons.h"
 #include "prog_test_copy.h"
 #include "prog_test_copy_thorough.h"
+#include "prog_test_mem.h"
+#include "prog_test_membug.h"
+#include "prog_test_push_pop_call_ret.h"
 
 class Monitor {
     public:

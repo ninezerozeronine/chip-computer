@@ -13,14 +13,8 @@ void Monitor::constructor_defaults() {
     bridge = HardwareBridge();
     lcd = Lcd();
     program_index = 0;
-    num_programs = 5;
+    num_programs = 8;
     clock_frequency = 0.1;
-
-    // num_program_bytes[0] = num_foobar_program_bytes;
-    // num_data_bytes[0] = num_foobar_data_bytes;
-    // program_bytes[0] = foobar_program_bytes;
-    // data_bytes[0] = foobar_data_bytes;
-    // program_names[0] = foobar_program_name;
 
     num_program_bytes[0] = num_fibonacci_program_bytes;
     num_data_bytes[0] = num_fibonacci_data_bytes;
@@ -51,6 +45,24 @@ void Monitor::constructor_defaults() {
     program_bytes[4] = test_copy_thorough_program_bytes;
     data_bytes[4] = test_copy_thorough_data_bytes;
     program_names[4] = test_copy_thorough_program_name;
+
+    num_program_bytes[5] = num_test_mem_program_bytes;
+    num_data_bytes[5] = num_test_mem_data_bytes;
+    program_bytes[5] = test_mem_program_bytes;
+    data_bytes[5] = test_mem_data_bytes;
+    program_names[5] = test_mem_program_name;
+
+    num_program_bytes[6] = num_test_membug_program_bytes;
+    num_data_bytes[6] = num_test_membug_data_bytes;
+    program_bytes[6] = test_membug_program_bytes;
+    data_bytes[6] = test_membug_data_bytes;
+    program_names[6] = test_membug_program_name;
+
+    num_program_bytes[7] = num_test_push_pop_call_ret_program_bytes;
+    num_data_bytes[7] = num_test_push_pop_call_ret_data_bytes;
+    program_bytes[7] = test_push_pop_call_ret_program_bytes;
+    data_bytes[7] = test_push_pop_call_ret_data_bytes;
+    program_names[7] = test_push_pop_call_ret_program_name;
 
     strcpy(queued_address_str, "");
     strcpy(proposed_address_str, "");
