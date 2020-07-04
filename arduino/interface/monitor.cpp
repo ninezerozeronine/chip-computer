@@ -114,9 +114,6 @@ void Monitor::transfer_stored_pgm() {
         e_ram_region initial_ram_region = bridge.get_ram_region();
         byte initial_address = bridge.get_address();
 
-        // Switch to setup mode
-        bridge.set_ram_control_mode(USER);
-
         // Loop over program bytes, sending to computer (Don't update LCD)
         if (num_program_bytes[program_index] > 0) {
 
@@ -515,13 +512,21 @@ bool Monitor::_is_within_range(int value, e_sign_mode sign_mode_){
 //
 // Temporarily puts the computer back into a semi run mode.
 void Monitor::_send_clock_pulses(int num_pulses) {
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(CONTROL_UNIT);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     bridge.set_clock_enabled(true);
     delayMicroseconds(5);
     bridge.send_clock_pulses(num_pulses);
     delayMicroseconds(5);
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     bridge.set_clock_enabled(false);
     delayMicroseconds(5);
@@ -732,7 +737,11 @@ void Monitor::_set_paused() {
     delayMicroseconds(5);
     bridge.set_clock_source(ARDUINO_PIN);
     delayMicroseconds(5);
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     lcd.draw_data(bridge.get_data(), number_base, sign_mode);
     lcd.draw_run_mode_indicator(run_mode);
@@ -741,7 +750,11 @@ void Monitor::_set_paused() {
 
 void Monitor::_set_running() {
     run_mode = RUNNING;
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(CONTROL_UNIT);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     _set_clock_to_frequency(clock_frequency);
     delayMicroseconds(5);

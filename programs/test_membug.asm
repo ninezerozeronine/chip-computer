@@ -1,6 +1,6 @@
 @init
-    SET_ZERO A
-    SET B #110
+    SET A #0
+    SET B #0b11111101
     SET_ZERO C
 
 @test_val

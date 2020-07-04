@@ -9,6 +9,7 @@ HardwareBridge::HardwareBridge() {
 void HardwareBridge::constructor_defaults() {
     ram_region = PROGRAM;
     ram_control_mode = USER;
+    ram_enable_enable = true;
     clock_source = ARDUINO_PIN;
     reset = false;
     clock_enabled = false;
@@ -18,6 +19,7 @@ void HardwareBridge::constructor_defaults() {
     control_bits = 0;
     _set_ram_region_control_bits();
     _set_ram_control_mode_control_bits();
+    _set_ram_enable_enable_control_bits();
     _set_clock_source_control_bits();
     _set_reset_control_bits();
     _set_clock_enabled_control_bits();
@@ -46,6 +48,7 @@ void HardwareBridge::HardwareBridge::init() {
 
     _set_ram_region_control_bits();
     _set_ram_control_mode_control_bits();
+    _set_ram_enable_enable_control_bits();
     _set_clock_source_control_bits();
     _set_reset_control_bits();
     _set_clock_enabled_control_bits();
@@ -77,6 +80,20 @@ void HardwareBridge::set_ram_control_mode(e_ram_control_mode ram_control_mode_) 
     if (ram_control_mode != ram_control_mode_) {
         ram_control_mode = ram_control_mode_;
         _set_ram_control_mode_control_bits();
+        _update_shift_outs();
+    }
+}
+
+
+bool HardwareBridge::get_ram_enable_enable() {
+    return ram_enable_enable;
+}
+
+
+void HardwareBridge::set_ram_enable_enable(bool ram_enable_enable_) {
+    if (ram_enable_enable != ram_enable_enable_) {
+        ram_enable_enable = ram_enable_enable_;
+        _set_ram_enable_enable_control_bits();
         _update_shift_outs();
     }
 }
@@ -251,6 +268,15 @@ void HardwareBridge::_set_ram_control_mode_control_bits() {
         case CONTROL_UNIT:
             bitWrite(control_bits, RAM_CONTROL_BIT_INDEX, 0);
             break;
+    }
+}
+
+
+void HardwareBridge::_set_ram_enable_enable_control_bits() {
+    if (ram_enable_enable) {
+        bitWrite(control_bits, RAM_ENABLE_ENABLE_BIT_INDEX, 1);
+    } else {
+        bitWrite(control_bits, RAM_ENABLE_ENABLE_BIT_INDEX, 0);
     }
 }
 

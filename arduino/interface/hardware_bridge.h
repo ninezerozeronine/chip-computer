@@ -13,6 +13,7 @@
 #define RAM_WRITE_BIT_INDEX 3
 #define RAM_CONTROL_BIT_INDEX 4
 #define RAM_REGION_BIT_INDEX 5
+#define RAM_ENABLE_ENABLE_BIT_INDEX 6
 
 // Low level direct control of computer via arduino.
 // Very little logic to make sure nothing silly happens.
@@ -26,6 +27,9 @@ class HardwareBridge {
 
         e_ram_control_mode get_ram_control_mode();
         void set_ram_control_mode(e_ram_control_mode ram_control_mode_);
+
+        bool get_ram_enable_enable();
+        void set_ram_enable_enable(bool ram_enable_enable_);
 
         e_clock_source get_clock_source();
         void set_clock_source(e_clock_source clock_source_);
@@ -55,6 +59,7 @@ class HardwareBridge {
         e_ram_region ram_region;
         e_ram_control_mode ram_control_mode;
         e_clock_source clock_source;
+        bool ram_enable_enable;
         bool reset;
         bool clock_enabled;
         byte address;
@@ -68,6 +73,7 @@ class HardwareBridge {
         void _update_shift_outs();
         void _set_ram_region_control_bits();
         void _set_ram_control_mode_control_bits();
+        void _set_ram_enable_enable_control_bits();
         void _set_clock_source_control_bits();
         void _set_reset_control_bits();
         void _set_clock_enabled_control_bits();
