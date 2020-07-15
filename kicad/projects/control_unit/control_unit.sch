@@ -1231,10 +1231,8 @@ Text Label 1250 7350 1    50   ~ 0
 MASTER_RESET
 Wire Wire Line
 	1450 7450 1450 7350
-Text Label 6100 900  2    50   ~ 0
+Text Label 6000 700  2    50   ~ 0
 MASTER_RESET
-Wire Wire Line
-	6100 900  6100 1000
 $Comp
 L Connector:Conn_01x01_Female J8
 U 1 1 5E54AF22
@@ -2116,6 +2114,17 @@ Wire Wire Line
 Wire Wire Line
 	3100 4300 2000 4300
 Connection ~ 2000 4300
+$Comp
+L Connector:Conn_01x01_Female J9
+U 1 1 5F14C107
+P 6100 800
+F 0 "J9" V 6000 1450 50  0000 R CNN
+F 1 "MASTER RESET" V 6100 1450 50  0000 R CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x01_P2.54mm_Horizontal" H 6100 800 50  0001 C CNN
+F 3 "~" H 6100 800 50  0001 C CNN
+	1    6100 800 
+	0    -1   -1   0   
+$EndComp
 Wire Bus Line
 	5250 6900 5950 6900
 Wire Bus Line
