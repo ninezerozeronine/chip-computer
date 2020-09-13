@@ -1,4 +1,4 @@
-16937896547907390
+16939483564086557
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -75256,3 +75256,10 @@ varistor SIOV
 0
 2
 2
+eight-bit-computer
+backplane-connector
+Through hole angled pin header, 1x34, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x34 2.54mm single row
+0
+68
+34
