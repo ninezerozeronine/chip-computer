@@ -28,4 +28,16 @@ K TTL REG DFF DFF8
 F http://www.ti.com/lit/gpn/sn74LS377
 $ENDCMP
 #
+$CMP Backplane
+D Backplane connector for the 32 control signals
+K connector
+F ~
+$ENDCMP
+#
+$CMP Control_signal_backplane
+D Backplane connector for the 32 control signals
+K connector
+F ~
+$ENDCMP
+#
 #End Doc Library

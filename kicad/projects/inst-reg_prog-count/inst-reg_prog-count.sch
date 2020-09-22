@@ -113,17 +113,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 8500 3500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x34_Male J?
-U 1 1 5F5EFDF6
-P 8550 6600
-F 0 "J?" V 8385 6528 50  0000 C CNN
-F 1 "Conn_01x34_Male" V 8476 6528 50  0000 C CNN
-F 2 "" H 8550 6600 50  0001 C CNN
-F 3 "~" H 8550 6600 50  0001 C CNN
-	1    8550 6600
-	0    1    -1   0   
-$EndComp
-$Comp
 L Connector:Conn_01x08_Female J?
 U 1 1 5F60CD57
 P 6600 800
@@ -203,57 +192,13 @@ $EndComp
 $Comp
 L Connector:Conn_01x08_Male J?
 U 1 1 5F628213
-P 8250 6000
-F 0 "J?" V 8177 5928 50  0000 C CNN
-F 1 "Conn_01x08_Male" V 8086 5928 50  0000 C CNN
-F 2 "" H 8250 6000 50  0001 C CNN
-F 3 "~" H 8250 6000 50  0001 C CNN
-	1    8250 6000
+P 8800 5450
+F 0 "J?" V 8727 5378 50  0000 C CNN
+F 1 "Conn_01x08_Male" V 8636 5378 50  0000 C CNN
+F 2 "" H 8800 5450 50  0001 C CNN
+F 3 "~" H 8800 5450 50  0001 C CNN
+	1    8800 5450
 	0    1    -1   0   
-$EndComp
-$Comp
-L Connector:Conn_01x01_Female J?
-U 1 1 5F6429BE
-P -1650 2650
-F 0 "J?" H -1622 2676 50  0000 L CNN
-F 1 "Conn_01x01_Female" H -1622 2585 50  0000 L CNN
-F 2 "" H -1650 2650 50  0001 C CNN
-F 3 "~" H -1650 2650 50  0001 C CNN
-	1    -1650 2650
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x01_Female J?
-U 1 1 5F643E35
-P -1650 2950
-F 0 "J?" H -1622 2976 50  0000 L CNN
-F 1 "Conn_01x01_Female" H -1622 2885 50  0000 L CNN
-F 2 "" H -1650 2950 50  0001 C CNN
-F 3 "~" H -1650 2950 50  0001 C CNN
-	1    -1650 2950
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x01_Female J?
-U 1 1 5F644FE4
-P -1650 2400
-F 0 "J?" H -1622 2426 50  0000 L CNN
-F 1 "Conn_01x01_Female" H -1622 2335 50  0000 L CNN
-F 2 "" H -1650 2400 50  0001 C CNN
-F 3 "~" H -1650 2400 50  0001 C CNN
-	1    -1650 2400
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x01_Female J?
-U 1 1 5F645644
-P -1650 2150
-F 0 "J?" H -1622 2176 50  0000 L CNN
-F 1 "Conn_01x01_Female" H -1622 2085 50  0000 L CNN
-F 2 "" H -1650 2150 50  0001 C CNN
-F 3 "~" H -1650 2150 50  0001 C CNN
-	1    -1650 2150
-	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R_Network08_US RN?
@@ -266,54 +211,54 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 9500 1400 50  0001 C CNN
 	1    9500 1400
 	0    1    1    0   
 $EndComp
-Text Label 8550 5800 1    50   ~ 0
+Text Label 9100 5250 1    50   ~ 0
 BUS_0
-Text Label 7950 5800 1    50   ~ 0
+Text Label 8500 5250 1    50   ~ 0
 BUS_6
-Text Label 8050 5800 1    50   ~ 0
+Text Label 8600 5250 1    50   ~ 0
 BUS_5
-Text Label 8150 5800 1    50   ~ 0
+Text Label 8700 5250 1    50   ~ 0
 BUS_4
-Text Label 8250 5800 1    50   ~ 0
+Text Label 8800 5250 1    50   ~ 0
 BUS_3
-Text Label 8350 5800 1    50   ~ 0
+Text Label 8900 5250 1    50   ~ 0
 BUS_2
-Text Label 8450 5800 1    50   ~ 0
+Text Label 9000 5250 1    50   ~ 0
 BUS_1
-Text Label 7850 5800 1    50   ~ 0
+Text Label 8400 5250 1    50   ~ 0
 BUS_7
 Wire Wire Line
-	7850 5800 7850 5550
+	8400 5250 8400 5000
 Wire Wire Line
-	7950 5800 7950 5550
+	8500 5250 8500 5000
 Wire Wire Line
-	8050 5800 8050 5550
+	8600 5250 8600 5000
 Wire Wire Line
-	8150 5800 8150 5550
+	8700 5250 8700 5000
 Wire Wire Line
-	8250 5800 8250 5550
+	8800 5250 8800 5000
 Wire Wire Line
-	8350 5800 8350 5550
+	8900 5250 8900 5000
 Wire Wire Line
-	8450 5800 8450 5550
+	9000 5250 9000 5000
 Wire Wire Line
-	8550 5800 8550 5550
+	9100 5250 9100 5000
 Entry Wire Line
-	7850 5550 7950 5450
+	8400 5000 8500 4900
 Entry Wire Line
-	7950 5550 8050 5450
+	8500 5000 8600 4900
 Entry Wire Line
-	8050 5550 8150 5450
+	8600 5000 8700 4900
 Entry Wire Line
-	8150 5550 8250 5450
+	8700 5000 8800 4900
 Entry Wire Line
-	8250 5550 8350 5450
+	8800 5000 8900 4900
 Entry Wire Line
-	8350 5550 8450 5450
+	8900 5000 9000 4900
 Entry Wire Line
-	8450 5550 8550 5450
+	9000 5000 9100 4900
 Entry Wire Line
-	8550 5550 8650 5450
+	9100 5000 9200 4900
 Text Label 8000 3000 2    50   ~ 0
 BUS_0
 Text Label 8000 3600 2    50   ~ 0
@@ -986,6 +931,17 @@ Entry Wire Line
 	3150 2350 3250 2450
 Entry Wire Line
 	3350 2350 3450 2450
+$Comp
+L eight-bit-computer:Control_signal_backplane J?
+U 1 1 5FC65F18
+P 8700 6200
+F 0 "J?" V 8700 4400 50  0000 C CNN
+F 1 "Control_signal_backplane" V 8550 4000 50  0000 C CNN
+F 2 "" H 8700 6200 50  0001 C CNN
+F 3 "~" H 8700 6200 50  0001 C CNN
+	1    8700 6200
+	0    1    -1   0   
+$EndComp
 Wire Bus Line
 	1600 3050 1600 5150
 Wire Bus Line
@@ -999,5 +955,5 @@ Wire Bus Line
 Wire Bus Line
 	7650 2850 7650 3600
 Wire Bus Line
-	7950 5450 8700 5450
+	8500 4900 9250 4900
 $EndSCHEMATC
