@@ -28,6 +28,18 @@ K TTL REG DFF DFF8
 F http://www.ti.com/lit/gpn/sn74LS377
 $ENDCMP
 #
+$CMP Aux_connection
+D Connection to auxilliaries - power, clock and reset.
+K connector
+F ~
+$ENDCMP
+#
+$CMP Bus_connection
+D Connection to the bus
+K connector
+F ~
+$ENDCMP
+#
 $CMP Control_signal_backplane
 D Backplane connector for the 32 control signals
 K connector
