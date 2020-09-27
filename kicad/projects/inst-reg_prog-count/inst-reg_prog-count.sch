@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L eight-bit-computer:74HCT161 U?
+L eight-bit-computer:74HCT161 U2
 U 1 1 5F5D69CD
 P 2450 3650
-F 0 "U?" H 2450 4631 50  0000 C CNN
+F 0 "U2" H 2450 4631 50  0000 C CNN
 F 1 "74HCT161 (LOW BITS)" H 2450 4540 50  0000 C CNN
 F 2 "" H 2450 3650 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 2450 3650 50  0001 C CNN
@@ -25,10 +25,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 2450 3650 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT161 U?
+L eight-bit-computer:74HCT161 U3
 U 1 1 5F5D73B5
 P 2450 5450
-F 0 "U?" H 2850 5200 50  0000 C CNN
+F 0 "U3" H 2850 5200 50  0000 C CNN
 F 1 "74HCT161 (HIGH BITS)" H 3200 5100 50  0000 C CNN
 F 2 "" H 2450 5450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 2450 5450 50  0001 C CNN
@@ -36,10 +36,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 2450 5450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 1 1 5F5DD5E6
 P 1750 6500
-F 0 "U?" H 1750 6350 50  0000 C CNN
+F 0 "U1" H 1750 6350 50  0000 C CNN
 F 1 "74HCT04" H 1750 6250 50  0000 C CNN
 F 2 "" H 1750 6500 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 6500 50  0001 C CNN
@@ -47,10 +47,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 650
 	-1   0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 2 1 5F5DEBD6
 P 1750 7000
-F 0 "U?" H 1750 6850 50  0000 C CNN
+F 0 "U1" H 1750 6850 50  0000 C CNN
 F 1 "74HCT04" H 1750 6750 50  0000 C CNN
 F 2 "" H 1750 7000 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 7000 50  0001 C CNN
@@ -58,10 +58,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 700
 	-1   0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 3 1 5F5E02D9
 P 4150 3250
-F 0 "U?" H 4150 3567 50  0000 C CNN
+F 0 "U1" H 4150 3567 50  0000 C CNN
 F 1 "74HCT04" H 4150 3476 50  0000 C CNN
 F 2 "" H 4150 3250 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4150 3250 50  0001 C CNN
@@ -69,10 +69,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4150 325
 	-1   0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 5 1 5F5E356A
 P 13200 5350
-F 0 "U?" H 13200 5667 50  0000 C CNN
+F 0 "U1" H 13200 5667 50  0000 C CNN
 F 1 "74HCT04" H 13200 5576 50  0000 C CNN
 F 2 "" H 13200 5350 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13200 5350 50  0001 C CNN
@@ -80,10 +80,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13200 53
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 6 1 5F5E41D5
 P 13250 4800
-F 0 "U?" H 13250 5117 50  0000 C CNN
+F 0 "U1" H 13250 5117 50  0000 C CNN
 F 1 "74HCT04" H 13250 5026 50  0000 C CNN
 F 2 "" H 13250 4800 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13250 4800 50  0001 C CNN
@@ -91,10 +91,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13250 48
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 7 1 5F5E5659
 P 12400 4150
-F 0 "U?" H 12630 4196 50  0000 L CNN
+F 0 "U1" H 12630 4196 50  0000 L CNN
 F 1 "74HCT04" H 12630 4105 50  0000 L CNN
 F 2 "" H 12400 4150 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12400 4150 50  0001 C CNN
@@ -102,10 +102,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12400 41
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT377 U?
+L eight-bit-computer:74HCT377 U5
 U 1 1 5F5EC320
 P 8500 3500
-F 0 "U?" H 8500 4481 50  0000 C CNN
+F 0 "U5" H 8500 4481 50  0000 C CNN
 F 1 "74HCT377" H 8500 4390 50  0000 C CNN
 F 2 "" H 8500 3500 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 8500 3500 50  0001 C CNN
@@ -113,10 +113,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 8500 3500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x08_Female J?
+L Connector:Conn_01x08_Female J4
 U 1 1 5F60CD57
 P 6600 800
-F 0 "J?" V 6765 730 50  0000 C CNN
+F 0 "J4" V 6765 730 50  0000 C CNN
 F 1 "Conn_01x08_Female" V 6674 730 50  0000 C CNN
 F 2 "" H 6600 800 50  0001 C CNN
 F 3 "~" H 6600 800 50  0001 C CNN
@@ -124,10 +124,10 @@ F 3 "~" H 6600 800 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x16_Female J?
+L Connector:Conn_01x16_Female J5
 U 1 1 5F610326
 P 8100 750
-F 0 "J?" V 8265 680 50  0000 C CNN
+F 0 "J5" V 8265 680 50  0000 C CNN
 F 1 "Conn_01x16_Female" V 8174 680 50  0000 C CNN
 F 2 "" H 8100 750 50  0001 C CNN
 F 3 "~" H 8100 750 50  0001 C CNN
@@ -135,10 +135,10 @@ F 3 "~" H 8100 750 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C1
 U 1 1 5F61F58E
 P 900 3700
-F 0 "C?" H 700 3750 50  0000 L CNN
+F 0 "C1" H 700 3750 50  0000 L CNN
 F 1 "C" H 700 3650 50  0000 L CNN
 F 2 "" H 938 3550 50  0001 C CNN
 F 3 "~" H 900 3700 50  0001 C CNN
@@ -146,10 +146,10 @@ F 3 "~" H 900 3700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C3
 U 1 1 5F620836
 P 3150 4050
-F 0 "C?" H 3000 3950 50  0000 L CNN
+F 0 "C3" H 3000 3950 50  0000 L CNN
 F 1 "C" H 3000 3850 50  0000 L CNN
 F 2 "" H 3188 3900 50  0001 C CNN
 F 3 "~" H 3150 4050 50  0001 C CNN
@@ -157,10 +157,10 @@ F 3 "~" H 3150 4050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C2
 U 1 1 5F6211E2
 P 900 5450
-F 0 "C?" H 700 5500 50  0000 L CNN
+F 0 "C2" H 700 5500 50  0000 L CNN
 F 1 "C" H 700 5400 50  0000 L CNN
 F 2 "" H 938 5300 50  0001 C CNN
 F 3 "~" H 900 5450 50  0001 C CNN
@@ -168,10 +168,10 @@ F 3 "~" H 900 5450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C4
 U 1 1 5F621A3D
 P 9800 3550
-F 0 "C?" H 9915 3596 50  0000 L CNN
+F 0 "C4" H 9915 3596 50  0000 L CNN
 F 1 "C" H 9915 3505 50  0000 L CNN
 F 2 "" H 9838 3400 50  0001 C CNN
 F 3 "~" H 9800 3550 50  0001 C CNN
@@ -179,10 +179,10 @@ F 3 "~" H 9800 3550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C?
+L Device:C C5
 U 1 1 5F62267F
 P 11900 4150
-F 0 "C?" H 12015 4196 50  0000 L CNN
+F 0 "C5" H 12015 4196 50  0000 L CNN
 F 1 "C" H 12015 4105 50  0000 L CNN
 F 2 "" H 11938 4000 50  0001 C CNN
 F 3 "~" H 11900 4150 50  0001 C CNN
@@ -190,21 +190,10 @@ F 3 "~" H 11900 4150 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x08_Male J?
-U 1 1 5F628213
-P 8800 5450
-F 0 "J?" V 8727 5378 50  0000 C CNN
-F 1 "Conn_01x08_Male" V 8636 5378 50  0000 C CNN
-F 2 "" H 8800 5450 50  0001 C CNN
-F 3 "~" H 8800 5450 50  0001 C CNN
-	1    8800 5450
-	0    1    -1   0   
-$EndComp
-$Comp
-L Device:R_Network08_US RN?
+L Device:R_Network08_US RN2
 U 1 1 5F695797
 P 9500 1400
-F 0 "RN?" H 9550 1600 50  0000 R CNN
+F 0 "RN2" H 9550 1600 50  0000 R CNN
 F 1 "R_Network08_US" H 9800 1700 50  0000 R CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 9975 1400 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 9500 1400 50  0001 C CNN
@@ -499,22 +488,15 @@ Wire Wire Line
 	9800 3700 9800 4300
 Wire Wire Line
 	9800 4300 8500 4300
-Wire Wire Line
-	8500 4300 7900 4300
-Wire Wire Line
-	7900 4300 7900 4000
-Wire Wire Line
-	7900 4000 8000 4000
-Connection ~ 8500 4300
 $Comp
-L 74xx:74HCT04 U?
+L 74xx:74HCT04 U1
 U 4 1 5F5E1DF4
-P 13300 4150
-F 0 "U?" H 13300 4467 50  0000 C CNN
-F 1 "74HCT04" H 13300 4376 50  0000 C CNN
-F 2 "" H 13300 4150 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13300 4150 50  0001 C CNN
-	4    13300 4150
+P 7650 4200
+F 0 "U1" H 7650 3950 50  0000 C CNN
+F 1 "74HCT04" H 7650 3850 50  0000 C CNN
+F 2 "" H 7650 4200 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 7650 4200 50  0001 C CNN
+	4    7650 4200
 	1    0    0    -1  
 $EndComp
 Text Label 1950 3150 2    50   ~ 0
@@ -649,7 +631,7 @@ Wire Wire Line
 Wire Wire Line
 	3150 5500 4200 5500
 Wire Wire Line
-	2450 4650 900  4650
+	2450 4650 2050 4650
 Wire Wire Line
 	900  4650 900  5300
 Wire Wire Line
@@ -687,10 +669,10 @@ Wire Wire Line
 Wire Wire Line
 	3400 4650 3400 3450
 $Comp
-L eight-bit-computer:74HCT245 U?
+L eight-bit-computer:74HCT245 U4
 U 1 1 5F5D81DC
 P 4200 4600
-F 0 "U?" H 4200 5731 50  0000 C CNN
+F 0 "U4" H 4200 5731 50  0000 C CNN
 F 1 "74HCT245" H 4200 5640 50  0000 C CNN
 F 2 "" H 3850 4600 50  0001 C CNN
 F 3 "" H 3850 4600 50  0001 C CNN
@@ -715,10 +697,10 @@ Wire Wire Line
 Text Label 4450 3250 0    50   ~ 0
 PC_OUT
 $Comp
-L Connector:Conn_01x08_Female J?
+L Connector:Conn_01x08_Female J1
 U 1 1 5F9D57FA
 P 1150 850
-F 0 "J?" V 1315 780 50  0000 C CNN
+F 0 "J1" V 1315 780 50  0000 C CNN
 F 1 "Conn_01x08_Female" V 1224 780 50  0000 C CNN
 F 2 "" H 1150 850 50  0001 C CNN
 F 3 "~" H 1150 850 50  0001 C CNN
@@ -726,10 +708,10 @@ F 3 "~" H 1150 850 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x16_Female J?
+L Connector:Conn_01x16_Female J2
 U 1 1 5F9D5804
 P 2650 800
-F 0 "J?" V 2815 730 50  0000 C CNN
+F 0 "J2" V 2815 730 50  0000 C CNN
 F 1 "Conn_01x16_Female" V 2724 730 50  0000 C CNN
 F 2 "" H 2650 800 50  0001 C CNN
 F 3 "~" H 2650 800 50  0001 C CNN
@@ -737,10 +719,10 @@ F 3 "~" H 2650 800 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Device:R_Network08_US RN?
+L Device:R_Network08_US RN1
 U 1 1 5F9D580E
 P 4050 1450
-F 0 "RN?" H 4100 1650 50  0000 R CNN
+F 0 "RN1" H 4100 1650 50  0000 R CNN
 F 1 "R_Network08_US" H 4350 1750 50  0000 R CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 4525 1450 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 4050 1450 50  0001 C CNN
@@ -932,28 +914,180 @@ Entry Wire Line
 Entry Wire Line
 	3350 2350 3450 2450
 $Comp
-L eight-bit-computer:Control_signal_backplane J?
-U 1 1 5FC65F18
-P 8700 6200
-F 0 "J?" V 8700 4400 50  0000 C CNN
-F 1 "Control_signal_backplane" V 8550 4000 50  0000 C CNN
-F 2 "" H 8700 6200 50  0001 C CNN
-F 3 "~" H 8700 6200 50  0001 C CNN
-	1    8700 6200
+L eight-bit-computer:Bus_connection J6
+U 1 1 60178B61
+P 8800 5450
+F 0 "J6" V 8834 5838 50  0000 L CNN
+F 1 "Bus_connection" V 8743 5838 50  0000 L CNN
+F 2 "" H 8800 5450 50  0001 C CNN
+F 3 "~" H 8800 5450 50  0001 C CNN
+	1    8800 5450
 	0    1    -1   0   
 $EndComp
+$Comp
+L eight-bit-computer:Control_signal_backplane J3
+U 1 1 6018AAB8
+P 4600 7450
+F 0 "J3" V 4350 5350 50  0000 C CNN
+F 1 "Control_signal_backplane" V 4150 5250 50  0000 C CNN
+F 2 "" H 4600 7450 50  0001 C CNN
+F 3 "~" H 4600 7450 50  0001 C CNN
+	1    4600 7450
+	0    1    -1   0   
+$EndComp
+$Comp
+L eight-bit-computer:Aux_connection J7
+U 1 1 601A1A44
+P 8800 6400
+F 0 "J7" V 8759 6888 50  0000 L CNN
+F 1 "Aux_connection" V 8668 6888 50  0000 L CNN
+F 2 "" H 8800 6400 50  0001 C CNN
+F 3 "~" H 8800 6400 50  0001 C CNN
+	1    8800 6400
+	0    1    -1   0   
+$EndComp
+Wire Wire Line
+	9100 6200 9200 6200
+Wire Wire Line
+	8900 6200 9000 6200
+$Comp
+L power:PWR_FLAG #FLG0101
+U 1 1 601E5751
+P 9500 6150
+F 0 "#FLG0101" H 9500 6225 50  0001 C CNN
+F 1 "PWR_FLAG" H 9500 6323 50  0000 C CNN
+F 2 "" H 9500 6150 50  0001 C CNN
+F 3 "~" H 9500 6150 50  0001 C CNN
+	1    9500 6150
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8300 6200 8300 6000
+Text Label 8300 6150 1    50   ~ 0
+RESET
+Text Label 3700 7100 1    50   ~ 0
+PC_IN
+Text Label 3500 7100 1    50   ~ 0
+PC_COUNT
+Text Label 3600 7100 1    50   ~ 0
+PC_OUT
+Wire Wire Line
+	3500 7100 3500 7250
+Wire Wire Line
+	3600 7100 3600 7250
+Wire Wire Line
+	3700 7100 3700 7250
+Text Label 7100 4200 0    50   ~ 0
+IR_IN
+Wire Wire Line
+	7100 4200 7350 4200
+Text Label 3400 7100 1    50   ~ 0
+IR_IN
+Wire Wire Line
+	3400 7100 3400 7250
+NoConn ~ 8500 6200
+Wire Wire Line
+	7950 4200 7950 4000
+Wire Wire Line
+	7950 4000 8000 4000
+Text Label 8700 6150 1    50   ~ 0
+DATA_CLK
+Wire Wire Line
+	8700 6200 8700 6000
+Text Label 7800 3900 2    50   ~ 0
+DATA_CLK
+Wire Wire Line
+	7800 3900 8000 3900
+Text Label 1750 5750 2    50   ~ 0
+DATA_CLK
+Wire Wire Line
+	1750 5750 1950 5750
+$Comp
+L power:VCC #PWR0101
+U 1 1 602E1A5A
+P 9200 6150
+F 0 "#PWR0101" H 9200 6000 50  0001 C CNN
+F 1 "VCC" H 9217 6323 50  0000 C CNN
+F 2 "" H 9200 6150 50  0001 C CNN
+F 3 "" H 9200 6150 50  0001 C CNN
+	1    9200 6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0102
+U 1 1 602E2B03
+P 9000 5900
+F 0 "#PWR0102" H 9000 5650 50  0001 C CNN
+F 1 "GND" H 9005 5727 50  0000 C CNN
+F 2 "" H 9000 5900 50  0001 C CNN
+F 3 "" H 9000 5900 50  0001 C CNN
+	1    9000 5900
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	9000 6200 9000 5900
+Connection ~ 9000 6200
+Wire Wire Line
+	9200 6200 9200 6150
+Connection ~ 9200 6200
+Wire Wire Line
+	9500 6150 9200 6150
+Connection ~ 9200 6150
+$Comp
+L power:PWR_FLAG #FLG0102
+U 1 1 60320B61
+P 9650 5900
+F 0 "#FLG0102" H 9650 5975 50  0001 C CNN
+F 1 "PWR_FLAG" H 9650 6073 50  0000 C CNN
+F 2 "" H 9650 5900 50  0001 C CNN
+F 3 "~" H 9650 5900 50  0001 C CNN
+	1    9650 5900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9650 5900 9000 5900
+Connection ~ 9000 5900
+Text Label 9350 5900 0    50   ~ 0
+GND
+Text Label 9350 6150 0    50   ~ 0
+VCC
+Text Label 9000 4300 0    50   ~ 0
+GND
+Text Label 8900 2700 0    50   ~ 0
+VCC
+Text Label 3750 3650 0    50   ~ 0
+VCC
+Text Label 3700 5500 0    50   ~ 0
+GND
+Text Label 2000 6250 0    50   ~ 0
+GND
+Text Label 2050 4750 0    50   ~ 0
+VCC
+Wire Wire Line
+	2050 4750 2050 4650
 Wire Bus Line
 	1600 3050 1600 5150
-Wire Bus Line
-	7500 2400 9450 2400
 Wire Bus Line
 	2050 2450 5200 2450
 Wire Bus Line
 	5200 2450 5200 4950
+Wire Bus Line
+	7500 2400 9450 2400
 Wire Bus Line
 	9450 2400 9450 3600
 Wire Bus Line
 	7650 2850 7650 3600
 Wire Bus Line
 	8500 4900 9250 4900
+Connection ~ 2050 4650
+Wire Wire Line
+	2050 4650 900  4650
+Text Label 1700 2850 0    50   ~ 0
+VCC
+Text Label 1800 4450 0    50   ~ 0
+GND
+Text Label 4250 1050 0    50   ~ 0
+GND
+Text Label 9700 1000 0    50   ~ 0
+GND
 $EndSCHEMATC
