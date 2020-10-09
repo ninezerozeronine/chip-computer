@@ -29,26 +29,34 @@ A_OUT           MEM_IN
 
 CALL ##
 
+A Call has to:
+* Push PC onto stack to return to
+* Set PC to address being called
+
 FF 01 CALL_OPCODE
 FF 02 HI_BYTE
 FF 03 LO_BYTE
 FF 04 NEXT INSTR
 
-// If MAR is incrementable
-//
-// Set ALU to FF, Decrement SP, increment PC          ALU_TO_1            ALU_IN          SP_COUNT_ENABLE         SP_DOWN      PC_COUNT_ENABLE         PC_UP
-// ALU into MAR_HI, increment PC                      ALU_OUT             MAR_HI_IN       PC_COUNT_ENABLE         PC_UP
-// SP into MAR_LO                                     SP_OUT              MAR_LO_IN
-// PC_HI into mem, SP Decrement                       PC_HI_OUT           MEM_IN          SP_COUNT_ENABLE         SP_DOWN
-// MAR Decrement                                      MAR_COUNT_ENABLE    MAR_DOWN
-// PC_LO into mem                                     PC_LO_OUT           MEM_IN
-// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
-// Decrement PC                                       PC_COUNT_ENABLE     PC_DOWN
-// PC_HI into MAR_HI                                  PC_HI_OUT           MAR_HI_IN
-// PC_LO into MAR_LO                                  PC_LO_OUT           MAR_LO_IN
-// MEM into PC_HI                                     MEM_OUT             PC_HI_IN
-// MAR increment                                      MAR_COUNT_ENABLE    MAR_UP
-// MEM into PC_LO                                     MEM_OUT             PC_LO_IN
+If MAR is incrementable
+
+Store the address to return to
+    Set ALU to FF, Decrement SP, increment PC               ALU_TO_1            ALU_IN          SP_COUNT_ENABLE         SP_DOWN      PC_COUNT_ENABLE         PC_UP
+    ALU into MAR_HI, increment PC                           ALU_OUT             MAR_HI_IN       PC_COUNT_ENABLE         PC_UP
+    SP into MAR_LO                                          SP_OUT              MAR_LO_IN
+    PC_HI into mem, SP Decrement                            PC_HI_OUT           MEM_IN          SP_COUNT_ENABLE         SP_DOWN
+    MAR Decrement                                           MAR_COUNT_ENABLE    MAR_DOWN
+    PC_LO into mem                                          PC_LO_OUT           MEM_IN
+Return PC to point at high byte
+    Decrement PC                                            PC_COUNT_ENABLE     PC_DOWN
+    Decrement PC                                            PC_COUNT_ENABLE     PC_DOWN
+Move PC into MAR
+    PC_HI into MAR_HI                                       PC_HI_OUT           MAR_HI_IN
+    PC_LO into MAR_LO                                       PC_LO_OUT           MAR_LO_IN
+Move dest into PC
+    MEM into PC_HI                                          MEM_OUT             PC_HI_IN
+    MAR increment                                           MAR_COUNT_ENABLE    MAR_UP
+    MEM into PC_LO                                          MEM_OUT             PC_LO_IN
 
 
 // If MAR is not incrementable
@@ -68,3 +76,60 @@ FF 04 NEXT INSTR
 // PC_LO into MAR_LO                                  PC_LO_OUT           MAR_LO_IN
 // MEM into PC_HI                                     MEM_OUT             PC_HI_IN
 // ALU into PC_LO                                     ALU_OUT             PC_LO_IN
+
+
+16 bit up down presettable reg
+
+    Controllable with 3 bits:
+
+    000     NOOP
+    001     HI IN
+    010     HI OUT
+    011     LO IN
+    100     LO OUT
+    101     COUNT UP
+    110     COUNT DOWN
+    111     NOOP
+
+    Would be used for:
+
+    MAR
+    PC
+    SP (Maybe...)
+
+Control Sig Planning
+
+    32 control sigs available
+
+        Step Counter Reset
+        Halt
+        ALU M
+        ALU Carry
+        ALU S0
+        ALU S1
+        ALU S2
+        ALU S3
+        ALU Store result
+        ALU Store Flags
+        ALU Out
+        ALU A is bus
+        Read from mem
+        Write to mem
+        ACC In
+        ACC Out
+        A In
+        A Out
+        B In
+        B Out
+        C In
+        C Out
+        PC In
+        PC Out
+        PC Count
+        MAR In
+        IR In
+        SP In
+        SP Out
+
+
+
