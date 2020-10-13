@@ -1,0 +1,401 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L eight-bit-computer:Aux_connection J?
+U 1 1 5F84FDFB
+P 9600 5600
+F 0 "J?" H 9512 6225 50  0000 C CNN
+F 1 "Aux_connection" H 9512 6134 50  0000 C CNN
+F 2 "" H 9600 5600 50  0001 C CNN
+F 3 "~" H 9600 5600 50  0001 C CNN
+	1    9600 5600
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:Bus_connection J?
+U 1 1 5F851371
+P 8550 5400
+F 0 "J?" H 8412 6325 50  0000 C CNN
+F 1 "Bus_connection" H 8412 6234 50  0000 C CNN
+F 2 "" H 8450 5800 50  0001 C CNN
+F 3 "~" H 8450 5800 50  0001 C CNN
+	1    8550 5400
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:Control_signal_backplane J?
+U 1 1 5F853275
+P 7250 4700
+F 0 "J?" H 7137 6425 50  0000 C CNN
+F 1 "Control_signal_backplane" H 7137 6334 50  0000 C CNN
+F 2 "" H 7250 4700 50  0001 C CNN
+F 3 "~" H 7250 4700 50  0001 C CNN
+	1    7250 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT245 U?
+U 1 1 5F854F6D
+P 5250 3300
+F 0 "U?" H 5250 4431 50  0000 C CNN
+F 1 "74HCT245" H 5250 4340 50  0000 C CNN
+F 2 "" H 4900 3300 50  0001 C CNN
+F 3 "" H 4900 3300 50  0001 C CNN
+	1    5250 3300
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT377 U?
+U 1 1 5F855C32
+P 2550 4700
+F 0 "U?" H 2550 5681 50  0000 C CNN
+F 1 "74HCT377" H 2550 5590 50  0000 C CNN
+F 2 "" H 2550 4700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2550 4700 50  0001 C CNN
+	1    2550 4700
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT377 U?
+U 1 1 5F857635
+P 2550 2900
+F 0 "U?" H 2550 3881 50  0000 C CNN
+F 1 "74HCT377" H 2550 3790 50  0000 C CNN
+F 2 "" H 2550 2900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2550 2900 50  0001 C CNN
+	1    2550 2900
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT245 U?
+U 1 1 5F858330
+P 5150 5100
+F 0 "U?" H 5150 6231 50  0000 C CNN
+F 1 "74HCT245" H 5150 6140 50  0000 C CNN
+F 2 "" H 4800 5100 50  0001 C CNN
+F 3 "" H 4800 5100 50  0001 C CNN
+	1    5150 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F859984
+P 9500 950
+F 0 "D?" H 9250 950 50  0000 C CNN
+F 1 "LED" H 9050 950 50  0000 C CNN
+F 2 "" H 9500 950 50  0001 C CNN
+F 3 "~" H 9500 950 50  0001 C CNN
+	1    9500 950 
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_Network08_US RN?
+U 1 1 5F85A9D0
+P 10550 1200
+F 0 "RN?" V 9933 1200 50  0000 C CNN
+F 1 "R_Network08_US" V 10024 1200 50  0000 C CNN
+F 2 "Resistor_THT:R_Array_SIP9" V 11025 1200 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 10550 1200 50  0001 C CNN
+	1    10550 1200
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Network08_US RN?
+U 1 1 5F85BE0F
+P 10550 2700
+F 0 "RN?" V 9933 2700 50  0000 C CNN
+F 1 "R_Network08_US" V 10024 2700 50  0000 C CNN
+F 2 "Resistor_THT:R_Array_SIP9" V 11025 2700 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 10550 2700 50  0001 C CNN
+	1    10550 2700
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F85DE40
+P 9500 800
+F 0 "D?" H 9250 800 50  0000 C CNN
+F 1 "LED" H 9050 800 50  0000 C CNN
+F 2 "" H 9500 800 50  0001 C CNN
+F 3 "~" H 9500 800 50  0001 C CNN
+	1    9500 800 
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86B1B5
+P 9500 1250
+F 0 "D?" H 9250 1250 50  0000 C CNN
+F 1 "LED" H 9050 1250 50  0000 C CNN
+F 2 "" H 9500 1250 50  0001 C CNN
+F 3 "~" H 9500 1250 50  0001 C CNN
+	1    9500 1250
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86B1BF
+P 9500 1100
+F 0 "D?" H 9250 1100 50  0000 C CNN
+F 1 "LED" H 9050 1100 50  0000 C CNN
+F 2 "" H 9500 1100 50  0001 C CNN
+F 3 "~" H 9500 1100 50  0001 C CNN
+	1    9500 1100
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86CD65
+P 9500 1550
+F 0 "D?" H 9250 1550 50  0000 C CNN
+F 1 "LED" H 9050 1550 50  0000 C CNN
+F 2 "" H 9500 1550 50  0001 C CNN
+F 3 "~" H 9500 1550 50  0001 C CNN
+	1    9500 1550
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86CD6F
+P 9500 1400
+F 0 "D?" H 9250 1400 50  0000 C CNN
+F 1 "LED" H 9050 1400 50  0000 C CNN
+F 2 "" H 9500 1400 50  0001 C CNN
+F 3 "~" H 9500 1400 50  0001 C CNN
+	1    9500 1400
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86CD79
+P 9500 1850
+F 0 "D?" H 9250 1850 50  0000 C CNN
+F 1 "LED" H 9050 1850 50  0000 C CNN
+F 2 "" H 9500 1850 50  0001 C CNN
+F 3 "~" H 9500 1850 50  0001 C CNN
+	1    9500 1850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F86CD83
+P 9500 1700
+F 0 "D?" H 9250 1700 50  0000 C CNN
+F 1 "LED" H 9050 1700 50  0000 C CNN
+F 2 "" H 9500 1700 50  0001 C CNN
+F 3 "~" H 9500 1700 50  0001 C CNN
+	1    9500 1700
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F873963
+P 9500 2150
+F 0 "D?" H 9250 2150 50  0000 C CNN
+F 1 "LED" H 9050 2150 50  0000 C CNN
+F 2 "" H 9500 2150 50  0001 C CNN
+F 3 "~" H 9500 2150 50  0001 C CNN
+	1    9500 2150
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F87396D
+P 9500 2000
+F 0 "D?" H 9250 2000 50  0000 C CNN
+F 1 "LED" H 9050 2000 50  0000 C CNN
+F 2 "" H 9500 2000 50  0001 C CNN
+F 3 "~" H 9500 2000 50  0001 C CNN
+	1    9500 2000
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F873977
+P 9500 2450
+F 0 "D?" H 9250 2450 50  0000 C CNN
+F 1 "LED" H 9050 2450 50  0000 C CNN
+F 2 "" H 9500 2450 50  0001 C CNN
+F 3 "~" H 9500 2450 50  0001 C CNN
+	1    9500 2450
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F873981
+P 9500 2300
+F 0 "D?" H 9250 2300 50  0000 C CNN
+F 1 "LED" H 9050 2300 50  0000 C CNN
+F 2 "" H 9500 2300 50  0001 C CNN
+F 3 "~" H 9500 2300 50  0001 C CNN
+	1    9500 2300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F87398B
+P 9500 2750
+F 0 "D?" H 9250 2750 50  0000 C CNN
+F 1 "LED" H 9050 2750 50  0000 C CNN
+F 2 "" H 9500 2750 50  0001 C CNN
+F 3 "~" H 9500 2750 50  0001 C CNN
+	1    9500 2750
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F873995
+P 9500 2600
+F 0 "D?" H 9250 2600 50  0000 C CNN
+F 1 "LED" H 9050 2600 50  0000 C CNN
+F 2 "" H 9500 2600 50  0001 C CNN
+F 3 "~" H 9500 2600 50  0001 C CNN
+	1    9500 2600
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F87399F
+P 9500 3050
+F 0 "D?" H 9250 3050 50  0000 C CNN
+F 1 "LED" H 9050 3050 50  0000 C CNN
+F 2 "" H 9500 3050 50  0001 C CNN
+F 3 "~" H 9500 3050 50  0001 C CNN
+	1    9500 3050
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D?
+U 1 1 5F8739A9
+P 9500 2900
+F 0 "D?" H 9250 2900 50  0000 C CNN
+F 1 "LED" H 9050 2900 50  0000 C CNN
+F 2 "" H 9500 2900 50  0001 C CNN
+F 3 "~" H 9500 2900 50  0001 C CNN
+	1    9500 2900
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x16_Female J?
+U 1 1 5F8962FF
+P 6900 1400
+F 0 "J?" H 6928 1376 50  0000 L CNN
+F 1 "Conn_01x16_Female" H 6928 1285 50  0000 L CNN
+F 2 "" H 6900 1400 50  0001 C CNN
+F 3 "~" H 6900 1400 50  0001 C CNN
+	1    6900 1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 1 1 5F89775D
+P 1550 3400
+F 0 "U?" H 1550 3717 50  0000 C CNN
+F 1 "74HCT04" H 1550 3626 50  0000 C CNN
+F 2 "" H 1550 3400 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1550 3400 50  0001 C CNN
+	1    1550 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 2 1 5F898EF8
+P 4250 2750
+F 0 "U?" H 4250 3067 50  0000 C CNN
+F 1 "74HCT04" H 4250 2976 50  0000 C CNN
+F 2 "" H 4250 2750 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4250 2750 50  0001 C CNN
+	2    4250 2750
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 3 1 5F899C5B
+P 5250 1100
+F 0 "U?" H 5250 1417 50  0000 C CNN
+F 1 "74HCT04" H 5250 1326 50  0000 C CNN
+F 2 "" H 5250 1100 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 5250 1100 50  0001 C CNN
+	3    5250 1100
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 4 1 5F89C4C9
+P 3650 1550
+F 0 "U?" H 3650 1867 50  0000 C CNN
+F 1 "74HCT04" H 3650 1776 50  0000 C CNN
+F 2 "" H 3650 1550 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3650 1550 50  0001 C CNN
+	4    3650 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 5 1 5F89DBF3
+P 4400 1550
+F 0 "U?" H 4400 1867 50  0000 C CNN
+F 1 "74HCT04" H 4400 1776 50  0000 C CNN
+F 2 "" H 4400 1550 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4400 1550 50  0001 C CNN
+	5    4400 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 6 1 5F89F049
+P 5150 1550
+F 0 "U?" H 5150 1867 50  0000 C CNN
+F 1 "74HCT04" H 5150 1776 50  0000 C CNN
+F 2 "" H 5150 1550 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 5150 1550 50  0001 C CNN
+	6    5150 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L 74xx:74HCT04 U?
+U 7 1 5F8A0462
+P 2800 1250
+F 0 "U?" H 3030 1296 50  0000 L CNN
+F 1 "74HCT04" H 3030 1205 50  0000 L CNN
+F 2 "" H 2800 1250 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2800 1250 50  0001 C CNN
+	7    2800 1250
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT245 U?
+U 1 1 5F8AC977
+P 8400 1350
+F 0 "U?" H 8400 2481 50  0000 C CNN
+F 1 "74HCT245" H 8400 2390 50  0000 C CNN
+F 2 "" H 8050 1350 50  0001 C CNN
+F 3 "" H 8050 1350 50  0001 C CNN
+	1    8400 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT245 U?
+U 1 1 5F8ADF71
+P 8400 3300
+F 0 "U?" H 8400 4431 50  0000 C CNN
+F 1 "74HCT245" H 8400 4340 50  0000 C CNN
+F 2 "" H 8050 3300 50  0001 C CNN
+F 3 "" H 8050 3300 50  0001 C CNN
+	1    8400 3300
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC

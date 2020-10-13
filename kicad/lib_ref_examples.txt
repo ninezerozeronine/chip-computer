@@ -1,2 +1,0 @@
-${KIPRJMOD}\..\..\symbol_libs\eight-bit-computer.lib
-${KIPRJMOD}\..\..\footprint_libs\eight-bit-computer.pretty
