@@ -34,6 +34,12 @@ K TTL REG DFF DFF8
 F http://www.ti.com/lit/gpn/sn74LS377
 $ENDCMP
 #
+$CMP 74LS181
+D Arithmetic logic unit
+K TTL ALU ARITH
+F 74xx/74F181.pdf
+$ENDCMP
+#
 $CMP Aux_connection
 D Connection to auxilliaries - power, clock and reset.
 K connector
