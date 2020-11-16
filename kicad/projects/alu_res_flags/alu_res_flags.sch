@@ -500,8 +500,6 @@ Text Label 13300 8200 2    50   ~ 0
 A_EQ_B
 Text Label 13300 8300 2    50   ~ 0
 CARRYBORROW
-Text Label 13300 8400 2    50   ~ 0
-NEGATIVE
 Text Label 13300 8500 2    50   ~ 0
 ZERO
 Text Label 2400 10050 0    50   ~ 0
@@ -550,8 +548,6 @@ Text Label 15950 7800 2    50   ~ 0
 A_EQ_B
 Text Label 15950 7900 2    50   ~ 0
 CARRYBORROW
-Text Label 15950 8000 2    50   ~ 0
-NEGATIVE
 Text Label 15950 8100 2    50   ~ 0
 ZERO
 Text Label 15950 8200 2    50   ~ 0
@@ -1747,10 +1743,6 @@ Connection ~ 10100 3950
 Wire Wire Line
 	9550 4300 9550 4350
 Connection ~ 9550 4350
-Text Label 2700 9850 0    50   ~ 0
-NEGATIVE
-Wire Wire Line
-	2400 9850 2700 9850
 Wire Wire Line
 	5600 3900 6800 3900
 Wire Wire Line
@@ -1767,4 +1759,8 @@ Wire Wire Line
 	5600 2250 5600 3450
 Wire Wire Line
 	5300 2100 6250 2100
+Text Label 13300 8400 2    50   ~ 0
+RES_15
+Text Label 15950 8000 2    50   ~ 0
+RES_15
 $EndSCHEMATC
