@@ -1709,7 +1709,7 @@ Wire Wire Line
 	19200 4250 18700 4250
 Text Label 19750 3250 0    50   ~ 0
 VCC
-Text Label 19750 4250 0    50   ~ 0
+Text Label 19400 4250 0    50   ~ 0
 GND
 NoConn ~ 19050 4800
 NoConn ~ 17850 4800
