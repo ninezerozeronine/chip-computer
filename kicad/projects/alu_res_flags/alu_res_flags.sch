@@ -102,28 +102,6 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 18700 3750 50  0001 C CN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT30 U8
-U 1 1 5FB1A22C
-P 8800 8450
-F 0 "U8" H 8800 8975 50  0000 C CNN
-F 1 "74HCT30" H 8800 8884 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8800 8450 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 8800 8450 50  0001 C CNN
-	1    8800 8450
-	1    0    0    -1  
-$EndComp
-$Comp
-L eight-bit-computer:74HCT30 U8
-U 2 1 5FB1BA54
-P 19750 3750
-F 0 "U8" H 19500 4100 50  0000 L CNN
-F 1 "74HCT30" H 19850 4100 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 19750 3750 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CNN
-	2    19750 3750
-	1    0    0    -1  
-$EndComp
-$Comp
 L eight-bit-computer:74HCT377 U2
 U 1 1 5FB1FEEC
 P 3250 5100
@@ -250,7 +228,7 @@ U 1 1 5FB35971
 P 2200 9150
 F 0 "J1" H 2228 9126 50  0000 L CNN
 F 1 "RES_CRRYBRRW_EQ_IN" H 2228 9035 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x19_P2.54mm_Horizontal" H 2200 9150 50  0001 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x18_P2.54mm_Horizontal" H 2200 9150 50  0001 C CNN
 F 3 "~" H 2200 9150 50  0001 C CNN
 	1    2200 9150
 	-1   0    0    -1  
@@ -1763,4 +1741,26 @@ Text Label 13300 8400 2    50   ~ 0
 RES_15
 Text Label 15950 8000 2    50   ~ 0
 RES_15
+$Comp
+L eight-bit-computer:74HCT30 U8
+U 1 1 5FBBC8A7
+P 8800 8450
+F 0 "U8" H 9267 8975 50  0000 C CNN
+F 1 "74HCT30" H 9267 8884 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8800 8450 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 8800 8450 50  0001 C CNN
+	1    8800 8450
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT30 U8
+U 2 1 5FBBF1CA
+P 19750 3750
+F 0 "U8" H 19980 3796 50  0000 L CNN
+F 1 "74HCT30" H 19980 3705 50  0000 L CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 19750 3750 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CNN
+	2    19750 3750
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

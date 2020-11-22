@@ -102,28 +102,6 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 18700 3750 50  0001 C CN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT30 U8
-U 1 1 5FB1A22C
-P 8800 8450
-F 0 "U8" H 8800 8975 50  0000 C CNN
-F 1 "74HCT30" H 8800 8884 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8800 8450 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 8800 8450 50  0001 C CNN
-	1    8800 8450
-	1    0    0    -1  
-$EndComp
-$Comp
-L eight-bit-computer:74HCT30 U8
-U 2 1 5FB1BA54
-P 19750 3750
-F 0 "U8" H 19500 4100 50  0000 L CNN
-F 1 "74HCT30" H 19850 4100 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 19750 3750 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CNN
-	2    19750 3750
-	1    0    0    -1  
-$EndComp
-$Comp
 L eight-bit-computer:74HCT377 U2
 U 1 1 5FB1FEEC
 P 3250 5100
@@ -1709,7 +1687,7 @@ Wire Wire Line
 	19200 4250 18700 4250
 Text Label 19750 3250 0    50   ~ 0
 VCC
-Text Label 19750 4250 0    50   ~ 0
+Text Label 19400 4250 0    50   ~ 0
 GND
 NoConn ~ 19050 4800
 NoConn ~ 17850 4800
@@ -1763,4 +1741,26 @@ Text Label 13300 8400 2    50   ~ 0
 RES_15
 Text Label 15950 8000 2    50   ~ 0
 RES_15
+$Comp
+L eight-bit-computer:74HCT30 U8
+U 1 1 5FBBC8A7
+P 8800 8450
+F 0 "U8" H 9267 8975 50  0000 C CNN
+F 1 "74HCT30" H 9267 8884 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8800 8450 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 8800 8450 50  0001 C CNN
+	1    8800 8450
+	1    0    0    -1  
+$EndComp
+$Comp
+L eight-bit-computer:74HCT30 U8
+U 2 1 5FBBF1CA
+P 19750 3750
+F 0 "U8" H 19980 3796 50  0000 L CNN
+F 1 "74HCT30" H 19980 3705 50  0000 L CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 19750 3750 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CNN
+	2    19750 3750
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
