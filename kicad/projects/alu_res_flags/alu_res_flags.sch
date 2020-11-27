@@ -162,7 +162,7 @@ U 1 1 5FB288BF
 P 3650 9250
 F 0 "J3" H 3512 10175 50  0000 C CNN
 F 1 "Bus_connection" H 3512 10084 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x16_P2.54mm_Horizontal" H 3550 9650 50  0001 C CNN
+F 2 "eight-bit-computer:bus-connection" H 3550 9650 50  0001 C CNN
 F 3 "~" H 3550 9650 50  0001 C CNN
 	1    3650 9250
 	1    0    0    -1  
@@ -173,7 +173,7 @@ U 1 1 5FB2A9AF
 P 4700 8400
 F 0 "J4" H 4587 10125 50  0000 C CNN
 F 1 "Control_signal_backplane" H 4587 10034 50  0000 C CNN
-F 2 "eight-bit-computer:backplane-connector" H 4700 8400 50  0001 C CNN
+F 2 "eight-bit-computer:backplane-connector-single-row-annotated" H 4700 8400 50  0001 C CNN
 F 3 "~" H 4700 8400 50  0001 C CNN
 	1    4700 8400
 	1    0    0    -1  
@@ -924,7 +924,7 @@ U 1 1 5FB26509
 P 2450 7550
 F 0 "J2" H 2362 8175 50  0000 C CNN
 F 1 "Aux_connection" H 2362 8084 50  0000 C CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Horizontal" H 2450 7550 50  0001 C CNN
+F 2 "eight-bit-computer:aux-connection" H 2450 7550 50  0001 C CNN
 F 3 "~" H 2450 7550 50  0001 C CNN
 	1    2450 7550
 	1    0    0    -1  
@@ -980,7 +980,7 @@ Wire Wire Line
 Connection ~ 2650 7150
 Connection ~ 2950 7150
 Wire Wire Line
-	2950 7150 3300 7150
+	2950 7150 3200 7150
 Wire Wire Line
 	2650 7350 2950 7350
 Connection ~ 2650 7350
@@ -1763,4 +1763,27 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CN
 	2    19750 3750
 	1    0    0    -1  
 $EndComp
+$Comp
+L Device:CP C13
+U 1 1 5FCF3BAB
+P 3950 7200
+F 0 "C13" H 4068 7246 50  0000 L CNN
+F 1 "330uF" H 4068 7155 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 3988 7050 50  0001 C CNN
+F 3 "~" H 3950 7200 50  0001 C CNN
+	1    3950 7200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3300 7350 3950 7350
+Connection ~ 3300 7350
+Wire Wire Line
+	3950 7050 3950 6900
+Wire Wire Line
+	3950 6900 3200 6900
+Wire Wire Line
+	3200 6900 3200 7150
+Connection ~ 3200 7150
+Wire Wire Line
+	3200 7150 3300 7150
 $EndSCHEMATC
