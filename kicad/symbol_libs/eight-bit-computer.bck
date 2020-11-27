@@ -6,6 +6,12 @@ K TTL DECOD DECOD8
 F https://www.ti.com/lit/ds/symlink/sn74hct138.pdf
 $ENDCMP
 #
+$CMP 74HCT157
+D Quadruple 2 line to 1 line data selector/multiplexer
+K TTL Multiplexer Selector
+F https://www.ti.com/lit/ds/symlink/sn74hct157.pdf
+$ENDCMP
+#
 $CMP 74HCT161
 D Synchronous 4-bit programmable binary Counter
 K TTL CNT CNT4
@@ -22,10 +28,28 @@ $CMP 74HCT245
 D 8-bit bus transceiver
 $ENDCMP
 #
+$CMP 74HCT27
+D Triple 3-input NOR
+K TTL Nor3
+F https://www.ti.com/lit/ds/symlink/cd74hct27.pdf
+$ENDCMP
+#
+$CMP 74HCT30
+D 8-input NAND
+K TTL Nand8
+F https://www.ti.com/lit/ds/symlink/cd74hct30.pdf
+$ENDCMP
+#
 $CMP 74HCT377
 D 8-bit Register
 K TTL REG DFF DFF8
 F http://www.ti.com/lit/gpn/sn74LS377
+$ENDCMP
+#
+$CMP 74LS181
+D Arithmetic logic unit
+K TTL ALU ARITH
+F 74xx/74F181.pdf
 $ENDCMP
 #
 $CMP Aux_connection
