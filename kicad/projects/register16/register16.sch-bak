@@ -41,7 +41,7 @@ U 1 1 5F853275
 P 8850 4950
 F 0 "J4" H 8737 6675 50  0000 C CNN
 F 1 "Control_signal_backplane" H 8737 6584 50  0000 C CNN
-F 2 "eight-bit-computer:backplane-connector-single-row-annotated" H 8850 4950 50  0001 C CNN
+F 2 "eight-bit-computer:backplane-connector-annotated" H 8850 4950 50  0001 C CNN
 F 3 "~" H 8850 4950 50  0001 C CNN
 	1    8850 4950
 	-1   0    0    -1  
