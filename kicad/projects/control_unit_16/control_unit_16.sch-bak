@@ -52,7 +52,7 @@ U 1 1 5FD89CDC
 P 2250 8950
 F 0 "U2" H 2000 10000 50  0000 C CNN
 F 1 "28C256" H 2500 10000 50  0000 C CNN
-F 2 "Package_DIP:DIP-28_W15.24mm" H 2250 8950 50  0001 C CNN
+F 2 "Package_DIP:DIP-28_W15.24mm_Socket" H 2250 8950 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 2250 8950 50  0001 C CNN
 	1    2250 8950
 	1    0    0    -1  
@@ -63,7 +63,7 @@ U 1 1 5FD8ACCD
 P 4550 8950
 F 0 "U6" H 4300 10000 50  0000 C CNN
 F 1 "28C256" H 4800 10000 50  0000 C CNN
-F 2 "Package_DIP:DIP-28_W15.24mm" H 4550 8950 50  0001 C CNN
+F 2 "Package_DIP:DIP-28_W15.24mm_Socket" H 4550 8950 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 4550 8950 50  0001 C CNN
 	1    4550 8950
 	1    0    0    -1  
@@ -74,7 +74,7 @@ U 1 1 5FD8B589
 P 6850 8950
 F 0 "U10" H 6600 10000 50  0000 C CNN
 F 1 "28C256" H 7100 10000 50  0000 C CNN
-F 2 "Package_DIP:DIP-28_W15.24mm" H 6850 8950 50  0001 C CNN
+F 2 "Package_DIP:DIP-28_W15.24mm_Socket" H 6850 8950 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 6850 8950 50  0001 C CNN
 	1    6850 8950
 	1    0    0    -1  
@@ -85,7 +85,7 @@ U 1 1 5FD8C15B
 P 9300 8950
 F 0 "U11" H 9050 10000 50  0000 C CNN
 F 1 "28C256" H 9550 10000 50  0000 C CNN
-F 2 "Package_DIP:DIP-28_W15.24mm" H 9300 8950 50  0001 C CNN
+F 2 "Package_DIP:DIP-28_W15.24mm_Socket" H 9300 8950 50  0001 C CNN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 9300 8950 50  0001 C CNN
 	1    9300 8950
 	1    0    0    -1  
@@ -129,7 +129,7 @@ U 1 1 5FD91862
 P 9400 5450
 F 0 "J2" H 9287 7175 50  0000 C CNN
 F 1 "Control_signal_backplane" H 9287 7084 50  0000 C CNN
-F 2 "eight-bit-computer:backplane-connector-single-row-annotated" H 9400 5450 50  0001 C CNN
+F 2 "eight-bit-computer:backplane-connector-single-row" H 9400 5450 50  0001 C CNN
 F 3 "~" H 9400 5450 50  0001 C CNN
 	1    9400 5450
 	1    0    0    -1  

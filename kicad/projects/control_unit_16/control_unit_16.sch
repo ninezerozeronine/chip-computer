@@ -14,17 +14,6 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L eight-bit-computer:74HCT377 U4
-U 1 1 5FD843AB
-P 2600 4000
-F 0 "U4" H 2350 4650 50  0000 C CNN
-F 1 "74HCT377" H 2850 4650 50  0000 C CNN
-F 2 "Package_DIP:DIP-20_W7.62mm" H 2600 4000 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2600 4000 50  0001 C CNN
-	1    2600 4000
-	1    0    0    -1  
-$EndComp
-$Comp
 L eight-bit-computer:74HCT161 U5
 U 1 1 5FD857CC
 P 3250 1600
@@ -742,38 +731,6 @@ NoConn ~ 11550 3050
 NoConn ~ 11450 3050
 NoConn ~ 11350 3050
 NoConn ~ 11250 3050
-Text Label 2100 3500 2    50   ~ 0
-INST_00
-Text Label 2100 3600 2    50   ~ 0
-INST_01
-Text Label 2100 3700 2    50   ~ 0
-INST_02
-Text Label 2100 3800 2    50   ~ 0
-INST_03
-Text Label 2100 3900 2    50   ~ 0
-INST_04
-Text Label 2100 4000 2    50   ~ 0
-INST_05
-Text Label 2100 4100 2    50   ~ 0
-INST_06
-Text Label 2100 4200 2    50   ~ 0
-INST_07
-Text Label 3100 3500 0    50   ~ 0
-MIR_INST_0
-Text Label 3100 3600 0    50   ~ 0
-MIR_INST_1
-Text Label 3100 3700 0    50   ~ 0
-MIR_INST_2
-Text Label 3100 3800 0    50   ~ 0
-MIR_INST_3
-Text Label 3100 3900 0    50   ~ 0
-MIR_INST_4
-Text Label 3100 4000 0    50   ~ 0
-MIR_INST_5
-Text Label 3100 4100 0    50   ~ 0
-MIR_INST_6
-Text Label 3100 4200 0    50   ~ 0
-MIR_INST_7
 Text Label 2850 650  0    50   ~ 0
 VCC
 Text Label 2850 2400 0    50   ~ 0
@@ -928,32 +885,6 @@ Text Label 5750 1700 0    50   ~ 0
 LIN_STEP_6
 Text Label 5750 1800 0    50   ~ 0
 LIN_STEP_7
-Text Label 1500 4400 2    50   ~ 0
-CONTROL_CLOCK
-$Comp
-L Device:C C2
-U 1 1 5FECB829
-P 1650 3350
-F 0 "C2" H 1450 3400 50  0000 L CNN
-F 1 "0.1uF" H 1350 3300 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1688 3200 50  0001 C CNN
-F 3 "~" H 1650 3350 50  0001 C CNN
-	1    1650 3350
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	1650 3200 2600 3200
-Wire Wire Line
-	1650 3500 1650 4500
-Wire Wire Line
-	1650 4800 2600 4800
-Wire Wire Line
-	2100 4500 1650 4500
-Connection ~ 1650 4500
-Wire Wire Line
-	1650 4500 1650 4800
-Wire Wire Line
-	1500 4400 2100 4400
 $Comp
 L eight-bit-computer:74HCT245 U8
 U 1 1 5FED6485
@@ -1084,22 +1015,6 @@ Wire Wire Line
 	6450 4200 6500 4200
 Text Label 6900 3500 0    50   ~ 0
 GND
-Wire Wire Line
-	3100 3500 4050 3500
-Wire Wire Line
-	4050 3600 3100 3600
-Wire Wire Line
-	3100 3700 4050 3700
-Wire Wire Line
-	4050 3800 3100 3800
-Wire Wire Line
-	3100 3900 4050 3900
-Wire Wire Line
-	4050 4000 3100 4000
-Wire Wire Line
-	3100 4100 4050 4100
-Wire Wire Line
-	4050 4200 3100 4200
 $Comp
 L Device:LED D1
 U 1 1 5FFC385A
@@ -1249,10 +1164,6 @@ Wire Wire Line
 Connection ~ 1800 6750
 Wire Wire Line
 	1800 6750 1800 7050
-Text Label 2300 3200 0    50   ~ 0
-VCC
-Text Label 2350 4800 0    50   ~ 0
-GND
 Text Label 4350 2800 0    50   ~ 0
 VCC
 Text Label 4350 4550 0    50   ~ 0
@@ -1783,4 +1694,93 @@ Wire Wire Line
 	3600 6250 4200 6250
 Text Label 6450 6700 0    50   ~ 0
 GND
+Text Label 2350 4800 0    50   ~ 0
+GND
+Text Label 2300 3200 0    50   ~ 0
+VCC
+Wire Wire Line
+	4050 3500 3100 3500
+Wire Wire Line
+	3100 3600 4050 3600
+Wire Wire Line
+	4050 3700 3100 3700
+Wire Wire Line
+	3100 3800 4050 3800
+Wire Wire Line
+	4050 3900 3100 3900
+Wire Wire Line
+	3100 4000 4050 4000
+Wire Wire Line
+	4050 4100 3100 4100
+Wire Wire Line
+	3100 4200 4050 4200
+Wire Wire Line
+	1500 4400 2100 4400
+Wire Wire Line
+	1650 4500 1650 4800
+Connection ~ 1650 4500
+Wire Wire Line
+	2100 4500 1650 4500
+Wire Wire Line
+	1650 4800 2600 4800
+Wire Wire Line
+	1650 3500 1650 4500
+Wire Wire Line
+	1650 3200 2600 3200
+$Comp
+L Device:C C2
+U 1 1 5FECB829
+P 1650 3350
+F 0 "C2" H 1450 3400 50  0000 L CNN
+F 1 "0.1uF" H 1350 3300 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1688 3200 50  0001 C CNN
+F 3 "~" H 1650 3350 50  0001 C CNN
+	1    1650 3350
+	1    0    0    -1  
+$EndComp
+Text Label 1500 4400 2    50   ~ 0
+CONTROL_CLOCK
+Text Label 3100 3500 0    50   ~ 0
+MIR_INST_7
+Text Label 3100 3600 0    50   ~ 0
+MIR_INST_6
+Text Label 3100 3700 0    50   ~ 0
+MIR_INST_5
+Text Label 3100 3800 0    50   ~ 0
+MIR_INST_4
+Text Label 3100 3900 0    50   ~ 0
+MIR_INST_3
+Text Label 3100 4000 0    50   ~ 0
+MIR_INST_2
+Text Label 3100 4100 0    50   ~ 0
+MIR_INST_1
+Text Label 3100 4200 0    50   ~ 0
+MIR_INST_0
+Text Label 2100 3500 2    50   ~ 0
+INST_07
+Text Label 2100 3600 2    50   ~ 0
+INST_06
+Text Label 2100 3700 2    50   ~ 0
+INST_05
+Text Label 2100 3800 2    50   ~ 0
+INST_04
+Text Label 2100 3900 2    50   ~ 0
+INST_03
+Text Label 2100 4000 2    50   ~ 0
+INST_02
+Text Label 2100 4100 2    50   ~ 0
+INST_01
+Text Label 2100 4200 2    50   ~ 0
+INST_00
+$Comp
+L eight-bit-computer:74HCT377 U4
+U 1 1 5FD843AB
+P 2600 4000
+F 0 "U4" H 2350 4650 50  0000 C CNN
+F 1 "74HCT377" H 2850 4650 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm" H 2600 4000 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2600 4000 50  0001 C CNN
+	1    2600 4000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
