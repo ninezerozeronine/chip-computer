@@ -1,4 +1,4 @@
-16939499096029592
+16949152523915349
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -75257,9 +75257,51 @@ varistor SIOV
 2
 2
 eight-bit-computer
+LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm
+LED, diameter 5.0mm z-position of LED center 3.0mm, 2 pins, diameter 5.0mm z-position of LED center 3.0mm, 2 pins
+LED diameter 5.0mm z-position of LED center 3.0mm 2 pins diameter 5.0mm z-position of LED center 3.0mm 2 pins
+0
+2
+2
+eight-bit-computer
+aux-connection
+Through hole angled pin header, 1x10, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x10 2.54mm single row
+0
+10
+10
+eight-bit-computer
 backplane-connector
 Through hole angled pin header, 1x32, 2.54mm pitch, 6mm pin length, single row
 Through hole angled pin header THT 1x34 2.54mm single row
 0
 64
 32
+eight-bit-computer
+backplane-connector-annotated
+Through hole angled pin header, 1x32, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x34 2.54mm single row
+0
+64
+32
+eight-bit-computer
+backplane-connector-single-row
+Through hole angled pin header, 1x32, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x32 2.54mm single row
+0
+32
+32
+eight-bit-computer
+backplane-connector-single-row-annotated
+Through hole angled pin header, 1x32, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x32 2.54mm single row
+0
+32
+32
+eight-bit-computer
+bus-connection
+Through hole angled pin header, 1x16, 2.54mm pitch, 6mm pin length, single row
+Through hole angled pin header THT 1x16 2.54mm single row
+0
+16
+16
