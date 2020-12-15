@@ -7,7 +7,7 @@ from .exceptions import AssemblyError
 ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
 
 
-def check_structure_validity(asm_line_infos, variable_start_offset):
+def check_structure_validity(asm_line_infos):
     """
     Check the processed assembly lines for consistency/correctness.
 
@@ -20,7 +20,8 @@ def check_structure_validity(asm_line_infos, variable_start_offset):
     check_multiple_label_assignment(asm_line_infos)
     check_undefined_label_ref(asm_line_infos)
     check_multiple_variable_def(asm_line_infos)
-    check_num_variables(asm_line_infos, variable_start_offset)
+    check_overlapping_variables(asm_line_infos)
+    check_undefined_variable_ref(asm_line_infos)
     check_num_instruction_bytes(asm_line_infos)
 
 
@@ -173,62 +174,83 @@ def check_multiple_variable_def(asm_line_infos):
                 variable_lines[variable] = asm_line_info["line_no"]
 
 
-def check_num_variables(asm_line_infos, variable_start_offset):
+def check_undefined_variable_ref(asm_line_infos):
     """
-    Check there are more variables defined than will fit in data mem.
-
-    There are 255 bytes of data memory available and the start offset
-    may eat into this.
+    Check instructions don't reference undefined variables
 
     Args:
         asm_line_infos (list(dict)): List of dictionaries (conforming to
             :func:`~.get_assembly_line_template`) with information about all
             the lines in the assembly file.
-        variable_start_offset (int): How far in memory to offset when
-            defining the first variable.
     Raises:
-        AssemblyError: If there are more variables defined than will fit
-            in data memory.
+        AssemblyError: If a variable is referenced but not defined.
     """
 
-    variables = []
+    # Get the names of all the defined variables
+    variables = set()
     for asm_line_info in asm_line_infos:
-
-        # Check for defined variable
         if asm_line_info["defines_variable"]:
-            variable = asm_line_info["defined_variable"]
-            if variable not in variables:
-                variables.append(asm_line_info["defined_variable"])
+            variables.add(asm_line_info["defined_variable"])
 
-                if len(variables) + variable_start_offset > 255:
-                    break
 
-        # Check for used variables
+    # Check the variables used in instructions
+    for asm_line_info in asm_line_infos:
         if asm_line_info["has_machine_code"]:
             for mc_byte_info in asm_line_info["mc_bytes"]:
                 if (mc_byte_info["byte_type"] == "constant"
                         and mc_byte_info["constant_type"] == "variable"
                         and mc_byte_info["constant"] not in variables):
-                    variables.append(mc_byte_info["constant"])
+                    details = (
+                        "The variable: \"{variable}\" has not been defined".format(
+                            variable=mc_byte_info["constant"]
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=asm_line_info["line_no"],
+                        line=asm_line_info["raw"],
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
 
-                if len(variables) + variable_start_offset > 255:
-                    break
 
-    if len(variables) + variable_start_offset > 255:
-        details = (
-            "No more data memory is available for the declaration of "
-            "variable: \"{variable}\". The max is 255 and a variable "
-            "start offset of {variable_start_offset} was used.".format(
-                variable=variable,
-                variable_start_offset=variable_start_offset,
-            )
-        )
-        msg = ERROR_TEMPLATE.format(
-            line_no=asm_line_info["line_no"],
-            line=asm_line_info["raw"],
-            details=details,
-        )
-        raise AssemblyError(msg)
+
+def check_overlapping_variables(asm_line_infos):
+    """
+    Check none of the defined variables overlap with each other.
+
+    Args:
+        asm_line_infos (list(dict)): List of dictionaries (conforming to
+            :func:`~.get_assembly_line_template`) with information about
+            all the lines in the assembly file.
+    Raises:
+        AssemblyError: If two variables overlap in position with each
+            other.
+    """
+
+    mem_pos_to_last_info = {}
+
+    for asm_line_info in asm_line_infos:
+        # Check for defined variable
+        if asm_line_info["defines_variable"]:
+            mem_pos = asm_line_info["defined_variable_location"]
+            if mem_pos in mem_pos_to_last_info:
+                details = (
+                    "The variable: \"{new_variable}\" is defined at the same "
+                    "location in memory as \"{old_variable}\" defined on line "
+                    "{assembly_line}.".format(
+                        new_variable=asm_line_info["defined_variable"],
+                        old_variable=mem_pos_to_last_info[mem_pos]["defined_variable"],
+                        assembly_line=mem_pos_to_last_info[mem_pos]["line_no"],
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=asm_line_info["line_no"],
+                    line=asm_line_info["raw"],
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                mem_pos_to_last_info[mem_pos] = asm_line_info
 
 
 def check_num_instruction_bytes(assembly_lines):

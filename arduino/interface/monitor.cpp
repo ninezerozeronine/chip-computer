@@ -13,7 +13,7 @@ void Monitor::constructor_defaults() {
     bridge = HardwareBridge();
     lcd = Lcd();
     program_index = 0;
-    num_programs = 2;
+    num_programs = 8;
     clock_frequency = 0.1;
 
     num_program_bytes[0] = num_fibonacci_program_bytes;
@@ -22,11 +22,47 @@ void Monitor::constructor_defaults() {
     data_bytes[0] = fibonacci_data_bytes;
     program_names[0] = fibonacci_program_name;
 
-    num_program_bytes[1] = num_foobar_program_bytes;
-    num_data_bytes[1] = num_foobar_data_bytes;
-    program_bytes[1] = foobar_program_bytes;
-    data_bytes[1] = foobar_data_bytes;
-    program_names[1] = foobar_program_name;
+    num_program_bytes[1] = num_test_rot_program_bytes;
+    num_data_bytes[1] = num_test_rot_data_bytes;
+    program_bytes[1] = test_rot_program_bytes;
+    data_bytes[1] = test_rot_data_bytes;
+    program_names[1] = test_rot_program_name;
+
+    num_program_bytes[2] = num_test_comparisons_program_bytes;
+    num_data_bytes[2] = num_test_comparisons_data_bytes;
+    program_bytes[2] = test_comparisons_program_bytes;
+    data_bytes[2] = test_comparisons_data_bytes;
+    program_names[2] = test_comparisons_program_name;
+
+    num_program_bytes[3] = num_test_copy_program_bytes;
+    num_data_bytes[3] = num_test_copy_data_bytes;
+    program_bytes[3] = test_copy_program_bytes;
+    data_bytes[3] = test_copy_data_bytes;
+    program_names[3] = test_copy_program_name;
+
+    num_program_bytes[4] = num_test_copy_thorough_program_bytes;
+    num_data_bytes[4] = num_test_copy_thorough_data_bytes;
+    program_bytes[4] = test_copy_thorough_program_bytes;
+    data_bytes[4] = test_copy_thorough_data_bytes;
+    program_names[4] = test_copy_thorough_program_name;
+
+    num_program_bytes[5] = num_test_mem_program_bytes;
+    num_data_bytes[5] = num_test_mem_data_bytes;
+    program_bytes[5] = test_mem_program_bytes;
+    data_bytes[5] = test_mem_data_bytes;
+    program_names[5] = test_mem_program_name;
+
+    num_program_bytes[6] = num_test_membug_program_bytes;
+    num_data_bytes[6] = num_test_membug_data_bytes;
+    program_bytes[6] = test_membug_program_bytes;
+    data_bytes[6] = test_membug_data_bytes;
+    program_names[6] = test_membug_program_name;
+
+    num_program_bytes[7] = num_test_push_pop_call_ret_program_bytes;
+    num_data_bytes[7] = num_test_push_pop_call_ret_data_bytes;
+    program_bytes[7] = test_push_pop_call_ret_program_bytes;
+    data_bytes[7] = test_push_pop_call_ret_data_bytes;
+    program_names[7] = test_push_pop_call_ret_program_name;
 
     strcpy(queued_address_str, "");
     strcpy(proposed_address_str, "");
@@ -77,9 +113,6 @@ void Monitor::transfer_stored_pgm() {
         // Store initial memory region and address
         e_ram_region initial_ram_region = bridge.get_ram_region();
         byte initial_address = bridge.get_address();
-
-        // Switch to setup mode
-        bridge.set_ram_control_mode(USER);
 
         // Loop over program bytes, sending to computer (Don't update LCD)
         if (num_program_bytes[program_index] > 0) {
@@ -479,13 +512,21 @@ bool Monitor::_is_within_range(int value, e_sign_mode sign_mode_){
 //
 // Temporarily puts the computer back into a semi run mode.
 void Monitor::_send_clock_pulses(int num_pulses) {
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(CONTROL_UNIT);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     bridge.set_clock_enabled(true);
     delayMicroseconds(5);
     bridge.send_clock_pulses(num_pulses);
     delayMicroseconds(5);
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     bridge.set_clock_enabled(false);
     delayMicroseconds(5);
@@ -696,7 +737,11 @@ void Monitor::_set_paused() {
     delayMicroseconds(5);
     bridge.set_clock_source(ARDUINO_PIN);
     delayMicroseconds(5);
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(USER);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     lcd.draw_data(bridge.get_data(), number_base, sign_mode);
     lcd.draw_run_mode_indicator(run_mode);
@@ -705,7 +750,11 @@ void Monitor::_set_paused() {
 
 void Monitor::_set_running() {
     run_mode = RUNNING;
+    bridge.set_ram_enable_enable(false);
+    delayMicroseconds(5);
     bridge.set_ram_control_mode(CONTROL_UNIT);
+    delayMicroseconds(5);
+    bridge.set_ram_enable_enable(true);
     delayMicroseconds(5);
     _set_clock_to_frequency(clock_frequency);
     delayMicroseconds(5);

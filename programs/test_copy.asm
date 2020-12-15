@@ -1,6 +1,6 @@
 // Tests that the copy operation works
 
-$test_num
+$test_num [#16] #16
 SET ACC #1
 STORE ACC [$test_num]
 
