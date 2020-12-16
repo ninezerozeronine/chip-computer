@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L 74xx:74HCT00 U7
+L 74xx:74HCT00 U6
 U 1 1 5FD83C4F
 P 4150 1500
-F 0 "U7" H 4150 1825 50  0000 C CNN
+F 0 "U6" H 4150 1825 50  0000 C CNN
 F 1 "74HCT00" H 4150 1734 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 4150 1500 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 4150 1500 50  0001 C CNN
@@ -25,10 +25,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 4150 1500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U7
+L 74xx:74HCT00 U6
 U 2 1 5FD85E64
 P 4150 2350
-F 0 "U7" H 4150 2675 50  0000 C CNN
+F 0 "U6" H 4150 2675 50  0000 C CNN
 F 1 "74HCT00" H 4150 2584 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 4150 2350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 4150 2350 50  0001 C CNN
@@ -36,10 +36,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 4150 2350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U7
+L 74xx:74HCT00 U6
 U 3 1 5FD873AA
 P 5900 2000
-F 0 "U7" H 5900 2325 50  0000 C CNN
+F 0 "U6" H 5900 2325 50  0000 C CNN
 F 1 "74HCT00" H 5900 2234 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5900 2000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 5900 2000 50  0001 C CNN
@@ -47,10 +47,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 5900 2000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U7
+L 74xx:74HCT00 U6
 U 5 1 5FD8BCD6
 P 5350 8350
-F 0 "U7" H 5100 8700 50  0000 L CNN
+F 0 "U6" H 5100 8700 50  0000 L CNN
 F 1 "74HCT00" H 5400 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5350 8350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 5350 8350 50  0001 C CNN
@@ -58,10 +58,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 5350 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U2
+L 74xx:74HCT00 U3
 U 1 1 5FD94E5C
 P 1800 5950
-F 0 "U2" H 1800 6275 50  0000 C CNN
+F 0 "U3" H 1800 6275 50  0000 C CNN
 F 1 "74HCT00" H 1800 6184 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1800 5950 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 1800 5950 50  0001 C CNN
@@ -69,10 +69,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 1800 5950 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U2
+L 74xx:74HCT00 U3
 U 2 1 5FD9C99E
 P 1800 6550
-F 0 "U2" H 1800 6875 50  0000 C CNN
+F 0 "U3" H 1800 6875 50  0000 C CNN
 F 1 "74HCT00" H 1800 6784 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1800 6550 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 1800 6550 50  0001 C CNN
@@ -80,10 +80,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 1800 6550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U2
+L 74xx:74HCT00 U3
 U 3 1 5FD9C9A4
 P 2500 6250
-F 0 "U2" H 2500 6575 50  0000 C CNN
+F 0 "U3" H 2500 6575 50  0000 C CNN
 F 1 "74HCT00" H 2500 6484 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 2500 6250 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 2500 6250 50  0001 C CNN
@@ -91,10 +91,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 2500 6250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U2
+L 74xx:74HCT00 U3
 U 4 1 5FD9C9AA
 P 3900 5550
-F 0 "U2" H 3900 5875 50  0000 C CNN
+F 0 "U3" H 3900 5875 50  0000 C CNN
 F 1 "74HCT00" H 3900 5784 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 3900 5550 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 3900 5550 50  0001 C CNN
@@ -102,10 +102,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 3900 5550 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT00 U2
+L 74xx:74HCT00 U3
 U 5 1 5FD9C9B0
 P 6650 8350
-F 0 "U2" H 6400 8700 50  0000 L CNN
+F 0 "U3" H 6400 8700 50  0000 L CNN
 F 1 "74HCT00" H 6700 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 6650 8350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 6650 8350 50  0001 C CNN
@@ -113,10 +113,10 @@ F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 6650 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT27 U4
+L eight-bit-computer:74HCT27 U5
 U 1 1 5FD9D267
 P 5000 2350
-F 0 "U4" H 5000 2675 50  0000 C CNN
+F 0 "U5" H 5000 2675 50  0000 C CNN
 F 1 "74HCT27" H 5000 2584 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5000 2350 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 5000 2350 50  0001 C CNN
@@ -124,10 +124,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 5000 2350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT27 U4
+L eight-bit-computer:74HCT27 U5
 U 2 1 5FDA0962
 P 5000 1600
-F 0 "U4" H 5000 1925 50  0000 C CNN
+F 0 "U5" H 5000 1925 50  0000 C CNN
 F 1 "74HCT27" H 5000 1834 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5000 1600 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 5000 1600 50  0001 C CNN
@@ -135,10 +135,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 5000 1600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT27 U4
+L eight-bit-computer:74HCT27 U5
 U 3 1 5FDA272B
 P 2800 1500
-F 0 "U4" H 2800 1825 50  0000 C CNN
+F 0 "U5" H 2800 1825 50  0000 C CNN
 F 1 "74HCT27" H 2800 1734 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 2800 1500 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 2800 1500 50  0001 C CNN
@@ -146,10 +146,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 2800 1500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT27 U4
+L eight-bit-computer:74HCT27 U5
 U 4 1 5FDA52B0
 P 3950 8350
-F 0 "U4" H 3700 8700 50  0000 L CNN
+F 0 "U5" H 3700 8700 50  0000 L CNN
 F 1 "74HCT27" H 4000 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 3950 8350 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 3950 8350 50  0001 C CNN
@@ -157,10 +157,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 3950 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 1 1 5FDA77B5
 P 1600 1600
-F 0 "U1" H 1600 1917 50  0000 C CNN
+F 0 "U2" H 1600 1917 50  0000 C CNN
 F 1 "74HCT04" H 1600 1826 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1600 1600 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1600 1600 50  0001 C CNN
@@ -168,10 +168,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1600 160
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 2 1 5FDA8E25
 P 7950 2700
-F 0 "U1" H 7950 3017 50  0000 C CNN
+F 0 "U2" H 7950 3017 50  0000 C CNN
 F 1 "74HCT04" H 7950 2926 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 7950 2700 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 7950 2700 50  0001 C CNN
@@ -179,10 +179,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 7950 270
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 3 1 5FDAA076
 P 4150 4400
-F 0 "U1" H 4150 4717 50  0000 C CNN
+F 0 "U2" H 4150 4717 50  0000 C CNN
 F 1 "74HCT04" H 4150 4626 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 4150 4400 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4150 4400 50  0001 C CNN
@@ -190,10 +190,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 4150 440
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 4 1 5FDABC36
 P 3900 7300
-F 0 "U1" H 3900 7617 50  0000 C CNN
+F 0 "U2" H 3900 7617 50  0000 C CNN
 F 1 "74HCT04" H 3900 7526 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 3900 7300 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3900 7300 50  0001 C CNN
@@ -201,10 +201,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3900 730
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 5 1 5FDACA0E
 P 11000 3600
-F 0 "U1" H 11000 3917 50  0000 C CNN
+F 0 "U2" H 11000 3917 50  0000 C CNN
 F 1 "74HCT04" H 11000 3826 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 11000 3600 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11000 3600 50  0001 C CNN
@@ -212,10 +212,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11000 36
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 6 1 5FDAEA06
 P 11000 4100
-F 0 "U1" H 11000 4417 50  0000 C CNN
+F 0 "U2" H 11000 4417 50  0000 C CNN
 F 1 "74HCT04" H 11000 4326 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 11000 4100 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11000 4100 50  0001 C CNN
@@ -223,10 +223,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11000 41
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HCT04 U2
 U 7 1 5FDB03C0
 P 2600 8350
-F 0 "U1" H 2300 8700 50  0000 L CNN
+F 0 "U2" H 2300 8700 50  0000 L CNN
 F 1 "74HCT04" H 2650 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 2600 8350 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2600 8350 50  0001 C CNN
@@ -234,10 +234,10 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2600 835
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U8
+L eight-bit-computer:74HCT245 U7
 U 1 1 5FDD53F1
 P 6150 4400
-F 0 "U8" H 5950 5100 50  0000 C CNN
+F 0 "U7" H 5950 5100 50  0000 C CNN
 F 1 "74HCT245" H 6400 5100 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 5800 4400 50  0001 C CNN
 F 3 "" H 5800 4400 50  0001 C CNN
@@ -245,10 +245,10 @@ F 3 "" H 5800 4400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U9
+L eight-bit-computer:74HCT245 U8
 U 1 1 5FDD606E
 P 6150 6350
-F 0 "U9" H 5950 7050 50  0000 C CNN
+F 0 "U8" H 5950 7050 50  0000 C CNN
 F 1 "74HCT245" H 6400 7050 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 5800 6350 50  0001 C CNN
 F 3 "" H 5800 6350 50  0001 C CNN
@@ -289,10 +289,10 @@ F 3 "~" H 12100 7400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U15
+L eight-bit-computer:74HCT109 U9
 U 1 1 5FDE46BD
 P 11400 2000
-F 0 "U15" H 11200 2250 50  0000 C CNN
+F 0 "U9" H 11200 2250 50  0000 C CNN
 F 1 "74HCT109" H 11650 2250 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 11400 2000 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 11400 2000 50  0001 C CNN
@@ -300,10 +300,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 11400 2000 50  0001 C C
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U15
+L eight-bit-computer:74HCT109 U9
 U 2 1 5FDE50A4
 P 10200 2000
-F 0 "U15" H 10000 2250 50  0000 C CNN
+F 0 "U9" H 10000 2250 50  0000 C CNN
 F 1 "74HCT109" H 10450 2250 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 10200 2000 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 10200 2000 50  0001 C CNN
@@ -311,10 +311,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 10200 2000 50  0001 C C
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U15
+L eight-bit-computer:74HCT109 U9
 U 3 1 5FDE701B
 P 7900 8350
-F 0 "U15" H 7650 8700 50  0000 L CNN
+F 0 "U9" H 7650 8700 50  0000 L CNN
 F 1 "74HCT109" H 7950 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 7900 8350 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 7900 8350 50  0001 C CNN
@@ -322,10 +322,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 7900 8350 50  0001 C CN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U14
+L eight-bit-computer:74HCT109 U1
 U 1 1 5FDED83D
 P 9100 2000
-F 0 "U14" H 8900 2250 50  0000 C CNN
+F 0 "U1" H 8900 2250 50  0000 C CNN
 F 1 "74HCT109" H 9350 2250 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 9100 2000 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 9100 2000 50  0001 C CNN
@@ -333,10 +333,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 9100 2000 50  0001 C CN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U14
+L eight-bit-computer:74HCT109 U1
 U 2 1 5FDED843
 P 12550 3800
-F 0 "U14" H 12350 4050 50  0000 C CNN
+F 0 "U1" H 12350 4050 50  0000 C CNN
 F 1 "74HCT109" H 12800 4050 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 12550 3800 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 12550 3800 50  0001 C CNN
@@ -344,10 +344,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 12550 3800 50  0001 C C
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT109 U14
+L eight-bit-computer:74HCT109 U1
 U 3 1 5FDED849
 P 1350 8350
-F 0 "U14" H 1100 8700 50  0000 L CNN
+F 0 "U1" H 1100 8700 50  0000 L CNN
 F 1 "74HCT109" H 1400 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 1350 8350 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct109.pdf" H 1350 8350 50  0001 C CNN
@@ -776,92 +776,6 @@ Wire Wire Line
 Connection ~ 12550 3300
 Wire Wire Line
 	12550 3300 13200 3300
-$Comp
-L Connector:Conn_01x16_Female J5
-U 1 1 60097EAA
-P 13950 7000
-F 0 "J5" H 13842 7885 50  0000 C CNN
-F 1 "Ext_address" H 13842 7794 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical" H 13950 7000 50  0001 C CNN
-F 3 "~" H 13950 7000 50  0001 C CNN
-	1    13950 7000
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Connector:Conn_01x16_Female J8
-U 1 1 600A6D38
-P 15050 7000
-F 0 "J8" H 14942 7885 50  0000 C CNN
-F 1 "Ext_bus" H 14942 7794 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical" H 15050 7000 50  0001 C CNN
-F 3 "~" H 15050 7000 50  0001 C CNN
-	1    15050 7000
-	-1   0    0    -1  
-$EndComp
-Text Label 14150 6300 0    50   ~ 0
-EXT_ADDR_00
-Text Label 14150 6400 0    50   ~ 0
-EXT_ADDR_01
-Text Label 14150 6500 0    50   ~ 0
-EXT_ADDR_02
-Text Label 14150 6600 0    50   ~ 0
-EXT_ADDR_03
-Text Label 14150 6700 0    50   ~ 0
-EXT_ADDR_04
-Text Label 14150 6800 0    50   ~ 0
-EXT_ADDR_05
-Text Label 14150 6900 0    50   ~ 0
-EXT_ADDR_06
-Text Label 14150 7000 0    50   ~ 0
-EXT_ADDR_07
-Text Label 14150 7100 0    50   ~ 0
-EXT_ADDR_08
-Text Label 14150 7200 0    50   ~ 0
-EXT_ADDR_09
-Text Label 14150 7300 0    50   ~ 0
-EXT_ADDR_10
-Text Label 14150 7400 0    50   ~ 0
-EXT_ADDR_11
-Text Label 14150 7500 0    50   ~ 0
-EXT_ADDR_12
-Text Label 14150 7600 0    50   ~ 0
-EXT_ADDR_13
-Text Label 14150 7700 0    50   ~ 0
-EXT_ADDR_14
-Text Label 14150 7800 0    50   ~ 0
-EXT_ADDR_15
-Text Label 15250 6300 0    50   ~ 0
-EXT_BUS_00
-Text Label 15250 6400 0    50   ~ 0
-EXT_BUS_01
-Text Label 15250 6500 0    50   ~ 0
-EXT_BUS_02
-Text Label 15250 6600 0    50   ~ 0
-EXT_BUS_03
-Text Label 15250 6700 0    50   ~ 0
-EXT_BUS_04
-Text Label 15250 6800 0    50   ~ 0
-EXT_BUS_05
-Text Label 15250 6900 0    50   ~ 0
-EXT_BUS_06
-Text Label 15250 7000 0    50   ~ 0
-EXT_BUS_07
-Text Label 15250 7100 0    50   ~ 0
-EXT_BUS_08
-Text Label 15250 7200 0    50   ~ 0
-EXT_BUS_09
-Text Label 15250 7300 0    50   ~ 0
-EXT_BUS_10
-Text Label 15250 7400 0    50   ~ 0
-EXT_BUS_11
-Text Label 15250 7500 0    50   ~ 0
-EXT_BUS_12
-Text Label 15250 7600 0    50   ~ 0
-EXT_BUS_13
-Text Label 15250 7700 0    50   ~ 0
-EXT_BUS_14
-Text Label 15250 7800 0    50   ~ 0
-EXT_BUS_15
 Text Label 12250 1250 0    50   ~ 0
 CTL_CLK
 Wire Wire Line
@@ -878,10 +792,10 @@ Wire Wire Line
 Wire Wire Line
 	6900 2000 8700 2000
 $Comp
-L 74xx:74HCT00 U7
+L 74xx:74HCT00 U6
 U 4 1 5FD88D53
 P 6600 2000
-F 0 "U7" H 6600 2325 50  0000 C CNN
+F 0 "U6" H 6600 2325 50  0000 C CNN
 F 1 "74HCT00" H 6600 2234 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 6600 2000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74hct00" H 6600 2000 50  0001 C CNN
@@ -1013,10 +927,10 @@ EXT_ADDR_14
 Text Label 8400 4150 2    50   ~ 0
 EXT_ADDR_15
 $Comp
-L eight-bit-computer:74HCT245 U13
+L eight-bit-computer:74HCT245 U11
 U 1 1 5FDD8913
 P 8950 6350
-F 0 "U13" H 8750 7050 50  0000 C CNN
+F 0 "U11" H 8750 7050 50  0000 C CNN
 F 1 "74HCT245" H 9200 7050 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 8600 6350 50  0001 C CNN
 F 3 "" H 8600 6350 50  0001 C CNN
@@ -1024,10 +938,10 @@ F 3 "" H 8600 6350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U12
+L eight-bit-computer:74HCT245 U10
 U 1 1 5FDD6942
 P 8950 4400
-F 0 "U12" H 8750 5100 50  0000 C CNN
+F 0 "U10" H 8750 5100 50  0000 C CNN
 F 1 "74HCT245" H 9200 5100 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 8600 4400 50  0001 C CNN
 F 3 "" H 8600 4400 50  0001 C CNN
@@ -1051,10 +965,10 @@ Wire Wire Line
 Wire Wire Line
 	8400 5950 7800 5950
 $Comp
-L Device:C C8
+L Device:C C9
 U 1 1 601B2E29
 P 7800 5550
-F 0 "C8" H 7915 5596 50  0000 L CNN
+F 0 "C9" H 7915 5596 50  0000 L CNN
 F 1 "0.1uF" H 7915 5505 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 7838 5400 50  0001 C CNN
 F 3 "~" H 7800 5550 50  0001 C CNN
@@ -1067,10 +981,10 @@ Connection ~ 7800 5950
 Wire Wire Line
 	7800 5400 8950 5400
 $Comp
-L Device:C C7
+L Device:C C8
 U 1 1 601D2A6D
 P 7800 3600
-F 0 "C7" H 7915 3646 50  0000 L CNN
+F 0 "C8" H 7915 3646 50  0000 L CNN
 F 1 "0.1uF" H 7915 3555 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 7838 3450 50  0001 C CNN
 F 3 "~" H 7800 3600 50  0001 C CNN
@@ -1129,10 +1043,10 @@ VCC
 Text Label 8700 2600 0    50   ~ 0
 GND
 $Comp
-L Device:C C3
+L Device:C C4
 U 1 1 60714BC6
 P 5200 3600
-F 0 "C3" H 5315 3646 50  0000 L CNN
+F 0 "C4" H 5315 3646 50  0000 L CNN
 F 1 "0.1uF" H 5315 3555 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5238 3450 50  0001 C CNN
 F 3 "~" H 5200 3600 50  0001 C CNN
@@ -1146,10 +1060,10 @@ Wire Wire Line
 Wire Wire Line
 	5200 5200 6150 5200
 $Comp
-L Device:C C4
+L Device:C C5
 U 1 1 6074BA84
 P 5250 5550
-F 0 "C4" H 5365 5596 50  0000 L CNN
+F 0 "C5" H 5365 5596 50  0000 L CNN
 F 1 "0.1uF" H 5365 5505 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5288 5400 50  0001 C CNN
 F 3 "~" H 5250 5550 50  0001 C CNN
@@ -1235,10 +1149,10 @@ F 3 "~" H 13150 5050 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L Device:CP C19
+L Device:CP C12
 U 1 1 60F148A1
 P 13450 4900
-F 0 "C19" H 13568 4946 50  0000 L CNN
+F 0 "C12" H 13568 4946 50  0000 L CNN
 F 1 "33uF" H 13568 4855 50  0000 L CNN
 F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 13488 4750 50  0001 C CNN
 F 3 "~" H 13450 4900 50  0001 C CNN
@@ -1246,10 +1160,10 @@ F 3 "~" H 13450 4900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C20
+L Device:CP C13
 U 1 1 60F17C9E
 P 13900 4900
-F 0 "C20" H 14018 4946 50  0000 L CNN
+F 0 "C13" H 14018 4946 50  0000 L CNN
 F 1 "33uF" H 14018 4855 50  0000 L CNN
 F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 13938 4750 50  0001 C CNN
 F 3 "~" H 13900 4900 50  0001 C CNN
@@ -1257,10 +1171,10 @@ F 3 "~" H 13900 4900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:CP C22
+L Device:CP C14
 U 1 1 60F1825C
 P 14350 4900
-F 0 "C22" H 14468 4946 50  0000 L CNN
+F 0 "C14" H 14468 4946 50  0000 L CNN
 F 1 "33uF" H 14468 4855 50  0000 L CNN
 F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14388 4750 50  0001 C CNN
 F 3 "~" H 14350 4900 50  0001 C CNN
@@ -1298,10 +1212,10 @@ Connection ~ 13900 5050
 Wire Wire Line
 	13900 5050 13450 5050
 $Comp
-L Device:C C13
+L Device:C C1
 U 1 1 611BF450
 P 1800 8350
-F 0 "C13" H 1685 8304 50  0000 R CNN
+F 0 "C1" H 1685 8304 50  0000 R CNN
 F 1 "0.1uF" H 1685 8395 50  0000 R CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 1838 8200 50  0001 C CNN
 F 3 "~" H 1800 8350 50  0001 C CNN
@@ -1309,10 +1223,10 @@ F 3 "~" H 1800 8350 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L Device:C C14
+L Device:C C2
 U 1 1 6120D8D8
 P 3050 8350
-F 0 "C14" H 3165 8396 50  0000 L CNN
+F 0 "C2" H 3165 8396 50  0000 L CNN
 F 1 "0.1uF" H 3165 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 3088 8200 50  0001 C CNN
 F 3 "~" H 3050 8350 50  0001 C CNN
@@ -1328,10 +1242,10 @@ Wire Wire Line
 Wire Wire Line
 	1800 8850 1350 8850
 $Comp
-L Device:C C15
+L Device:C C3
 U 1 1 613DD096
 P 4400 8350
-F 0 "C15" H 4515 8396 50  0000 L CNN
+F 0 "C3" H 4515 8396 50  0000 L CNN
 F 1 "0.1uF" H 4515 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 4438 8200 50  0001 C CNN
 F 3 "~" H 4400 8350 50  0001 C CNN
@@ -1339,10 +1253,10 @@ F 3 "~" H 4400 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C16
+L Device:C C6
 U 1 1 613DEEF9
 P 5800 8350
-F 0 "C16" H 5915 8396 50  0000 L CNN
+F 0 "C6" H 5915 8396 50  0000 L CNN
 F 1 "0.1uF" H 5915 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 5838 8200 50  0001 C CNN
 F 3 "~" H 5800 8350 50  0001 C CNN
@@ -1350,10 +1264,10 @@ F 3 "~" H 5800 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C17
+L Device:C C7
 U 1 1 613E164D
 P 7100 8350
-F 0 "C17" H 7215 8396 50  0000 L CNN
+F 0 "C7" H 7215 8396 50  0000 L CNN
 F 1 "0.1uF" H 7215 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 7138 8200 50  0001 C CNN
 F 3 "~" H 7100 8350 50  0001 C CNN
@@ -1361,10 +1275,10 @@ F 3 "~" H 7100 8350 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C18
+L Device:C C10
 U 1 1 613E1C54
 P 8350 8350
-F 0 "C18" H 8465 8396 50  0000 L CNN
+F 0 "C10" H 8465 8396 50  0000 L CNN
 F 1 "0.1uF" H 8465 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 8388 8200 50  0001 C CNN
 F 3 "~" H 8350 8350 50  0001 C CNN
@@ -1496,76 +1410,65 @@ Text Label 3350 7300 2    50   ~ 0
 ENABLE_BUS_OUTPUT
 Text Label 15150 5050 0    50   ~ 0
 ENABLE_CLOCK_OUTPUT
-$Comp
-L Connector:Conn_01x03_Female J7
-U 1 1 623FB0DC
-P 14950 5600
-F 0 "J7" H 14850 5950 50  0000 C CNN
-F 1 "Conn_01x03_Female" H 14850 5850 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x03_P2.54mm_Vertical" H 14950 5600 50  0001 C CNN
-F 3 "~" H 14950 5600 50  0001 C CNN
-	1    14950 5600
-	-1   0    0    -1  
-$EndComp
 Text Label 3050 2350 2    50   ~ 0
 EXT_CLOCK_IN
-Text Label 15150 5500 0    50   ~ 0
+Text Label 14950 7900 0    50   ~ 0
 DATA_CLOCK_OUT
-Text Label 15150 5600 0    50   ~ 0
+Text Label 14450 7800 2    50   ~ 0
 W_TO_MEM_OUT
-Text Label 15150 5700 0    50   ~ 0
+Text Label 14450 7900 2    50   ~ 0
 R_FM_MEM_OUT
 Wire Wire Line
 	3450 5450 3600 5450
 $Comp
-L eight-bit-computer:74HCT126 U3
+L eight-bit-computer:74HCT126 U4
 U 1 1 6257D758
-P 1850 3450
-F 0 "U3" H 1800 3650 50  0000 C CNN
-F 1 "74HCT126" H 2100 3600 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 3450 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 3450 50  0001 C CNN
-	1    1850 3450
+P 1850 3400
+F 0 "U4" H 1800 3600 50  0000 C CNN
+F 1 "74HCT126" H 2100 3550 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 3400 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 3400 50  0001 C CNN
+	1    1850 3400
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT126 U3
+L eight-bit-computer:74HCT126 U4
 U 2 1 6257FEA9
-P 1850 4100
-F 0 "U3" H 1800 4300 50  0000 C CNN
-F 1 "74HCT126" H 2100 4250 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 4100 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 4100 50  0001 C CNN
-	2    1850 4100
+P 1850 4550
+F 0 "U4" H 1800 4750 50  0000 C CNN
+F 1 "74HCT126" H 2100 4700 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 4550 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 4550 50  0001 C CNN
+	2    1850 4550
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT126 U3
+L eight-bit-computer:74HCT126 U4
 U 3 1 62584A6B
-P 1850 4750
-F 0 "U3" H 1800 4950 50  0000 C CNN
-F 1 "74HCT126" H 2100 4900 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 4750 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 4750 50  0001 C CNN
-	3    1850 4750
+P 1850 5200
+F 0 "U4" H 1800 5400 50  0000 C CNN
+F 1 "74HCT126" H 2100 5350 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 5200 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 5200 50  0001 C CNN
+	3    1850 5200
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT126 U3
+L eight-bit-computer:74HCT126 U4
 U 4 1 6258573A
-P 13950 3600
-F 0 "U3" H 13900 3800 50  0000 C CNN
-F 1 "74HCT126" H 14200 3750 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 13950 3600 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 13950 3600 50  0001 C CNN
-	4    13950 3600
+P 1850 4000
+F 0 "U4" H 1800 4200 50  0000 C CNN
+F 1 "74HCT126" H 2100 4150 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 1850 4000 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 1850 4000 50  0001 C CNN
+	4    1850 4000
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT126 U3
+L eight-bit-computer:74HCT126 U4
 U 5 1 62589F0D
 P 9200 8350
-F 0 "U3" H 8950 8700 50  0000 L CNN
+F 0 "U4" H 8950 8700 50  0000 L CNN
 F 1 "74HCT126" H 9250 8700 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 9200 8350 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 9200 8350 50  0001 C CNN
@@ -1573,10 +1476,10 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 9200 8350 50  0001 C CN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:C C21
+L Device:C C11
 U 1 1 625EC47F
 P 9950 8350
-F 0 "C21" H 10065 8396 50  0000 L CNN
+F 0 "C11" H 10065 8396 50  0000 L CNN
 F 1 "0.1uF" H 10065 8305 50  0000 L CNN
 F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 9988 8200 50  0001 C CNN
 F 3 "~" H 9950 8350 50  0001 C CNN
@@ -1599,50 +1502,36 @@ Connection ~ 8350 8850
 Connection ~ 9200 8850
 Wire Wire Line
 	9200 8850 8350 8850
-Text Label 2150 3450 0    50   ~ 0
+Text Label 2400 3400 0    50   ~ 0
 DATA_CLOCK_OUT
-Text Label 1550 3450 2    50   ~ 0
+Text Label 1550 3400 2    50   ~ 0
 DATA_CLK
-Text Label 1550 4100 2    50   ~ 0
+Text Label 1550 4550 2    50   ~ 0
 R_FM_MEM
-Text Label 1550 4750 2    50   ~ 0
+Text Label 1550 5200 2    50   ~ 0
 W_TO_MEM
-Text Label 2150 4750 0    50   ~ 0
+Text Label 2300 5200 0    50   ~ 0
 W_TO_MEM_OUT
-Text Label 2150 4100 0    50   ~ 0
+Text Label 2300 4550 0    50   ~ 0
 R_FM_MEM_OUT
-Text Label 1750 4450 2    50   ~ 0
+Text Label 1750 4900 2    50   ~ 0
 ENABLE_RW_MEM_OUTPUT
 Wire Wire Line
 	2800 6250 3450 6250
 Wire Wire Line
-	1850 4450 1050 4450
+	1850 4900 1050 4900
 Wire Wire Line
-	1050 4450 1050 5000
+	1050 4900 1050 5450
 Wire Wire Line
-	1050 5000 1850 5000
+	1050 5450 1850 5450
 Wire Wire Line
-	1850 4350 1850 4450
-Text Label 1750 3750 2    50   ~ 0
+	1850 4800 1850 4900
+Text Label 1750 3700 2    50   ~ 0
 ENABLE_CLOCK_OUTPUT
 Wire Wire Line
-	1750 3750 1850 3750
-Wire Wire Line
-	1850 3750 1850 3700
+	1850 3700 1850 3650
 Text Label 15150 5150 0    50   ~ 0
 ENABLE_RW_MEM_OUTPUT
-NoConn ~ 14250 3600
-Text Label 13550 4200 2    50   ~ 0
-GND
-Wire Wire Line
-	13550 4200 13650 4200
-Wire Wire Line
-	13950 4200 13950 3850
-Wire Wire Line
-	13650 3600 13650 4200
-Connection ~ 13650 4200
-Wire Wire Line
-	13650 4200 13950 4200
 Wire Wire Line
 	10500 4200 10700 4200
 Wire Wire Line
@@ -1715,10 +1604,10 @@ EXT_BUS_14
 Text Label 5450 10100 2    50   ~ 0
 EXT_BUS_15
 $Comp
-L Device:R_Network08_US RN9
+L Device:R_Network08_US RN1
 U 1 1 632735CB
 P 1400 9800
-F 0 "RN9" V 783 9800 50  0000 C CNN
+F 0 "RN1" V 783 9800 50  0000 C CNN
 F 1 "10K" V 874 9800 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 1875 9800 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 1400 9800 50  0001 C CNN
@@ -1726,10 +1615,10 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 1400 9800 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R_Network08_US RN10
+L Device:R_Network08_US RN2
 U 1 1 63337B4A
 P 2600 9800
-F 0 "RN10" V 1983 9800 50  0000 C CNN
+F 0 "RN2" V 1983 9800 50  0000 C CNN
 F 1 "10K" V 2074 9800 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 3075 9800 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 2600 9800 50  0001 C CNN
@@ -1737,10 +1626,10 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 2600 9800 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R_Network08_US RN11
+L Device:R_Network08_US RN4
 U 1 1 6345D476
 P 5650 9800
-F 0 "RN11" V 5033 9800 50  0000 C CNN
+F 0 "RN4" V 5033 9800 50  0000 C CNN
 F 1 "10K" V 5124 9800 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 6125 9800 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 5650 9800 50  0001 C CNN
@@ -1748,10 +1637,10 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 5650 9800 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L Device:R_Network08_US RN12
+L Device:R_Network08_US RN3
 U 1 1 6345EFF4
 P 4200 9800
-F 0 "RN12" V 3583 9800 50  0000 C CNN
+F 0 "RN3" V 3583 9800 50  0000 C CNN
 F 1 "10K" V 3674 9800 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 4675 9800 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 4200 9800 50  0001 C CNN
@@ -1761,48 +1650,44 @@ $EndComp
 $Comp
 L Device:R_US R1
 U 1 1 634605C5
-P 2300 3600
-F 0 "R1" V 2200 3700 50  0000 C CNN
-F 1 "10K" V 2200 3500 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 3590 50  0001 C CNN
-F 3 "~" H 2300 3600 50  0001 C CNN
-	1    2300 3600
+P 2300 3550
+F 0 "R1" V 2200 3650 50  0000 C CNN
+F 1 "10K" V 2200 3450 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 3540 50  0001 C CNN
+F 3 "~" H 2300 3550 50  0001 C CNN
+	1    2300 3550
 	0    -1   -1   0   
 $EndComp
-Text Label 2450 3600 0    50   ~ 0
-GND
 Wire Wire Line
-	2150 3450 2150 3600
-$Comp
-L Device:R_US R2
-U 1 1 634C7FDF
-P 2300 4250
-F 0 "R2" V 2200 4350 50  0000 C CNN
-F 1 "10K" V 2200 4150 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 4240 50  0001 C CNN
-F 3 "~" H 2300 4250 50  0001 C CNN
-	1    2300 4250
-	0    -1   -1   0   
-$EndComp
-Text Label 2450 4250 0    50   ~ 0
-GND
+	2150 3400 2150 3550
 $Comp
 L Device:R_US R3
-U 1 1 6352A2F7
-P 2300 4900
-F 0 "R3" V 2200 5000 50  0000 C CNN
-F 1 "10K" V 2200 4800 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 4890 50  0001 C CNN
-F 3 "~" H 2300 4900 50  0001 C CNN
-	1    2300 4900
+U 1 1 634C7FDF
+P 2300 4700
+F 0 "R3" V 2200 4800 50  0000 C CNN
+F 1 "10K" V 2200 4600 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 4690 50  0001 C CNN
+F 3 "~" H 2300 4700 50  0001 C CNN
+	1    2300 4700
 	0    -1   -1   0   
 $EndComp
-Text Label 2450 4900 0    50   ~ 0
+$Comp
+L Device:R_US R4
+U 1 1 6352A2F7
+P 2300 5350
+F 0 "R4" V 2200 5450 50  0000 C CNN
+F 1 "10K" V 2200 5250 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 5340 50  0001 C CNN
+F 3 "~" H 2300 5350 50  0001 C CNN
+	1    2300 5350
+	0    -1   -1   0   
+$EndComp
+Text Label 2950 5350 0    50   ~ 0
 GND
 Wire Wire Line
-	2150 4750 2150 4900
+	2150 5200 2150 5350
 Wire Wire Line
-	2150 4100 2150 4250
+	2150 4550 2150 4700
 Text Label 1600 9400 0    50   ~ 0
 GND
 Text Label 2800 9400 0    50   ~ 0
@@ -1811,4 +1696,190 @@ Text Label 4400 9400 0    50   ~ 0
 GND
 Text Label 5850 9400 0    50   ~ 0
 GND
+Text Label 14950 7800 0    50   ~ 0
+CTL_CLK_OUT
+Text Label 14450 6200 2    50   ~ 0
+EXT_BUS_15
+Text Label 14450 6300 2    50   ~ 0
+EXT_BUS_14
+Text Label 14450 6400 2    50   ~ 0
+EXT_BUS_13
+Text Label 14450 6500 2    50   ~ 0
+EXT_BUS_12
+Text Label 14450 6600 2    50   ~ 0
+EXT_BUS_11
+Text Label 14450 6700 2    50   ~ 0
+EXT_BUS_10
+Text Label 14450 6800 2    50   ~ 0
+EXT_BUS_09
+Text Label 14450 6900 2    50   ~ 0
+EXT_BUS_08
+Text Label 14450 7000 2    50   ~ 0
+EXT_BUS_07
+Text Label 14450 7100 2    50   ~ 0
+EXT_BUS_06
+Text Label 14450 7200 2    50   ~ 0
+EXT_BUS_05
+Text Label 14450 7300 2    50   ~ 0
+EXT_BUS_04
+Text Label 14450 7400 2    50   ~ 0
+EXT_BUS_03
+Text Label 14450 7500 2    50   ~ 0
+EXT_BUS_02
+Text Label 14450 7600 2    50   ~ 0
+EXT_BUS_01
+Text Label 14450 7700 2    50   ~ 0
+EXT_BUS_00
+Text Label 14950 7700 0    50   ~ 0
+EXT_ADDR_00
+Text Label 14950 7600 0    50   ~ 0
+EXT_ADDR_01
+Text Label 14950 7500 0    50   ~ 0
+EXT_ADDR_02
+Text Label 14950 7400 0    50   ~ 0
+EXT_ADDR_03
+Text Label 14950 7300 0    50   ~ 0
+EXT_ADDR_04
+Text Label 14950 7200 0    50   ~ 0
+EXT_ADDR_05
+Text Label 14950 7100 0    50   ~ 0
+EXT_ADDR_06
+Text Label 14950 7000 0    50   ~ 0
+EXT_ADDR_07
+Text Label 14950 6900 0    50   ~ 0
+EXT_ADDR_08
+Text Label 14950 6800 0    50   ~ 0
+EXT_ADDR_09
+Text Label 14950 6700 0    50   ~ 0
+EXT_ADDR_10
+Text Label 14950 6600 0    50   ~ 0
+EXT_ADDR_11
+Text Label 14950 6500 0    50   ~ 0
+EXT_ADDR_12
+Text Label 14950 6400 0    50   ~ 0
+EXT_ADDR_13
+Text Label 14950 6300 0    50   ~ 0
+EXT_ADDR_14
+Text Label 14950 6200 0    50   ~ 0
+EXT_ADDR_15
+Text Label 1550 4000 2    50   ~ 0
+CTL_CLK
+Wire Wire Line
+	1100 3700 1100 4250
+Wire Wire Line
+	1100 4250 1850 4250
+Wire Wire Line
+	1100 3700 1850 3700
+Text Label 2350 4000 0    50   ~ 0
+CTL_CLK_OUT
+$Comp
+L Device:R_US R2
+U 1 1 60FF1662
+P 2300 4150
+F 0 "R2" V 2200 4250 50  0000 C CNN
+F 1 "10K" V 2200 4050 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2340 4140 50  0001 C CNN
+F 3 "~" H 2300 4150 50  0001 C CNN
+	1    2300 4150
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2150 4000 2150 4150
+Wire Wire Line
+	2450 5350 2950 5350
+Wire Wire Line
+	2450 4700 2950 4700
+Wire Wire Line
+	2950 4700 2950 5350
+Wire Wire Line
+	2950 4700 2950 4150
+Wire Wire Line
+	2950 4150 2450 4150
+Connection ~ 2950 4700
+Wire Wire Line
+	2450 3550 2950 3550
+Wire Wire Line
+	2950 3550 2950 4150
+Connection ~ 2950 4150
+Wire Wire Line
+	2150 4550 2300 4550
+Connection ~ 2150 4550
+Wire Wire Line
+	2150 4000 2350 4000
+Connection ~ 2150 4000
+Wire Wire Line
+	2150 3400 2400 3400
+Connection ~ 2150 3400
+Wire Wire Line
+	2150 5200 2300 5200
+Connection ~ 2150 5200
+$Comp
+L Connector_Generic:Conn_02x18_Odd_Even J5
+U 1 1 610B27CF
+P 14750 7000
+F 0 "J5" H 14800 8017 50  0000 C CNN
+F 1 "Conn_02x18_Odd_Even" H 14800 7926 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_2x18_P2.54mm_Vertical" H 14750 7000 50  0001 C CNN
+F 3 "~" H 14750 7000 50  0001 C CNN
+	1    14750 7000
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R_Network08_US RN6
+U 1 1 61115368
+P 8800 9800
+F 0 "RN6" V 8183 9800 50  0000 C CNN
+F 1 "10K" V 8274 9800 50  0000 C CNN
+F 2 "Resistor_THT:R_Array_SIP9" V 9275 9800 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 8800 9800 50  0001 C CNN
+	1    8800 9800
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_Network08_US RN5
+U 1 1 6111536E
+P 7350 9800
+F 0 "RN5" V 6733 9800 50  0000 C CNN
+F 1 "10K" V 6824 9800 50  0000 C CNN
+F 2 "Resistor_THT:R_Array_SIP9" V 7825 9800 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 7350 9800 50  0001 C CNN
+	1    7350 9800
+	0    1    1    0   
+$EndComp
+Text Label 7550 9400 0    50   ~ 0
+GND
+Text Label 9000 9400 0    50   ~ 0
+GND
+Text Label 7150 9400 2    50   ~ 0
+EXT_ADDR_00
+Text Label 7150 9500 2    50   ~ 0
+EXT_ADDR_01
+Text Label 7150 9600 2    50   ~ 0
+EXT_ADDR_02
+Text Label 7150 9700 2    50   ~ 0
+EXT_ADDR_03
+Text Label 7150 9800 2    50   ~ 0
+EXT_ADDR_04
+Text Label 7150 9900 2    50   ~ 0
+EXT_ADDR_05
+Text Label 7150 10000 2    50   ~ 0
+EXT_ADDR_06
+Text Label 7150 10100 2    50   ~ 0
+EXT_ADDR_07
+Text Label 8600 9400 2    50   ~ 0
+EXT_ADDR_08
+Text Label 8600 9500 2    50   ~ 0
+EXT_ADDR_09
+Text Label 8600 9600 2    50   ~ 0
+EXT_ADDR_10
+Text Label 8600 9700 2    50   ~ 0
+EXT_ADDR_11
+Text Label 8600 9800 2    50   ~ 0
+EXT_ADDR_12
+Text Label 8600 9900 2    50   ~ 0
+EXT_ADDR_13
+Text Label 8600 10000 2    50   ~ 0
+EXT_ADDR_14
+Text Label 8600 10100 2    50   ~ 0
+EXT_ADDR_15
 $EndSCHEMATC
