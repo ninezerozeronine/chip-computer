@@ -1,0 +1,34 @@
+LOAD [CONST] ACC
+    
+JUMP_IF_ZERO_FLAG CONST
+    0:
+        ZL
+            PC_COUNT
+        ZH
+            PC_OUT, MAR_IN
+    1:
+        ZH
+            RAM_OUT, PC_IN
+
+
+
+JUMP_IF_ZERO_FLAG CONST
+    ZERO_LOW:
+        PC_COUNT
+    ZERO_HIGH:
+        PC_OUT, MAR_IN
+        RAM_OUT, PC_IN
+
+INCR A
+    ANY_FLAG:
+        A_OUT, ALU_A_IS_BUS, ALU_STORE_RES, ALU_STORE_FLAGS
+        ALU_OUT, A_IN
+
+
+
+Classes:
+
+    SignatureControlSignals
+        ControlSignalSequence
+        
+
