@@ -280,12 +280,12 @@ $EndComp
 $Comp
 L 74xx:74HCT04 U1
 U 2 1 5F99F922
-P 14550 3250
-F 0 "U1" H 14550 3567 50  0000 C CNN
-F 1 "74HCT04" H 14550 3476 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 14550 3250 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 14550 3250 50  0001 C CNN
-	2    14550 3250
+P 12550 2600
+F 0 "U1" H 12550 2917 50  0000 C CNN
+F 1 "74HCT04" H 12550 2826 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 12550 2600 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12550 2600 50  0001 C CNN
+	2    12550 2600
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1038,10 +1038,10 @@ GND
 Text Label 9650 2900 3    50   ~ 0
 GND
 Wire Wire Line
-	11400 2850 11400 2100
+	11400 2600 11400 2100
 Wire Wire Line
 	11400 2100 10250 2100
-Text Label 11600 2850 0    50   ~ 0
+Text Label 12850 2600 0    50   ~ 0
 CARRY_BORROW_OUT
 Text Label 11150 3450 3    50   ~ 0
 VCC
@@ -1053,7 +1053,7 @@ Connection ~ 11150 3000
 Wire Wire Line
 	11150 3000 11150 2200
 Wire Wire Line
-	11400 2850 11600 2850
+	11400 2600 12250 2600
 Text Label 9650 900  1    50   ~ 0
 VCC
 Text Label 7350 900  1    50   ~ 0
@@ -1412,14 +1412,10 @@ Wire Wire Line
 Connection ~ 14250 2200
 Wire Wire Line
 	14250 2200 14250 2700
-Connection ~ 14250 2700
-Wire Wire Line
-	14250 2700 14250 3250
 NoConn ~ 14850 1200
 NoConn ~ 14850 1700
 NoConn ~ 14850 2200
 NoConn ~ 14850 2700
-NoConn ~ 14850 3250
 NoConn ~ 15200 5700
 NoConn ~ 15200 5800
 NoConn ~ 15200 5900
@@ -1552,4 +1548,6 @@ Wire Wire Line
 Connection ~ 8800 8300
 Wire Wire Line
 	8800 8300 8350 8300
+Text Label 11450 2600 0    50   ~ 0
+~CARRY_BORROW_OUT
 $EndSCHEMATC
