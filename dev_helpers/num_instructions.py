@@ -3,28 +3,28 @@ import itertools
 
 def add_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST_8"]:
+    for arg in ["A", "B", "C", "CONST"]:
         sigs.append(["ADD", arg])
     return sigs
 
 
 def addc_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST_8"]:
+    for arg in ["A", "B", "C", "CONST"]:
         sigs.append(["ADDC", arg])
     return sigs
 
 
 def sub_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST_8"]:
+    for arg in ["A", "B", "C", "CONST"]:
         sigs.append(["SUB", arg])
     return sigs
 
 
 def subb_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST_8"]:
+    for arg in ["A", "B", "C", "CONST"]:
         sigs.append(["SUBB", arg])
     return sigs
 
@@ -69,7 +69,7 @@ def copy_op():
 
 def load_op():
     sigs = []
-    srcs = ["CONST_16"]
+    srcs = ["CONST"]
     dests = ["ACC", "A", "B", "C", "SP"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["LOAD", "[{0}]".format(src), dest])
@@ -79,7 +79,7 @@ def load_op():
 def store_op():
     sigs = []
     srcs = ["ACC", "A", "B", "C"]
-    dests = ["CONST_16"]
+    dests = ["CONST"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["STORE", src, "[{0}]".format(dest)])
     return sigs
@@ -102,7 +102,7 @@ def pop_op():
 def set_op():
     sigs = []
     for arg in ["ACC", "A", "B", "C", "SP"]:
-        sigs.append(["SET", arg, "CONST_8"])
+        sigs.append(["SET", arg, "CONST"])
     return sigs
 
 
@@ -119,7 +119,7 @@ def noop_op():
 
 def jump_op():
     sigs = []
-    for arg in ["CONST_16"]:
+    for arg in ["CONST"]:
         sigs.append(["JUMP", arg])
     return sigs
 
@@ -127,28 +127,28 @@ def jump_op():
 def comparison_jump_ops():
     sigs = []
     ops = [
-        "JUMP_IF_LT_ACC",
-        "JUMP_IF_LT_EQ_ACC",
-        "JUMP_IF_EQ_ACC",
-        "JUMP_IF_NEQ_ACC",
-        "JUMP_IF_GT_EQ_ACC",
-        "JUMP_IF_GT_ACC",
+        "JUMP_IF_ACC_LT",
+        "JUMP_IF_ACC_LTEQ",
+        "JUMP_IF_ACC_EQ",
+        "JUMP_IF_ACC_NEQ",
+        "JUMP_IF_ACC_GTEQ",
+        "JUMP_IF_ACC_GT",
     ]
     args = [
         "A",
         "B",
         "C",
         "SP",
-        "CONST_8",
+        "CONST",
     ]
     for op, arg in itertools.product(ops, args):
-        sigs.append([op, arg, "CONST_16"])
+        sigs.append([op, arg, "CONST"])
 
     for arg in ["ACC", "A", "B", "C", "SP"]:
-        sigs.append(["JUMP_IF_EQ_ZERO", arg, "CONST_16"])
+        sigs.append(["JUMP_IF_EQ_ZERO", arg, "CONST"])
 
     for arg in ["ACC", "A", "B", "C", "SP"]:
-        sigs.append(["JUMP_IF_NEQ_ZERO", arg, "CONST_16"])
+        sigs.append(["JUMP_IF_NEQ_ZERO", arg, "CONST"])
 
     return sigs
 
@@ -164,41 +164,12 @@ def jump_if_flag_ops():
         "JUMP_IF_NOT_ZERO_FLAG",
         ]
     for op in ops:
-        sigs.append([op, "CONST_16"])
-    return sigs
-
-
-def skip_if_ops():
-    sigs = []
-    ops = [
-        "SKIP_IF_LT_ACC",
-        "SKIP_IF_LT_EQ_ACC",
-        "SKIP_IF_EQ_ACC",
-        "SKIP_IF_NEQ_ACC",
-        "SKIP_IF_GT_EQ_ACC",
-        "SKIP_IF_GT_ACC",
-    ]
-    args = [
-        "A",
-        "B",
-        "C",
-        "SP",
-        "CONST_8",
-    ]
-    for op, arg in itertools.product(ops, args):
-        sigs.append([op, arg])
-
-    for arg in ["ACC", "A", "B", "C", "SP"]:
-        sigs.append(["SKIP_IF_EQ_ZERO", arg])
-
-    for arg in ["ACC", "A", "B", "C", "SP"]:
-        sigs.append(["SKIP_IF_NEQ_ZERO", arg])
-
+        sigs.append([op, "CONST"])
     return sigs
 
 
 def call_op():
-    return ["CALL", "CONST_16"]
+    return ["CALL", "CONST"]
 
 
 def ret_op():
@@ -219,7 +190,7 @@ def logical_ops():
         "XOR",
         "NXOR",
     ]
-    args = ["A", "B", "C", "CONST_8"]
+    args = ["A", "B", "C", "CONST"]
     for op, arg in itertools.product(ops, args):
         sigs.append([op, arg])
 
@@ -258,7 +229,6 @@ def get_all_instructions():
         jump_op,
         comparison_jump_ops,
         jump_if_flag_ops,
-        skip_if_ops,
         call_op,
         ret_op,
         halt_op,
@@ -271,3 +241,6 @@ def get_all_instructions():
 
 
 print len(get_all_instructions())
+
+for instr in get_all_instructions():
+    print instr

@@ -1,17 +1,64 @@
-!CONST #123   
+!MY_ALIAS #123   
 
-@ #123
+@#100
+    "foobar"
+
+@#200
+    $variable
+
+@#300
+&start
+    LOAD [#123] A
+    SET A !MY_ALIAS
+    JUMP &start
+
+&end
+    STORE A [B]
+    LOAD [$variable] ACC
+    HALT
+
+Tokens
+    !<name> - Alias
+    @<number> - Anchor
+    &<name> - Label
+    $<name> - Variable
+    #<number> - Number
+    "..." - Ascii
+    // - Comments
+    [...] - Memory ref
+    name - pattern of alphanumerics
+    number - Valid Python number 0xFFFA, 34, -14, 0o23
+    Instruction - LOAD, NOOP, etc
+    Module - A, B ACC, etc
+    Constants - labels, variables, aliases, numbers
+
+Aliases, variables and labels need to conform to sensible word patterns
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $memloc_a 
 $memloc_b #1
 $memloc_c #1 #2 !CONST
 
-@ #0
-%label_a
+% #0
+&label_a
     LOAD #123 A
     SET A !CONST
-%label_b
+&label_b
     STORE #123 $memloc_a
-    JUMP %label
+    JUMP @label
 
 
 
@@ -21,9 +68,16 @@ Tokens:
     16 bit bumber (##1865)
     Instruction (LOAD, ADD)
     Module (A, B)
-    Anchor (@ #123)
+    Anchor (% #123)
     memloc ($ball_pos_x)
     Label (%loop_start)
+
+
+! @ # $ % & * ?
+
+
+
+
 
 
 constant number
@@ -67,3 +121,220 @@ make a new assembly chunk for each @ anchor
 Variable positions also need to be resolved reltive to thier anchor
 
 %label_b can only be resolved once the instructions have been resolved to machine code bytes
+
+
+
+
+
+
+
+Signatures are made up of:
+    Instruction code: NOOP, ADD, JUMP
+    Zero or more arguments: A, B, [C], #34, [#34], @label)
+
+Instruction codes are unique identifiers
+
+Arguments can be
+    Module names: A, B, SP, PC, etc
+    Constant: @label, $variable, #34
+    Memory ref: [<module name>], [<constant>]
+
+Memory refs can realised with module names or constants
+
+
+MR(A)
+
+MR(CONST)
+
+CONST
+
+A
+
+NOOP
+
+INS.NOOP, MEM.A, MOD.SP
+
+INS.JUMP, MEM.CONST, CST.CST
+
+
+
+signatures = {
+    0: Sig(NOOP),
+    1: None,
+    2: None,
+    3: Sig(LOAD, M(A), B),
+    4: Sig(LOAD, M(CONST), ACC),
+    5: Sig(JUMP, CONST),
+    6: Sig(JUMP, M(CONST)),
+}
+
+
+
+
+
+
+
+
+
+
+def assemble():
+    assembly_lines = []
+    for line_no, line in lines:
+        assembly_line = AssemblyLine(line)
+        assembly_line.line_no = line_no
+        assembly_lines.append(assembly_line)
+
+
+
+
+
+def process_line():
+    Lines can be:
+        defines
+
+
+
+rules - defines and variables must come before any assembly
+
+
+tokens = tokenise_line()
+
+patterns:
+    assembly
+    anchor
+    data
+    label
+    variable (variable, or variable, immediate)
+    alias_def (alias, constant)
+
+    assembly - consult assembly list for valid assembly patterns
+
+
+
+assembly_sig = 
+    (LOAD, M(A), ACC)
+    (JUMP, ALIAS("!my_alias"))
+    (JUMP, CONST("#123"))
+
+Consts can be:
+    - Immediate values (#123)
+    - Labels (&loop_start)
+        Can only be resolved once we know how where the chunk starts, and
+        how many words in the chunk
+    - Aliases (!num_apples)
+    - Variables ($my_var)
+
+
+machinecode = signature_to_machinecode(assembly_sig)
+
+for word in machinecode:
+    if word.is_instruction_word:
+        pass
+    if word.is_data_word:
+        if word.token.is_immediate:
+            word.value = resolve_immediate(word.token)
+        if word.token.is_alias:
+            word.value = resolve_alias(word.token)
+        if word.token.is_label:
+            word.value = resolve_label(...)
+        if word.token.is_variable:
+
+
+class AssemblyLine():
+    raw_line
+    line_no
+    pattern
+
+class MachinecodeChunk():
+    start
+    words (can be data (e.g. ascii) or instructions (which also have data))
+    length
+
+class MachineCodeWord():
+    label
+
+    class MachineCodeInstructionWord
+
+    class MachineCodeImmediateWord
+
+    class MachineCodeVariableWord
+
+    class MachineCodeAliasWord
+
+
+def process_assembly_line(line):
+    assembly_line = AssemblyLine()
+    line = trim_comments(line)
+    string_tokens = line.split()
+    tokens = []
+    for string_token in string_tokens:
+        tokens.append(match_token(string_token))
+    pattern = match_to_pattern(tokens)
+
+    return assembly_line
+
+
+def match_token(token):
+    matched_token = None
+    for token_type in all_token_types():
+        if token_type.match(token)
+            matched_token = token_type(token)
+            break
+
+    if matched_token is None:
+        raise "Unable to match token"
+
+    return matched_token
+
+
+Should tokens that make up valid assembly be a pattern?
+Means the assembly pattern needs to represent a signature
+
+def match_tokens_to_pattern(tokens):
+    if len(tokens) == 1:
+        if isinstance(tokens[0], AnchorToken):
+            return AnchorPattern(AnchorToken)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def build_chunks():
+    chunks = []
+    current_chunk = None
+    for line in assembly_lines:
+        if isinstance(line.pattern, Anchor):
+            if current_chunk is not None:
+                chunks.append(current_chunk)
+            else:
+                current_chunk = AssemblyChunk()
+                current_chunk.start = line.pattern.anchor_value
+        if isinstance(line.pattern, (Data, Assembly):
+            current_chunk.append(line.pattern.to_machinecode_words())
+
+
+
+
+def build_label_index():
+    label_index = {}
+    for chunk in machine_code_chunks:
+        for word, word_index in in enumerate(chunk):
+            if word.label is not None:
+                label_index[word.label] = chunk.start_index + word_index
+
+
+label_to_word_index = {
+    "@start": 32,
+
+}
+
