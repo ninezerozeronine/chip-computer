@@ -338,3 +338,84 @@ label_to_word_index = {
 
 }
 
+
+
+Microcode definitions
+
+Need to specify:
+    Control step orders
+    Flags for each step
+    Control sigs at each step
+
+
+LOAD M(CONST) A
+    0
+        EX CX NX ZX
+            PC_OUT, MAR_IN
+    1
+        EX CX NX ZX
+            RFM, ALU_IN, ALU_F_IS_A
+    2
+        EX CX NX ZX
+            ALU_OUT, MAR IN
+    3
+        EX CX NX ZX
+            RFM, A_IN
+
+
+Might be able to write to MAR from RAM in this step, rather than using
+ALU as an intermediate - seems suuuuper sketchy though.
+Might need to add a Mirror MAR register?
+LOAD M(CONST) A
+    EX CX NX ZX
+        PC.OUT, MAR.IN
+        RFM, ALU.IN, ALU.A_IS_BUS, PC.COUNT
+        ALU.OUT, MAR.IN
+        RFM, A.IN
+
+SKETCHYLOAD M(CONST) A
+    EX CX NX ZX
+        PC.OUT, MAR.IN
+        RFM, MAR.IN
+        RFM, A.IN
+
+
+
+
+
+
+
+
+
+ADD M(CONST)
+    EX CX NX ZX
+        PC_OUT, MAR_IN
+        RFM, ALU.A_PLUS_B, ALU.IN, PC.COUNT
+        ALU.OUT, ACC.IN
+
+JUMP_IF_ZERO_FLAG CONST
+    EX CX NX ZL
+        PC.COUNT
+    EX CX NX ZH
+        PC.OUT, MAR.IN
+        RFM, PC.IN
+
+JUMP_IF_ACC_EQ A CONST
+    EL CX NX ZX
+        A.OUT, ALU.A_IS_BUS, ALU.PASSTHRU, ALU.STORE_FLAGS
+        PC.COUNT
+    EH CX NX ZX
+        A.OUT, ALU.A_IS_BUS, ALU.PASSTHRU, ALU.STORE_FLAGS
+        PC.OUT, MAR.IN
+        RFM, PC.IN
+
+JUMP_IF_ACC_EQ M(CONST) CONST
+    EL CX NX ZX
+        PC_OUT, MAR_IN
+        RFM, ALU.A_IS_BUS, ALU.PASSTHRU, ALU.STORE_FLAGS, PC.COUNT
+        PC.COUNT
+    EH CX NX ZX
+        PC_OUT, MAR_IN
+        RFM, ALU.A_IS_BUS, ALU.PASSTHRU, ALU.STORE_FLAGS
+        PC.OUT, MAR.IN
+        RFM, PC.IN  
