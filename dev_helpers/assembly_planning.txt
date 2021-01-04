@@ -299,6 +299,42 @@ def match_tokens_to_pattern(tokens):
 
 
 
+Keep assembly and instruction definitions as seperate as possible.
+
+The single point of commonality is a mapping to go from an assembly pattern to an
+instruction signature (there's nothing saying multiple pattenrs can't
+match the same signature)
+
+Each assembly pattern needs to know how to ask for a machine code template
+with appropriate placeholders for the constants that the assembler will fill in. We
+Can't pass the thing that makes the templates the resolved constants because the
+pattern that gets returned could change the constants (e.g. labels which need
+to be word aligned)
+
+Could be something like:
+
+def get_microcode_template(instruction_signature, constants=None):
+    pass
+
+Or we make some room in the signature components (op code, arguments) to pass through a
+key that allows us to do the constant replacement later. Maybe we could just pass the token?
+
+So it would become something like:
+
+def get_microcode_template(instruction_signature):
+    pass
+
+instruction_signature = (LOAD(), M_CONST("#123"), CONST("&label"))
+
+
+
+
+
+
+
+
+
+
 
 
 
