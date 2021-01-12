@@ -10,7 +10,7 @@ A number type can have a value of 34, or 16.
 
 
 
-class Token():
+class Token(object):
     pass
 
 class CONSTANT(Token):
