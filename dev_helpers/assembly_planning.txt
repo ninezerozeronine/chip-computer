@@ -454,4 +454,20 @@ JUMP_IF_ACC_EQ M(CONST) CONST
         PC_OUT, MAR_IN
         RFM, ALU.A_IS_BUS, ALU.PASSTHRU, ALU.STORE_FLAGS
         PC.OUT, MAR.IN
-        RFM, PC.IN  
+        RFM, PC.IN
+
+
+
+
+
+assembly
+instructions
+microcode
+
+An instruction is a combination of an operation and arguments
+
+
+
+Instructions (e.g. ADD A, ADD #42, ADD[$var]) are responisble for generating:
+    microcode
+    machinecode

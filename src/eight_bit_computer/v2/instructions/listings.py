@@ -7,16 +7,18 @@ from .instruction_components import (
     M_CONST
 )
 
-INSTRUCTION_SIGNATURES = set(
+INSTRUCTION_SIGNATURES = frozenset(
     (NOOP,),
     (LOAD, M_CONST, A),
     (STORE, A, M_CONST),
+    (ADD, CONST),
+    (ADD, M_CONST),
     (ADD, M_A),
     (ADD, A)
 )
 
 
-def get_instruction_byte_val(instruction):
+def get_instruction_byte_val(signature):
     pass
 
 
@@ -31,6 +33,8 @@ def get_template_function(signature):
             if template_func is not None:
                 _FUNC_MAPPING[signature] = template_func
                 break
+    if signature not in _FUNC_MAPPING:
+        raise
     return _FUNC_MAPPING[signature]
                     
 

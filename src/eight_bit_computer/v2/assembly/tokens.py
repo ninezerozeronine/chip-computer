@@ -75,3 +75,8 @@ class M_A(MEMREF):
 
 class M_B(MEMREF):
     pass
+
+class M_ALIAS(MEMREF):
+    pass
+
+class M_VARIABLE(MEMREF)

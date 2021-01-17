@@ -25,6 +25,8 @@ _TOKEN_TO_COMPONENT = {
     STORE : components.STORE,
     NUMBER : components.CONST,
     LABEL : components.CONST,
+    M_NUMBER : components.M_CONST
+    M_LABEL : components.M_CONST
 }
 
 

@@ -3,6 +3,7 @@ class AssemblyLine():
         self.raw_line = None
         self.pattern = None
         self.line_no = None
+        self.machinecode = None
 
 def process_line(line, line_no):
     no_comments = strip_comments(line)
@@ -29,20 +30,13 @@ def get_pattern(tokens):
     If none of the matchers match thats a problem - raise
 
     """
-    matched_pattern = True
+    pattern = None
 
-    for pattern_matcher in pattern_matchers:
-        pattern = pattern_matcher(tokens)
-        if pattern is None:
-            continue
-        else
-            matched_pattern = pattern
+    for pattern_class in all_pattern_classes:
+        pattern = pattern_class.from_tokens(tokens)
+        if pattern is not None:
             break
-
-    if matched_pattern is None:
+    else:
         raise NoMatchingPatternError
 
     return matched_pattern
-
-    pattern = pattern_matcher(tokens):
-    if 
