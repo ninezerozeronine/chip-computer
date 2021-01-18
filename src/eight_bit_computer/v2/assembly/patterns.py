@@ -30,10 +30,17 @@ _TOKEN_TO_COMPONENT = {
 }
 
 
+def get_all_patterns():
+    return (
+        Instruction,
+        Label,
+    )
+
+
 
 class Pattern(ABC):
     @abstractmethod
-    def has_machinecode():
+    def generate_machinecode():
         pass
 
     @abstractmethod
@@ -41,30 +48,40 @@ class Pattern(ABC):
         pass
 
 class AliasDefinition(Pattern):
+    def __init__(self, tokens):
+        self.tokens = tokens
 
     @classmethod
-    def match(tokens):
+    def from_tokens(cls, tokens):
         if (len(tokens) == 2
                 and tokens[0] == ALIAS
                 and tokens[1] == NUMBER):
-            return True
+            return cls(tokens)
         else:
-            return False
+            return None
+
+    def generate_machinecode(self):
+    return None
+
 
 class DataSet(Pattern):
+    def __init__(self, tokens):
+        self.tokens = tokens
 
     @classmethod
-    def match(tokens):
+    def from_tokens(cls, tokens):
         for token in tokens:
             if not isinstance(token, CONSTANT):
-                return False
-        return True
+                return None
+        return cls(tokens)
+
+    def generate_machinecode(self):
+        return [Word, Word]
 
 class Instruction(Pattern):
     def __init__(self, tokens, signature):
         self.tokens = tokens
         self.signature = signature
-
 
     @classmethod
     def from_tokens(cls, tokens):
@@ -72,7 +89,7 @@ class Instruction(Pattern):
         for token in tokens:
             instruction_component = token_to_component(token)
             if instruction_component is None:
-                return False
+                return None
             else:
                 instruction_components.append(instruction_component)
 
@@ -80,15 +97,13 @@ class Instruction(Pattern):
         if signature in INSTRUCTION_SIGNATURES:
             return cls(tokens, signature)
         else:
-            return False
+            return None
 
 
 
 
-    def has_machinecode(self):
-        return True
-
-    def get_machinecode_template(self):
+    def generate_machinecode(self):
+        return [Word, Word]
 
 
 
