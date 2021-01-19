@@ -1,17 +1,37 @@
+// Define an alias
+// This doesn't generate any machine code
 !MY_ALIAS #123   
 
-@#100
+// Define a variable without setting any associated data
+// This doesn't generate any machine code
+$my_var #456
+
+// Define some data
+    "hello"
+    #34
+    #34 #34 #12
+
+// Define some data and assign a variable to the first word
+//
+// The variable behaves like a label in this case, it sticks
+// to the next bit of machinecode declared
+$message1
     "foobar"
 
-@#300
+$some_data
+    #32 #44 #55
 
-@#200
-    $variable
+// Anchor the next bit of machine code to a certain index
+@ #100
+$message
+    "Winner!"
+
 
 @#300
 &start
     LOAD [#123] A
     SET A !MY_ALIAS
+    JUMP_IF_ACC_GT !NUM_BOXES &some_label
     JUMP &start
 
 &end

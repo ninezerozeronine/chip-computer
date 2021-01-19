@@ -44,7 +44,7 @@ class Pattern(ABC):
         pass
 
     @abstractmethod
-    def from_tokens(tokens):
+    def from_tokens(cls, tokens):
         pass
 
 class AliasDefinition(Pattern):
