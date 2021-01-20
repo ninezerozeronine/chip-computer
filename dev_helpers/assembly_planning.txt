@@ -1,3 +1,8 @@
+// Rather than labels and variables, consolidate into "Markers" which are
+// named locations in memory?
+// The differentiation between variables for data and labels for specific
+// instructions is nice though. Helps spot mistakes.
+
 // Define an alias
 // This doesn't generate any machine code
 !MY_ALIAS #123   

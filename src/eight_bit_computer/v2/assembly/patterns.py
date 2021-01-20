@@ -61,7 +61,7 @@ class AliasDefinition(Pattern):
             return None
 
     def generate_machinecode(self):
-    return None
+        return None
 
 
 class DataSet(Pattern):

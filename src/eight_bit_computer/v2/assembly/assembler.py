@@ -8,6 +8,12 @@ class AssemblyLine():
         self.line_no = None
         self.machinecode = None
 
+    def has_machine_code(self):
+        if self.machinecode is None:
+            return False
+        else:
+            return True
+
     def assign_machine_code_indecies(next_mc_index):
         if self.machinecode is None:
             return next_mc_index
@@ -23,13 +29,13 @@ def process_raw_assembly_lines(lines):
     for line_no, line in enumerate(lines, start=1):
         try:
             assembly_line = process_line(line)
-        except LineProcessingError as inst:
+        except LineProcessingError as err:
             msg = (
                 "Error processing line {line_no} ({line}): "
                 "{reason}".format(
                     line_no=line_no,
                     line=line,
-                    reason=inst.args[0])
+                    reason=err.args[0])
             )
             raise AssemblyError(msg)
         assembly_line.line_no = line_no
@@ -60,17 +66,21 @@ def assign_machine_code_indecies(assembly_lines):
 
 
 def process_line(line):
+    """
+    Process a raw line of assembly code.
+
+    A raw line is something like: ``LOAD [$var] A // A comment.``
+
+    Args:
+        line (str): Raw line of assembly code.
+    Returns:
+        AssemblyLine: AssemblyLine Object that represents the processed
+        line.
+    """
+
     no_comments = remove_comments(line)
-    try
-        tokens = get_tokens(line)
-    except InvalidTokenError:
-        raise
-
-    try
-        pattern = get_pattern(tokens)
-    except NoMatchingPatternError
-        raise
-
+    tokens = get_tokens(line)
+    pattern = get_pattern(tokens)
     machinecode = pattern.generate_machinecode()
 
     return AssemblyLine(
@@ -130,10 +140,10 @@ def get_tokens(line):
         num_matches = len(matched_tokens)
 
         if num_matches == 0:
-            raise NoMatchingTokenError
+            raise LineProcessingError("No tokens matched")
 
         if num_matches > 1:
-            raise MultipleTokensMatchedError
+            raise LineProcessingError("Multiple tokens matched")
 
         tokens.append(matched_tokens[0])
         
@@ -189,9 +199,9 @@ def get_pattern(tokens):
     num_matches = len(matched_patterns)
 
     if num_matches == 0:
-        raise NoMatchingPatternError
+        raise LineProcessingError("No patterns matched")
 
     if num_matches > 1:
-        raise MultiplePatternsMatchedError
+        raise LineProcessingError("Multiple patterns matched")
 
     return matched_patterns[0]
