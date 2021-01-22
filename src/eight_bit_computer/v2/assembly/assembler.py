@@ -1,6 +1,10 @@
 from . import patterns
 
 
+ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
+
+
+
 class AssemblyLine():
     def __init__(self):
         self.raw_line = None
@@ -30,32 +34,161 @@ def process_raw_assembly_lines(lines):
         try:
             assembly_line = process_line(line)
         except LineProcessingError as err:
-            msg = (
-                "Error processing line {line_no} ({line}): "
-                "{reason}".format(
-                    line_no=line_no,
-                    line=line,
-                    reason=err.args[0])
+            msg = ERROR_TEMPLATE.format(
+                line_no=line_no,
+                line=raw_line,
+                details=err.args[0],
             )
             raise AssemblyError(msg)
+
         assembly_line.line_no = line_no
         assembly_lines.append(assembly_line)
 
-    check_structure_validity(assembly_lines)
+    check_multiple_alias_def(assembly_lines)
+    check_multiple_marker_defs(assembly_lines)
+    check_multiple_marker_assignment(assembly_lines)
+
     assign_machine_code_indecies(assembly_lines)
     check_for_overlapping_indecies(assembly_lines)
 
     alias_map = build_alias_map(assembly_lines)
     resolve_aliases(assembly_lines, alias_map)
 
-    label_map = build_label_map(assembly_lines)
-    resolve_labels(assembly_lines, label_map)
-
-    variable_map = build_variable_map(assembly_lines)
-    resolve_variables(assembly_lines, variable_map)
+    marker_map = build_marker_map(assembly_lines)
+    resolve_markers(assembly_lines, marker_map)
 
 
-def assign_machine_code_indecies(assembly_lines):
+
+
+def check_multiple_alias_defs(assembly_lines):
+    """
+
+    """
+
+
+def check_multiple_marker_defs(assembly_lines):
+    """
+    Check if a marker been defined more than once.
+
+    E.g. This is allowed::
+
+        $marker_0 #123
+
+        $marker_1
+            NOOP
+        $marker_2
+            "hello"
+
+    But this is not::
+
+        $marker_0 #123
+        $marker_0 #456
+
+        $marker_1
+            NOOP
+        $marker_1
+            "hello"
+
+    As ``$marker_0`` is defined twice, and ``$marker_1`` is already
+    assigned to the index holding the ``NOOP`` instruction.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If the same marker been defined more than once.
+    """
+
+    markers = set()
+    marker_lines = {}
+    for assembly_line in assembly_lines:
+        if isinstance(assembly_line.pattern, (Marker, MarkerDef)):
+            marker = assembly_line.pattern.marker
+            if marker in markers:
+                details = (
+                    "The marker: \"{marker}\" has already been defined on "
+                    "line {prev_line}.".format(
+                        marker=marker,
+                        prev_line=marker_lines[marker],
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                markers.add(marker)
+                marker_lines[marker] = assembly_line.line_no
+
+
+def check_multiple_marker_assignment(assembly_lines):
+    """
+    Check if a line would be assigned more than one marker.
+
+    E.g. This is allowed::
+
+        &marker_1
+            NOOP
+        &marker_2
+            SET_ZERO A
+
+    But this is not::
+
+        &marker_1
+        &marker_2
+            SET_ZERO A
+
+    As the ``SET_ZERO A`` instruction would have both ``&marker_1`` and 
+    ``&marker_2`` assgned to it.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a line been assigned more than one marker.
+    """
+
+    marker_queued = False
+    last_marker = ""
+    for assembly_line in assembly_lines:
+        if marker_queued and isinstance(assembly_line.pattern, Marker):
+            details = (
+                "There is already a marker ({marker}) queued for "
+                "assignment to the next machinecode word.".format(
+                    marker=last_marker
+                )
+            )
+            msg = ERROR_TEMPLATE.format(
+                line_no=assembly_line.line_no,
+                line=assembly_line.raw_line,
+                details=details,
+            )
+            raise AssemblyError(msg)
+
+        if isinstance(assembly_line.pattern, Marker):
+            marker_queued = True
+            last_marker = assembly_line.pattern.marker
+
+        if assembly_line.has_machine_code() and marker_queued:
+            marker_queued = False
+
+
+def assign_machinecode_indecies(assembly_lines):
+    """
+    Assign indecies to all the machinecode words.
+
+    Instructions can resolve to more than one word, and sections of
+    assembly can be anchored so the machine code index has no
+    correlation to the assembly line index.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    """
     next_mc_index = 0
     for line in assembly_lines:
         if isinstance(line.pattern, Anchor):
