@@ -17,18 +17,23 @@ _IDENTIFIER_REGEX = re.compile(r"[a-zA-Z_]+\w*$")
 
 
 class Token(ABC):
+
     @abstractmethod
     def value():
         pass
 
     @abstractmethod
-    def from_word(word):
+    def from_string(word):
         pass
 
 
 class ALIAS(Token):
+    def __init__(self, raw, value):
+        self.raw = raw
+        self.value = value
+
     @classmethod
-    def from_word(cls, word):
+    def from_string(cls, word):
         if not word:
             return None
 
@@ -40,14 +45,17 @@ class ALIAS(Token):
 
         return cls(word, word)
 
+    def value(self):
+        return self.value
+
+
+class NUMBER(Token):
     def __init__(self, raw, value):
         self.raw = raw
         self.value = value
 
-
-class NUMBER(Token):
     @classmethod
-    def from_word(cls, word):
+    def from_string(cls, word):
         if not word:
             return None
 
@@ -66,9 +74,15 @@ class NUMBER(Token):
 
         return cls(word, num)
 
-    def __init__(self, raw, value):
-        self.raw = raw
-        self.value = value
+    def value(self):
+        return self.value
+
+
+def get_all_tokens():
+    return (
+        ALIAS,
+        NUMBER,
+    )
 
 
 
@@ -76,78 +90,73 @@ class NUMBER(Token):
 
 
 
+# class CONSTANT(Token):
+#     pass
+
+# class ALIAS(CONSTANT):
+#     pass
+
+# class NUMBER(CONSTANT):
+#     pass
+
+# class LABEL(CONSTANT):
+#     pass
+
+# class VARIABLE(CONSTANT):
+#     pass
+
+
+
+# class ASCII(Token):
+#     pass
+
+
+# class ANCHOR(Token):
+#     pass
 
 
 
 
+# class INSTRUCTION(Token):
+#     pass
 
-class CONSTANT(Token):
-    pass
+# class LOAD(INSTRUCTION):
+#     pass
 
-class ALIAS(CONSTANT):
-    pass
-
-class NUMBER(CONSTANT):
-    pass
-
-class LABEL(CONSTANT):
-    pass
-
-class VARIABLE(CONSTANT):
-    pass
-
-
-
-class ASCII(Token):
-    pass
-
-
-class ANCHOR(Token):
-    pass
+# class STORE(INSTRUCTION):
+#     pass
 
 
 
 
-class INSTRUCTION(Token):
-    pass
+# class MODULE(Token):
+#     pass
 
-class LOAD(INSTRUCTION):
-    pass
+# class A(MODULE):
+#     pass
 
-class STORE(INSTRUCTION):
-    pass
+# class B(MODULE):
+#     pass
 
-
-
-
-class MODULE(Token):
-    pass
-
-class A(MODULE):
-    pass
-
-class B(MODULE):
-    pass
-
-class C(MODULE):
-    pass
+# class C(MODULE):
+#     pass
 
 
 
 
-class MEMREF(Token):
-    pass
+# class MEMREF(Token):
+#     pass
 
-class M_A(MEMREF):
-    pass
+# class M_A(MEMREF):
+#     pass
 
-class M_B(MEMREF):
-    pass
+# class M_B(MEMREF):
+#     pass
 
-class M_ALIAS(MEMREF):
-    pass
+# class M_ALIAS(MEMREF):
+#     pass
 
-class M_VARIABLE(MEMREF)
+# class M_VARIABLE(MEMREF)
 
 
 

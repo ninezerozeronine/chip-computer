@@ -1,11 +1,15 @@
+from enum import Enum
+
 class OpCode(Enum):
     NOOP = 1
     LOAD = 2
     STORE = 3
+    ADD = 4
 
 NOOP = OpCode.NOOP
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE
+ADD = OpCode.ADD
 
 
 class Module(Enum):
@@ -24,7 +28,7 @@ class Constant(Enum):
 CONST = Constant.CONST
 
 
-class MemoryReference(Enum)
+class MemoryReference(Enum):
     M_A = 1
     M_B = 2
     M_CONST = 3

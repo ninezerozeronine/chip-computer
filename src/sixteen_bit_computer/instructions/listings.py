@@ -1,21 +1,23 @@
-from .instruction_components import (
-    NOOP,
-    LOAD,
-    STORE,
+from .components import (
     A,
+    ADD,
+    CONST,
+    LOAD,
     M_A,
-    M_CONST
+    M_CONST,
+    NOOP,
+    STORE,
 )
 
-INSTRUCTION_SIGNATURES = frozenset(
-    (NOOP,),
-    (LOAD, M_CONST, A),
-    (STORE, A, M_CONST),
+INSTRUCTION_SIGNATURES = frozenset([
+    (ADD, A),
     (ADD, CONST),
-    (ADD, M_CONST),
     (ADD, M_A),
-    (ADD, A)
-)
+    (ADD, M_CONST),
+    (LOAD, M_CONST, A),
+    (NOOP,),
+    (STORE, A, M_CONST),
+])
 
 
 def get_instruction_byte_val(signature):
