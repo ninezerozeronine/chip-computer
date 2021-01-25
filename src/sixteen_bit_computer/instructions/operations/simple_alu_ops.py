@@ -6,6 +6,17 @@ _SUPPORTED_SIGNATURES = frozenset(
     (ADD, M_CONST),
 )
 
+# ADD
+# SUB
+# AND
+# OR
+# XOR
+# NAND
+# NOR
+# NXOR
+
+
+
 def generate_machinecode(signature, const_tokens):
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError

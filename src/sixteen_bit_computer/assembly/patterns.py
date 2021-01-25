@@ -1,60 +1,91 @@
 """
-There's work that goes into checking if tokens match a pattern. This work will
-vary by pattern, and we want to store the result of the work in the resulting pattern
-
-
+Definition of patterns - arrangements of tokens that have a higher
+meaning.
 """
 
 from abc import ABC, abstractmethod
-
 
 from .tokens import (
     ALIAS,
     NUMBER,
 )
-
-
 from ..instructions import components
 from ..instructions.listings import INSTRUCTION_SIGNATURES
 
-_TOKEN_TO_COMPONENT = {
-    ALIAS: components.CONST,
-    NUMBER: components.CONST,
-}
-
 
 def get_all_patterns():
+    """
+    Get all the defined patterns.
+
+    Returns:
+        tuple(Pattern): A tuple of all the pattern classes (excluding
+        the base class)
+    """
     return (
         AliasDefinition,
     )
 
 
 class Pattern(ABC):
+    """
+    Base class for all patterns.
 
-    @abstractmethod
-    def generate_machinecode():
-        pass
+    A pattern is an arrangement of tokens (potentially only tokens with
+    specific values) that has a higher level meaning.
 
+    A simple pattern could be a Marker, it's a single token, the marker.
+    E.g.::
+
+        $mymarker
+
+    A more complex pattern could be a definition of an alias, it's two
+    tokens, an alias, and then a number. E.g.::
+
+        !my_alias #123
+    """
+
+    def __init__(self, tokens):
+        """
+        Initialise the class.
+
+        Args:
+            tokens (list(Token)): The list of tokens from the assembler
+                that make up this pattern.
+        """
+
+        self._tokens = tokens
+        self._machinecode = self._generate_machinecode()
+
+    @property
+    def tokens(self):
+        return self._tokens
+
+    @property
+    def machinecode(self):
+        return self._machinecode
+
+    def _generate_machinecode(self):
+        return []
+
+    @classmethod
     @abstractmethod
     def from_tokens(cls, tokens):
-        pass
+        return None
 
 
 class AliasDefinition(Pattern):
-    def __init__(self, tokens):
-        self.tokens = tokens
+    """
+    Represents an alias being defined as a specific value.
+    """
 
     @classmethod
     def from_tokens(cls, tokens):
         if (len(tokens) == 2
-                and type(tokens[0]) == ALIAS
-                and type(tokens[1]) == NUMBER):
+                and isinstance(tokens[0], ALIAS)
+                and isinstance(tokens[1], NUMBER)):
             return cls(tokens)
         else:
             return None
-
-    def generate_machinecode(self):
-        return None
 
 
 # class DataSet(Pattern):
@@ -73,7 +104,7 @@ class AliasDefinition(Pattern):
 
 # class Instruction(Pattern):
 #     def __init__(self, tokens, signature):
-#         self.tokens = tokens
+#         super().__init__(tokens)
 #         self.signature = signature
 
 #     @classmethod
@@ -93,11 +124,8 @@ class AliasDefinition(Pattern):
 #             return None
 
 
-
-
-#     def generate_machinecode(self):
+#     def _generate_machinecode(self):
 #         return [Word, Word]
-
 
 
 # def token_to_component(token):
@@ -106,3 +134,9 @@ class AliasDefinition(Pattern):
 #         return _TOKEN_TO_COMPONENT[token_type]
 #     else
 #         return None
+
+
+# _TOKEN_TO_COMPONENT = {
+#     ALIAS: components.CONST,
+#     NUMBER: components.CONST,
+# }

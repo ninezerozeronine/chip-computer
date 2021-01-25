@@ -11,34 +11,17 @@ ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
 
 
 class AssemblyLine():
-    def __init__(self):
-        self.raw_line = None
-        self.pattern = None
+    def __init__(self, raw_line=None, pattern=None, line_no=None):
+        self.raw_line = raw_line
+        self.pattern = pattern
         self.line_no = None
-        self.machinecode = None
-
-    def has_machinecode(self):
-        if self.machinecode is None:
-            return False
-        else:
-            return True
-
-    def assign_machinecode_indecies(next_mc_index):
-        if self.machinecode is None:
-            return next_mc_index
-        else:
-            for word in machinecode:
-                word.index = next_mc_index
-                next_mc_index = next_mc_index + 1
-
-        return next_mc_index
 
 
-def process_raw_assembly_lines(lines):
+def ingest_raw_assembly_lines(lines):
     assembly_lines = []
     for line_no, line in enumerate(lines, start=1):
         try:
-            assembly_line = process_line(line)
+            pattern = pattern_from_line(line)
         except LineProcessingError as err:
             msg = ERROR_TEMPLATE.format(
                 line_no=line_no,
@@ -47,15 +30,28 @@ def process_raw_assembly_lines(lines):
             )
             raise AssemblyError(msg)
 
-        assembly_line.line_no = line_no
-        assembly_lines.append(assembly_line)
+        assembly_lines.append(
+            AssemblyLine(
+                raw_line=line,
+                line_no=line_no,
+                pattern=pattern
+            )
+        )
+
+    return assembly_lines
+
+
+def process_assembly_lines(assembly_lines):
 
     check_multiple_alias_defs(assembly_lines)
     check_multiple_marker_defs(assembly_lines)
     check_multiple_marker_assignment(assembly_lines)
+    check_numbers_in_range(assembly_lines)
 
     assign_machinecode_indecies(assembly_lines)
-    check_for_overlapping_indecies(assembly_lines)
+    check_for_colliding_indecies(assembly_lines)
+
+    resolve_numbers(assembly_lines)
 
     alias_map = build_alias_map(assembly_lines)
     resolve_aliases(assembly_lines, alias_map)
@@ -64,29 +60,22 @@ def process_raw_assembly_lines(lines):
     resolve_markers(assembly_lines, marker_map)
 
 
-def process_line(line):
+def pattern_from_line(line):
     """
-    Process a raw line of assembly code.
+    Get the pattern corresponding to a raw line of assembly code.
 
     A raw line is something like: ``LOAD [$var] A // A comment.``
 
     Args:
         line (str): Raw line of assembly code.
     Returns:
-        AssemblyLine: AssemblyLine Object that represents the processed
-        line.
+        Pattern: Pattern that corresponds to the passed in line.
     """
 
     no_comments = remove_comments(line)
     tokens = get_tokens(line)
     pattern = get_pattern(tokens)
-    machinecode = pattern.generate_machinecode()
-
-    return AssemblyLine(
-        raw_line=line,
-        pattern=pattern,
-        machinecode=machinecode
-    )
+    return pattern
 
 
 def remove_comments(line):
@@ -188,7 +177,6 @@ def get_pattern(tokens):
     matched_patterns = []
 
     for pattern_class in patterns.get_all_patterns():
-        print(tokens)
         pattern = pattern_class.from_tokens(tokens)
         if pattern is not None:
             matched_patterns.append(pattern)
@@ -378,10 +366,14 @@ def assign_machinecode_indecies(assembly_lines):
     for line in assembly_lines:
         if isinstance(line.pattern, Anchor):
             next_mc_index = line.pattern.anchor_value()
-        next_mc_index = line.assign_machinecode_indecies(next_mc_index)
+
+        if line.machinecode:
+            for word in line.machinecode:
+                word.index = next_mc_index
+                next_mc_index = next_mc_index + 1
 
 
-def check_for_overlapping_indecies(assembly_lines):
+def check_for_colliding_indecies(assembly_lines):
     """
     Check that all machinecode words have a unique index.
 
@@ -389,7 +381,7 @@ def check_for_overlapping_indecies(assembly_lines):
         assembly_lines (list(:class:`~.AssemblyLine`)): List of
             processed lines of assembly.
     Raises:
-        AssemblyError: If a machine code word overlaps with another.
+        AssemblyError: If a machine code word collides with another.
     """
 
     indecies_to_lines = {}
@@ -400,7 +392,7 @@ def check_for_overlapping_indecies(assembly_lines):
                 if index in indecies_to_lines:
                     details = (
                         "The machinecode word at index {index} "
-                        "from assembly line {curr_line} ({curr_line_content}) overlaps "
+                        "from assembly line {curr_line} ({curr_line_content}) collides "
                         "with the machinecode word already defined "
                         "there from assembly line {prior_line} ({prior_line_content})".format(
                             index=index,

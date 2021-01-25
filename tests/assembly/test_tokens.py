@@ -1,22 +1,44 @@
 import pytest
 
 from sixteen_bit_computer.assembly import tokens
+from sixteen_bit_computer.assembly.tokens import (
+    ALIAS,
+    NUMBER,
+)
+
 
 @pytest.mark.parametrize("test_input, expected", [
-    ("123", True),
-    ("-1", True),
-    ("0xFF", True),
-    ("0o22", True),
-    ("0b101", True),
-    ("0.45", False),
-    ("#", False),
-    ("", False),
-    ("0q12", False),
-    ("0b10#g", False),
-    ("blah", False),
+    ("!_foo", ALIAS),
+    ("!NUM_BOXES", ALIAS),
+    ("#12", type(None)),
+    ("!!hello", type(None)),
+    ("NAME", type(None)),
+    ("$NAME", type(None)),
 ])
-def test_is_number(test_input, expected):
-    assert tokens.is_number(test_input) == expected
+def test_ALIAS(test_input, expected):
+    assert type(ALIAS.from_string(test_input)) == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    ("#123", NUMBER),
+    ("#-1", NUMBER),
+    ("#0xFF", NUMBER),
+    ("#0o22", NUMBER),
+    ("#0b101", NUMBER),
+    ("#-34", NUMBER),
+    ("4", type(None)),
+    ("0.45", type(None)),
+    ("#", type(None)),
+    ("", type(None)),
+    ("#0q12", type(None)),
+    ("#0b10#g", type(None)),
+    ("#blah", type(None)),
+])
+def test_NUMBER(test_input, expected):
+    assert type(NUMBER.from_string(test_input)) == expected
+
+
+
 
 
 @pytest.mark.parametrize("test_input, expected", [

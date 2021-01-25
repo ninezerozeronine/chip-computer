@@ -1,10 +1,12 @@
-from enum import Enum
+from enum import Enum, auto
+
 
 class OpCode(Enum):
-    NOOP = 1
-    LOAD = 2
-    STORE = 3
-    ADD = 4
+    NOOP = auto()
+    LOAD = auto()
+    STORE = auto()
+    ADD = auto()
+
 
 NOOP = OpCode.NOOP
 LOAD = OpCode.LOAD
@@ -13,9 +15,10 @@ ADD = OpCode.ADD
 
 
 class Module(Enum):
-    A = 1
-    B = 2
-    C = 3
+    A = auto()
+    B = auto()
+    C = auto()
+
 
 A = Module.A
 B = Module.B
@@ -23,15 +26,17 @@ C = Module.C
 
 
 class Constant(Enum):
-    CONST = 1
+    CONST = auto()
+
 
 CONST = Constant.CONST
 
 
 class MemoryReference(Enum):
-    M_A = 1
-    M_B = 2
-    M_CONST = 3
+    M_A = auto()
+    M_B = auto()
+    M_CONST = auto()
+
 
 M_A = MemoryReference.M_A
 M_B = MemoryReference.M_B
