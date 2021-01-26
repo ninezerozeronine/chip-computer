@@ -217,7 +217,7 @@ def check_multiple_alias_defs(assembly_lines):
     aliases = set()
     alias_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(assembly_line.pattern, AliasDef):
+        if isinstance(assembly_line.pattern, patterns.AliasDefinition):
             alias = assembly_line.pattern.alias
             if alias in aliases:
                 details = (

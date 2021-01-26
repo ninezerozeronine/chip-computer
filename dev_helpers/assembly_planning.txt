@@ -12,25 +12,28 @@
 $my_var #456
 
 // Define some data
-    "hello"
-    #34
-    #34 #34 #12
+    DATA "hello"
+    DATA #34
+    DATA #34 #34 #12
 
 // Define some data and assign a variable to the first word
 //
 // The variable behaves like a label in this case, it sticks
 // to the next bit of machinecode declared
 $message1
-    "foobar"
+    DATA "foobar"
 
 $some_data
-    #32 #44 #55
+    DATA #32 #44 #55
 
 // Anchor the next bit of machine code to a certain index
 @ #100
 $message
     "Winner!"
 
+// Store the current index in the current index - nifty!
+$message
+    DATA $message
 
 @#300
 &start

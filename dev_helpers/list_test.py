@@ -9,6 +9,24 @@ class MyClass():
         return self.my_list
 
 
+class OtherClass():
+    FOO = 8
+
+    def __init__(self, num):
+        self._num = num
+
+    @property
+    def num(self):
+        print("Getting num")
+        return self._num
+
+    def print_num(self):
+        print(type(self.num))
+        print(self.num)
+        print(f"FOO: {self.FOO}")
+        self.FOO = self.FOO + 1
+
+
 def make_obj(input_list):
 
     obj = MyClass(input_list)
@@ -26,3 +44,12 @@ print(obj.my_list)
 b = obj.get_list()
 b[2] = 7
 print(obj.my_list)
+
+c = OtherClass(5)
+d = OtherClass(10)
+c.print_num()
+d.print_num()
+c.print_num()
+d.print_num()
+
+print(type(4))
