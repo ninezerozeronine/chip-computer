@@ -16,7 +16,6 @@ _SUPPORTED_SIGNATURES = frozenset(
 # NXOR
 
 
-
 def generate_machinecode(signature, const_tokens):
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
@@ -27,16 +26,29 @@ def generate_machinecode(signature, const_tokens):
     if signature[1] == CONST:
         return _add_const_machinecode(signature, const_tokens)
 
+    if signature[1] == M_CONST:
+        return _add_memref_const_machinecode(signature, const_tokens)
+
+
 def _add_module_machinecode(signature):
     return [
         Word(value=get_instruction_index(signature))
     ]
+
 
 def _add_const_machinecode(signature, const_tokens):
     return [
         Word(value=get_instruction_index(signature)),
         Word(const_token=const_tokens[0]),
     ]
+
+
+def _add_memref_const_machinecode(signature, const_tokens):
+    return [
+        Word(value=get_instruction_index(signature)),
+        Word(const_token=const_tokens[0]),
+    ]
+
 
 
 def generate_microcode(signature):
@@ -54,6 +66,7 @@ def alu_opcode_to_alu_mode(component):
     }
 
     return mapping[component]
+
 
 def generate_control_steps(signature):
     if signature[1] in set(A, B, C):

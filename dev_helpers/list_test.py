@@ -1,4 +1,5 @@
 from copy import deepcopy
+import my_values
 
 
 class MyClass():
@@ -33,23 +34,35 @@ def make_obj(input_list):
     return obj
 
 
-a = [1, 2, 3]
-obj = make_obj(a)
-a[0] = 9
+def things_from_module():
+    print(id(my_values.VALS) == id(my_values.get_vals()))
+    a = my_values.VALS
+    b = my_values.get_vals()
+
+    print(id(a) == id(b))
 
 
-print(a)
-print(obj.my_list)
+def ref_tests():
+    a = [1, 2, 3]
+    obj = make_obj(a)
+    a[0] = 9
 
-b = obj.get_list()
-b[2] = 7
-print(obj.my_list)
 
-c = OtherClass(5)
-d = OtherClass(10)
-c.print_num()
-d.print_num()
-c.print_num()
-d.print_num()
+    print(a)
+    print(obj.my_list)
 
-print(type(4))
+    b = obj.get_list()
+    b[2] = 7
+    print(obj.my_list)
+
+    c = OtherClass(5)
+    d = OtherClass(10)
+    c.print_num()
+    d.print_num()
+    c.print_num()
+    d.print_num()
+
+    print(type(4))
+
+
+things_from_module()

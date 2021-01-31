@@ -8,9 +8,9 @@ from abc import ABC, abstractmethod
 from .tokens import (
     ALIAS,
     NUMBER,
+    MEMREF,
 )
-from ..instructions import components
-from ..instructions.listings import INSTRUCTION_SIGNATURES
+from ..instructions import listings
 
 
 def get_all_patterns():
@@ -133,48 +133,50 @@ class AliasDefinition(Pattern):
         return self.tokens[1].value
 
 
+class Marker(Pattern):
+    pass
+    pass
+
+
+class MarkerDefinition(Pattern):
+    pass
+    pass
+
+
 class Instruction(Pattern):
     """
     An instruction.
     """
 
-    _TOKEN_TO_COMPONENT = {
-        ALIAS: components.CONST,
-        NUMBER: components.CONST,
-    }
-    """
-    A handy mapping
-    """
-
     def __init__(self, tokens, signature):
-        super().__init__(tokens)
         self.signature = signature
+        super().__init__(tokens)
 
     @classmethod
     def from_tokens(cls, tokens):
         instruction_components = []
         for token in tokens:
-            instruction_component = _token_to_component(token)
+            instruction_component = token.component
             if instruction_component is None:
                 return None
             else:
                 instruction_components.append(instruction_component)
 
         signature = tuple(instruction_components)
-        if signature in INSTRUCTION_SIGNATURES:
+        if listings.is_supported_signature(signature):
             return cls(tokens, signature)
         else:
             return None
 
-    def _token_to_component(self, token):
-        token_type = type(token)
-        return self._TOKEN_TO_COMPONENT.get(token_type, None)
-
     def _generate_machinecode(self):
-        machinecode_func = get_machinecode_func(self.signature)
-        constant_tokens = [
-            token for token in self.tokens if token.is_const()
-        ]
+        machinecode_func = listings.get_machinecode_function(self.signature)
+        constant_tokens = []
+        for token in self.tokens:
+            if isinstance(token, MEMREF):
+                token = token.inner_token
+            if token.is_const():
+                constant_tokens.append(token)
+
         return machinecode_func(self.signature, constant_tokens)
 
 

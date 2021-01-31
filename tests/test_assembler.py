@@ -4,9 +4,12 @@ from sixteen_bit_computer import assembler
 from sixteen_bit_computer.assembly.tokens import (
     ALIAS,
     NUMBER,
+    OPCODE,
+    MODULE,
 )
 from sixteen_bit_computer.assembly.patterns import (
     AliasDefinition,
+    Instruction,
 )
 from sixteen_bit_computer.exceptions import (
     NoMatchingTokensError,
@@ -87,6 +90,10 @@ def test_remove_comments(test_input, expected):
         "!ALIAS0  #123",
         [ALIAS, NUMBER],
     ),
+    (
+        "SET_ZERO  ACC",
+        [OPCODE, MODULE],
+    ),
 ])
 def test_get_tokens(test_input, expected):
     result_types = [type(result) for result in assembler.get_tokens(test_input)]
@@ -106,9 +113,17 @@ def test_get_tokens_raises(test_input):
         [ALIAS.from_string("!ALIAS"), NUMBER.from_string("#123")],
         AliasDefinition
     ),
+    (
+        [OPCODE.from_string("NOOP")],
+        Instruction
+    ),
+    (
+        [OPCODE.from_string("SET_ZERO"), MODULE.from_string("ACC")],
+        Instruction
+    ),
 ])
 def test_get_pattern(test_input, expected):
-    assert type(assembler.get_pattern(test_input) == expected)
+    assert isinstance(assembler.get_pattern(test_input), expected)
 
 
 @pytest.mark.parametrize("test_input", [

@@ -5,6 +5,15 @@ Definition of tokens - the atomic parts of assembly code.
 from abc import ABC, abstractmethod
 import re
 
+from ..instructions.components import (
+    NOOP,
+    SET_ZERO,
+    ACC,
+    A,
+    B,
+    C,
+)
+
 _IDENTIFIER_REGEX = re.compile(r"[a-zA-Z_]+\w*$")
 
 
@@ -19,6 +28,8 @@ def get_all_tokens():
     return (
         ALIAS,
         NUMBER,
+        OPCODE,
+        MODULE,
     )
 
 
@@ -75,6 +86,26 @@ class Token(ABC):
         """
         return self._raw
 
+    @property
+    def component(self):
+        """
+        Instruction component or None: Instruction Component this token
+        represents.
+        """
+        return None
+
+    def is_const(self):
+        """
+        Whether or not this token represents a constant value.
+
+        A constant value is something like a number or an alias, some
+        raw data that will eventually end up in machinecode.
+
+        Returns
+            bool: Whether the token is constant or not.
+        """
+        return False
+
 
 class ALIAS(Token):
     """
@@ -104,6 +135,10 @@ class ALIAS(Token):
             return None
 
         return cls(_string, _string[1:])
+
+
+class MARKER(Token):
+    pass
 
 
 class NUMBER(Token):
@@ -141,84 +176,112 @@ class NUMBER(Token):
         return cls(_string, num)
 
 
+class OPCODE(Token):
+    """
+    Defines an Opcode.
+
+    An opcode is the part of an instruction that defines the type of
+    behaviour. E.g., in::
+
+        LOAD [A] B
+        LOAD [#123] ACC
+
+    ``LOAD`` is the opcode. Regardless of where in memory the value is
+    being fetched from, or what module the value is being loaded into,
+    it's still a load.
+    """
+    _OPCODE_STRINGS = frozenset([
+        "NOOP",
+        "SET_ZERO",
+    ])
+    """
+    frozenset(str): The set of strings that are supported as opcodes.
+    """
+
+    _OPCODE_TO_COMPONENT = {
+        "NOOP": NOOP,
+        "SET_ZERO": SET_ZERO
+    }
+    """
+    dict(str:component): A mapping of opcode strings to thier
+    :mod:`instruction component <components>` equivalents.
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        """
+        See :meth:`Token.from_string`.
+        """
+        if _string in cls._OPCODE_STRINGS:
+            return cls(_string, _string)
+        else:
+            return None
+
+    @property
+    def component(self):
+        """
+        See :meth:`Token.component`.
+        """
+        return self._OPCODE_TO_COMPONENT[self.value]
 
 
+class MODULE(Token):
+    """
+    Defines a Module..
+
+    A module is a part of the CPU that can me interacted with in an i
+    instruction. E.g., in::
+
+        LOAD [A] B
+        LOAD [#123] ACC
+
+    ``A``, ``B``, and ``ACC`` are modules.
+    """
+    _MODULE_STRINGS = frozenset([
+        "ACC",
+        "A",
+        "B",
+        "C",
+    ])
+    """
+    frozenset(str): The set of strings that are supported as modules.
+    """
+
+    _MODULE_TO_COMPONENT = {
+        "ACC": ACC,
+        "A": A,
+        "B": B,
+        "C": C,
+    }
+    """
+    dict(str:component): A mapping of module strings to thier
+    :mod:`instruction component <components>` equivalents.
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        """
+        See :meth:`Token.from_string`.
+        """
+        if _string in cls._MODULE_STRINGS:
+            return cls(_string, _string)
+        else:
+            return None
+
+    @property
+    def component(self):
+        """
+        See :meth:`Token.component`.
+        """
+        return self._MODULE_TO_COMPONENT[self.value]
+
+
+class MEMREF(Token):
+    pass
 
 
 # class DATA(Token):
 #     pass
-
-
-
-# class CONSTANT(Token):
-#     pass
-
-# class ALIAS(CONSTANT):
-#     pass
-
-# class NUMBER(CONSTANT):
-#     pass
-
-# class LABEL(CONSTANT):
-#     pass
-
-# class VARIABLE(CONSTANT):
-#     pass
-
-
-
-# class ASCII(Token):
-#     pass
-
-
-# class ANCHOR(Token):
-#     pass
-
-
-
-
-# class INSTRUCTION(Token):
-#     pass
-
-# class LOAD(INSTRUCTION):
-#     pass
-
-# class STORE(INSTRUCTION):
-#     pass
-
-
-
-
-# class MODULE(Token):
-#     pass
-
-# class A(MODULE):
-#     pass
-
-# class B(MODULE):
-#     pass
-
-# class C(MODULE):
-#     pass
-
-
-
-
-# class MEMREF(Token):
-#     pass
-
-# class M_A(MEMREF):
-#     pass
-
-# class M_B(MEMREF):
-#     pass
-
-# class M_ALIAS(MEMREF):
-#     pass
-
-# class M_VARIABLE(MEMREF)
-
-
 
 
 def is_identifier(test_string):

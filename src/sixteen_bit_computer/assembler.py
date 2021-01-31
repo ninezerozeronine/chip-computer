@@ -50,6 +50,7 @@ def process_assembly_lines(assembly_lines):
 
     assign_machinecode_indecies(assembly_lines)
     check_for_colliding_indecies(assembly_lines)
+    check_for_out_of_range_indecies(assembly_lines)
 
     resolve_numbers(assembly_lines)
 
@@ -167,7 +168,7 @@ def get_pattern(tokens):
     Find the pattern that the tokens match.
 
     Args:
-        tokens list(Token): The tokens to match to a pattern.
+        tokens (list(Token)): The tokens to match to a pattern.
     Returns:
         Pattern: The pattern that matches the tokens.
     Raises:
@@ -275,8 +276,10 @@ def check_multiple_marker_defs(assembly_lines):
     markers = set()
     marker_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(assembly_line.pattern, (Marker, MarkerDef)):
-            marker = assembly_line.pattern.marker
+        if isinstance(
+                assembly_line.pattern,
+                (patterns.Marker, patterns.MarkerDefinition)):
+            marker = assembly_line.pattern.name
             if marker in markers:
                 details = (
                     "The marker: \"{marker}\" has already been defined on "
@@ -326,7 +329,8 @@ def check_multiple_marker_assignment(assembly_lines):
     marker_queued = False
     last_marker = ""
     for assembly_line in assembly_lines:
-        if marker_queued and isinstance(assembly_line.pattern, Marker):
+        if (marker_queued
+                and isinstance(assembly_line.pattern, patterns.Marker)):
             details = (
                 "There is already a marker ({marker}) queued for "
                 "assignment to the next machinecode word.".format(
@@ -342,7 +346,7 @@ def check_multiple_marker_assignment(assembly_lines):
 
         if isinstance(assembly_line.pattern, Marker):
             marker_queued = True
-            last_marker = assembly_line.pattern.marker
+            last_marker = assembly_line.pattern.name
 
         if assembly_line.has_machine_code() and marker_queued:
             marker_queued = False
@@ -367,10 +371,9 @@ def assign_machinecode_indecies(assembly_lines):
         if isinstance(line.pattern, Anchor):
             next_mc_index = line.pattern.anchor_value()
 
-        if line.machinecode:
-            for word in line.machinecode:
-                word.index = next_mc_index
-                next_mc_index = next_mc_index + 1
+        for word in line.machinecode:
+            word.index = next_mc_index
+            next_mc_index = next_mc_index + 1
 
 
 def check_for_colliding_indecies(assembly_lines):
@@ -410,3 +413,156 @@ def check_for_colliding_indecies(assembly_lines):
                     raise AssemblyError(msg)
                 else:
                     indecies_to_lines[index] = assembly_line
+
+
+def check_for_out_of_range_indecies(assembly_lines):
+    """
+    Check that all machinecode words have a valid index.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a machine code word collides with another.
+    """
+    for line in assembly_lines:
+        for word in line.machinecode:
+            if (word.index < 0) or (word.index > (2**16) - 1):
+                details = (
+                    "The machinecode word(s) would be placed at an "
+                    "index that is not within the range 0-65535 "
+                    "inclusive. ({index})".format(
+                        index=word.index
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+
+
+def resolve_numbers(assembly_lines):
+    """
+    Resolve any number tokens used in machine code.
+
+    Modifies the assmebly lines in place.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    """
+    for line in assembly_lines:
+        for word in line.machinecode:
+            token = word.const_token
+            if isinstance(token, tokens.NUMBER):
+                word.value = token.value
+
+
+def build_alias_map(assembly_lines):
+    """
+    Build a mapping of aliases to thier values.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Returns:
+        dict(str:int): Dictionary of alias name keys to thier values.
+    """
+    alias_map = {}
+    for line in assembly_lines:
+        if isinstance(line.pattern, patterns.AliasDefinition):
+            alias_map[line.pattern.name] = line.pattern.value
+    return alias_map
+
+
+def resolve_aliases(assembly_lines, alias_map):
+    """
+    Resolve any references to aliases in machinecode words.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If an alias has been referenced but not defined.
+    """
+    for line in assembly_lines:
+        for word in line.machinecode:
+            token = word.const_token
+            if isinstance(token, tokens.ALIAS):
+                try:
+                    word.value = alias_map[token.value]
+                except KeyError:
+                    details = (
+                        "The alias: {alias} has not been defined.".format(
+                            alias=token.value
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+
+
+def build_marker_map(assembly_lines):
+    """
+    Build a mapping of markers to thier values.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Returns:
+        dict(str:int): Dictionary of marker name keys to thier values.
+    """
+    marker_map = {}
+    marker = None
+    for line in assembly_lines:
+        if isinstance(line.pattern, pattern.MarkerDefinition):
+            marker_map[line.pattern.name] = line.pattern.value
+            continue
+
+        if isinstance(line.pattern, pattern.Marker):
+            marker = line.pattern.name
+            continue
+
+        if marker is not None and line.machinecode:
+            marker_map[marker] = line.machinecode[0].index
+            marker = None
+    return marker_map
+
+
+def resolve_markers(assembly_lines, marker_map):
+    """
+    Resolve any references to markers in machinecode words.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a marker has been referenced but not defined.
+    """
+    for line in assembly_lines:
+        for word in line.machinecode:
+            token = word.const_token
+            if isinstance(token, tokens.MARKER):
+                try:
+                    word.value = marker_map[token.value]
+                except KeyError:
+                    details = (
+                        "The marker: {marker} has not been defined.".format(
+                            marker=token.value
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)

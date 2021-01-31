@@ -1,10 +1,6 @@
-def get_machinecode_template(signature, *constant_refs):
-    pass
-
-
 class Word(object):
-    def __init__(self):
-        self.value = None
-        self.const_token = None
-        self.index = None
+    def __init__(self, value=None, const_token=None, index=None):
+        self.value = value
+        self.const_token = const_token
+        self.index = index
     pass
