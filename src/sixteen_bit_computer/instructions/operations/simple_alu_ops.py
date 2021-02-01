@@ -1,3 +1,11 @@
+"""
+The simple ALU Ops
+"""
+
+pass
+
+
+"""
 _SUPPORTED_SIGNATURES = frozenset(
     (ADD, A),
     (ADD, B),
@@ -132,3 +140,4 @@ def generate_control_steps(signature):
         control_steps = [step_0, step_1, step_2, step_3]
 
     return control_steps
+"""

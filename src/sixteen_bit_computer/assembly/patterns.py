@@ -18,7 +18,7 @@ def get_all_patterns():
     Get all the defined patterns.
 
     Returns:
-        tuple(Pattern): A tuple of all the pattern classes (excluding
+        tuple[Pattern]: A tuple of all the pattern classes (excluding
         the base class)
     """
     return (
@@ -53,7 +53,7 @@ class Pattern(ABC):
         on initialisation.
 
         Args:
-            tokens (list(Token)): The list of tokens from the assembler
+            tokens (List[Token]): The list of tokens from the assembler
                 that make up this pattern.
         """
 
@@ -63,14 +63,14 @@ class Pattern(ABC):
     @property
     def tokens(self):
         """
-        list(Token): The tokens that matched this pattern.
+        List[Token]: The tokens that matched this pattern.
         """
         return self._tokens
 
     @property
     def machinecode(self):
         """
-        list(Word): The machine code this pattern generates.
+        List[Word]: The machine code this pattern generates.
 
         If the pattern generates no machine code this is an empty list.
         """
@@ -81,7 +81,7 @@ class Pattern(ABC):
         Generate the machinecode for this pattern.
 
         Returns:
-            list(Word): List of machinecode words or an empty list if
+            List[Word]: List of machinecode words or an empty list if
             the pattern generates no machinecode.
         """
         return []
@@ -95,10 +95,11 @@ class Pattern(ABC):
         If the tokens don't match the pattern, None is returned.
 
         Args:
-            tokens (list(tokens)): List of tokens from the assembler to
+            tokens (List[Token]): List of tokens from the assembler to
                 attempt to match
         Returns:
-            None if the tokens didn't match Pattern if they did.
+            None or List[Token]: None if the tokens didn't match, the
+            created pattern if they did.
         """
         return None
 

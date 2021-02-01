@@ -15,6 +15,7 @@ from ..instructions.components import (
 )
 
 _IDENTIFIER_REGEX = re.compile(r"[a-zA-Z_]+\w*$")
+"""foobar"""
 
 
 def get_all_tokens():
@@ -40,10 +41,10 @@ class Token(ABC):
     A token is an atomic part of some assembly code which can't be
     split further. Examples would be:
 
-     - ``#123`` A number.
-     - ``LOAD`` The OpCode for the load instruction.
-     - ``[A]`` The location in memory at the value currently in the A
-        register
+     * ``#123`` A number.
+     * ``LOAD`` The OpCode for the load instruction.
+     * ``[A]`` The location in memory at the value currently in the A
+       module.
     """
 
     def __init__(self, raw, value):
@@ -67,6 +68,13 @@ class Token(ABC):
 
         If the string does not match what the token should be, None
         should be returned instead of an instance of the class.
+
+        Args:
+            _string (str): The string to try and create the token from.
+
+        Returns:
+            None or Token: None if the string doesn't match the token,
+            an instance of the token if it does.
         """
         return None
 
@@ -89,8 +97,9 @@ class Token(ABC):
     @property
     def component(self):
         """
-        Instruction component or None: Instruction Component this token
-        represents.
+        :mod:`Instruction component<.components>` or None: Instruction
+        Component this token represents or None if it has no mapping to
+        a component.
         """
         return None
 
@@ -101,7 +110,7 @@ class Token(ABC):
         A constant value is something like a number or an alias, some
         raw data that will eventually end up in machinecode.
 
-        Returns
+        Returns:
             bool: Whether the token is constant or not.
         """
         return False
@@ -181,7 +190,9 @@ class OPCODE(Token):
     Defines an Opcode.
 
     An opcode is the part of an instruction that defines the type of
-    behaviour. E.g., in::
+    behaviour. E.g., in:
+
+    .. code-block:: none
 
         LOAD [A] B
         LOAD [#123] ACC
@@ -195,7 +206,7 @@ class OPCODE(Token):
         "SET_ZERO",
     ])
     """
-    frozenset(str): The set of strings that are supported as opcodes.
+    frozenset[str]: The set of strings that are supported as opcodes.
     """
 
     _OPCODE_TO_COMPONENT = {
@@ -203,15 +214,13 @@ class OPCODE(Token):
         "SET_ZERO": SET_ZERO
     }
     """
-    dict(str:component): A mapping of opcode strings to thier
-    :mod:`instruction component <components>` equivalents.
+    dict[str, :mod:`Instruction component<.components>`]: A mapping of
+    opcode strings to thier :mod:`instruction component <components>`
+    equivalents.
     """
 
     @classmethod
     def from_string(cls, _string):
-        """
-        See :meth:`Token.from_string`.
-        """
         if _string in cls._OPCODE_STRINGS:
             return cls(_string, _string)
         else:
@@ -219,23 +228,30 @@ class OPCODE(Token):
 
     @property
     def component(self):
-        """
-        See :meth:`Token.component`.
-        """
         return self._OPCODE_TO_COMPONENT[self.value]
 
 
 class MODULE(Token):
     """
-    Defines a Module..
+    Defines a Module.
 
-    A module is a part of the CPU that can me interacted with in an i
-    instruction. E.g., in::
+    A module is a part of the CPU that can be interacted with in an in
+    instruction. E.g., in:
+
+    .. code-block:: none
 
         LOAD [A] B
-        LOAD [#123] ACC
+        LOAD [123] ACC
 
     ``A``, ``B``, and ``ACC`` are modules.
+
+    ..
+        Add these here as using private-members in
+        autodoc_default_options means all sort of private nonsense
+        gets documented.
+
+    .. autoattribute:: _MODULE_STRINGS
+    .. autoattribute:: _MODULE_TO_COMPONENT
     """
     _MODULE_STRINGS = frozenset([
         "ACC",
@@ -244,7 +260,8 @@ class MODULE(Token):
         "C",
     ])
     """
-    frozenset(str): The set of strings that are supported as modules.
+    frozenset[str]: The set of strings that are supported as modules.
+
     """
 
     _MODULE_TO_COMPONENT = {
@@ -254,15 +271,13 @@ class MODULE(Token):
         "C": C,
     }
     """
-    dict(str:component): A mapping of module strings to thier
-    :mod:`instruction component <components>` equivalents.
+    Dict[str, :mod:`instruction component<.components>`]: A mapping of
+    module strings to thier :mod:`instruction component<.components>`
+    equivalents.
     """
 
     @classmethod
     def from_string(cls, _string):
-        """
-        See :meth:`Token.from_string`.
-        """
         if _string in cls._MODULE_STRINGS:
             return cls(_string, _string)
         else:
@@ -270,9 +285,6 @@ class MODULE(Token):
 
     @property
     def component(self):
-        """
-        See :meth:`Token.component`.
-        """
         return self._MODULE_TO_COMPONENT[self.value]
 
 

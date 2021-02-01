@@ -65,7 +65,7 @@ def pattern_from_line(line):
     """
     Get the pattern corresponding to a raw line of assembly code.
 
-    A raw line is something like: ``LOAD [$var] A // A comment.``
+    A raw line is something like: ``LOAD [$var] A // My comment.``
 
     Args:
         line (str): Raw line of assembly code.
@@ -107,7 +107,7 @@ def get_tokens(line):
     Args:
         line (str): Line to get tokens from.
     Returns:
-        list(Token): List of tokens on this line
+        list[Token]: List of tokens on this line
     Raises:
         NoMatchingTokensError: When a matching token was not found.
         MultipleMatchingTokensError: When multiple tokens matched.
@@ -148,7 +148,7 @@ def get_words_from_line(line):
     Args:
         line (str): Line to convert to tokens.
     Returns:
-        list(str): The words.
+        list of str: The words in the line.
     """
 
     # Does line have any content
@@ -168,7 +168,8 @@ def get_pattern(tokens):
     Find the pattern that the tokens match.
 
     Args:
-        tokens (list(Token)): The tokens to match to a pattern.
+        tokens (List[Token]): The tokens to match to a
+            pattern.
     Returns:
         Pattern: The pattern that matches the tokens.
     Raises:
@@ -208,7 +209,7 @@ def check_multiple_alias_defs(assembly_lines):
         !MY_ALIAS #456
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If the same alias has been defined more than
@@ -266,7 +267,7 @@ def check_multiple_marker_defs(assembly_lines):
     assigned to the index holding the ``NOOP`` instruction.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If the same marker has been defined more than
@@ -320,7 +321,7 @@ def check_multiple_marker_assignment(assembly_lines):
     ``&marker_2`` assgned to it.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If a line been assigned more than one marker.
@@ -363,7 +364,7 @@ def assign_machinecode_indecies(assembly_lines):
     Edits the assembly lines in place.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     """
     next_mc_index = 0
@@ -381,7 +382,7 @@ def check_for_colliding_indecies(assembly_lines):
     Check that all machinecode words have a unique index.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If a machine code word collides with another.
@@ -420,7 +421,7 @@ def check_for_out_of_range_indecies(assembly_lines):
     Check that all machinecode words have a valid index.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If a machine code word collides with another.
@@ -450,7 +451,7 @@ def resolve_numbers(assembly_lines):
     Modifies the assmebly lines in place.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     """
     for line in assembly_lines:
@@ -465,10 +466,11 @@ def build_alias_map(assembly_lines):
     Build a mapping of aliases to thier values.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict(str:int): Dictionary of alias name keys to thier values.
+        Dict[str, int]: Dictionary of alias
+        name keys to thier values.
     """
     alias_map = {}
     for line in assembly_lines:
@@ -484,7 +486,7 @@ def resolve_aliases(assembly_lines, alias_map):
     Edits the assembly lines in place.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If an alias has been referenced but not defined.
@@ -514,10 +516,10 @@ def build_marker_map(assembly_lines):
     Build a mapping of markers to thier values.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict(str:int): Dictionary of marker name keys to thier values.
+        dict of str to int: Dictionary of marker name keys to thier values.
     """
     marker_map = {}
     marker = None
@@ -543,7 +545,7 @@ def resolve_markers(assembly_lines, marker_map):
     Edits the assembly lines in place.
 
     Args:
-        assembly_lines (list(:class:`~.AssemblyLine`)): List of
+        assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If a marker has been referenced but not defined.
