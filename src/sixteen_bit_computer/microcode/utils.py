@@ -17,13 +17,12 @@ Attributes:
 """
 
 
-def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
+def assemble_instruction_steps(instruction_bitdef, flags_bitdefs, control_steps):
     """
     Create templates for all steps to form a complete instruction.
 
     Args:
-        instruction_bitdefs (list(str)): List of the bitdefs that make
-            up the instruction byte.
+        instruction_bitdef (str): Bitdef of the instruction index.
         flags_bitdefs: list(str): List of the bitdefs that make up the
             flags for this instruction.
         control_steps: list(list(str): List of list of bitdefs that
@@ -44,15 +43,18 @@ def assemble_instruction(instruction_bitdefs, flags_bitdefs, control_steps):
 
     templates = []
 
-    instruction_bitdef = bitdef.merge(instruction_bitdefs)
     flags_bitdef = bitdef.merge(flags_bitdefs)
 
     for index, current_step_controls in enumerate(control_steps, start=2):
         step_bitdef = hardware_mapping.STEPS[index]
-
+        # This brings the 8 bits of the instruction bitdef up to the 15
+        # in an address
+        padded_instruction_bitdef = "{instr}.......".format(
+            instr=instruction_bitdef
+        )
         address_bitdef = bitdef.merge(
             [
-                instruction_bitdef,
+                padded_instruction_bitdef,
                 flags_bitdef,
                 step_bitdef
             ]

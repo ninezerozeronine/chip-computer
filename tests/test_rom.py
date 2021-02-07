@@ -1,12 +1,12 @@
 import pytest
 
-from eight_bit_computer import rom
-from eight_bit_computer.microcode.utils import DataTemplate
+from sixteen_bit_computer import rom
+from sixteen_bit_computer.microcode.utils import DataTemplate
 
 
 @pytest.mark.slow
-def test_get_rom_doesnt_raise():
-    data = rom.get_rom()
+def test_get_microcode_rom_doesnt_raise():
+    data = rom.get_microcode_rom()
     assert True
 
 

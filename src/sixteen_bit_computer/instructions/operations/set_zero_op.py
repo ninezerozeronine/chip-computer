@@ -1,6 +1,15 @@
 from .. import listings
 from ..machinecode import Word
 from ..components import SET_ZERO, ACC, A, B, C
+from ... import number_utils
+from ...microcode.utils import assemble_instruction_steps
+from ...microcode.hardware_mapping import (
+    component_to_module_name,
+    MODULE_CONTROL,
+    ALU_CONTROL_FLAGS,
+    FLAGS,
+)
+
 
 _SUPPORTED_SIGNATURES = frozenset([
     (SET_ZERO, ACC),
@@ -22,26 +31,26 @@ def generate_machinecode(signature, const_tokens):
     ]
 
 
-def generate_microcode():
+def generate_microcode_templates():
     """
 
     """
     data_templates = []
 
     for signature in _SUPPORTED_SIGNATURES:
-        templates = _generate_microcode_for_sig(signature)
+        templates = _generate_microcode_templates_for_sig(signature)
         data_templates.extend(templates)
 
     return data_templates
 
 
-def _generate_microcode_for_sig(signature):
+def _generate_microcode_templates_for_sig(signature):
     """
 
     """
     instr_index = listings.get_instruction_index(signature)
     instr_index_bitdef = number_utils.number_to_bitstring(
-        instr_index, width=8
+        instr_index, bit_width=8
     )
     flags_bitdefs = [FLAGS["ANY"]]
 
@@ -52,12 +61,12 @@ def _generate_microcode_for_sig(signature):
 
     step_1 = [
         MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL[component_to_module_name(signaure[1])]["IN"],
+        MODULE_CONTROL[component_to_module_name(signature[1])]["IN"],
     ]
 
     control_steps = [step_0, step_1]
 
-    return assemble_instruction(
+    return assemble_instruction_steps(
         instr_index_bitdef, flags_bitdefs, control_steps
     )
 
