@@ -5,12 +5,12 @@ meaning.
 
 from abc import ABC, abstractmethod
 
-from .tokens import (
+from .assembly_tokens import (
     ALIAS,
     NUMBER,
     MEMREF,
 )
-from ..instructions import listings
+from . import instruction_listings
 
 
 def get_all_patterns():
@@ -164,13 +164,13 @@ class Instruction(Pattern):
                 instruction_components.append(instruction_component)
 
         signature = tuple(instruction_components)
-        if listings.is_supported_signature(signature):
+        if instruction_listings.is_supported_signature(signature):
             return cls(tokens, signature)
         else:
             return None
 
     def _generate_machinecode(self):
-        machinecode_func = listings.get_machinecode_function(self.signature)
+        machinecode_func = instruction_listings.get_machinecode_function(self.signature)
         constant_tokens = []
         for token in self.tokens:
             if isinstance(token, MEMREF):

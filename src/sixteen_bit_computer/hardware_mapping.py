@@ -2,7 +2,7 @@
 
 """
 
-from ..instructions.components import (
+from .instruction_components import (
     ACC,
     A,
     B,

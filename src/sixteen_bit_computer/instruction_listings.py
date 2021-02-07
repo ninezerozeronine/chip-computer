@@ -1,4 +1,4 @@
-from .components import (
+from .instruction_components import (
     NOOP,
     SET_ZERO,
     ACC,

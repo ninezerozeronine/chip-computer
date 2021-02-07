@@ -1,12 +1,12 @@
-from .. import listings
+from .. import instruction_listings
 from ..machinecode import Word
-from ..components import NOOP
-from ... import number_utils
-from ...microcode.hardware_mapping import (
+from ..instruction_components import NOOP
+from .. import number_utils
+from ..hardware_mapping import (
     MODULE_CONTROLS_NONE,
     FLAGS,
 )
-from ...microcode.utils import assemble_instruction_steps
+from ..utils import assemble_instruction_steps
 
 _SUPPORTED_SIGNATURES = frozenset([
     (NOOP,),
@@ -21,7 +21,7 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     return [
-        Word(value=listings.get_instruction_index(signature))
+        Word(value=instruction_listings.get_instruction_index(signature))
     ]
 
 
@@ -32,7 +32,7 @@ def generate_microcode_templates():
     data_templates = []
 
     for signature in _SUPPORTED_SIGNATURES:
-        instr_index = listings.get_instruction_index(signature)
+        instr_index = instruction_listings.get_instruction_index(signature)
         instr_index_bitdef = number_utils.number_to_bitstring(
             instr_index, bit_width=8
         )

@@ -2,13 +2,13 @@
 The fetch steps added to the start of all operations.
 """
 
-from ...microcode import bitdef
-from ...microcode.hardware_mapping import (
+from .. import bitdef
+from ..hardware_mapping import (
     EMPTY_ADDRESS,
     MODULE_CONTROL,
     STEPS,
 )
-from ...microcode.utils import DataTemplate
+from ..utils import DataTemplate
 
 
 def generate_microcode_templates():

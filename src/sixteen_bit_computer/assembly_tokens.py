@@ -5,7 +5,7 @@ Definition of tokens - the atomic parts of assembly code.
 from abc import ABC, abstractmethod
 import re
 
-from ..instructions.components import (
+from .instruction_components import (
     NOOP,
     SET_ZERO,
     ACC,

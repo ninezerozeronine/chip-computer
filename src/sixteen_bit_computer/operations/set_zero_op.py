@@ -1,9 +1,9 @@
-from .. import listings
+from .. import instruction_listings
+from .. import number_utils
 from ..machinecode import Word
-from ..components import SET_ZERO, ACC, A, B, C
-from ... import number_utils
-from ...microcode.utils import assemble_instruction_steps
-from ...microcode.hardware_mapping import (
+from ..instruction_components import SET_ZERO, ACC, A, B, C
+from ..utils import assemble_instruction_steps
+from ..hardware_mapping import (
     component_to_module_name,
     MODULE_CONTROL,
     ALU_CONTROL_FLAGS,
@@ -27,7 +27,7 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     return [
-        Word(value=listings.get_instruction_index(signature))
+        Word(value=instruction_listings.get_instruction_index(signature))
     ]
 
 
@@ -48,7 +48,7 @@ def _generate_microcode_templates_for_sig(signature):
     """
 
     """
-    instr_index = listings.get_instruction_index(signature)
+    instr_index = instruction_listings.get_instruction_index(signature)
     instr_index_bitdef = number_utils.number_to_bitstring(
         instr_index, bit_width=8
     )

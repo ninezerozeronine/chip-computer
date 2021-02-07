@@ -3,12 +3,12 @@ Create and export roms for the computer
 """
 from collections import namedtuple
 
-from .instructions.operations import all_operations, fetch
-from .microcode.hardware_mapping import (
+from .operations import all_operations, fetch
+from .hardware_mapping import (
     EMPTY_ADDRESS,
     MODULE_CONTROLS_DEFAULT
 )
-from .microcode import bitdef
+from . import bitdef
 from . import number_utils
 
 

@@ -1,7 +1,7 @@
 import pytest
 
 from sixteen_bit_computer import rom
-from sixteen_bit_computer.microcode.utils import DataTemplate
+from sixteen_bit_computer.utils import DataTemplate
 
 
 @pytest.mark.slow

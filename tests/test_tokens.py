@@ -1,7 +1,7 @@
 import pytest
 
-from sixteen_bit_computer.assembly import tokens
-from sixteen_bit_computer.assembly.tokens import (
+from sixteen_bit_computer import assembly_tokens
+from sixteen_bit_computer.assembly_tokens import (
     ALIAS,
     NUMBER,
 )
@@ -51,4 +51,4 @@ def test_NUMBER(test_input, expected):
     ("", False),
 ])
 def test_is_identifier(test_input, expected):
-    assert tokens.is_identifier(test_input) == expected
+    assert assembly_tokens.is_identifier(test_input) == expected

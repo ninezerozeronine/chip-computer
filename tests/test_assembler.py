@@ -1,13 +1,13 @@
 import pytest
 
 from sixteen_bit_computer import assembler
-from sixteen_bit_computer.assembly.tokens import (
+from sixteen_bit_computer.assembly_tokens import (
     ALIAS,
     NUMBER,
     OPCODE,
     MODULE,
 )
-from sixteen_bit_computer.assembly.patterns import (
+from sixteen_bit_computer.assembly_patterns import (
     AliasDefinition,
     Instruction,
 )

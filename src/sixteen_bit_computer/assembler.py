@@ -1,4 +1,5 @@
-from .assembly import patterns, tokens
+from . import assembly_patterns
+from . import assembly_tokens
 from .exceptions import (
     LineProcessingError,
     NoMatchingTokensError,
@@ -120,7 +121,7 @@ def get_tokens(line):
     final_tokens = []
     for word in words:
         matched_tokens = []
-        for token_class in tokens.get_all_tokens():
+        for token_class in assembly_tokens.get_all_tokens():
             token = token_class.from_string(word)
             if token is not None:
                 matched_tokens.append(token)
@@ -178,7 +179,7 @@ def get_pattern(tokens):
     """
     matched_patterns = []
 
-    for pattern_class in patterns.get_all_patterns():
+    for pattern_class in assembly_patterns.get_all_patterns():
         pattern = pattern_class.from_tokens(tokens)
         if pattern is not None:
             matched_patterns.append(pattern)
@@ -219,7 +220,7 @@ def check_multiple_alias_defs(assembly_lines):
     aliases = set()
     alias_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(assembly_line.pattern, patterns.AliasDefinition):
+        if isinstance(assembly_line.pattern, assembly_patterns.AliasDefinition):
             alias = assembly_line.pattern.alias
             if alias in aliases:
                 details = (
@@ -279,7 +280,7 @@ def check_multiple_marker_defs(assembly_lines):
     for assembly_line in assembly_lines:
         if isinstance(
                 assembly_line.pattern,
-                (patterns.Marker, patterns.MarkerDefinition)):
+                (assembly_patterns.Marker, assembly_patterns.MarkerDefinition)):
             marker = assembly_line.pattern.name
             if marker in markers:
                 details = (
@@ -331,7 +332,7 @@ def check_multiple_marker_assignment(assembly_lines):
     last_marker = ""
     for assembly_line in assembly_lines:
         if (marker_queued
-                and isinstance(assembly_line.pattern, patterns.Marker)):
+                and isinstance(assembly_line.pattern, assembly_patterns.Marker)):
             details = (
                 "There is already a marker ({marker}) queued for "
                 "assignment to the next machinecode word.".format(
@@ -457,7 +458,7 @@ def resolve_numbers(assembly_lines):
     for line in assembly_lines:
         for word in line.machinecode:
             token = word.const_token
-            if isinstance(token, tokens.NUMBER):
+            if isinstance(token, assembly_tokens.NUMBER):
                 word.value = token.value
 
 
@@ -474,7 +475,7 @@ def build_alias_map(assembly_lines):
     """
     alias_map = {}
     for line in assembly_lines:
-        if isinstance(line.pattern, patterns.AliasDefinition):
+        if isinstance(line.pattern, assembly_patterns.AliasDefinition):
             alias_map[line.pattern.name] = line.pattern.value
     return alias_map
 
@@ -494,7 +495,7 @@ def resolve_aliases(assembly_lines, alias_map):
     for line in assembly_lines:
         for word in line.machinecode:
             token = word.const_token
-            if isinstance(token, tokens.ALIAS):
+            if isinstance(token, assembly_tokens.ALIAS):
                 try:
                     word.value = alias_map[token.value]
                 except KeyError:
@@ -553,7 +554,7 @@ def resolve_markers(assembly_lines, marker_map):
     for line in assembly_lines:
         for word in line.machinecode:
             token = word.const_token
-            if isinstance(token, tokens.MARKER):
+            if isinstance(token, assembly_tokens.MARKER):
                 try:
                     word.value = marker_map[token.value]
                 except KeyError:
