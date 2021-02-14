@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer import language_defs
+from sixteen_bit_computer import language_defs
 
 
 @pytest.mark.parametrize("test_input,expected", [

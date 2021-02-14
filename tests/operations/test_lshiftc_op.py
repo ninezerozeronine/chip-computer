@@ -1,8 +1,8 @@
 import pytest
 
-from eight_bit_computer.operations import lshiftc_op
-from eight_bit_computer.data_structures import get_machine_code_byte_template
-from eight_bit_computer.exceptions import OperationParsingError
+from sixteen_bit_computer.operations import lshiftc_op
+from sixteen_bit_computer.data_structures import get_machine_code_byte_template
+from sixteen_bit_computer.exceptions import OperationParsingError
 
 
 def generate_parse_line_test_data():

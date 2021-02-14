@@ -2,9 +2,9 @@ from copy import deepcopy
 
 import pytest
 
-from eight_bit_computer import operation_utils
-from eight_bit_computer.data_structures import get_arg_def_template
-from eight_bit_computer.exceptions import OperationParsingError
+from sixteen_bit_computer import operation_utils
+from sixteen_bit_computer.data_structures import get_arg_def_template
+from sixteen_bit_computer.exceptions import OperationParsingError
 
 
 @pytest.mark.parametrize("test_input,expected", [

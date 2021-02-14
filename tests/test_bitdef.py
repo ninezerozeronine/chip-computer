@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer import bitdef
+from sixteen_bit_computer import bitdef
 
 
 @pytest.mark.parametrize("test_input,expected", [

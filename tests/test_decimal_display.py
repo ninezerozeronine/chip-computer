@@ -1,9 +1,9 @@
 import pytest
 
-from eight_bit_computer import decimal_display
-from eight_bit_computer.bitdef import remove_whitespace as rw
-from eight_bit_computer.language_defs import DISPLAY_OPTIONS
-from eight_bit_computer.data_structures import RomData
+from sixteen_bit_computer import decimal_display
+from sixteen_bit_computer.bitdef import remove_whitespace as rw
+from sixteen_bit_computer.language_defs import DISPLAY_OPTIONS
+from sixteen_bit_computer.data_structures import RomData
 
 @pytest.mark.parametrize("test_input, expected", [
     (1,1),

@@ -2,7 +2,7 @@ import textwrap
 
 import pytest
 
-from eight_bit_computer import assembly_summary
+from sixteen_bit_computer import assembly_summary
 
 
 def test_get_assembly_summary_data(assembly_line_infos, assembly_summary_data):

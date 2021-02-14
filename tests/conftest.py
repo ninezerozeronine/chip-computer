@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import pytest
 
-from eight_bit_computer.data_structures import (
+from sixteen_bit_computer.data_structures import (
     get_machine_code_byte_template,
     get_summary_entry_template,
     get_assembly_line_template,

@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer import number_utils
+from sixteen_bit_computer import number_utils
 
 
 @pytest.mark.parametrize("test_input,test_bitwidth,expected", [

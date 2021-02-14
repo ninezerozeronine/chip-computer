@@ -2,8 +2,8 @@ import textwrap
 
 import pytest
 
-from eight_bit_computer import export
-from eight_bit_computer.data_structures import (
+from sixteen_bit_computer import export
+from sixteen_bit_computer.data_structures import (
     get_assembly_line_template, get_machine_code_byte_template
 )
 

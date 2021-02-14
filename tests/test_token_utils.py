@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer import token_utils
+from sixteen_bit_computer import token_utils
 
 @pytest.mark.parametrize("test_input,expected", [
     ("", False),

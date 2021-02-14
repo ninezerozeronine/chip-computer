@@ -1,8 +1,8 @@
 import pytest
 from copy import deepcopy
 
-from eight_bit_computer import main
-from eight_bit_computer.data_structures import (
+from sixteen_bit_computer import main
+from sixteen_bit_computer.data_structures import (
     get_assembly_line_template, get_machine_code_byte_template
 )
 

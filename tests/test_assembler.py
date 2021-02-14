@@ -1,11 +1,11 @@
 import pytest
 from copy import deepcopy
 
-from eight_bit_computer import assembler
-from eight_bit_computer.data_structures import (
+from sixteen_bit_computer import assembler
+from sixteen_bit_computer.data_structures import (
     get_assembly_line_template, get_machine_code_byte_template
 )
-from eight_bit_computer.exceptions import LineProcessingError, AssemblyError
+from sixteen_bit_computer.exceptions import LineProcessingError, AssemblyError
 
 
 @pytest.mark.parametrize("test_input", [

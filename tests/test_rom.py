@@ -1,7 +1,7 @@
 import pytest
 
-from eight_bit_computer import rom
-from eight_bit_computer.data_structures import DataTemplate
+from sixteen_bit_computer import rom
+from sixteen_bit_computer.data_structures import DataTemplate
 
 
 @pytest.mark.slow
