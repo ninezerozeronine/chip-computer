@@ -35,22 +35,23 @@ def assemble(
 
     # Does input file exist
     if not os.path.isfile(input_filepath):
-        print "Input file: {input_filepath} does not exist.".format(
+        print("Input file: {input_filepath} does not exist.".format(
             input_filepath=input_filepath)
+        )
         return
 
     # Does input file have the correct extension
     if not input_filepath.endswith(".asm"):
-        print "Input file must have a .asm extension."
+        print("Input file must have a .asm extension.")
         return
 
     # Is output format correct
     output_formats = ["logisim", "arduino"]
     if output_format not in output_formats:
         formats_str = " ".join(["'{name}'".format(name=name) for name in output_formats])
-        print "Output format must be one of: {output_formats}.".format(
+        print("Output format must be one of: {output_formats}.".format(
             output_formats=formats_str
-        )
+        ))
         return
 
     # Generate output filename
@@ -62,9 +63,9 @@ def assemble(
         output_dir = "./"
     else:
         if not os.path.isdir(output_dir):
-            print "Output directory: {output_dir} does not exist.".format(
+            print("Output directory: {output_dir} does not exist.".format(
                 output_dir=output_dir
-            )
+            ))
             return
 
     # Do assembly
@@ -72,7 +73,7 @@ def assemble(
     try:
         assembly_line_infos = process_assembly_lines(lines)
     except AssemblyError as inst:
-        print inst.args[0]
+        print(inst.args[0])
         return
 
     if output_format == "logisim":
@@ -80,8 +81,8 @@ def assemble(
     if output_format == "arduino":
         write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename_base)
 
-    print "\n\nAssembly summary:\n"
-    print generate_assembly_summary(assembly_line_infos)
+    print("\n\nAssembly summary:\n")
+    print(generate_assembly_summary(assembly_line_infos))
 
 
 def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename_base):
@@ -108,7 +109,7 @@ def write_bitstrings_to_logisim(assembly_line_infos, output_dir, output_filename
             output_filepath=file_path
         )
     )
-    print completion_msg
+    print(completion_msg)
 
 
 def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename_base):
@@ -141,7 +142,7 @@ def write_bitstrings_to_arduino(assembly_line_infos, output_dir, output_filename
         "Assembly complete. Assembly files written to: {h_filepath} and ."
         "{cpp_filepath}".format(h_filepath=h_filepath, cpp_filepath=cpp_filepath)
         )
-    print completion_msg
+    print(completion_msg)
 
 
 def filepath_to_lines(input_filepath):
@@ -188,9 +189,9 @@ def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
     """
 
     if not os.path.isdir(output_dir):
-        print "Output directory: {output_dir} does not exist.".format(
+        print("Output directory: {output_dir} does not exist.".format(
             output_dir=output_dir
-        )
+        ))
         return
 
     if file_prefix is None:
@@ -246,4 +247,4 @@ def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
     msg = "ROM writing complete. ROMs written to {output_dir}".format(
         output_dir=output_dir
     )
-    print msg
+    print(msg)

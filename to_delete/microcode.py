@@ -579,7 +579,7 @@ def print_microcode_rom(rom):
             data_info_string=data_info_string
             ))
 
-    print "\n=========================================\n".join(address_reports)
+    print("\n=========================================\n".join(address_reports))
 
 
 # def OPCODE(address_width):

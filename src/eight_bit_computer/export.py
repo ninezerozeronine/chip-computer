@@ -152,7 +152,7 @@ def chunker(seq, chunk_size):
         generator: Generator that yields each chunk.
     """
     return (
-        seq[pos:pos + chunk_size] for pos in xrange(0, len(seq), chunk_size)
+        seq[pos:pos + chunk_size] for pos in range(0, len(seq), chunk_size)
     )
 
 
