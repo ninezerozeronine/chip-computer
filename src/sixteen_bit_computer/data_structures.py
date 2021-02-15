@@ -28,6 +28,14 @@ Attributes:
 """
 
 
+class Word(object):
+    def __init__(self, value=None, const_token=None, index=None):
+        self.value = value
+        self.const_token = const_token
+        self.index = index
+    pass
+
+
 def get_summary_entry_template():
     """
     Get a template to describe each line in an assembly summary

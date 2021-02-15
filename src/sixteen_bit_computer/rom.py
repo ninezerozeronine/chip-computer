@@ -4,7 +4,7 @@ Create and export roms for the computer
 
 import os
 
-from .operations import get_all_operations, fetch
+from .new_operations import get_all_operations, fetch
 from .language_defs import (
     EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT, DECIMAL_ROM_DEFAULT
 )

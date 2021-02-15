@@ -199,7 +199,7 @@ def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
 
     rom_data = rom.get_rom()
     rom_slices = rom.slice_rom(rom_data)
-    for rom_index, rom_slice in rom_slices.iteritems():
+    for rom_index, rom_slice in rom_slices.items():
         slice_bitstrings = [romdata.data for romdata in rom_slice]
         file_basename = "{file_prefix}mc_rom_{rom_index}".format(
             file_prefix=file_prefix, rom_index=rom_index
