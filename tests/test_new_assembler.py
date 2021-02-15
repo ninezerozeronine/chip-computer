@@ -8,6 +8,7 @@ from sixteen_bit_computer.assembly_tokens import (
     MODULE,
 )
 from sixteen_bit_computer.assembly_patterns import (
+    NullPattern,
     AliasDefinition,
     Instruction,
 )
@@ -120,6 +121,10 @@ def test_get_tokens_raises(test_input):
     (
         [OPCODE.from_string("SET_ZERO"), MODULE.from_string("ACC")],
         Instruction
+    ),
+    (
+        [],
+        NullPattern
     ),
 ])
 def test_get_pattern(test_input, expected):

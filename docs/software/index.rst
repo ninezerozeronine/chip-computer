@@ -17,4 +17,4 @@ Software
    :maxdepth: 3
    :caption: Source Documentation:
 
-   source/eight_bit_computer
+   source/sixteen_bit_computer

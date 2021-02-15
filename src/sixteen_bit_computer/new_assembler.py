@@ -171,16 +171,13 @@ def get_pattern(tokens):
 
     Args:
         tokens (List[Token]): The tokens to match to a
-            pattern.
+            pattern. Can be an empty list - returns a NullPattern.
     Returns:
         Pattern or None: The pattern that matches the tokens.
     Raises:
         NoMatchingPatternsError: When a matching token was not found.
         MultipleMatchingPatternsError: When multiple tokens matched.
     """
-    if not tokens:
-        return None
-
     matched_patterns = []
 
     for pattern_class in assembly_patterns.get_all_patterns():
@@ -354,7 +351,7 @@ def check_multiple_marker_assignment(assembly_lines):
             marker_queued = True
             last_marker = assembly_line.pattern.name
 
-        if assembly_line.has_machine_code() and marker_queued:
+        if assembly_line.pattern.machine_code() and marker_queued:
             marker_queued = False
 
 
@@ -377,7 +374,7 @@ def assign_machinecode_indecies(assembly_lines):
         if isinstance(line.pattern, Anchor):
             next_mc_index = line.pattern.anchor_value()
 
-        for word in line.machinecode:
+        for word in line.pattern.machinecode:
             word.index = next_mc_index
             next_mc_index = next_mc_index + 1
 
@@ -432,7 +429,7 @@ def check_for_out_of_range_indecies(assembly_lines):
         AssemblyError: If a machine code word collides with another.
     """
     for line in assembly_lines:
-        for word in line.machinecode:
+        for word in line.pattern.machinecode:
             if (word.index < 0) or (word.index > (2**16) - 1):
                 details = (
                     "The machinecode word(s) would be placed at an "
@@ -460,7 +457,7 @@ def resolve_numbers(assembly_lines):
             processed lines of assembly.
     """
     for line in assembly_lines:
-        for word in line.machinecode:
+        for word in line.pattern.machinecode:
             token = word.const_token
             if isinstance(token, assembly_tokens.NUMBER):
                 word.value = token.value
@@ -497,7 +494,7 @@ def resolve_aliases(assembly_lines, alias_map):
         AssemblyError: If an alias has been referenced but not defined.
     """
     for line in assembly_lines:
-        for word in line.machinecode:
+        for word in line.pattern.machinecode:
             token = word.const_token
             if isinstance(token, assembly_tokens.ALIAS):
                 try:
@@ -537,8 +534,8 @@ def build_marker_map(assembly_lines):
             marker = line.pattern.name
             continue
 
-        if marker is not None and line.machinecode:
-            marker_map[marker] = line.machinecode[0].index
+        if marker is not None and line.pattern.machinecode:
+            marker_map[marker] = line.pattern.machinecode[0].index
             marker = None
     return marker_map
 
@@ -556,7 +553,7 @@ def resolve_markers(assembly_lines, marker_map):
         AssemblyError: If a marker has been referenced but not defined.
     """
     for line in assembly_lines:
-        for word in line.machinecode:
+        for word in line.pattern.machinecode:
             token = word.const_token
             if isinstance(token, assembly_tokens.MARKER):
                 try:

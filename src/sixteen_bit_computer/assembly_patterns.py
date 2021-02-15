@@ -22,6 +22,7 @@ def get_all_patterns():
         the base class)
     """
     return (
+        NullPattern,
         AliasDefinition,
         Instruction,
     )
@@ -104,6 +105,22 @@ class Pattern(ABC):
         return None
 
 
+class NullPattern(Pattern):
+    """
+    Pattern that represents no tokens.
+
+    Useful for compatability and code streamlining so things ilke empty
+    lines and lines that are just comments don't have to be treated
+    specially.
+    """
+    @classmethod
+    def from_tokens(cls, tokens):
+        if not tokens:
+            return cls([])
+        else:
+            return None
+
+
 class AliasDefinition(Pattern):
     """
     Represents an alias being defined as a specific value.
@@ -132,16 +149,6 @@ class AliasDefinition(Pattern):
         int: The value of the defined alias.
         """
         return self.tokens[1].value
-
-
-class Marker(Pattern):
-    pass
-    pass
-
-
-class MarkerDefinition(Pattern):
-    pass
-    pass
 
 
 class Instruction(Pattern):
@@ -181,8 +188,14 @@ class Instruction(Pattern):
         return machinecode_func(self.signature, constant_tokens)
 
 
+# class Marker(Pattern):
+#     pass
+#     pass
 
 
+# class MarkerDefinition(Pattern):
+#     pass
+#     pass
 
 
 # class DataSet(Pattern):
@@ -198,7 +211,3 @@ class Instruction(Pattern):
 
 #     def generate_machinecode(self):
 #         return [Word, Word]
-
-
-
-

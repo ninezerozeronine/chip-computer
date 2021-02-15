@@ -45,7 +45,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
-    'sphinxarg.ext.',
+    'sphinxarg.ext',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -182,7 +182,10 @@ epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
 
-autodoc_member_order = "bysource"
+autodoc_default_options = {
+    "member-order": "bysource",
+}
+napoleon_include_private_with_doc = True
 
 
 def run_apidoc(_):
