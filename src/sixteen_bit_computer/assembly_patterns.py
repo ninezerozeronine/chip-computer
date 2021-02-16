@@ -9,6 +9,7 @@ from .assembly_tokens import (
     ALIAS,
     NUMBER,
     MEMREF,
+    MARKER,
 )
 from . import instruction_listings
 
@@ -25,6 +26,8 @@ def get_all_patterns():
         NullPattern,
         AliasDefinition,
         Instruction,
+        Marker,
+        MarkerDefinition,
     )
 
 
@@ -193,14 +196,91 @@ class Instruction(Pattern):
         return machinecode_func(self.signature, constant_tokens)
 
 
-# class Marker(Pattern):
-#     pass
-#     pass
+class Marker(Pattern):
+    """
+    A marker that will be dynamically defined.
+
+    Dynamically defined means that it will get bound to the next
+    machinecode word and it's value will be the index of that word.
+
+    For example, in::
+
+        $first
+            NOOP
+            SET_ZERO A
+        $second
+            DATA #123 #21
+
+    ``$first`` will be assigned a value of ``0``, as the NOOP
+    machinecode word is at index 0. If an instruction occupied
+    multiple words (i.e. it has some data) the marker will be set to
+    the value of the first word.
+
+    ``$second`` will be assigned a value of ``2``, as that is the first
+    machinecode word of the defined dataset. (Index 1 went to
+    ``SET_ZERO A``)
+    """
+
+    @classmethod
+    def from_tokens(cls, tokens):
+        if (len(tokens) == 1 and isinstance(tokens[0], MARKER)):
+            return cls(tokens)
+        else:
+            return None
+
+    @property
+    def name(self):
+        """
+        str: The name of the marker.
+        """
+        return self.tokens[0].value
 
 
-# class MarkerDefinition(Pattern):
-#     pass
-#     pass
+class MarkerDefinition(Pattern):
+    """
+    A marker that has been explicity defined.
+
+    Explicitly defined means that a static value has been supplied for
+    this marker, as opposed to letting it bind to the next machinecode
+    word.
+
+    E.g., in::
+
+        // Define a marker
+        $my_marker #67
+
+            NOOP
+            SET_ZERO A
+
+        $dynamic_marker
+            LOAD [#21] B
+
+
+    ``$my_marker`` has been defined to have a value of ``67``.
+    """
+
+    @classmethod
+    def from_tokens(cls, tokens):
+        if (len(tokens) == 2
+                and isinstance(tokens[0], MARKER)
+                and isinstance(tokens[0], NUMBER)):
+            return cls(tokens)
+        else:
+            return None
+
+    @property
+    def name(self):
+        """
+        str: The name of the marker.
+        """
+        return self.tokens[0].value
+
+    @property
+    def value(self):
+        """
+        int: The value of the marker.
+        """
+        return self.tokens[1].value
 
 
 # class DataSet(Pattern):

@@ -4,6 +4,7 @@ from sixteen_bit_computer import assembly_tokens
 from sixteen_bit_computer.assembly_tokens import (
     ALIAS,
     NUMBER,
+    MARKER,
 )
 
 
@@ -38,7 +39,19 @@ def test_NUMBER(test_input, expected):
     assert type(NUMBER.from_string(test_input)) == expected
 
 
-
+@pytest.mark.parametrize("test_input, expected", [
+    ("$hello", MARKER),
+    ("$_blah", MARKER),
+    ("$MY_MARKER", MARKER),
+    ("4", type(None)),
+    ("0.45", type(None)),
+    ("#", type(None)),
+    ("", type(None)),
+    ("$012", type(None)),
+    ("$//comment", type(None)),
+])
+def test_MARKER(test_input, expected):
+    assert type(MARKER.from_string(test_input)) == expected
 
 
 @pytest.mark.parametrize("test_input, expected", [

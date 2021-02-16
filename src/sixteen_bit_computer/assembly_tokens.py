@@ -29,6 +29,7 @@ def get_all_tokens():
     return (
         ALIAS,
         NUMBER,
+        MARKER,
         OPCODE,
         MODULE,
     )
@@ -150,7 +151,36 @@ class ALIAS(Token):
 
 
 class MARKER(Token):
-    pass
+    """
+    Defines a marker.
+
+    A marker is a named index in machinecode, that can be declared
+    statically or dynacically. See :class:`~Marker` and
+    :class:`~MarkerDefinition` for details.
+
+    It is declard as an :func:`identifier <is_identifier>` prepended
+    with the ``$`` character. E.g.:
+
+     - ``$MY_MARKER``
+     - ``$loop_start``
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if not _string:
+            return None
+
+        if _string[0] != "$":
+            return None
+
+        identifier = _string[1:]
+        if not is_identifier(identifier):
+            return None
+
+        return cls(_string, identifier)
+
+    def is_const(self):
+        return True
 
 
 class NUMBER(Token):
