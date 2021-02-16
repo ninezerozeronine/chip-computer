@@ -1,5 +1,5 @@
 import pytest
-
+import textwrap
 from sixteen_bit_computer import new_assembler
 from sixteen_bit_computer.assembly_tokens import (
     ALIAS,
@@ -12,7 +12,8 @@ from sixteen_bit_computer.assembly_patterns import (
     AliasDefinition,
     Instruction,
 )
-from sixteen_bit_computer.exceptions import (
+from sixteen_bit_computer.new_exceptions import (
+    AssemblyError,
     NoMatchingTokensError,
     NoMatchingPatternsError,
 )
@@ -88,11 +89,11 @@ def test_remove_comments(test_input, expected):
         [ALIAS, ALIAS],
     ),
     (
-        "!ALIAS0  #123",
+        "  !ALIAS0  #123   ",
         [ALIAS, NUMBER],
     ),
     (
-        "SET_ZERO  ACC",
+        "SET_ZERO     ACC",
         [OPCODE, MODULE],
     ),
 ])
@@ -135,9 +136,99 @@ def test_get_pattern(test_input, expected):
     [
         ALIAS.from_string("!ALIAS"),
         ALIAS.from_string("!ALIAS"),
-        ALIAS.from_string("!ALIAS")
+        ALIAS.from_string("!ALIAS"),
     ],
 ])
 def test_get_pattern_raises(test_input):
     with pytest.raises(NoMatchingPatternsError):
         new_assembler.get_pattern(test_input)
+
+
+def test_ingest_raw_assembly_lines():
+    raw = textwrap.dedent(
+        """\
+        NOOP
+        NOOP
+        // A comment
+            !myalias #123
+        """
+    ).splitlines()
+    expected = [
+        (
+            1,
+            "NOOP",
+            Instruction,
+        ),
+        (
+            2,
+            "NOOP",
+            Instruction,
+        ),
+        (
+            3,
+            "// A comment",
+            NullPattern,
+        ),
+        (
+            4,
+            "    !myalias #123",
+            AliasDefinition,
+        ),
+    ]
+    processed = new_assembler.ingest_raw_assembly_lines(raw)
+    assert len(processed) == len(raw)
+    for assembly_line, result in zip(processed, expected):
+        assert assembly_line.line_no == result[0]
+        assert assembly_line.raw_line == result[1]
+        assert isinstance(assembly_line.pattern, result[2])
+
+
+@pytest.mark.parametrize("test_input", [
+    textwrap.dedent(
+        """\
+        NOOP
+        NOOP
+        // A comment
+            !myalias #123
+            !myalias #456
+        """
+    ).splitlines(),
+    textwrap.dedent(
+        """\
+            !foobar #0b1010
+        NOOP
+        // A comment
+            !myalias #123
+            !foobar #456
+        """
+    ).splitlines(),
+])
+def test_check_multiple_alias_defs_raises(test_input):
+    processed = new_assembler.ingest_raw_assembly_lines(test_input)
+    with pytest.raises(AssemblyError):
+        new_assembler.check_multiple_alias_defs(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    textwrap.dedent(
+        """\
+        NOOP
+        NOOP
+        // A comment
+            !myalias #123
+            !otheralias #456
+        """
+    ).splitlines(),
+    textwrap.dedent(
+        """\
+            !foobar #0b1010
+        NOOP
+        // A comment
+            !myalias #123
+            !hello #456
+        """
+    ).splitlines(),
+])
+def test_check_multiple_alias_defs_doesnt_raise(test_input):
+    processed = new_assembler.ingest_raw_assembly_lines(test_input)
+    new_assembler.check_multiple_alias_defs(processed)

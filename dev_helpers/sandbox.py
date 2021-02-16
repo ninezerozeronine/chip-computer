@@ -1,10 +1,11 @@
 import sys
 import os
 from pprint import pprint
+import textwrap
 
 sys.path.append(os.path.abspath("../src"))
-print sys.path
-from eight_bit_computer import rom, main
+print(sys.path)
+from sixteen_bit_computer import rom, main
 
 
 def sandbox():
@@ -20,26 +21,26 @@ def sandbox():
     # print romdatas[4]
 
     romdatas = rom.get_rom()
-    print "done"
+    print("done")
     slices = rom.slice_rom(romdatas)
     slice_index = 1
     romdata_chunks = rom.chunker(slices[slice_index], 16)
     count = 0
     for sixteen_index, romdata_chunk in enumerate(romdata_chunks):
         for line_index, romdata in enumerate(romdata_chunk):
-            print "{hex_sixteen_index:04X} {sixteen_index:03} {line_index:04} {count:05} {romdata}".format(
+            print("{hex_sixteen_index:04X} {sixteen_index:03} {line_index:04} {count:05} {romdata}".format(
                 hex_sixteen_index=sixteen_index*16,
                 sixteen_index=sixteen_index,
                 line_index=line_index+1,
                 count=count,
                 romdata=romdata,
-            )
+            ))
             count += 1
 
-    print romdatas[128]
+    print(romdatas[128])
 
     logisim_string = rom.rom_slice_to_logisim_string(slices[slice_index])
-    print logisim_string
+    print(logisim_string)
 
     # romdatas = rom.get_defined_romdata()
     # full_rom = rom.populate_empty_addresses(romdatas)
@@ -53,7 +54,7 @@ def file_test():
         lines = file.read().splitlines()
 
     for line in lines[:10]:
-        print line
+        print(line)
         # print line.endswith("\n")
 
 
@@ -83,20 +84,34 @@ def get_dict():
 def dict_ref_test_2():
     a = get_dict()
     a["a"] = "foo"
-    print a
+    print(a)
     b = get_dict()
     b["a"] = "bar"
-    print a
-    print b
+    print(a)
+    print(b)
 
 
 def assemble_test():
     main.assemble("../programs/fibbonaci.asm")
+
+def try_dedent():
+    a = textwrap.dedent(
+        """\
+        FOO
+            BAR
+        HELLO
+        WORLD
+        """
+    )
+
+    print(a)
+    print(a.splitlines())
 
 if __name__ == "__main__":
     # sandbox()
     # file_test()
     # dict_ref_test()
     # dict_ref_test_2()
-    assemble_test()
+    # assemble_test()
     # main.create_roms(directory="./test_roms")
+    try_dedent()

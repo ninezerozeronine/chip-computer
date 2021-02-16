@@ -97,9 +97,9 @@ class Token(ABC):
     @property
     def component(self):
         """
-        :mod:`Instruction component<.components>` or None: Instruction
-        Component this token represents or None if it has no mapping to
-        a component.
+        :mod:`Instruction component<.instruction_components>` or None:
+        Instruction Component this token represents or None if it has
+        no mapping to a component.
         """
         return None
 
@@ -220,9 +220,9 @@ class OPCODE(Token):
         "SET_ZERO": SET_ZERO
     }
     """
-    dict[str, :mod:`Instruction component<.components>`]: A mapping of
-    opcode strings to thier :mod:`instruction component <components>`
-    equivalents.
+    dict[str, :mod:`Instruction component<.instruction_components>`]:
+    A mapping of opcode strings to thier :mod:`instruction component
+    <components>` equivalents.
     """
 
     @classmethod
@@ -277,9 +277,9 @@ class MODULE(Token):
         "C": C,
     }
     """
-    Dict[str, :mod:`instruction component<.components>`]: A mapping of
-    module strings to thier :mod:`instruction component<.components>`
-    equivalents.
+    Dict[str, :mod:`instruction component<.instruction_components>`]:
+    A mapping of module strings to thier :mod:`instruction
+    component<.instruction_components>` equivalents.
     """
 
     @classmethod

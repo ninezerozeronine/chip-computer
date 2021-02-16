@@ -3,28 +3,28 @@ import itertools
 
 def add_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST"]:
+    for arg in ["A", "B", "C", "CONST", "[CONST]"]:
         sigs.append(["ADD", arg])
     return sigs
 
 
 def addc_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST"]:
+    for arg in ["A", "B", "C", "CONST", "[CONST]"]:
         sigs.append(["ADDC", arg])
     return sigs
 
 
 def sub_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST"]:
+    for arg in ["A", "B", "C", "CONST", "[CONST]"]:
         sigs.append(["SUB", arg])
     return sigs
 
 
 def subb_op():
     sigs = []
-    for arg in ["A", "B", "C", "CONST"]:
+    for arg in ["A", "B", "C", "CONST", "[CONST]"]:
         sigs.append(["SUBB", arg])
     return sigs
 
@@ -69,8 +69,8 @@ def copy_op():
 
 def load_op():
     sigs = []
-    srcs = ["CONST"]
-    dests = ["ACC", "A", "B", "C", "SP"]
+    srcs = ["CONST", "ACC", "A", "B", "C", "SP"]
+    dests = ["ACC", "A", "B", "C"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["LOAD", "[{0}]".format(src), dest])
     return sigs
@@ -79,7 +79,7 @@ def load_op():
 def store_op():
     sigs = []
     srcs = ["ACC", "A", "B", "C"]
-    dests = ["CONST"]
+    dests = ["CONST", "ACC", "A", "B", "C", "SP"]
     for src, dest in itertools.product(srcs, dests):
         sigs.append(["STORE", src, "[{0}]".format(dest)])
     return sigs
@@ -114,7 +114,7 @@ def setzero_op():
 
 
 def noop_op():
-    return ["NOOP"]
+    return [["NOOP"]]
 
 
 def jump_op():
@@ -169,15 +169,18 @@ def jump_if_flag_ops():
 
 
 def call_op():
-    return ["CALL", "CONST"]
+    sigs = []
+    for arg in ["CONST", "ACC", "A", "B", "C"]:
+        sigs.append(["CALL", arg])
+    return sigs
 
 
 def ret_op():
-    return ["RETURN"]
+    return [["RETURN"]]
 
 
 def halt_op():
-    return ["HALT"]
+    return [["HALT"]]
 
 
 def logical_ops():
@@ -190,7 +193,7 @@ def logical_ops():
         "XOR",
         "NXOR",
     ]
-    args = ["A", "B", "C", "CONST"]
+    args = ["A", "B", "C", "CONST", "[CONST]"]
     for op, arg in itertools.product(ops, args):
         sigs.append([op, arg])
 
@@ -240,7 +243,9 @@ def get_all_instructions():
     return all_instrs
 
 
-print len(get_all_instructions())
+
 
 for instr in get_all_instructions():
     print instr
+
+print len(get_all_instructions())

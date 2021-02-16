@@ -113,6 +113,7 @@ class NullPattern(Pattern):
     lines and lines that are just comments don't have to be treated
     specially.
     """
+
     @classmethod
     def from_tokens(cls, tokens):
         if not tokens:
@@ -124,6 +125,10 @@ class NullPattern(Pattern):
 class AliasDefinition(Pattern):
     """
     Represents an alias being defined as a specific value.
+
+    E.g.::
+
+        !my_alias #23
     """
 
     @classmethod

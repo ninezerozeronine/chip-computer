@@ -1,6 +1,7 @@
 from . import assembly_patterns
 from . import assembly_tokens
-from .exceptions import (
+from .new_exceptions import (
+    AssemblyError,
     LineProcessingError,
     NoMatchingTokensError,
     MultipleMatchingTokensError,
@@ -15,14 +16,14 @@ class AssemblyLine():
     def __init__(self, raw_line=None, pattern=None, line_no=None):
         self.raw_line = raw_line
         self.pattern = pattern
-        self.line_no = None
+        self.line_no = line_no
 
 
 def ingest_raw_assembly_lines(lines):
     assembly_lines = []
-    for line_no, line in enumerate(lines, start=1):
+    for line_no, raw_line in enumerate(lines, start=1):
         try:
-            pattern = pattern_from_line(line)
+            pattern = pattern_from_line(raw_line)
         except LineProcessingError as err:
             msg = ERROR_TEMPLATE.format(
                 line_no=line_no,
@@ -33,9 +34,9 @@ def ingest_raw_assembly_lines(lines):
 
         assembly_lines.append(
             AssemblyLine(
-                raw_line=line,
+                raw_line=raw_line,
+                pattern=pattern,
                 line_no=line_no,
-                pattern=pattern
             )
         )
 
@@ -75,7 +76,7 @@ def pattern_from_line(line):
     """
 
     no_comments = remove_comments(line)
-    tokens = get_tokens(line)
+    tokens = get_tokens(no_comments)
     pattern = get_pattern(tokens)
     return pattern
 
@@ -130,7 +131,9 @@ def get_tokens(line):
         num_matches = len(matched_tokens)
 
         if num_matches == 0:
-            raise NoMatchingTokensError("No tokens matched")
+            raise NoMatchingTokensError(
+                F"No tokens matched the following: \"{word}\""
+            )
 
         if num_matches > 1:
             raise MultipleMatchingTokensError("Multiple tokens matched")
@@ -222,7 +225,7 @@ def check_multiple_alias_defs(assembly_lines):
     alias_lines = {}
     for assembly_line in assembly_lines:
         if isinstance(assembly_line.pattern, assembly_patterns.AliasDefinition):
-            alias = assembly_line.pattern.alias
+            alias = assembly_line.pattern.name
             if alias in aliases:
                 details = (
                     "The alias: \"{alias}\" has already been defined on "
@@ -570,3 +573,26 @@ def resolve_markers(assembly_lines, marker_map):
                         details=details,
                     )
                     raise AssemblyError(msg)
+
+
+def assembly_lines_to_dictionary(assembly_lines):
+    """
+    Convert the assembly lines to a dictionary of indexes and values.
+
+    The keys in the dictionary are the indexes of the machinecode words
+    to write, the values are the unsigned int equivalents of the
+    machinecode words.
+
+    Args:
+        assembly_lines (List(AssemblyLine)): Fully processed assembly
+            lines to convert to a raw dictionary.
+
+    Returns:
+        Dict(int,int)
+    """
+
+    assembly = {}
+    for line in assembly_lines:
+        for word in pattern.machinecode:
+            assembly[word.index] = word.value
+    return assembly
