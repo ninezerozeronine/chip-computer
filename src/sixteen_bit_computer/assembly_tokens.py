@@ -141,10 +141,11 @@ class ALIAS(Token):
         if _string[0] != "!":
             return None
 
-        if not is_identifier(_string[1:]):
+        identifier = _string[1:]
+        if not is_identifier(identifier):
             return None
 
-        return cls(_string, _string[1:])
+        return cls(_string, identifier)
 
     def is_const(self):
         return True
