@@ -10,8 +10,11 @@ from .assembly_tokens import (
     NUMBER,
     MEMREF,
     MARKER,
+    DATA
 )
+from .instruction_components import CONST
 from . import instruction_listings
+from .data_structures import Word
 
 
 def get_all_patterns():
@@ -189,8 +192,8 @@ class Instruction(Pattern):
         constant_tokens = []
         for token in self.tokens:
             if isinstance(token, MEMREF):
-                token = token.inner_token
-            if token.is_const():
+                token = token.value
+            if token.component == CONST:
                 constant_tokens.append(token)
 
         return machinecode_func(self.signature, constant_tokens)
@@ -263,7 +266,7 @@ class MarkerDefinition(Pattern):
     def from_tokens(cls, tokens):
         if (len(tokens) == 2
                 and isinstance(tokens[0], MARKER)
-                and isinstance(tokens[0], NUMBER)):
+                and isinstance(tokens[1], NUMBER)):
             return cls(tokens)
         else:
             return None
@@ -283,16 +286,23 @@ class MarkerDefinition(Pattern):
         return self.tokens[1].value
 
 
-# class DataSet(Pattern):
-#     def __init__(self, tokens):
-#         self.tokens = tokens
+class DataSet(Pattern):
+    @classmethod
+    def from_tokens(cls, tokens):
+        if len(tokens) < 2:
+            return None
 
-#     @classmethod
-#     def from_tokens(cls, tokens):
-#         for token in tokens:
-#             if not isinstance(token, (NUMBER, ALIAS, MARKER, ASCII):
-#                 return None
-#         return cls(tokens)
+        if not isinstance(tokens[0], DATA):
+            return None
 
-#     def generate_machinecode(self):
-#         return [Word, Word]
+        for token in tokens[1:]:
+            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
+                return None
+
+        return cls(tokens)
+
+    def _generate_machinecode(self):
+        machinecode = []
+        for token in self.tokens[1:]:
+            machinecode.append(Word(const_token=token))
+        return machinecode

@@ -41,14 +41,12 @@ class Module(Enum):
     A = auto()
     B = auto()
     C = auto()
-    SP = auto()
 
 
 ACC = Module.ACC
 A = Module.A
 B = Module.B
 C = Module.C
-SP = Module.SP
 
 
 class Constant(Enum):
@@ -81,11 +79,15 @@ class MemoryReference(Enum):
     operation, use the value currently in memory at the location
     specified by the item in the square braces.
     """
+    M_ACC = auto()
     M_A = auto()
     M_B = auto()
+    M_C = auto()
     M_CONST = auto()
 
 
+M_ACC = MemoryReference.M_ACC
 M_A = MemoryReference.M_A
 M_B = MemoryReference.M_B
+M_C = MemoryReference.M_C
 M_CONST = MemoryReference.M_CONST

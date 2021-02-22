@@ -12,6 +12,12 @@ from .instruction_components import (
     A,
     B,
     C,
+    CONST,
+    M_ACC,
+    M_A,
+    M_B,
+    M_C,
+    M_CONST,
 )
 
 _IDENTIFIER_REGEX = re.compile(r"[a-zA-Z_]+\w*$")
@@ -32,6 +38,8 @@ def get_all_tokens():
         MARKER,
         OPCODE,
         MODULE,
+        MEMREF,
+        DATA,
     )
 
 
@@ -106,13 +114,13 @@ class Token(ABC):
 
     def is_const(self):
         """
-        Whether or not this token represents a constant value.
+        Whether or not this token represents a constant word.
 
         A constant value is something like a number or an alias, some
         raw data that will eventually end up in machinecode.
 
         Returns:
-            bool: Whether the token is constant or not.
+            bool: Whether the token represents a constanr word.
         """
         return False
 
@@ -150,6 +158,10 @@ class ALIAS(Token):
     def is_const(self):
         return True
 
+    @property
+    def component(self):
+        return CONST
+
 
 class MARKER(Token):
     """
@@ -182,6 +194,10 @@ class MARKER(Token):
 
     def is_const(self):
         return True
+
+    @property
+    def component(self):
+        return CONST
 
 
 class NUMBER(Token):
@@ -220,6 +236,10 @@ class NUMBER(Token):
 
     def is_const(self):
         return True
+
+    @property
+    def component(self):
+        return CONST
 
 
 class OPCODE(Token):
@@ -326,11 +346,80 @@ class MODULE(Token):
 
 
 class MEMREF(Token):
-    pass
+    """
+    A way to represent a location in memory.
+
+    If the token starts with ``[`` and ends with ``]`` it is considered
+    to be a memory reference.
+
+    The location in memory (i.e.) the thing between the brackets needs
+    to be one of the following:
+
+     - ``ALIAS``
+     - ``MARKER``
+     - ``NUMBER``
+     - ``MODULE``
+    """
+
+    _COMPONENT_TO_MEMREF_COMPONENT = {
+        ACC: M_ACC,
+        A: M_A,
+        B: M_B,
+        C: M_C,
+        CONST: M_CONST,
+    }
+
+    _VALID_TOKENS = (
+        ALIAS,
+        MARKER,
+        NUMBER,
+        MODULE,
+    )
+
+    @classmethod
+    def from_string(cls, _string):
+        if len(_string) < 3:
+            return None
+
+        if not (_string.startswith("[") and _string.endswith("]")):
+            return None
+
+        matched_token = None
+        for valid_token in _VALID_TOKENS:
+            matched_token = valid_token.from_string(_string[1:-1])
+            if matched_token is not None:
+                break
+
+        if matched_token is None:
+            return None
+
+        return cls(_string, matched_token)
+
+    @property
+    def component(self):
+        return self._COMPONENT_TO_MEMREF_COMPONENT[self.value.component]
 
 
-# class DATA(Token):
-#     pass
+class DATA(Token):
+    """
+    A marker to sigify the definition of some raw data.
+
+    A way to write one or more words of data directly into the machine
+    code.
+
+    The words of data are specified as constants after the data marker,
+    e.g.::
+
+        DATA #123 !my_alias $a_marker
+        DATA #43 #78 #88
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if _string == "DATA":
+            return cls(_string, None)
+        else:
+            return None
 
 
 def is_identifier(test_string):
