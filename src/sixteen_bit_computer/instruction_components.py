@@ -24,6 +24,7 @@ class OpCode(Enum):
     LOAD = auto()
     STORE = auto()
     ADD = auto()
+    AND = auto()
 
 
 NOOP = OpCode.NOOP
@@ -31,6 +32,7 @@ SET_ZERO = OpCode.SET_ZERO
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE
 ADD = OpCode.ADD
+AND = OpCode.AND
 
 
 class Module(Enum):

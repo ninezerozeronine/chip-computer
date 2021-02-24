@@ -31,6 +31,7 @@ def get_all_patterns():
         Instruction,
         Marker,
         MarkerDefinition,
+        DataSet,
     )
 
 

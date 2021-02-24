@@ -354,7 +354,7 @@ def check_multiple_marker_assignment(assembly_lines):
             marker_queued = True
             last_marker = assembly_line.pattern.name
 
-        if assembly_line.pattern.machine_code() and marker_queued:
+        if assembly_line.pattern.machine_code and marker_queued:
             marker_queued = False
 
 

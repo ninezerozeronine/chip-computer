@@ -6,7 +6,7 @@ from ..language_defs import (
     MODULE_CONTROLS_NONE,
     FLAGS,
 )
-from .utils import assemble_instruction_steps
+from . import utils
 
 _SUPPORTED_SIGNATURES = frozenset([
     (NOOP,),
@@ -39,7 +39,7 @@ def generate_microcode_templates():
         flags_bitdefs = [FLAGS["ANY"]]
         control_steps = [[MODULE_CONTROLS_NONE]]
 
-        templates = assemble_instruction_steps(
+        templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps
         )
         data_templates.extend(templates)

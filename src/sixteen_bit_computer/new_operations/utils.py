@@ -1,6 +1,7 @@
 from .. import bitdef
 from .. import language_defs
 from ..data_structures import DataTemplate
+from ..instruction_components import ACC, A, B, C
 
 
 def assemble_instruction_steps(instruction_bitdef, flags_bitdefs, control_steps):
@@ -62,3 +63,22 @@ def assemble_instruction_steps(instruction_bitdef, flags_bitdefs, control_steps)
         templates.append(template)
 
     return templates
+
+
+_COMPONENT_TO_MODULE_NAME = {
+    ACC: "ACC",
+    A: "A",
+    B: "B",
+    C: "C",
+}
+
+
+def component_to_module_name(component):
+    """
+
+    """
+    module_name = _COMPONENT_TO_MODULE_NAME.get(component)
+    if module_name is None:
+        raise ValueError("Component has no mapping to a module")
+    else:
+        return module_name

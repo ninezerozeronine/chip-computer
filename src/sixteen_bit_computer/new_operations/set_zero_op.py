@@ -1,10 +1,9 @@
 from .. import instruction_listings
 from .. import number_utils
-from .utils import assemble_instruction_steps
+from . import utils
 from ..data_structures import Word
 from ..instruction_components import SET_ZERO, ACC, A, B, C
 from ..language_defs import (
-    component_to_module_name,
     MODULE_CONTROL,
     ALU_CONTROL_FLAGS,
     FLAGS,
@@ -61,12 +60,12 @@ def _generate_microcode_templates_for_sig(signature):
 
     step_1 = [
         MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL[component_to_module_name(signature[1])]["IN"],
+        MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
     ]
 
     control_steps = [step_0, step_1]
 
-    return assemble_instruction_steps(
+    return utils.assemble_instruction_steps(
         instr_index_bitdef, flags_bitdefs, control_steps
     )
 

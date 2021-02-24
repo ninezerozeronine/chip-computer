@@ -5,10 +5,14 @@ Listings of all the defined instructions.
 from .instruction_components import (
     NOOP,
     SET_ZERO,
+    ADD,
+    AND,
     ACC,
     A,
     B,
     C,
+    CONST,
+    M_CONST,
 )
 from . import new_operations
 
@@ -19,6 +23,16 @@ _INSTRUCTION_SIGNATURES = frozenset([
     (SET_ZERO, A),
     (SET_ZERO, B),
     (SET_ZERO, C),
+    (ADD, A),
+    (ADD, B),
+    (ADD, C),
+    (ADD, CONST),
+    (ADD, M_CONST),
+    (AND, A),
+    (AND, B),
+    (AND, C),
+    (AND, CONST),
+    (AND, M_CONST),
 ])
 """
 All possible instruction signatures.
@@ -34,6 +48,16 @@ _INSTRUCTION_INDECIES = {
     (SET_ZERO, A): 2,
     (SET_ZERO, B): 3,
     (SET_ZERO, C): 4,
+    (ADD, A): 5,
+    (ADD, B): 6,
+    (ADD, C): 7,
+    (ADD, CONST): 8,
+    (ADD, M_CONST): 9,
+    (AND, A): 10,
+    (AND, B): 11,
+    (AND, C): 12,
+    (AND, CONST): 13,
+    (AND, M_CONST): 14,
 }
 """
 The index of all instructions.

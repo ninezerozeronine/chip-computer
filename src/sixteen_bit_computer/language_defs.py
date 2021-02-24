@@ -5,31 +5,6 @@ Defnitions for the machine code and microcode.
 from .bitdef import remove_whitespace as rw
 from .bitdef import merge
 
-from .instruction_components import (
-    ACC,
-    A,
-    B,
-    C,
-)
-
-_COMPONENT_TO_MODULE_NAME = {
-    ACC: "ACC",
-    A: "A",
-    B: "B",
-    C: "C",
-}
-
-
-def component_to_module_name(component):
-    """
-
-    """
-    module_name = _COMPONENT_TO_MODULE_NAME.get(component)
-    if module_name is None:
-        raise ValueError("Component has no mapping to a module")
-    else:
-        return module_name
-
 
 INSTRUCTION_GROUPS = {
     "COPY":             rw("00...... .... ..."),
