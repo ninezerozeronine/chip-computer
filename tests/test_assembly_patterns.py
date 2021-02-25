@@ -98,6 +98,24 @@ def test_AliasDefinition_from_tokens(test_input, expected_type, expected_attrs):
         (ics.SET_ZERO, ics.ACC),
         (Word(),),
     ),
+    (
+        get_tokens("ADD A"),
+        Instruction,
+        (ics.ADD, ics.A),
+        (Word(),),
+    ),
+    (
+        get_tokens("AND #12"),
+        Instruction,
+        (ics.AND, ics.CONST),
+        (Word(), Word(const_token=get_tokens("#12")[0])),
+    ),
+    (
+        get_tokens("AND [!my_alias]"),
+        Instruction,
+        (ics.AND, ics.M_CONST),
+        (Word(), Word(const_token=get_tokens("!my_alias")[0])),
+    ),
 ])
 def test_Instruction_from_tokens(test_input, expected_type, expected_signature, expected_machinecode):
     res = Instruction.from_tokens(test_input)

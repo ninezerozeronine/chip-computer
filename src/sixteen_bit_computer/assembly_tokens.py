@@ -8,6 +8,8 @@ import re
 from .instruction_components import (
     NOOP,
     SET_ZERO,
+    ADD,
+    AND,
     ACC,
     A,
     B,
@@ -261,6 +263,8 @@ class OPCODE(Token):
     _OPCODE_STRINGS = frozenset([
         "NOOP",
         "SET_ZERO",
+        "ADD",
+        "AND",
     ])
     """
     frozenset[str]: The set of strings that are supported as opcodes.
@@ -268,7 +272,9 @@ class OPCODE(Token):
 
     _OPCODE_TO_COMPONENT = {
         "NOOP": NOOP,
-        "SET_ZERO": SET_ZERO
+        "SET_ZERO": SET_ZERO,
+        "ADD": ADD,
+        "AND": AND,
     }
     """
     dict[str, :mod:`Instruction component<.instruction_components>`]:
@@ -385,7 +391,7 @@ class MEMREF(Token):
             return None
 
         matched_token = None
-        for valid_token in _VALID_TOKENS:
+        for valid_token in cls._VALID_TOKENS:
             matched_token = valid_token.from_string(_string[1:-1])
             if matched_token is not None:
                 break

@@ -32,6 +32,7 @@ Submodules
    sixteen_bit_computer.language_defs
    sixteen_bit_computer.main
    sixteen_bit_computer.new_assembler
+   sixteen_bit_computer.new_exceptions
    sixteen_bit_computer.number_utils
    sixteen_bit_computer.operation_utils
    sixteen_bit_computer.rom

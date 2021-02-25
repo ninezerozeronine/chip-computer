@@ -13,6 +13,7 @@ from ..instruction_components import (
 )
 from .. import number_utils
 from . import utils
+from ..data_structures import Word
 from ..language_defs import (
     FLAGS,
     MODULE_CONTROL,

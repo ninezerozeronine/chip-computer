@@ -1,3 +1,9 @@
+"""
+The SET_ZERO operation.
+
+Sets the given module to zero.
+"""
+
 from .. import instruction_listings
 from .. import number_utils
 from . import utils
@@ -16,11 +22,25 @@ _SUPPORTED_SIGNATURES = frozenset([
     (SET_ZERO, B),
     (SET_ZERO, C),
 ])
+"""
+The list of signatures this operation supports.
+
+An instruction signature is a tuple of the :mod:`Instruction component
+<.instruction_components>` s it's made up of.
+"""
 
 
 def generate_machinecode(signature, const_tokens):
     """
+    Generate machinecode for the given SET_ZERO operation.
 
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+        const_tokens (list(Token)): The tokens that represent constant
+            values in the instruction.
+    Returns:
+        list(Word): The machinecode for the given signature.
     """
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
@@ -32,7 +52,10 @@ def generate_machinecode(signature, const_tokens):
 
 def generate_microcode_templates():
     """
+    Generate microcode for the SET_ZERO operation.
 
+    Returns:
+        list(DataTemplate): DataTemplates for all the SET_ZERO microcode.
     """
     data_templates = []
 
@@ -45,7 +68,12 @@ def generate_microcode_templates():
 
 def _generate_microcode_templates_for_sig(signature):
     """
+    Generate microcode for the SET_ZERO operation with the given
+    signature.
 
+    Returns:
+        list(DataTemplate): DataTemplates for the particular SET_ZERO
+        operation microcode.
     """
     instr_index = instruction_listings.get_instruction_index(signature)
     instr_index_bitdef = number_utils.number_to_bitstring(
@@ -71,4 +99,13 @@ def _generate_microcode_templates_for_sig(signature):
 
 
 def supports(signature):
+    """
+    Whether this operation provides a definition for the given signature.
+
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+    Returns:
+        bool: Whether it's supported or not.
+    """
     return signature in _SUPPORTED_SIGNATURES

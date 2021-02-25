@@ -1,3 +1,9 @@
+"""
+The NOOP operation.
+
+Does nothing for one micro cycle.
+"""
+
 from .. import instruction_listings
 from ..data_structures import Word
 from ..instruction_components import NOOP
@@ -15,7 +21,15 @@ _SUPPORTED_SIGNATURES = frozenset([
 
 def generate_machinecode(signature, const_tokens):
     """
+    Generate machinecode for the NOOP instruction.
 
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+        const_tokens (list(Token)): The tokens that represent constant
+            values in the instruction.
+    Returns:
+        list(Word): The machinecode for the given signature.
     """
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
@@ -27,7 +41,10 @@ def generate_machinecode(signature, const_tokens):
 
 def generate_microcode_templates():
     """
+    Generate microcode for the NOOP operation.
 
+    Returns:
+        list(DataTemplate): DataTemplates for all the NOOP microcode.
     """
     data_templates = []
 
@@ -48,4 +65,13 @@ def generate_microcode_templates():
 
 
 def supports(signature):
+    """
+    Whether this operation provides a definition for the given signature.
+
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+    Returns:
+        bool: Whether it's supported or not.
+    """
     return signature in _SUPPORTED_SIGNATURES
