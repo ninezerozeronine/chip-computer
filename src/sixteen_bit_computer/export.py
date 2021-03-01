@@ -501,7 +501,7 @@ def gen_arduino_program_cpp_file(assembly_line_infos, filename_base, h_filename)
             else:
                 cpp_lines.append(
                     "    0x{value:02X}{joiner}// {variable_index:03d} {name}".format(
-                        value=number_utils.get_positive_equivalent(variable["value"]),
+                        value=number_utils.get_positive_equivalent(variable["value"], bitwidth=8),
                         joiner=joiner,
                         variable_index=variable_index,
                         name=variable["name"]

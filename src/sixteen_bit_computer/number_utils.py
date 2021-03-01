@@ -45,7 +45,7 @@ def number_is_within_bit_limit(number, bit_width=8):
     return min_val <= number <= max_val
 
 
-def get_positive_equivalent(number):
+def get_positive_equivalent(number, bitwidth=8):
     """
     Read the 2's compliment equivalent of this number as positive.
 
@@ -68,7 +68,7 @@ def get_positive_equivalent(number):
 
     ret = number
     if number < 0:
-        ret = number + 256
+        ret = number + 2**bitwidth
     return ret
 
 

@@ -1,5 +1,6 @@
 from . import assembly_patterns
 from . import assembly_tokens
+from . import number_utils
 from .new_exceptions import (
     AssemblyError,
     LineProcessingError,
@@ -45,10 +46,10 @@ def ingest_raw_assembly_lines(lines):
 
 def process_assembly_lines(assembly_lines):
 
+    check_numbers_in_range(assembly_lines)
     check_multiple_alias_defs(assembly_lines)
     check_multiple_marker_defs(assembly_lines)
     check_multiple_marker_assignment(assembly_lines)
-    check_numbers_in_range(assembly_lines)
 
     assign_machinecode_indecies(assembly_lines)
     check_for_colliding_indecies(assembly_lines)
@@ -197,6 +198,39 @@ def get_pattern(tokens):
         raise MultipleMatchingPatternsError("Multiple patterns matched")
 
     return matched_patterns[0]
+
+
+def check_numbers_in_range(assembly_lines):
+    """
+    Check that any number tokens have a value that is within the range
+    the computer can handle.
+
+    It's a sixteen bit computer so numbers from -32767 to 65535 are
+    supported.
+    """
+
+    for line in assembly_lines:
+        for token in line.pattern.tokens:
+            # Extract the token in the memref if it's a memref
+            if (isinstance(token, assembly_tokens.MEMREF)):
+                token = token.value
+
+            if (isinstance(token, assembly_tokens.NUMBER)
+                    and not number_utils.number_is_within_bit_limit(
+                        token.value, bit_width=16)):
+                details = (
+                    "Number token: \"{token}\" with a value of {value} "
+                    "is outside the supported range of -32767 to 65535 "
+                    "(inclusive).".format(
+                        token=token.raw, value=token.value
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=line.line_no,
+                    line=line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
 
 
 def check_multiple_alias_defs(assembly_lines):
@@ -350,11 +384,11 @@ def check_multiple_marker_assignment(assembly_lines):
             )
             raise AssemblyError(msg)
 
-        if isinstance(assembly_line.pattern, Marker):
+        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
             marker_queued = True
             last_marker = assembly_line.pattern.name
 
-        if assembly_line.pattern.machine_code and marker_queued:
+        if assembly_line.pattern.machinecode and marker_queued:
             marker_queued = False
 
 
