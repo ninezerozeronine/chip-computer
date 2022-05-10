@@ -42,6 +42,7 @@ def get_all_tokens():
         MODULE,
         MEMREF,
         DATA,
+        ANCHOR,
     )
 
 
@@ -122,7 +123,7 @@ class Token(ABC):
         raw data that will eventually end up in machinecode.
 
         Returns:
-            bool: Whether the token represents a constanr word.
+            bool: Whether the token represents a constant word.
         """
         return False
 
@@ -170,7 +171,7 @@ class MARKER(Token):
     Defines a marker.
 
     A marker is a named index in machinecode, that can be declared
-    statically or dynacically. See :class:`~Marker` and
+    statically or dynamically. See :class:`~Marker` and
     :class:`~MarkerDefinition` for details.
 
     It is declard as an :func:`identifier <is_identifier>` prepended
@@ -423,6 +424,22 @@ class DATA(Token):
     @classmethod
     def from_string(cls, _string):
         if _string == "DATA":
+            return cls(_string, None)
+        else:
+            return None
+
+
+class ANCHOR(Token):
+    """
+    A marker to signify the definition of an anchor.
+
+    Anchors pin machine code that follows them to a specific address.
+    See :class:`~Anchor` for details.
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if _string == "@":
             return cls(_string, None)
         else:
             return None

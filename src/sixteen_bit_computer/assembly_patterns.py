@@ -30,7 +30,7 @@ def get_all_patterns():
         AliasDefinition,
         Instruction,
         Marker,
-        MarkerDefinition,
+        Anchor,
         DataSet,
     )
 
@@ -202,7 +202,7 @@ class Instruction(Pattern):
 
 class Marker(Pattern):
     """
-    A marker that will be dynamically defined.
+    A marker that will have it's location dynamically defined.
 
     Dynamically defined means that it will get bound to the next
     machinecode word and it's value will be the index of that word.
@@ -242,42 +242,35 @@ class Marker(Pattern):
 
 class MarkerDefinition(Pattern):
     """
-    A marker that has been explicity defined.
+    A way to pin machine code to a specific location.
 
-    Explicitly defined means that a static value has been supplied for
-    this marker, as opposed to letting it bind to the next machinecode
-    word.
+    The machine code that follows an anchor will start at the address
+    defined by the anchor.
 
     E.g., in::
 
-        // Define a marker
-        $my_marker #67
-
+        // Define an anchor
+        @ #67
             NOOP
             SET_ZERO A
 
-        $dynamic_marker
+        @ #0XFCCE
+        $my_marker
             LOAD [#21] B
 
 
-    ``$my_marker`` has been defined to have a value of ``67``.
+    The ``NOOP`` instruction will be placed at ``67`` and the
+    ``LOAD [#21] B`` instruction will be placed at 0XFCCE.
     """
 
     @classmethod
     def from_tokens(cls, tokens):
         if (len(tokens) == 2
-                and isinstance(tokens[0], MARKER)
+                and isinstance(tokens[0], ANCHOR)
                 and isinstance(tokens[1], NUMBER)):
             return cls(tokens)
         else:
             return None
-
-    @property
-    def name(self):
-        """
-        str: The name of the marker.
-        """
-        return self.tokens[0].value
 
     @property
     def value(self):

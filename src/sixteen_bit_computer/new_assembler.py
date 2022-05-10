@@ -48,7 +48,7 @@ def process_assembly_lines(assembly_lines):
 
     check_numbers_in_range(assembly_lines)
     check_multiple_alias_defs(assembly_lines)
-    check_multiple_marker_defs(assembly_lines)
+    check_for_duplicate_markers(assembly_lines)
     check_multiple_marker_assignment(assembly_lines)
 
     assign_machinecode_indecies(assembly_lines)
@@ -279,13 +279,11 @@ def check_multiple_alias_defs(assembly_lines):
                 alias_lines[alias] = assembly_line.line_no
 
 
-def check_multiple_marker_defs(assembly_lines):
+def check_for_duplicate_markers(assembly_lines):
     """
-    Check if a marker been defined more than once.
+    Check if a marker been assigned more than once.
 
     E.g. This is allowed::
-
-        $marker_0 #123
 
         $marker_1
             NOOP
@@ -294,16 +292,16 @@ def check_multiple_marker_defs(assembly_lines):
 
     But this is not::
 
-        $marker_0 #123
-        $marker_0 #456
-
-        $marker_1
+        $marker_0
             NOOP
         $marker_1
-            "hello"
+            ADD A
+        $marker_0
+            NOT ACC
 
-    As ``$marker_0`` is defined twice, and ``$marker_1`` is already
-    assigned to the index holding the ``NOOP`` instruction.
+    As ``$marker_0`` is already assigned to the index holding the
+    ``NOOP`` instruction, so cannot also be assigned the index of the
+    ``NOT ACC`` instruction
 
     Args:
         assembly_lines (List[AssemblyLine]): List of
@@ -316,9 +314,7 @@ def check_multiple_marker_defs(assembly_lines):
     markers = set()
     marker_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(
-                assembly_line.pattern,
-                (assembly_patterns.Marker, assembly_patterns.MarkerDefinition)):
+        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
             marker = assembly_line.pattern.name
             if marker in markers:
                 details = (
@@ -397,8 +393,8 @@ def assign_machinecode_indecies(assembly_lines):
     Assign indecies to all the machinecode words.
 
     Instructions can resolve to more than one word, and sections of
-    assembly can be anchored so the machine code index has no
-    correlation to the assembly line index.
+    assembly can be anchored via an explicitly defined marker so the
+    machine code index has no correlation to the assembly line index.
 
     Edits the assembly lines in place.
 
@@ -409,7 +405,7 @@ def assign_machinecode_indecies(assembly_lines):
     next_mc_index = 0
     for line in assembly_lines:
         if isinstance(line.pattern, Anchor):
-            next_mc_index = line.pattern.anchor_value()
+            next_mc_index = line.pattern.value()
 
         for word in line.pattern.machinecode:
             word.index = next_mc_index
@@ -563,13 +559,8 @@ def build_marker_map(assembly_lines):
     marker_map = {}
     marker = None
     for line in assembly_lines:
-        if isinstance(line.pattern, pattern.MarkerDefinition):
-            marker_map[line.pattern.name] = line.pattern.value
-            continue
-
         if isinstance(line.pattern, pattern.Marker):
             marker = line.pattern.name
-            continue
 
         if marker is not None and line.pattern.machinecode:
             marker_map[marker] = line.pattern.machinecode[0].index
