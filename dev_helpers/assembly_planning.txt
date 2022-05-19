@@ -3,39 +3,42 @@
 // The differentiation between variables for data and labels for specific
 // instructions is nice though. Helps spot mistakes.
 
+
 // Define an alias
 // This doesn't generate any machine code
 !MY_ALIAS #123   
 
 // Define a variable without setting any associated data
-// This doesn't generate any machine code
-$my_var #456
+// This doesn't generate any machine code but will increment
+// The index at which the next bit of machinecode is placed.
+$my_var
+$another_var
+$x_pos
+
+// Define a variable at a specific position
+@ #0xFF
+$num_bullets
+
+// Define a variable at a specific location and set a value to it
+// The data set will be written out as machine code
+@ #0xFF00
+$some_variable #100
 
 // Define some data
-    DATA "hello"
-    DATA #34
-    DATA #34 #34 #12
+DATA "hello"
+DATA #34
+DATA #34 #34 #12
 
-// Define some data and assign a variable to the first word
-//
-// The variable behaves like a label in this case, it sticks
-// to the next bit of machinecode declared
-$message1
-    DATA "foobar"
-
-$some_data
-    DATA #32 #44 #55
-
-// Anchor the next bit of machine code to a certain index
+// Anchor the next bit of machine code to a certain machinecode index
 @ #100
-$message
-    "Winner!"
+    LOAD [$num_bullets] ACC
+    ADD [$bonus_bullets]
 
 // Store the current index in the current index - nifty!
 $message
     DATA $message
 
-@#300
+@ #300
 &start
     LOAD [#123] A
     SET A !MY_ALIAS
@@ -45,6 +48,7 @@ $message
 &end
     STORE A [B]
     LOAD [$variable] ACC
+    INCR [$x_pixel]
     HALT
 
 Tokens

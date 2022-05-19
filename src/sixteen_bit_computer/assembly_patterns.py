@@ -129,7 +129,7 @@ class NullPattern(Pattern):
             return None
 
 
-class AliasDefinition(Pattern):
+class Alias(Pattern):
     """
     Represents an alias being defined as a specific value.
 
@@ -161,6 +161,44 @@ class AliasDefinition(Pattern):
         int: The value of the defined alias.
         """
         return self.tokens[1].value
+
+
+class Anchor(Pattern):
+    pass
+
+
+class Label(Pattern):
+    pass
+
+
+class Variable(Pattern):
+    pass
+
+
+class VariableDefinition(Pattern):
+    pass
+
+
+class DataSet(Pattern):
+    @classmethod
+    def from_tokens(cls, tokens):
+        if len(tokens) < 2:
+            return None
+
+        if not isinstance(tokens[0], DATA):
+            return None
+
+        for token in tokens[1:]:
+            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
+                return None
+
+        return cls(tokens)
+
+    def _generate_machinecode(self):
+        machinecode = []
+        for token in self.tokens[1:]:
+            machinecode.append(Word(const_token=token))
+        return machinecode
 
 
 class Instruction(Pattern):
@@ -280,23 +318,4 @@ class MarkerDefinition(Pattern):
         return self.tokens[1].value
 
 
-class DataSet(Pattern):
-    @classmethod
-    def from_tokens(cls, tokens):
-        if len(tokens) < 2:
-            return None
 
-        if not isinstance(tokens[0], DATA):
-            return None
-
-        for token in tokens[1:]:
-            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
-                return None
-
-        return cls(tokens)
-
-    def _generate_machinecode(self):
-        machinecode = []
-        for token in self.tokens[1:]:
-            machinecode.append(Word(const_token=token))
-        return machinecode

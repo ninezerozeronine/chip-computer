@@ -463,7 +463,7 @@ def check_for_out_of_range_indecies(assembly_lines):
     """
     for line in assembly_lines:
         for word in line.pattern.machinecode:
-            if (word.index < 0) or (word.index > (2**16) - 1):
+            if (word.index < 0) or (word.index > ((2**16) - 1)):
                 details = (
                     "The machinecode word(s) would be placed at an "
                     "index that is not within the range 0-65535 "

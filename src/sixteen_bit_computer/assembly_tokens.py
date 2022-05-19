@@ -35,14 +35,15 @@ def get_all_tokens():
         base class)
     """
     return (
+        ANCHOR,
+        DATA,
         ALIAS,
+        LABEL,
+        VARIABLE,
         NUMBER,
-        MARKER,
         OPCODE,
         MODULE,
         MEMREF,
-        DATA,
-        ANCHOR,
     )
 
 
@@ -128,6 +129,44 @@ class Token(ABC):
         return False
 
 
+class ANCHOR(Token):
+    """
+    Defines an anchor.
+
+    Anchors pin machine code that follows them to a specific address.
+    See :class:`~Anchor` for details.
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if _string == "@":
+            return cls(_string, None)
+        else:
+            return None
+
+
+class DATA(Token):
+    """
+    A marker to sigify the definition of some raw data.
+
+    A way to write one or more words of data directly into the machine
+    code.
+
+    The words of data are specified as constants after the data marker,
+    e.g.::
+
+        DATA #123 !my_alias $a_marker
+        DATA #43 #78 #88
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if _string == "DATA":
+            return cls(_string, None)
+        else:
+            return None
+
+
 class ALIAS(Token):
     """
     Defines an alias.
@@ -166,19 +205,66 @@ class ALIAS(Token):
         return CONST
 
 
-class MARKER(Token):
+class LABEL(Token):
     """
-    Defines a marker.
+    Defines a label.
 
-    A marker is a named index in machinecode, that can be declared
-    statically or dynamically. See :class:`~Marker` and
-    :class:`~MarkerDefinition` for details.
+    A label is a named index in machine code. Labels are a convenience
+    that the assembler provides to easily point to a certain
+    instruction in the machinecode.
+
+    When declared, the value of the label is set to the index of the
+    machinecode that follows it.
+
+    It is typically used as an index to pass to a JUMP or CALL
+    instruction.
+
+    It is declared as an :func:`identifier <is_identifier>` prepended
+    with the ``&`` character. E.g.:
+
+     - ``$MY_MARKER``
+     - ``$loop_start``
+    """
+
+    @classmethod
+    def from_string(cls, _string):
+        if not _string:
+            return None
+
+        if _string[0] != "&":
+            return None
+
+        identifier = _string[1:]
+        if not is_identifier(identifier):
+            return None
+
+        return cls(_string, identifier)
+
+    def is_const(self):
+        return True
+
+    @property
+    def component(self):
+        return CONST
+
+
+class VARIABLE(Token):
+    """
+    Defines a variable.
+
+    A label is a named index in machine code. Variables are a
+    convenience that the assembler provides to easily point to a certain
+    location in memory.
+
+    When declared, the value of the variable is set to the next
+    available machinecode index. Variables consume machinecode indexes,
+    but don't result in any machonecode being generated.
 
     It is declard as an :func:`identifier <is_identifier>` prepended
     with the ``$`` character. E.g.:
 
-     - ``$MY_MARKER``
-     - ``$loop_start``
+     - ``$MY_VARIABLE``
+     - ``$num_lives``
     """
 
     @classmethod
@@ -405,44 +491,6 @@ class MEMREF(Token):
     @property
     def component(self):
         return self._COMPONENT_TO_MEMREF_COMPONENT[self.value.component]
-
-
-class DATA(Token):
-    """
-    A marker to sigify the definition of some raw data.
-
-    A way to write one or more words of data directly into the machine
-    code.
-
-    The words of data are specified as constants after the data marker,
-    e.g.::
-
-        DATA #123 !my_alias $a_marker
-        DATA #43 #78 #88
-    """
-
-    @classmethod
-    def from_string(cls, _string):
-        if _string == "DATA":
-            return cls(_string, None)
-        else:
-            return None
-
-
-class ANCHOR(Token):
-    """
-    A marker to signify the definition of an anchor.
-
-    Anchors pin machine code that follows them to a specific address.
-    See :class:`~Anchor` for details.
-    """
-
-    @classmethod
-    def from_string(cls, _string):
-        if _string == "@":
-            return cls(_string, None)
-        else:
-            return None
 
 
 def is_identifier(test_string):
