@@ -193,7 +193,53 @@ class Anchor(Pattern):
 
 
 class Label(Pattern):
-    pass
+    """
+    Label a location in assembly so it can be referenced.
+
+    The assembler will calculate the eventual machinecode index of the
+    assembly following the label and replace any use of the label in
+    the assembly with the value of it's eventual index.
+
+    The label 'binds' to the next line of assembly that generates
+    machinecode.
+
+    For example, in::
+
+        &first
+            NOOP
+            SET_ZERO A
+        &second
+            ADD B
+            JUMP &first
+
+    ``$first`` will be assigned a value of ``0``, as the NOOP
+    machinecode word is at index 0. If an instruction occupied
+    multiple words (i.e. it has some data) the marker will be set to
+    the value of the first word.
+
+    ``$second`` will be assigned a value of ``2``, as that is the index
+    of the ``ADD B`` instruction. Index 1 went to ``SET_ZERO A``.
+
+    The ``JUMP &first`` instruction will be resolved to ``JUMP #0`` by
+    the assembler as the ``$first`` label in the instruction is
+    replaced with `#0`.
+    """
+
+
+    @classmethod
+    def from_tokens(cls, tokens):
+        if (len(tokens) == 1 and isinstance(tokens[0], LABEL)):
+            return cls(tokens)
+        else:
+            return None
+
+    @property
+    def name(self):
+        """
+        str: The name of the label.
+        """
+        return self.tokens[0].value
+
 
 
 class Variable(Pattern):

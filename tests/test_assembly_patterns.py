@@ -229,3 +229,7 @@ def test_DataSet_from_tokens(test_input, expected_type, expected_machinecode):
         assert len(expected_machinecode) == len(res.machinecode)
         for expected_word, res_word in zip(expected_machinecode, res.machinecode):
             assert expected_word.const_token.value == res_word.const_token.value
+
+
+# Test what happens when there is no assembly that follows a variable
+# or label
