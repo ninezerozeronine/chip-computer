@@ -164,7 +164,32 @@ class Alias(Pattern):
 
 
 class Anchor(Pattern):
-    pass
+    """
+    Anchor machinecode the follws the anchor to a given index.
+
+    E.g. in::
+
+        @ #0x00FF
+            LOAD [A] ACC
+
+    The ``LOAD [A] ACC`` instruction will be placed at ``0x00FF``
+    """
+
+    @classmethod
+    def from_tokens(cls, tokens):
+        if (len(tokens) == 2
+                and isinstance(tokens[0], ANCHOR)
+                and isinstance(tokens[1], NUMBER)):
+            return cls(tokens)
+        else:
+            return None
+
+    @property
+    def location(self):
+        """
+        int: The location this anchor sets.
+        """
+        return self.tokens[1].value
 
 
 class Label(Pattern):
