@@ -23,7 +23,16 @@ from .instruction_components import (
 )
 
 _IDENTIFIER_REGEX = re.compile(r"[a-zA-Z_]+\w*$")
-"""foobar"""
+"""
+    Define what constitutes a valid identifier.
+    
+    Any upper or lower case letter or an underscore followed by zero or
+    more alphanumeric characters. Some examples would be:
+
+     - ``my_name``
+     - ``helloWorld2``
+     - ``_AnoTHer__exampLE``
+"""
 
 
 def get_all_tokens():
@@ -54,9 +63,9 @@ class Token(ABC):
     A token is an atomic part of some assembly code which can't be
     split further. Examples would be:
 
-     * ``#123`` A number.
-     * ``LOAD`` The OpCode for the load instruction.
-     * ``[A]`` The location in memory at the value currently in the A
+     * ``#123`` - A number.
+     * ``LOAD`` - The OpCode for the load instruction.
+     * ``[A]`` - The location in memory at the value currently in the A
        module.
     """
 
@@ -86,8 +95,8 @@ class Token(ABC):
             _string (str): The string to try and create the token from.
 
         Returns:
-            None or Token: None if the string doesn't match the token,
-            an instance of the token if it does.
+            None or subclass of Token: None if the string doesn't match
+            the token, an instance of the token if it does.
         """
         return None
 
@@ -134,7 +143,10 @@ class ANCHOR(Token):
     Defines an anchor.
 
     Anchors pin machine code that follows them to a specific address.
-    See :class:`~Anchor` for details.
+    See the :class:`~sixteen_bit_computer.assembly_patterns.Anchor`
+    pattern for details.
+
+    An anchor token is the ``@`` character.
     """
 
     @classmethod
@@ -150,10 +162,11 @@ class ALIAS(Token):
     Defines an alias.
 
     Aliases provide a convenience to refer to a value. See the
-    :class:`~Alias` pattern for details.
+    :class:`~sixteen_bit_computer.assembly_patterns.Alias` pattern for
+    details.
 
-    An alias is an :func:`identifier <is_identifier>` prepended with the
-    ``!`` character. E.g.:
+    An alias token is an :func:`identifier <is_identifier>` prepended
+    with the ``!`` character. E.g.:
 
      - ``!MY_ALIAS``
      - ``!NUM_ROWS``
@@ -186,12 +199,13 @@ class LABEL(Token):
     Defines a label.
 
     A label is a named index in machine code. See the
-    :class:`~Label` pattern for details.
+    :class:`~sixteen_bit_computer.assembly_patterns.Label` pattern for
+    details.
 
     It is declared as an :func:`identifier <is_identifier>` prepended
     with the ``&`` character. E.g.:
 
-     - ``&MY_MARKER``
+     - ``&MY_LABEL``
      - ``&loop_start``
     """
 
@@ -221,10 +235,11 @@ class VARIABLE(Token):
     """
     Defines a variable.
 
-    A variable is a named location in memory. See the :class:`~Variable`
+    A variable is a named location in memory. See the
+    :class:`~sixteen_bit_computer.assembly_patterns.Variable`
     pattern for details.
 
-    It is declard as an :func:`identifier <is_identifier>` prepended
+    It is declared as an :func:`identifier <is_identifier>` prepended
     with the ``$`` character. E.g.:
 
      - ``$MY_VARIABLE``

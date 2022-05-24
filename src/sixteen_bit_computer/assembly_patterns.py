@@ -44,7 +44,9 @@ class Pattern(ABC):
     specific values) that has a higher level meaning.
 
     A simple pattern could be a label, it's a single token, the label.
-    E.g.::
+    E.g.:
+
+    .. code-block:: none
 
         &loopstart
             SETZERO A
@@ -140,7 +142,9 @@ class Alias(Pattern):
     many places in the assmebly code to represent (say) the max number of
     enemies in a game, an alias ``MAX_ENEMIES`` can be defined instead.
 
-    E.g.::
+    E.g.:
+
+    .. code-block:: none
 
         !my_alias #23
     """
@@ -177,7 +181,9 @@ class Anchor(Pattern):
     The machine code that follows an anchor will start at the address
     defined by the anchor.
 
-    E.g., in::
+    E.g., in:
+
+    .. code-block:: none
 
         // Define an anchor
         @ #67
@@ -223,7 +229,9 @@ class Label(Pattern):
     It is typically used as an index to pass to a JUMP or CALL
     instruction.
 
-    For example, in::
+    For example, in:
+
+    .. code-block:: none
 
         // Define the first label
         &first
@@ -273,10 +281,12 @@ class Variable(Pattern):
 
     When a line defines a variable, the machinecode index that line
     would have used (were it an instruction) is reserved for the
-    variable but no machincecode will actually be generated at that
+    variable but no machinecode will actually be generated at that
     address.
 
-    E.g., in::
+    E.g., in:
+
+    .. code-block:: none
 
         // Anchor the machinecode to 0x10
         @ #10
@@ -294,7 +304,7 @@ class Variable(Pattern):
 
     ``$num_enemies`` is set to 10 due to the anchor that
     preceeded it (note that 10 refers to the memory location
-    10, not what is in memory at 10), and
+    10, not what is *in memory* at 10), and
     ``$player_hitpoints`` is set to 11. The ``NOOP`` instruction
     will be written out as machinecode at 12. The 
     ``STORE ACC [$num_enemies]`` line will resolve to
@@ -323,7 +333,9 @@ class VariableDefinition(Pattern):
     Very much like a :class:`~Variable`, but as well as reserving the
     location in memory, it sets data into machinecode.
 
-    E.g., in::
+    E.g., in:
+
+    .. code-block:: none
 
         // Anchor the machinecode to 0xFF
         @ #20
