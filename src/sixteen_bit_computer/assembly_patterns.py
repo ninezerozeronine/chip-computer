@@ -270,7 +270,7 @@ class Variable(Pattern):
     E.g., in::
 
         // Anchor the machinecode to 0x10
-        @ 0x10
+        @ #10
 
         // Define some variables
         $num_enemies
@@ -283,13 +283,13 @@ class Variable(Pattern):
             // Use the $num_enemies variable
             STORE ACC [$num_enemies]
 
-    ``$num_enemies`` is set to ``0x10`` due to the anchor that
-    preceeded it (note that ``0x10`` refers to the memory location
-    ``0x10``, not what is in memory at ``0x10``), and
-    ``$player_hitpoints`` is set to ``0x11``. The ``NOOP`` instruction
-    will be written out as machinecode at ``0x12``. The 
+    ``$num_enemies`` is set to 10 due to the anchor that
+    preceeded it (note that 10 refers to the memory location
+    10, not what is in memory at 10), and
+    ``$player_hitpoints`` is set to 11. The ``NOOP`` instruction
+    will be written out as machinecode at 12. The 
     ``STORE ACC [$num_enemies]`` line will resolve to
-    ``STORE ACC [0x10]``.
+    ``STORE ACC [#10]``.
     """
 
     @classmethod
@@ -302,29 +302,59 @@ class Variable(Pattern):
     @property
     def name(self):
         """
-        str: The name of the marker.
+        str: The name of the variable.
         """
         return self.tokens[0].value
 
 
 class VariableDefinition(Pattern):
-    pass
+    """
+    A variable with data defined and set in machinecode.
 
+    Very much like a :class:`~Variable`, but as well as reserving the
+    location in memory, it sets data into machinecode.
 
-class DataSet(Pattern):
+    E.g., in::
+
+        // Anchor the machinecode to 0xFF
+        @ #20
+
+        // Define some variables
+        $num_lives #3
+        $wall_heights #30 #15 #18
+
+        // Begin a main loop
+        &main_loop
+            NOOP
+
+    ``$num_lives`` will be set to 20 and 3 will be set as machinecode
+    at that location. ``$wall_heghts`` will be set to 21 and then the
+    values 30, 15, and 18 will be set as machinecode at locations
+    21, 22 and 23 respectively.
+
+    The ``NOOP`` instruction will be at machinecode index 24.
+    """
+
     @classmethod
     def from_tokens(cls, tokens):
         if len(tokens) < 2:
             return None
 
-        if not isinstance(tokens[0], DATA):
+        if not isinstance(tokens[0], VARIABLE):
             return None
 
         for token in tokens[1:]:
-            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
+            if not isinstance(token, (NUMBER, ALIAS)):
                 return None
 
         return cls(tokens)
+
+    @property
+    def value(self):
+        """
+        int: The value of the marker.
+        """
+        return self.tokens[1].value
 
     def _generate_machinecode(self):
         machinecode = []
@@ -368,6 +398,14 @@ class Instruction(Pattern):
                 constant_tokens.append(token)
 
         return machinecode_func(self.signature, constant_tokens)
+
+
+
+
+
+
+
+
 
 
 class Marker(Pattern):
@@ -450,4 +488,23 @@ class MarkerDefinition(Pattern):
         return self.tokens[1].value
 
 
+class DataSet(Pattern):
+    @classmethod
+    def from_tokens(cls, tokens):
+        if len(tokens) < 2:
+            return None
 
+        if not isinstance(tokens[0], DATA):
+            return None
+
+        for token in tokens[1:]:
+            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
+                return None
+
+        return cls(tokens)
+
+    def _generate_machinecode(self):
+        machinecode = []
+        for token in self.tokens[1:]:
+            machinecode.append(Word(const_token=token))
+        return machinecode
