@@ -8,9 +8,10 @@ from abc import ABC, abstractmethod
 from .assembly_tokens import (
     ALIAS,
     NUMBER,
+    ANCHOR,
+    LABEL,
+    VARIABLE,
     MEMREF,
-    MARKER,
-    DATA
 )
 from .instruction_components import CONST
 from . import instruction_listings
@@ -27,11 +28,11 @@ def get_all_patterns():
     """
     return (
         NullPattern,
-        AliasDefinition,
+        Alias,
+        Label,
+        Variable,
+        VariableDefinition,
         Instruction,
-        Marker,
-        Anchor,
-        DataSet,
     )
 
 
@@ -42,10 +43,11 @@ class Pattern(ABC):
     A pattern is an arrangement of tokens (potentially only tokens with
     specific values) that has a higher level meaning.
 
-    A simple pattern could be a Marker, it's a single token, the marker.
+    A simple pattern could be a label, it's a single token, the label.
     E.g.::
 
-        $mymarker
+        &loopstart
+            SETZERO A
 
     A more complex pattern could be a definition of an alias, it's two
     tokens, an alias, and then a number. E.g.::
@@ -133,6 +135,11 @@ class Alias(Pattern):
     """
     Represents an alias being defined as a specific value.
 
+    An alias is a convenience to allow a string to be used in place of
+    a number constant. E.g. instead of having to hardcode ``#10`` in
+    many places in the assmebly code to represent (say) the max number of
+    enemies in a game, an alias ``MAX_ENEMIES`` can be defined instead.
+
     E.g.::
 
         !my_alias #23
@@ -207,12 +214,14 @@ class Label(Pattern):
     """
     Label a location in assembly so it can be referenced.
 
-    The assembler will calculate the eventual machinecode index of the
-    assembly following the label and replace any use of the label in
-    the assembly with the value of it's eventual index.
+    Labels are a convenience that the assembler provides to easily
+    point to a certain instruction in the machinecode.
 
-    The label 'binds' to the next line of assembly that generates
-    machinecode.
+    When declared, the value of the label is set to the index of the
+    machinecode that follows it.
+
+    It is typically used as an index to pass to a JUMP or CALL
+    instruction.
 
     For example, in::
 
@@ -228,7 +237,7 @@ class Label(Pattern):
 
     ``$first`` will be assigned a value of ``0``, as the NOOP
     machinecode word is at index 0. If an instruction occupied
-    multiple words (i.e. it has some data) the marker will be set to
+    multiple words (i.e. it has some data) the label will be set to
     the value of the first word.
 
     ``$second`` will be assigned a value of ``2``, as that is the index
@@ -350,11 +359,12 @@ class VariableDefinition(Pattern):
         return cls(tokens)
 
     @property
-    def value(self):
+    def name(self):
         """
-        int: The value of the marker.
+        str: The name of the variable.
         """
-        return self.tokens[1].value
+        return self.tokens[0].value
+
 
     def _generate_machinecode(self):
         machinecode = []
@@ -398,113 +408,3 @@ class Instruction(Pattern):
                 constant_tokens.append(token)
 
         return machinecode_func(self.signature, constant_tokens)
-
-
-
-
-
-
-
-
-
-
-class Marker(Pattern):
-    """
-    A marker that will have it's location dynamically defined.
-
-    Dynamically defined means that it will get bound to the next
-    machinecode word and it's value will be the index of that word.
-
-    For example, in::
-
-        $first
-            NOOP
-            SET_ZERO A
-        $second
-            DATA #123 #21
-
-    ``$first`` will be assigned a value of ``0``, as the NOOP
-    machinecode word is at index 0. If an instruction occupied
-    multiple words (i.e. it has some data) the marker will be set to
-    the value of the first word.
-
-    ``$second`` will be assigned a value of ``2``, as that is the first
-    machinecode word of the defined dataset. (Index 1 went to
-    ``SET_ZERO A``)
-    """
-
-    @classmethod
-    def from_tokens(cls, tokens):
-        if (len(tokens) == 1 and isinstance(tokens[0], MARKER)):
-            return cls(tokens)
-        else:
-            return None
-
-    @property
-    def name(self):
-        """
-        str: The name of the marker.
-        """
-        return self.tokens[0].value
-
-
-class MarkerDefinition(Pattern):
-    """
-    A way to pin machine code to a specific location.
-
-    The machine code that follows an anchor will start at the address
-    defined by the anchor.
-
-    E.g., in::
-
-        // Define an anchor
-        @ #67
-            NOOP
-            SET_ZERO A
-
-        @ #0XFCCE
-        $my_marker
-            LOAD [#21] B
-
-
-    The ``NOOP`` instruction will be placed at ``67`` and the
-    ``LOAD [#21] B`` instruction will be placed at 0XFCCE.
-    """
-
-    @classmethod
-    def from_tokens(cls, tokens):
-        if (len(tokens) == 2
-                and isinstance(tokens[0], ANCHOR)
-                and isinstance(tokens[1], NUMBER)):
-            return cls(tokens)
-        else:
-            return None
-
-    @property
-    def value(self):
-        """
-        int: The value of the marker.
-        """
-        return self.tokens[1].value
-
-
-class DataSet(Pattern):
-    @classmethod
-    def from_tokens(cls, tokens):
-        if len(tokens) < 2:
-            return None
-
-        if not isinstance(tokens[0], DATA):
-            return None
-
-        for token in tokens[1:]:
-            if not isinstance(token, (NUMBER, ALIAS, MARKER)):
-                return None
-
-        return cls(tokens)
-
-    def _generate_machinecode(self):
-        machinecode = []
-        for token in self.tokens[1:]:
-            machinecode.append(Word(const_token=token))
-        return machinecode

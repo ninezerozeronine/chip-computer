@@ -145,36 +145,12 @@ class ANCHOR(Token):
             return None
 
 
-class DATA(Token):
-    """
-    A marker to sigify the definition of some raw data.
-
-    A way to write one or more words of data directly into the machine
-    code.
-
-    The words of data are specified as constants after the data marker,
-    e.g.::
-
-        DATA #123 !my_alias $a_marker
-        DATA #43 #78 #88
-    """
-
-    @classmethod
-    def from_string(cls, _string):
-        if _string == "DATA":
-            return cls(_string, None)
-        else:
-            return None
-
-
 class ALIAS(Token):
     """
     Defines an alias.
 
-    An alias is a convenience to allow a string to be used in place of
-    a number constant. E.g. instead of having to hardcode ``#10`` in
-    many places in the assmebly code to represent (say) the max number of
-    enemies in a game, an alias ``MAX_ENEMIES`` can be defined instead.
+    Aliases provide a convenience to refer to a value. See the
+    :class:`~Alias` pattern for details.
 
     An alias is an :func:`identifier <is_identifier>` prepended with the
     ``!`` character. E.g.:
@@ -209,21 +185,14 @@ class LABEL(Token):
     """
     Defines a label.
 
-    A label is a named index in machine code. Labels are a convenience
-    that the assembler provides to easily point to a certain
-    instruction in the machinecode.
-
-    When declared, the value of the label is set to the index of the
-    machinecode that follows it.
-
-    It is typically used as an index to pass to a JUMP or CALL
-    instruction.
+    A label is a named index in machine code. See the
+    :class:`~Label` pattern for details.
 
     It is declared as an :func:`identifier <is_identifier>` prepended
     with the ``&`` character. E.g.:
 
-     - ``$MY_MARKER``
-     - ``$loop_start``
+     - ``&MY_MARKER``
+     - ``&loop_start``
     """
 
     @classmethod
@@ -252,13 +221,8 @@ class VARIABLE(Token):
     """
     Defines a variable.
 
-    A label is a named index in machine code. Variables are a
-    convenience that the assembler provides to easily point to a certain
-    location in memory.
-
-    When declared, the value of the variable is set to the next
-    available machinecode index. Variables consume machinecode indexes,
-    but don't result in any machonecode being generated.
+    A variable is a named location in memory. See the :class:`~Variable`
+    pattern for details.
 
     It is declard as an :func:`identifier <is_identifier>` prepended
     with the ``$`` character. E.g.:
@@ -449,7 +413,8 @@ class MEMREF(Token):
     to be one of the following:
 
      - ``ALIAS``
-     - ``MARKER``
+     - ``LABEL``
+     - ``VARIABLE``
      - ``NUMBER``
      - ``MODULE``
     """
@@ -464,7 +429,8 @@ class MEMREF(Token):
 
     _VALID_TOKENS = (
         ALIAS,
-        MARKER,
+        LABEL,
+        VARIABLE,
         NUMBER,
         MODULE,
     )
