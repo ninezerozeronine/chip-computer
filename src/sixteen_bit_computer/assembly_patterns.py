@@ -165,14 +165,25 @@ class Alias(Pattern):
 
 class Anchor(Pattern):
     """
-    Anchor machinecode the follws the anchor to a given index.
+    A way to pin machine code to a specific location in memory.
 
-    E.g. in::
+    The machine code that follows an anchor will start at the address
+    defined by the anchor.
 
-        @ #0x00FF
-            LOAD [A] ACC
+    E.g., in::
 
-    The ``LOAD [A] ACC`` instruction will be placed at ``0x00FF``
+        // Define an anchor
+        @ #67
+            NOOP
+            SET_ZERO A
+
+        @ #0XFCCE
+        &loopstart
+            LOAD [#21] B
+
+
+    The ``NOOP`` instruction will be placed at ``67`` and the
+    ``LOAD [#21] B`` instruction will be placed at 0XFCCE.
     """
 
     @classmethod
@@ -205,9 +216,12 @@ class Label(Pattern):
 
     For example, in::
 
+        // Define the first label
         &first
             NOOP
             SET_ZERO A
+
+        // Define the second label
         &second
             ADD B
             JUMP &first
@@ -241,9 +255,56 @@ class Label(Pattern):
         return self.tokens[0].value
 
 
-
 class Variable(Pattern):
-    pass
+    """
+    A way to refer to a location in memory.
+
+    Variables are typically used to reserve a location in memory
+    for a piece of data used throughout the program.
+
+    When a line defines a variable, the machinecode index that line
+    would have used (were it an instruction) is reserved for the
+    variable but no machincecode will actually be generated at that
+    address.
+
+    E.g., in::
+
+        // Anchor the machinecode to 0x10
+        @ 0x10
+
+        // Define some variables
+        $num_enemies
+        $player_hitponts
+
+        // Begin a main loop
+        &main_loop
+            NOOP
+            SETZERO ACC
+            // Use the $num_enemies variable
+            STORE ACC [$num_enemies]
+
+    ``$num_enemies`` is set to ``0x10`` due to the anchor that
+    preceeded it (note that ``0x10`` refers to the memory location
+    ``0x10``, not what is in memory at ``0x10``), and
+    ``$player_hitpoints`` is set to ``0x11``. The ``NOOP`` instruction
+    will be written out as machinecode at ``0x12``. The 
+    ``STORE ACC [$num_enemies]`` line will resolve to
+    ``STORE ACC [0x10]``.
+    """
+
+    @classmethod
+    def from_tokens(cls, tokens):
+        if (len(tokens) == 1 and isinstance(tokens[0], VARIABLE)):
+            return cls(tokens)
+        else:
+            return None
+
+    @property
+    def name(self):
+        """
+        str: The name of the marker.
+        """
+        return self.tokens[0].value
 
 
 class VariableDefinition(Pattern):
