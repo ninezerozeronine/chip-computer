@@ -45,7 +45,6 @@ def get_all_tokens():
     """
     return (
         ANCHOR,
-        DATA,
         ALIAS,
         LABEL,
         VARIABLE,

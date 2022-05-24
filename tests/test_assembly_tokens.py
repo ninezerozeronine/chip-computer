@@ -2,10 +2,31 @@ import pytest
 
 from sixteen_bit_computer import assembly_tokens
 from sixteen_bit_computer.assembly_tokens import (
+    ANCHOR,
     ALIAS,
+    LABEL,
+    VARIABLE,
     NUMBER,
-    MARKER,
+    OPCODE,
+    MODULE,
+    MEMREF,
 )
+from sixteen_bit_computer.instruction_components import (
+    NOOP,
+    AND,
+)
+
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    ("@", ANCHOR),
+    ("$", type(None)),
+    ("&", type(None)),
+    ("%", type(None)),
+    ("hello", type(None)),
+])
+def test_ANCHOR(test_input, expected):
+    assert type(ANCHOR.from_string(test_input)) == expected
 
 
 @pytest.mark.parametrize("test_input, expected", [
@@ -18,6 +39,36 @@ from sixteen_bit_computer.assembly_tokens import (
 ])
 def test_ALIAS(test_input, expected):
     assert type(ALIAS.from_string(test_input)) == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    ("&hello", LABEL),
+    ("&_blah", LABEL),
+    ("&MY_MARKER", LABEL),
+    ("4", type(None)),
+    ("0.45", type(None)),
+    ("#", type(None)),
+    ("", type(None)),
+    ("$012", type(None)),
+    ("$//comment", type(None)),
+])
+def test_LABEL(test_input, expected):
+    assert type(LABEL.from_string(test_input)) == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    ("$hello", VARIABLE),
+    ("$_blah", VARIABLE),
+    ("$MY_VARIABLE", VARIABLE),
+    ("4", type(None)),
+    ("0.45", type(None)),
+    ("#", type(None)),
+    ("", type(None)),
+    ("$012", type(None)),
+    ("$//comment", type(None)),
+])
+def test_VARIABLE(test_input, expected):
+    assert type(VARIABLE.from_string(test_input)) == expected
 
 
 @pytest.mark.parametrize("test_input, expected", [
@@ -39,19 +90,28 @@ def test_NUMBER(test_input, expected):
     assert type(NUMBER.from_string(test_input)) == expected
 
 
-@pytest.mark.parametrize("test_input, expected", [
-    ("$hello", MARKER),
-    ("$_blah", MARKER),
-    ("$MY_MARKER", MARKER),
-    ("4", type(None)),
-    ("0.45", type(None)),
-    ("#", type(None)),
-    ("", type(None)),
-    ("$012", type(None)),
-    ("$//comment", type(None)),
+@pytest.mark.parametrize("test_input, expected_token, expected_component", [
+    ("NOOP", OPCODE, NOOP),
+    ("AND", OPCODE, AND),
+    ("FOO", type(None), None),
+    ("ANDZZ", type(None), None),
+    ("NOOOOP", type(None), None),
+    ("#", type(None), None),
+    ("", type(None), None),
+    ("$012", type(None), None),
+    ("$//comment", type(None), None),
 ])
-def test_MARKER(test_input, expected):
-    assert type(MARKER.from_string(test_input)) == expected
+def test_OPCODE(test_input, expected_token, expected_component):
+    res = OPCODE.from_string(test_input)
+    assert type(res) == expected_token
+    if res is not None:
+        assert res.component == expected_component
+
+
+
+
+
+
 
 
 @pytest.mark.parametrize("test_input, expected", [
