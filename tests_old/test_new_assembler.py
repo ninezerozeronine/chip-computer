@@ -18,6 +18,9 @@ from sixteen_bit_computer.new_exceptions import (
     NoMatchingPatternsError,
 )
 
+# Test what happens when there is no assembly that follows a variable
+# or label
+
 
 @pytest.mark.parametrize("test_input, expected", [
     (

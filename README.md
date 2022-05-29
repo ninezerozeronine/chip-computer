@@ -26,9 +26,9 @@ in `docs`. This also runs the apidoc command on build with a convenience functio
 
 To run the tests, run:
 
-    tox -e test
+    tox tests
 
-in the root directory.
+in the root directory. We need to specify the tests dir for now because there's lots of old tests being migrated from old_tests.
 
 Run:
 

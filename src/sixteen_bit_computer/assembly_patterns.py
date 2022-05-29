@@ -28,10 +28,11 @@ def get_all_patterns():
     """
     return (
         NullPattern,
-        Alias,
+        AliasDef,
+        Anchor,
         Label,
         Variable,
-        VariableDefinition,
+        VariableDef,
         Instruction,
     )
 
@@ -133,7 +134,7 @@ class NullPattern(Pattern):
             return None
 
 
-class Alias(Pattern):
+class AliasDef(Pattern):
     """
     Represents an alias being defined as a specific value.
 
@@ -326,7 +327,7 @@ class Variable(Pattern):
         return self.tokens[0].value
 
 
-class VariableDefinition(Pattern):
+class VariableDef(Pattern):
     """
     A variable with data defined and set in machinecode.
 
@@ -376,7 +377,6 @@ class VariableDefinition(Pattern):
         str: The name of the variable.
         """
         return self.tokens[0].value
-
 
     def _generate_machinecode(self):
         machinecode = []
