@@ -14,6 +14,10 @@ from sixteen_bit_computer.assembly_tokens import (
 from sixteen_bit_computer.instruction_components import (
     NOOP,
     AND,
+    A,
+    C,
+    M_B,
+    M_CONST
 )
 
 
@@ -108,10 +112,40 @@ def test_OPCODE(test_input, expected_token, expected_component):
         assert res.component == expected_component
 
 
+@pytest.mark.parametrize("test_input, expected_token, expected_component", [
+    ("A", MODULE, A),
+    ("C", MODULE, C),
+    ("AND", type(None), None),
+    ("ANDZZ", type(None), None),
+    ("#C", type(None), None),
+    ("AA", type(None), None),
+    ("", type(None), None),
+    ("$012", type(None), None),
+    ("$//comment", type(None), None),
+])
+def test_MODULE(test_input, expected_token, expected_component):
+    res = MODULE.from_string(test_input)
+    assert type(res) == expected_token
+    if res is not None:
+        assert res.component == expected_component
 
-
-
-
+@pytest.mark.parametrize("test_input, expected_token, expected_component", [
+    ("[B]", MEMREF, M_B),
+    ("[#12]", MEMREF, M_CONST),
+    ("[$myvar]", MEMREF, M_CONST),
+    ("[AND", type(None), None),
+    ("ANDZZ", type(None), None),
+    ("[]][]]]]", type(None), None),
+    ("{}", type(None), None),
+    ("", type(None), None),
+    ("[$012", type(None), None),
+    ("$//comment", type(None), None),
+])
+def test_MEMREF(test_input, expected_token, expected_component):
+    res = MEMREF.from_string(test_input)
+    assert type(res) == expected_token
+    if res is not None:
+        assert res.component == expected_component
 
 
 @pytest.mark.parametrize("test_input, expected", [
