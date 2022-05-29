@@ -1,35 +1,46 @@
-"""
-Custom exceptions used in this project.
-"""
-
-
-class EightBitComputerError(Exception):
+class SixteentBitComputerError(Exception):
     """
     Base class for exceptions in the computer
     """
     pass
 
 
-class OperationParsingError(EightBitComputerError):
+class LineProcessingError(SixteentBitComputerError):
     """
-    Raised when parsing an operation fails.
-
-    E.g. An incorrect argument is used with the LOAD operation.
+    Raised when processing a line of assembly fails.
     """
     pass
 
 
-class LineProcessingError(EightBitComputerError):
+class NoMatchingTokensError(LineProcessingError):
     """
-    Raised when processing a line fails.
-
-    E.g. The line was not a constant declaration and no operations
-    matched.
+    Raised when a word matches no tokens.
     """
     pass
 
 
-class AssemblyError(EightBitComputerError):
+class MultipleMatchingTokensError(LineProcessingError):
+    """
+    Raised when a word matches multiple tokens.
+    """
+    pass
+
+
+class NoMatchingPatternsError(LineProcessingError):
+    """
+    Raised when tokens match no patterns.
+    """
+    pass
+
+
+class MultipleMatchingPatternsError(LineProcessingError):
+    """
+    Raised when tokens match multiple patterns.
+    """
+    pass
+
+
+class AssemblyError(SixteentBitComputerError):
     """
     Raised when the assembly could not be converted to machine code.
     """

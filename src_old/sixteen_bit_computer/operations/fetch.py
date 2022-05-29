@@ -2,12 +2,8 @@
 The fetch steps added to the start of all operations.
 """
 
+from ..language_defs import MODULE_CONTROL, STEPS, EMPTY_ADDRESS
 from .. import bitdef
-from ..language_defs import (
-    EMPTY_ADDRESS,
-    MODULE_CONTROL,
-    STEPS,
-)
 from ..data_structures import DataTemplate
 
 
@@ -66,7 +62,8 @@ def fetch_step_1():
     control_bitdef = bitdef.merge(
         [
             MODULE_CONTROL["PC"]["COUNT"],
-            MODULE_CONTROL["MEM"]["READ_FROM"],
+            MODULE_CONTROL["RAM"]["SEL_PROG_MEM"],
+            MODULE_CONTROL["RAM"]["OUT"],
             MODULE_CONTROL["IR"]["IN"],
         ]
     )

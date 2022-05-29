@@ -1,170 +1,116 @@
-"""
-Process assembly code and output machine code.
-"""
-
-from .exceptions import (
-    LineProcessingError,
-    OperationParsingError,
-    AssemblyError,
-)
-from .data_structures import get_assembly_line_template
-from .assembly_validity import check_structure_validity
-from .operations import get_all_operations
+from . import assembly_patterns
+from . import assembly_tokens
 from . import number_utils
-from . import token_utils
+from .new_exceptions import (
+    AssemblyError,
+    LineProcessingError,
+    NoMatchingTokensError,
+    MultipleMatchingTokensError,
+    NoMatchingPatternsError,
+    MultipleMatchingPatternsError,
+)
 
+ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
+"""
+    The template for top level error reports during assembly.
+"""
 
-def process_assembly_lines(lines):
+class AssemblyLine():
     """
-    Parse, assemble and generate machine code.
+    Representation of a line in the assembly file.
+    """
+    def __init__(self, raw_line=None, pattern=None, line_no=None):
+        """
+        Initialise the class
+
+        Args:
+            raw_line (str): The line of assembly code as it was in the
+                assembly file.
+            pattern (:class:`~sixteen_bit_computer.assembly_patterns.Pattern`):
+                The pattern this line corresponds to.
+            line_no (int): The line of the assembly file this line came
+                from
+        """
+        self.raw_line = raw_line
+        self.pattern = pattern
+        self.line_no = line_no
+
+
+def ingest_raw_assembly_lines(lines):
+    """
+    Take strings and convert to :class:`~sixteen_bit_computer.new_assembler.AssemblyLine`
+    objects.
+
+    All lines are processed in isolation at this point.
+    :func:`process_assembly_lines` has a more global view of how lines
+    interact with each other .
 
     Args:
-        lines (list(str)): The lines that made up the assembly file to
-            be assembled.
-    Returns:
-        list(dict): The assembly file converted to an equivalent list of
-        dictionaries with information about what each line was resolved
-        to.
+        lines (list(str)): List of assembly lines to ingest
+    Returns: list(:class:`~sixteen_bit_computer.new_assembler.AssemblyLine`):
+    List of processed assembly lines.
     Raises:
-        AssemblyError: If there was an error assembling the machine
-            code.
+        LineProcessingError: If there was problem processing a line.
     """
-
     assembly_lines = []
-    for line_no, line in enumerate(lines, start=1):
+    for line_no, raw_line in enumerate(lines, start=1):
         try:
-            assembly_line = process_line(line)
-        except LineProcessingError as inst:
-            msg = (
-                "Error processing line {line_no} ({line}): "
-                "{reason}".format(
-                    line_no=line_no,
-                    line=line,
-                    reason=inst.args[0])
+            pattern = pattern_from_line(raw_line)
+        except LineProcessingError as err:
+            msg = ERROR_TEMPLATE.format(
+                line_no=line_no,
+                line=raw_line,
+                details=err.args[0],
             )
             raise AssemblyError(msg)
-        assembly_line["line_no"] = line_no
-        assembly_lines.append(assembly_line)
 
-    check_structure_validity(assembly_lines)
-    assign_machine_code_byte_indexes(assembly_lines)
-    assign_labels(assembly_lines)
-    resolve_labels(assembly_lines)
-    resolve_numbers(assembly_lines)
-    resolve_variables(assembly_lines)
+        assembly_lines.append(
+            AssemblyLine(
+                raw_line=raw_line,
+                pattern=pattern,
+                line_no=line_no,
+            )
+        )
 
     return assembly_lines
 
 
-def process_line(line):
+def process_assembly_lines(assembly_lines):
+
+    check_numbers_in_range(assembly_lines)
+    check_multiple_alias_defs(assembly_lines)
+    check_for_duplicate_markers(assembly_lines)
+    check_multiple_marker_assignment(assembly_lines)
+
+    assign_machinecode_indecies(assembly_lines)
+    check_for_colliding_indecies(assembly_lines)
+    check_for_out_of_range_indecies(assembly_lines)
+
+    resolve_numbers(assembly_lines)
+
+    alias_map = build_alias_map(assembly_lines)
+    resolve_aliases(assembly_lines, alias_map)
+
+    marker_map = build_marker_map(assembly_lines)
+    resolve_markers(assembly_lines, marker_map)
+
+
+def pattern_from_line(line):
     """
-    Process a single line of assembly.
+    Get the pattern corresponding to a raw line of assembly code.
+
+    A raw line is something like: ``LOAD [$var] A // My comment.``
 
     Args:
-        line (str): The line of assembly to process. This line has
-            already been cleaned (excess whitespace and comments
-            removed).
+        line (str): Raw line of assembly code.
     Returns:
-        dict: A dictionary of information about this line. See the
-        :func:`~.get_assembly_line_template` documentation for more
-        information about what is in the dictionary.
-    """
-    assembly_line = get_assembly_line_template()
-    assembly_line["raw"] = line
-
-    cleaned_line = clean_line(line)
-    if not cleaned_line:
-        return assembly_line
-    assembly_line["clean"] = cleaned_line
-
-    line_is_label = token_utils.is_label(cleaned_line)
-    if line_is_label:
-        assembly_line["defines_label"] = True
-        assembly_line["defined_label"] = cleaned_line
-
-    line_is_variable, name, location, value = get_variable_info_from_line(cleaned_line)
-    if line_is_variable:
-        assembly_line["defines_variable"] = True
-        assembly_line["defined_variable"] = name
-        assembly_line["defined_variable_location"] = location
-        assembly_line["defined_variable_value"] = value
-
-    if not (line_is_variable or line_is_label):
-        mc_bytes = machine_code_bytes_from_line(cleaned_line)
-        validate_and_identify_constants(mc_bytes)
-        assembly_line["mc_bytes"] = mc_bytes
-        assembly_line["has_machine_code"] = True
-
-    return assembly_line
-
-
-def get_variable_info_from_line(cleaned_line):
-    """
-    Get variable info from the line (if any).
-
-    Looks ata line to determine whether or not it's a variable
-    definition.
-
-    Expects the passed in line to be a valid line of machine code. That
-    is, the passed in line should be translatable to valid machine code.
-
-    Args:
-        line (cleaned_line): Line to parse.
-    Returns:
-        (bool, str, int, int): Whether the line is a variable def, the
-        variable defined, the value of the variable and it's location.
+        Pattern: Pattern that corresponds to the passed in line.
     """
 
-    tokens = token_utils.get_tokens_from_line(cleaned_line)
-
-    # If there's not 3 tokens, not a variable def
-    if len(tokens) != 3:
-        return False, None, None, None
-
-    # If the first token isn't a variable, not a variable def
-    if not token_utils.is_variable(tokens[0]):
-        return False, None, None, None
-
-    # If the second token isn't a memory index, not a variable def
-    if not token_utils.is_memory_index(tokens[1]):
-        return False, None, None, None
-
-    # If thing inside memory index isn't a number, not a variable def
-    mem_index_contents = token_utils.extract_memory_position(tokens[1])
-    if not token_utils.is_number(mem_index_contents):
-        return False, None, None, None
-
-    # If variable position isn't between 0 and 255, not a variable def
-    variable_position = token_utils.number_constant_value(mem_index_contents)
-    if not (variable_position >= 0 and variable_position <= 255):
-        return False, None, None, None
-
-    # If third token not a number, not a variable def
-    if not token_utils.is_number(tokens[2]):
-        return False, None, None, None
-
-    # If number wont fit in 8 bits, not a variable def 
-    variable_value = token_utils.number_constant_value(tokens[2])
-    if not number_utils.number_is_within_bit_limit(variable_value, bit_width=8):
-        return False, None, None, None
-
-    # Otherwise, passes all tests!
-    return True, tokens[0], variable_position, variable_value
-
-def clean_line(line):
-    """
-    Clean a line of assembly ready for further processing.
-
-    Removes leading and trailing whitespace, comments, and excess
-    whitespace between tokens.
-
-    Args:
-        line (str): The line to clean.
-    Returns:
-        str: The cleaned line.
-    """
     no_comments = remove_comments(line)
-    return remove_excess_whitespace(no_comments)
+    tokens = get_tokens(no_comments)
+    pattern = get_pattern(tokens)
+    return pattern
 
 
 def remove_comments(line):
@@ -186,265 +132,523 @@ def remove_comments(line):
     return comments_removed
 
 
-def remove_excess_whitespace(line):
+def get_tokens(line):
     """
-    Remove excess whitespace from a line.
+    Get the tokens this line contains.
+
+    Expects the line to have had it's comments removed.
 
     Args:
-        line (str): line to remove excess whitespace from.
+        line (str): Line to get tokens from.
     Returns:
-        str: The line with excess whitespace removed.
-    """
-    return " ".join(line.strip().split())
-
-
-def machine_code_bytes_from_line(line):
-    """
-    Get machine code bytes that describe this line.
-
-    Uses all the defined instructions and defers the work of parsing to
-    them. See :func:`~.get_machine_code_byte_template` for information on
-    machine code dictionaries from instructions.
-
-    Expects the passed in line to be a valid line of machine code. That
-    is, the passed in line should be translatable to valid machine code.
-
-    Args:
-        line (str): Line to parse.
-    Returns:
-        list(dict): Machine code byte information dictionaries.
+        list[Token] or None: List of tokens on this line (could be
+            empty).
     Raises:
-        LineProcessingError: Failure to extract machine code or matching
-        multiple operations.
+        NoMatchingTokensError: When a matching token was not found.
+        MultipleMatchingTokensError: When multiple tokens matched.
     """
-    operation_matches = []
-    for operation in get_all_operations():
-        try:
-            mc_bytes = operation.parse_line(line)
-        except OperationParsingError as e:
-            raise LineProcessingError(e)
-        if mc_bytes:
-            operation_matches.append(mc_bytes)
 
-    num_matches = len(operation_matches)
+    if not line:
+        return []
+
+    words = get_words_from_line(line)
+    final_tokens = []
+    for word in words:
+        matched_tokens = []
+        for token_class in assembly_tokens.get_all_tokens():
+            token = token_class.from_string(word)
+            if token is not None:
+                matched_tokens.append(token)
+
+        num_matches = len(matched_tokens)
+
+        if num_matches == 0:
+            raise NoMatchingTokensError(
+                F"No tokens matched the following: \"{word}\""
+            )
+
+        if num_matches > 1:
+            raise MultipleMatchingTokensError("Multiple tokens matched")
+
+        final_tokens.append(matched_tokens[0])
+
+    return final_tokens
+
+
+def get_words_from_line(line):
+    """
+    Given a line split it into words and return them.
+
+    Words are runs of characters separated by spaces. If there are no
+    words return an empty list.
+
+    Args:
+        line (str): Line to convert to tokens.
+    Returns:
+        list of str: The words in the line.
+    """
+
+    # Does line have any content
+    if not line:
+        return []
+
+    # Does the line have any content after splitting it
+    words = line.split()
+    if not words:
+        return []
+
+    return words
+
+
+def get_pattern(tokens):
+    """
+    Find the pattern that the tokens match.
+
+    Args:
+        tokens (List[Token]): The tokens to match to a
+            pattern. Can be an empty list - returns a NullPattern.
+    Returns:
+        Pattern or None: The pattern that matches the tokens.
+    Raises:
+        NoMatchingPatternsError: When a matching token was not found.
+        MultipleMatchingPatternsError: When multiple tokens matched.
+    """
+    matched_patterns = []
+
+    for pattern_class in assembly_patterns.get_all_patterns():
+        pattern = pattern_class.from_tokens(tokens)
+        if pattern is not None:
+            matched_patterns.append(pattern)
+
+    num_matches = len(matched_patterns)
+
     if num_matches == 0:
-        raise LineProcessingError("Unable to match line to an operation")
+        raise NoMatchingPatternsError("No patterns matched")
+
     if num_matches > 1:
-        raise LineProcessingError("Line matched multiple operations")
+        raise MultipleMatchingPatternsError("Multiple patterns matched")
 
-    return operation_matches[0]
+    return matched_patterns[0]
 
 
-def validate_and_identify_constants(machine_code_bytes):
+def check_numbers_in_range(assembly_lines):
     """
-    Validate and identify constants from assembly code.
+    Check that any number tokens have a value that is within the range
+    the computer can handle.
 
-    Assumed constants are returned from the instruction parsers. This
-    function then validates them to make sure they are correct and
-    determines what kind of constant they are.
-
-    See :func:`~.get_machine_code_byte_template` for information on
-    machine code dictionaries from instructions.
-
-    This function modifies the passed in machine code templates list
-    in place.
-
-    Args:
-        machine_code_bytes (list(dict)): The machine code byte
-            dicts as returned by an instruction line parser.
-    Raises:
-        LineProcessingError: Invalid constants were specified.
+    It's a sixteen bit computer so numbers from -32767 to 65535 are
+    supported.
     """
 
-    for mc_byte in machine_code_bytes:
-        if mc_byte["byte_type"] != "constant":
-            continue
+    for line in assembly_lines:
+        for token in line.pattern.tokens:
+            # Extract the token in the memref if it's a memref
+            if (isinstance(token, assembly_tokens.MEMREF)):
+                token = token.value
 
-        constant = mc_byte["constant"]
-
-        if not token_utils.is_constant(constant):
-            raise LineProcessingError("Not a valid constant")
-
-        constant_is_label = token_utils.is_label(constant)
-        constant_is_variable = token_utils.is_variable(constant)
-        constant_is_number = token_utils.is_number(constant)
-
-        constants = [
-            constant_is_label, constant_is_variable, constant_is_number
-        ]
-
-        num_constants = sum([1 for _constant in constants if _constant])
-        if num_constants > 1:
-            raise LineProcessingError("Constant is of more than one type")
-
-        if constant_is_label:
-            mc_byte["constant_type"] = "label"
-        elif constant_is_variable:
-            mc_byte["constant_type"] = "variable"
-        else:
-            mc_byte["constant_type"] = "number"
-            value = token_utils.number_constant_value(constant)
-            if not (number_utils.number_is_within_bit_limit(
-                    value, bit_width=8)):
-                msg = (
-                    "Number specified ({number}) is not within the "
-                    "range of values that a byte can store "
-                    "(-127 to 255)".format(number=constant)
+            if (isinstance(token, assembly_tokens.NUMBER)
+                    and not number_utils.number_is_within_bit_limit(
+                        token.value, bit_width=16)):
+                details = (
+                    "Number token: \"{token}\" with a value of {value} "
+                    "is outside the supported range of -32767 to 65535 "
+                    "(inclusive).".format(
+                        token=token.raw, value=token.value
+                    )
                 )
-                raise LineProcessingError(msg)
-            mc_byte["number_value"] = value
+                msg = ERROR_TEMPLATE.format(
+                    line_no=line.line_no,
+                    line=line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
 
 
-def assign_machine_code_byte_indexes(assembly_lines):
+def check_multiple_alias_defs(assembly_lines):
     """
-    Assign indexes to the machine code bytes.
+    Check if an alias has been defined multiple times.
 
-    This modifies the passed in list of assembly lines, adding data to
-    it.
+    E.g. This is allowed::
+
+        !MY_ALIAS #123
+        !OTHER_ALIAS #456
+
+    But this is not::
+
+        !MY_ALIAS #123
+        !MY_ALIAS #456
 
     Args:
-        assembly_lines (list(dict)): Lines of assembly to add label
-        information to.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If the same alias has been defined more than
+            once.
     """
 
-    mc_byte_index = 0
+    aliases = set()
+    alias_lines = {}
     for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                mc_byte["index"] = mc_byte_index
-                mc_byte_index += 1
+        if isinstance(assembly_line.pattern, assembly_patterns.AliasDefinition):
+            alias = assembly_line.pattern.name
+            if alias in aliases:
+                details = (
+                    "The alias: \"{alias}\" has already been defined on "
+                    "line {prev_line}.".format(
+                        alias=alias,
+                        prev_line=alias_lines[alias],
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                aliases.add(alias)
+                alias_lines[alias] = assembly_line.line_no
 
 
-def assign_labels(assembly_lines):
+def check_for_duplicate_markers(assembly_lines):
     """
-    Assign labels to the lines for later reference
+    Check if a marker been assigned more than once.
 
-    This modifies the passed in list of assembly lines, adding data to
-    it.
+    E.g. This is allowed::
+
+        $marker_1
+            NOOP
+        $marker_2
+            "hello"
+
+    But this is not::
+
+        $marker_0
+            NOOP
+        $marker_1
+            ADD A
+        $marker_0
+            NOT ACC
+
+    As ``$marker_0`` is already assigned to the index holding the
+    ``NOOP`` instruction, so cannot also be assigned the index of the
+    ``NOT ACC`` instruction
 
     Args:
-        assembly_lines (list(dict)): Lines of assembly to add label
-        information to.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If the same marker has been defined more than
+            once.
     """
 
-    label = None
+    markers = set()
+    marker_lines = {}
     for assembly_line in assembly_lines:
-        if label is None and assembly_line["defines_label"]:
-            label = assembly_line["defined_label"]
-        if assembly_line["has_machine_code"] and label is not None:
-            assembly_line["has_label_assigned"] = True
-            assembly_line["assigned_label"] = label
-            label = None
+        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
+            marker = assembly_line.pattern.name
+            if marker in markers:
+                details = (
+                    "The marker: \"{marker}\" has already been defined on "
+                    "line {prev_line}.".format(
+                        marker=marker,
+                        prev_line=marker_lines[marker],
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                markers.add(marker)
+                marker_lines[marker] = assembly_line.line_no
 
 
-def resolve_labels(assembly_lines):
+def check_multiple_marker_assignment(assembly_lines):
     """
-    Resolve labels to indexes in the machine code bytes.
+    Check if a line would be assigned more than one marker.
 
-    This modifies the passed in list of assembly line dictionaries.
+    E.g. This is allowed::
+
+        &marker_1
+            NOOP
+        &marker_2
+            SET_ZERO A
+
+    But this is not::
+
+        &marker_1
+        &marker_2
+            SET_ZERO A
+
+    As the ``SET_ZERO A`` instruction would have both ``&marker_1`` and
+    ``&marker_2`` assgned to it.
 
     Args:
-        assembly_lines (list(dict)): List of assembly lines to resolve
-            label references in.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a line been assigned more than one marker.
     """
 
-    label_map = create_label_map(assembly_lines)
+    marker_queued = False
+    last_marker = ""
     for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                if (mc_byte["byte_type"] == "constant"
-                        and mc_byte["constant_type"] == "label"):
-                    label = mc_byte["constant"]
-                    mc_byte["bitstring"] = label_map[label]
+        if (marker_queued
+                and isinstance(assembly_line.pattern, assembly_patterns.Marker)):
+            details = (
+                "There is already a marker ({marker}) queued for "
+                "assignment to the next machinecode word.".format(
+                    marker=last_marker
+                )
+            )
+            msg = ERROR_TEMPLATE.format(
+                line_no=assembly_line.line_no,
+                line=assembly_line.raw_line,
+                details=details,
+            )
+            raise AssemblyError(msg)
+
+        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
+            marker_queued = True
+            last_marker = assembly_line.pattern.name
+
+        if assembly_line.pattern.machinecode and marker_queued:
+            marker_queued = False
 
 
-def create_label_map(assembly_lines):
+def assign_machinecode_indecies(assembly_lines):
     """
-    Create a map of labels to machine code byte indexes.
+    Assign indecies to all the machinecode words.
+
+    Instructions can resolve to more than one word, and sections of
+    assembly can be anchored via an explicitly defined marker so the
+    machine code index has no correlation to the assembly line index.
+
+    Edits the assembly lines in place.
 
     Args:
-        assembly_lines (list(dict)): List of assembly lines to create a
-            label map for.
-    Returns:
-        dict(str:str): Dictionary of label names to machine code
-        indexes.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    """
+    next_mc_index = 0
+    for line in assembly_lines:
+        if isinstance(line.pattern, Anchor):
+            next_mc_index = line.pattern.value()
+
+        for word in line.pattern.machinecode:
+            word.index = next_mc_index
+            next_mc_index = next_mc_index + 1
+
+
+def check_for_colliding_indecies(assembly_lines):
+    """
+    Check that all machinecode words have a unique index.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a machine code word collides with another.
     """
 
-    label_map = {}
-    mc_byte_index = 0
+    indecies_to_lines = {}
     for assembly_line in assembly_lines:
-        if assembly_line["has_label_assigned"]:
-            index_bit_string = number_utils.number_to_bitstring(mc_byte_index)
-            label_map[assembly_line["assigned_label"]] = index_bit_string
-        if assembly_line["has_machine_code"]:
-            mc_byte_index += len(assembly_line["mc_bytes"])
-    return label_map
+        if assembly_line.has_machinecode():
+            for machinecode_word in assembly_line.machinecode:
+                index = machinecode_word.index
+                if index in indecies_to_lines:
+                    details = (
+                        "The machinecode word at index {index} "
+                        "from assembly line {curr_line} ({curr_line_content}) collides "
+                        "with the machinecode word already defined "
+                        "there from assembly line {prior_line} ({prior_line_content})".format(
+                            index=index,
+                            curr_line=assembly_line.line_no,
+                            curr_line_content=assembly_line.raw_line,
+                            prior_line=indecies_to_lines[index].line_no,
+                            prior_line_content=indecies_to_lines[index].raw_line
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+                else:
+                    indecies_to_lines[index] = assembly_line
+
+
+def check_for_out_of_range_indecies(assembly_lines):
+    """
+    Check that all machinecode words have a valid index.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a machine code word collides with another.
+    """
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            if (word.index < 0) or (word.index > ((2**16) - 1)):
+                details = (
+                    "The machinecode word(s) would be placed at an "
+                    "index that is not within the range 0-65535 "
+                    "inclusive. ({index})".format(
+                        index=word.index
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
 
 
 def resolve_numbers(assembly_lines):
     """
-    Resolve number constants to machine code byte values.
+    Resolve any number tokens used in machine code.
 
-    This modifies the passed in list of assembly line dictionaries.
-
-    Args:
-        assembly_lines (list(dict)): List of assembly lines to resolve
-            numbers for.
-    """
-    for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                if (mc_byte["byte_type"] == "constant"
-                        and mc_byte["constant_type"] == "number"):
-                    number = mc_byte["number_value"]
-                    mc_byte["bitstring"] = number_utils.number_to_bitstring(
-                        number
-                    )
-
-
-def resolve_variables(assembly_lines):
-    """
-    Resolve variable constants to indexes in data memory.
-
-    This modifies the passed in list of assembly line dictionaries.
+    Modifies the assmebly lines in place.
 
     Args:
-        assembly_lines (list(dict)): List of assembly lines to resolve
-            variables in.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
     """
-    variable_map = create_variable_map(assembly_lines)
-    for assembly_line in assembly_lines:
-        if assembly_line["has_machine_code"]:
-            for mc_byte in assembly_line["mc_bytes"]:
-                if (mc_byte["byte_type"] == "constant"
-                        and mc_byte["constant_type"] == "variable"):
-                    variable = mc_byte["constant"]
-                    mc_byte["bitstring"] = variable_map[variable]
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            token = word.const_token
+            if isinstance(token, assembly_tokens.NUMBER):
+                word.value = token.value
 
 
-def create_variable_map(assembly_lines):
+def build_alias_map(assembly_lines):
     """
-    Create a map of variables to indexes in data memory.
+    Build a mapping of aliases to thier values.
 
     Args:
-        assembly_lines (list(dict)): List of assembly lines to create a
-            variable map for.
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
     Returns:
-        dict(str:str): Dictionary of variable names to machine code
-        indexes.
+        Dict[str, int]: Dictionary of alias
+        name keys to thier values.
+    """
+    alias_map = {}
+    for line in assembly_lines:
+        if isinstance(line.pattern, assembly_patterns.AliasDefinition):
+            alias_map[line.pattern.name] = line.pattern.value
+    return alias_map
+
+
+def resolve_aliases(assembly_lines, alias_map):
+    """
+    Resolve any references to aliases in machinecode words.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If an alias has been referenced but not defined.
+    """
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            token = word.const_token
+            if isinstance(token, assembly_tokens.ALIAS):
+                try:
+                    word.value = alias_map[token.value]
+                except KeyError:
+                    details = (
+                        "The alias: {alias} has not been defined.".format(
+                            alias=token.value
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+
+
+def build_marker_map(assembly_lines):
+    """
+    Build a mapping of markers to thier values.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Returns:
+        dict of str to int: Dictionary of marker name keys to thier values.
+    """
+    marker_map = {}
+    marker = None
+    for line in assembly_lines:
+        if isinstance(line.pattern, pattern.Marker):
+            marker = line.pattern.name
+
+        if marker is not None and line.pattern.machinecode:
+            marker_map[marker] = line.pattern.machinecode[0].index
+            marker = None
+    return marker_map
+
+
+def resolve_markers(assembly_lines, marker_map):
+    """
+    Resolve any references to markers in machinecode words.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a marker has been referenced but not defined.
+    """
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            token = word.const_token
+            if isinstance(token, assembly_tokens.MARKER):
+                try:
+                    word.value = marker_map[token.value]
+                except KeyError:
+                    details = (
+                        "The marker: {marker} has not been defined.".format(
+                            marker=token.value
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+
+
+def assembly_lines_to_dictionary(assembly_lines):
+    """
+    Convert the assembly lines to a dictionary of indexes and values.
+
+    The keys in the dictionary are the indexes of the machinecode words
+    to write, the values are the unsigned int equivalents of the
+    machinecode words.
+
+    Args:
+        assembly_lines (List(AssemblyLine)): Fully processed assembly
+            lines to convert to a raw dictionary.
+
+    Returns:
+        Dict(int,int)
     """
 
-    variable_map = {}
-    for assembly_line in assembly_lines:
-
-        # Check for defined variable
-        if assembly_line["defines_variable"]:
-            variable = assembly_line["defined_variable"]
-            if variable in variable_map:
-                continue
-            variable_map[variable] = number_utils.number_to_bitstring(
-                assembly_line["defined_variable_location"]
-            )
-            continue
-
-    return variable_map
+    assembly = {}
+    for line in assembly_lines:
+        for word in pattern.machinecode:
+            assembly[word.index] = word.value
+    return assembly

@@ -11,16 +11,47 @@ from .new_exceptions import (
 )
 
 ERROR_TEMPLATE = "Error processing line {line_no} ({line}): {details}"
-
+"""
+    The template for top level error reports during assembly.
+"""
 
 class AssemblyLine():
+    """
+    Representation of a line in the assembly file.
+    """
     def __init__(self, raw_line=None, pattern=None, line_no=None):
+        """
+        Initialise the class
+
+        Args:
+            raw_line (str): The line of assembly code as it was in the
+                assembly file.
+            pattern (:class:`~sixteen_bit_computer.assembly_patterns.Pattern`):
+                The pattern this line corresponds to.
+            line_no (int): The line of the assembly file this line came
+                from
+        """
         self.raw_line = raw_line
         self.pattern = pattern
         self.line_no = line_no
 
 
 def ingest_raw_assembly_lines(lines):
+    """
+    Take strings and convert to :class:`~sixteen_bit_computer.new_assembler.AssemblyLine`
+    objects.
+
+    All lines are processed in isolation at this point.
+    :func:`process_assembly_lines` has a more global view of how lines
+    interact with each other .
+
+    Args:
+        lines (list(str)): List of assembly lines to ingest
+    Returns: list(:class:`~sixteen_bit_computer.new_assembler.AssemblyLine`):
+    List of processed assembly lines.
+    Raises:
+        LineProcessingError: If there was problem processing a line.
+    """
     assembly_lines = []
     for line_no, raw_line in enumerate(lines, start=1):
         try:

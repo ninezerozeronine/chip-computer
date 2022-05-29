@@ -4,80 +4,81 @@ The SET_ZERO operation.
 Sets the given module to zero.
 """
 
-from itertools import product
-
+from .. import instruction_listings
+from .. import number_utils
+from . import utils
+from ..data_structures import Word
+from ..instruction_components import SET_ZERO, ACC, A, B, C
 from ..language_defs import (
-    INSTRUCTION_GROUPS,
     MODULE_CONTROL,
     ALU_CONTROL_FLAGS,
-    ALU_OPERATIONS,
-    ALU_OPERANDS,
     FLAGS,
-    instruction_byte_from_bitdefs,
 )
 
-from ..operation_utils import assemble_instruction, match_and_parse_line
-from ..data_structures import (
-    get_arg_def_template, get_machine_code_byte_template
-)
 
-_NAME = "SET_ZERO"
+_SUPPORTED_SIGNATURES = frozenset([
+    (SET_ZERO, ACC),
+    (SET_ZERO, A),
+    (SET_ZERO, B),
+    (SET_ZERO, C),
+])
+"""
+The list of signatures this operation supports.
+
+An instruction signature is a tuple of the :mod:`Instruction component
+<.instruction_components>` s it's made up of.
+"""
 
 
-def generate_signatures():
+def generate_machinecode(signature, const_tokens):
     """
-    Generate the definitions of all possible arguments passable.
+    Generate machinecode for the given SET_ZERO operation.
 
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+        const_tokens (list(Token)): The tokens that represent constant
+            values in the instruction.
     Returns:
-        list(list(dict)): All possible arguments. See
-        :func:`~.get_arg_def_template` for more information.
+        list(Word): The machinecode for the given signature.
     """
+    if signature not in _SUPPORTED_SIGNATURES:
+        raise ValueError
 
-    signatures = []
-    for register in ("ACC", "A", "B", "C"):
-        signature = []
-
-        arg_def = get_arg_def_template()
-        arg_def["value_type"] = "module_name"
-        arg_def["value"] = register
-        signature.append(arg_def)
-
-        signatures.append(signature)
-
-    return signatures
+    return [
+        Word(value=instruction_listings.get_instruction_index(signature))
+    ]
 
 
 def generate_microcode_templates():
     """
-    Generate microcode for all the SET_ZERO operations.
+    Generate microcode for the SET_ZERO operation.
 
     Returns:
         list(DataTemplate): DataTemplates for all the SET_ZERO microcode.
     """
-
     data_templates = []
 
-    signatures = generate_signatures()
-    for signature in signatures:
-        templates = generate_operation_templates(signature)
+    for signature in _SUPPORTED_SIGNATURES:
+        templates = _generate_microcode_templates_for_sig(signature)
         data_templates.extend(templates)
 
     return data_templates
 
 
-def generate_operation_templates(signature):
+def _generate_microcode_templates_for_sig(signature):
     """
-    Create the DataTemplates to define an SET_ZERO with the given args.
+    Generate microcode for the SET_ZERO operation with the given
+    signature.
 
-    Args:
-        signature (list(dict)): List of argument definitions that
-            specify which particular not operation to generate
-            templates for.
     Returns:
-        list(DataTemplate) : Datatemplates that define this set_zero.
+        list(DataTemplate): DataTemplates for the particular SET_ZERO
+        operation microcode.
     """
-    instruction_byte_bitdefs = generate_instruction_byte_bitdefs(signature)
-
+    instr_index = instruction_listings.get_instruction_index(signature)
+    instr_index_bitdef = number_utils.number_to_bitstring(
+        instr_index, bit_width=8
+    )
     flags_bitdefs = [FLAGS["ANY"]]
 
     step_0 = [
@@ -87,66 +88,24 @@ def generate_operation_templates(signature):
 
     step_1 = [
         MODULE_CONTROL["ALU"]["OUT"],
-        MODULE_CONTROL[signature[0]["value"]]["IN"],
+        MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
     ]
 
     control_steps = [step_0, step_1]
 
-    return assemble_instruction(
-        instruction_byte_bitdefs, flags_bitdefs, control_steps
+    return utils.assemble_instruction_steps(
+        instr_index_bitdef, flags_bitdefs, control_steps
     )
 
 
-def generate_instruction_byte_bitdefs(signature):
+def supports(signature):
     """
-    Generate bitdefs to specify the instruction byte for these args.
+    Whether this operation provides a definition for the given signature.
 
     Args:
-        signature (list(dict)): List of argument definitions that
-            specify which particular not operation to generate
-            the instruction byte bitdefs for.
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
     Returns:
-        list(str): Bitdefs that make up the instruction_byte
+        bool: Whether it's supported or not.
     """
-
-    if signature[0]["value"] == "ACC":
-        alu_operands = ALU_OPERANDS["ACC/CONST"]
-    else:
-        alu_operands = ALU_OPERANDS[signature[0]["value"]]
-
-    return [
-        INSTRUCTION_GROUPS["ALU"],
-        ALU_OPERATIONS["ZERO"],
-        alu_operands,
-    ]
-
-
-def parse_line(line):
-    """
-    Parse a line of assembly code to create machine code byte templates.
-
-    If a line is not identifiably an SET_ZERO assembly line, return an
-    empty list instead.
-
-    Args:
-        line (str): Assembly line to be parsed.
-    Returns:
-        list(dict): List of instruction byte template dictionaries or an
-        empty list.
-    """
-
-    match, signature = match_and_parse_line(
-        line, _NAME, generate_signatures()
-    )
-
-    if not match:
-        return []
-
-    instruction_byte = instruction_byte_from_bitdefs(
-        generate_instruction_byte_bitdefs(signature)
-    )
-    mc_byte = get_machine_code_byte_template()
-    mc_byte["byte_type"] = "instruction"
-    mc_byte["bitstring"] = instruction_byte
-
-    return [mc_byte]
+    return signature in _SUPPORTED_SIGNATURES

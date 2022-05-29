@@ -4,21 +4,39 @@ The NOOP operation.
 Does nothing for one micro cycle.
 """
 
-from itertools import product
-
+from .. import instruction_listings
+from ..data_structures import Word
+from ..instruction_components import NOOP
+from .. import number_utils
 from ..language_defs import (
-    INSTRUCTION_GROUPS,
-    SRC_REGISTERS,
-    DEST_REGISTERS,
     MODULE_CONTROLS_NONE,
     FLAGS,
-    instruction_byte_from_bitdefs,
 )
+from . import utils
 
-from ..operation_utils import assemble_instruction, match_and_parse_line
-from ..data_structures import get_machine_code_byte_template
+_SUPPORTED_SIGNATURES = frozenset([
+    (NOOP,),
+])
 
-_NAME = "NOOP"
+
+def generate_machinecode(signature, const_tokens):
+    """
+    Generate machinecode for the NOOP instruction.
+
+    Args:
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
+        const_tokens (list(Token)): The tokens that represent constant
+            values in the instruction.
+    Returns:
+        list(Word): The machinecode for the given signature.
+    """
+    if signature not in _SUPPORTED_SIGNATURES:
+        raise ValueError
+
+    return [
+        Word(value=instruction_listings.get_instruction_index(signature))
+    ]
 
 
 def generate_microcode_templates():
@@ -28,54 +46,32 @@ def generate_microcode_templates():
     Returns:
         list(DataTemplate): DataTemplates for all the NOOP microcode.
     """
-    instruction_byte_bitdefs = generate_instruction_byte_bitdefs()
-    flags_bitdefs = [FLAGS["ANY"]]
-    control_steps = [[MODULE_CONTROLS_NONE]]
+    data_templates = []
 
-    return assemble_instruction(
-        instruction_byte_bitdefs, flags_bitdefs, control_steps
-    )
+    for signature in _SUPPORTED_SIGNATURES:
+        instr_index = instruction_listings.get_instruction_index(signature)
+        instr_index_bitdef = number_utils.number_to_bitstring(
+            instr_index, bit_width=8
+        )
+        flags_bitdefs = [FLAGS["ANY"]]
+        control_steps = [[MODULE_CONTROLS_NONE]]
+
+        templates = utils.assemble_instruction_steps(
+            instr_index_bitdef, flags_bitdefs, control_steps
+        )
+        data_templates.extend(templates)
+
+    return data_templates
 
 
-def generate_instruction_byte_bitdefs():
+def supports(signature):
     """
-    Generate bitdefs to specify the NOOP instruction.
-
-    Returns:
-        list(str): Bitdefs that make up the instruction_byte
-    """
-
-    return [
-        INSTRUCTION_GROUPS["LOAD"],
-        SRC_REGISTERS["SP+/-"],
-        DEST_REGISTERS["SP+/-"],
-    ]
-
-
-def parse_line(line):
-    """
-    Parse a line of assembly code to create machine code byte templates.
-
-    If a line is not identifiably an NOOP assembly line, return an
-    empty list instead.
+    Whether this operation provides a definition for the given signature.
 
     Args:
-        line (str): Assembly line to be parsed.
+        signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
+            The signature to check.
     Returns:
-        list(dict): List of instruction byte template dictionaries or an
-        empty list.
+        bool: Whether it's supported or not.
     """
-
-    match, signature = match_and_parse_line(line, _NAME)
-
-    if not match:
-        return []
-
-    instruction_byte = instruction_byte_from_bitdefs(
-        generate_instruction_byte_bitdefs()
-    )
-    mc_byte = get_machine_code_byte_template()
-    mc_byte["byte_type"] = "instruction"
-    mc_byte["bitstring"] = instruction_byte
-
-    return [mc_byte]
+    return signature in _SUPPORTED_SIGNATURES
