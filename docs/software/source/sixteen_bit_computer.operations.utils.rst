@@ -1,7 +1,7 @@
-sixteen\_bit\_computer.decimal\_display module
+sixteen\_bit\_computer.operations.utils module
 ==============================================
 
-.. automodule:: sixteen_bit_computer.decimal_display
+.. automodule:: sixteen_bit_computer.operations.utils
    :members:
    :undoc-members:
    :show-inheritance:

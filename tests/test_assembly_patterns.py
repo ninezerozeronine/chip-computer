@@ -14,7 +14,7 @@ from sixteen_bit_computer.assembly_patterns import (
     VariableDef,
     Instruction,
 )
-from sixteen_bit_computer.new_assembler import get_tokens
+from sixteen_bit_computer.assembler import get_tokens
 from sixteen_bit_computer.data_structures import Word
 from sixteen_bit_computer import instruction_components as ics
 

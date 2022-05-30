@@ -14,7 +14,7 @@ from .instruction_components import (
     CONST,
     M_CONST,
 )
-from . import new_operations
+from . import operations
 
 
 _INSTRUCTION_SIGNATURES = frozenset([
@@ -128,7 +128,7 @@ def _generate_signature_to_machinecode_function_map():
     """
     mapping = {}
     for signature in _INSTRUCTION_SIGNATURES:
-        for operation in new_operations.get_all_operations():
+        for operation in operations.get_all_operations():
             if operation.supports(signature):
                 mapping[signature] = operation.generate_machinecode
     return mapping

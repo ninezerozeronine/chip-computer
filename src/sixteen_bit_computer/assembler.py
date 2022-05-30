@@ -1,7 +1,7 @@
 from . import assembly_patterns
 from . import assembly_tokens
 from . import number_utils
-from .new_exceptions import (
+from .exceptions import (
     AssemblyError,
     LineProcessingError,
     NoMatchingTokensError,
@@ -26,10 +26,9 @@ class AssemblyLine():
         Args:
             raw_line (str): The line of assembly code as it was in the
                 assembly file.
-            pattern (:class:`~sixteen_bit_computer.assembly_patterns.Pattern`):
-                The pattern this line corresponds to.
+            pattern (Pattern): The pattern this line corresponds to.
             line_no (int): The line of the assembly file this line came
-                from
+                from.
         """
         self.raw_line = raw_line
         self.pattern = pattern
@@ -38,17 +37,17 @@ class AssemblyLine():
 
 def ingest_raw_assembly_lines(lines):
     """
-    Take strings and convert to :class:`~sixteen_bit_computer.new_assembler.AssemblyLine`
+    Take strings and convert to :class:`~sixteen_bit_computer.assembler.AssemblyLine`
     objects.
 
     All lines are processed in isolation at this point.
     :func:`process_assembly_lines` has a more global view of how lines
-    interact with each other .
+    interact with each other.
 
     Args:
         lines (list(str)): List of assembly lines to ingest
-    Returns: list(:class:`~sixteen_bit_computer.new_assembler.AssemblyLine`):
-    List of processed assembly lines.
+    Returns:
+        list(AssemblyLine): List of processed assembly lines.
     Raises:
         LineProcessingError: If there was problem processing a line.
     """
@@ -73,26 +72,6 @@ def ingest_raw_assembly_lines(lines):
         )
 
     return assembly_lines
-
-
-def process_assembly_lines(assembly_lines):
-
-    check_numbers_in_range(assembly_lines)
-    check_multiple_alias_defs(assembly_lines)
-    check_for_duplicate_markers(assembly_lines)
-    check_multiple_marker_assignment(assembly_lines)
-
-    assign_machinecode_indecies(assembly_lines)
-    check_for_colliding_indecies(assembly_lines)
-    check_for_out_of_range_indecies(assembly_lines)
-
-    resolve_numbers(assembly_lines)
-
-    alias_map = build_alias_map(assembly_lines)
-    resolve_aliases(assembly_lines, alias_map)
-
-    marker_map = build_marker_map(assembly_lines)
-    resolve_markers(assembly_lines, marker_map)
 
 
 def pattern_from_line(line):
@@ -141,11 +120,13 @@ def get_tokens(line):
     Args:
         line (str): Line to get tokens from.
     Returns:
-        list[Token] or None: List of tokens on this line (could be
+        list(Token) or None: List of tokens on this line (could be
             empty).
     Raises:
-        NoMatchingTokensError: When a matching token was not found.
-        MultipleMatchingTokensError: When multiple tokens matched.
+        NoMatchingTokensError: When no matching tokens were found for
+            something on the line.
+        MultipleMatchingTokensError: When multiple tokens matched
+            something on the line.
     """
 
     if not line:
@@ -185,7 +166,7 @@ def get_words_from_line(line):
     Args:
         line (str): Line to convert to tokens.
     Returns:
-        list of str: The words in the line.
+        list(str): The words in the line.
     """
 
     # Does line have any content
@@ -205,8 +186,9 @@ def get_pattern(tokens):
     Find the pattern that the tokens match.
 
     Args:
-        tokens (List[Token]): The tokens to match to a
-            pattern. Can be an empty list - returns a NullPattern.
+        tokens (list(Token)): The tokens to match to a
+            pattern. Can be an empty list - returns a
+            :class:`~sixteen_bit_computer.assembly_patterns.NullPattern`.
     Returns:
         Pattern or None: The pattern that matches the tokens.
     Raises:
@@ -229,6 +211,26 @@ def get_pattern(tokens):
         raise MultipleMatchingPatternsError("Multiple patterns matched")
 
     return matched_patterns[0]
+
+
+def process_assembly_lines(assembly_lines):
+
+    check_numbers_in_range(assembly_lines)
+    check_multiple_alias_defs(assembly_lines)
+    check_for_duplicate_markers(assembly_lines)
+    check_multiple_marker_assignment(assembly_lines)
+
+    assign_machinecode_indecies(assembly_lines)
+    check_for_colliding_indecies(assembly_lines)
+    check_for_out_of_range_indecies(assembly_lines)
+
+    resolve_numbers(assembly_lines)
+
+    alias_map = build_alias_map(assembly_lines)
+    resolve_aliases(assembly_lines, alias_map)
+
+    marker_map = build_marker_map(assembly_lines)
+    resolve_markers(assembly_lines, marker_map)
 
 
 def check_numbers_in_range(assembly_lines):
@@ -289,7 +291,7 @@ def check_multiple_alias_defs(assembly_lines):
     aliases = set()
     alias_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(assembly_line.pattern, assembly_patterns.AliasDefinition):
+        if isinstance(assembly_line.pattern, assembly_patterns.AliasDef):
             alias = assembly_line.pattern.name
             if alias in aliases:
                 details = (
@@ -310,9 +312,9 @@ def check_multiple_alias_defs(assembly_lines):
                 alias_lines[alias] = assembly_line.line_no
 
 
-def check_for_duplicate_markers(assembly_lines):
+def check_for_duplicate_label_names(assembly_lines):
     """
-    Check if a marker been assigned more than once.
+    Check if a label name has been used more than once.
 
     E.g. This is allowed::
 
@@ -338,21 +340,21 @@ def check_for_duplicate_markers(assembly_lines):
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
-        AssemblyError: If the same marker has been defined more than
+        AssemblyError: If the same label name has been used more than
             once.
     """
 
-    markers = set()
-    marker_lines = {}
+    labels = set()
+    label_lines = {}
     for assembly_line in assembly_lines:
-        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
-            marker = assembly_line.pattern.name
-            if marker in markers:
+        if isinstance(assembly_line.pattern, assembly_patterns.Label):
+            label = assembly_line.pattern.name
+            if label in labels:
                 details = (
-                    "The marker: \"{marker}\" has already been defined on "
+                    "The label: \"{label}\" has already been defined on "
                     "line {prev_line}.".format(
-                        marker=marker,
-                        prev_line=marker_lines[marker],
+                        label=label,
+                        prev_line=label_lines[label],
                     )
                 )
                 msg = ERROR_TEMPLATE.format(
@@ -362,8 +364,8 @@ def check_for_duplicate_markers(assembly_lines):
                 )
                 raise AssemblyError(msg)
             else:
-                markers.add(marker)
-                marker_lines[marker] = assembly_line.line_no
+                labels.add(label)
+                label_lines[label] = assembly_line.line_no
 
 
 def check_multiple_marker_assignment(assembly_lines):
@@ -540,7 +542,7 @@ def build_alias_map(assembly_lines):
     """
     alias_map = {}
     for line in assembly_lines:
-        if isinstance(line.pattern, assembly_patterns.AliasDefinition):
+        if isinstance(line.pattern, assembly_patterns.AliasDef):
             alias_map[line.pattern.name] = line.pattern.value
     return alias_map
 
