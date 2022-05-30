@@ -206,10 +206,10 @@ def test_ingest_raw_assembly_lines():
         """
     ).splitlines(),
 ])
-def test_check_multiple_alias_defs_raises(test_input):
+def test_check_for_duplicate_alias_names_raises(test_input):
     processed = assembler.ingest_raw_assembly_lines(test_input)
     with pytest.raises(AssemblyError):
-        assembler.check_multiple_alias_defs(processed)
+        assembler.check_for_duplicate_alias_names(processed)
 
 
 @pytest.mark.parametrize("test_input", [
@@ -232,17 +232,17 @@ def test_check_multiple_alias_defs_raises(test_input):
         """
     ).splitlines(),
 ])
-def test_check_multiple_alias_defs_doesnt_raise(test_input):
+def test_check_for_duplicate_alias_names_doesnt_raise(test_input):
     processed = assembler.ingest_raw_assembly_lines(test_input)
-    assembler.check_multiple_alias_defs(processed)
+    assembler.check_for_duplicate_alias_names(processed)
 
 
 @pytest.mark.parametrize("test_input", [
     textwrap.dedent(
         """\
-        $marker_0 #123
-        $marker_1 #456
-        $marker_0 #456
+        &label_0
+        &label_1
+        &label_0
 
             NOOP
             NOOP
@@ -256,22 +256,22 @@ def test_check_multiple_alias_defs_doesnt_raise(test_input):
             NOOP
             // A comment
 
-        $marker_0 #123
-        $marker_1 #456
-        $marker_0 #456
+        &label_0
+        &label_1
+        &label_0
         """
     ).splitlines(),
 
     textwrap.dedent(
         """\
-        $marker1 #0b1010
+        &label1
             NOOP
 
-        $marker2 #456
+        &label2
             // A comment
             SET_ZERO A
 
-        $marker1 #45
+        &label1
             NOOP
             SET_ZERO B
         """
@@ -279,48 +279,48 @@ def test_check_multiple_alias_defs_doesnt_raise(test_input):
 
     textwrap.dedent(
         """\
-        $marker1 #123
+        &label1
 
             // A comment
             SET_ZERO A
 
-        $marker2
+        &label2
             NOOP
             SET_ZERO B
 
-        $marker1 #0b1010
+        &label1
             NOOP
         """
     ).splitlines(),
 
     textwrap.dedent(
         """\
-        $marker1 #123
+        &label1
 
             // A comment
             SET_ZERO A
 
-        $marker2
+        &label2
             NOOP
             SET_ZERO B
 
-        $marker2
+        &label2
             NOOP
         """
     ).splitlines(),
 ])
-def test_check_multiple_marker_defs_raises(test_input):
+def test_check_for_duplicate_label_names_raises(test_input):
     processed = assembler.ingest_raw_assembly_lines(test_input)
     with pytest.raises(AssemblyError):
-        assembler.check_multiple_marker_defs(processed)
+        assembler.check_for_duplicate_label_names(processed)
 
 
 @pytest.mark.parametrize("test_input",  [
     textwrap.dedent(
         """\
-        $marker_0 #123
-        $marker_1 #456
-        $marker_2 #456
+        &label_0
+        &label_1
+        &label_2
 
             NOOP
             NOOP
@@ -334,22 +334,22 @@ def test_check_multiple_marker_defs_raises(test_input):
             NOOP
             // A comment
 
-        $marker_0 #123
-        $marker_1 #456
-        $marker_2 #456
+        &label_0
+        &label_1
+        &label_2
         """
     ).splitlines(),
 
     textwrap.dedent(
         """\
-        $marker1 #0b1010
+        &label1
             NOOP
 
-        $marker2 #456
+        &label2
             // A comment
             SET_ZERO A
 
-        $marker3 #45
+        &label3
             NOOP
             SET_ZERO B
         """
@@ -357,168 +357,61 @@ def test_check_multiple_marker_defs_raises(test_input):
 
     textwrap.dedent(
         """\
-        $marker1 #123
+        &label1
 
             // A comment
             SET_ZERO A
 
-        $marker2
+        &label2
             NOOP
             SET_ZERO B
 
-        $marker3 #0b1010
+        &label3
             NOOP
         """
     ).splitlines(),
 
     textwrap.dedent(
         """\
-        $marker1 #123
+        &label1
 
             // A comment
             SET_ZERO A
 
-        $marker2
+        &label2
             NOOP
             SET_ZERO B
 
-        $marker3
+        &label3
             NOOP
         """
     ).splitlines(),
 ])
-def test_check_multiple_marker_defs_doesnt_raise(test_input):
+def test_check_check_for_duplicate_label_names_doesnt_raise(test_input):
     processed = assembler.ingest_raw_assembly_lines(test_input)
-    assembler.check_multiple_marker_defs(processed)
+    assembler.check_for_duplicate_label_names(processed)
 
 
 @pytest.mark.parametrize("test_input", [
-    textwrap.dedent(
-        """\
-        $marker0
-            NOOP
-
-        $marker1
-        $marker2
-            NOOP
-            // A comment
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        $marker1 #0b1010
-            NOOP
-
-        $marker2 #456
-        $marker3
-        $marker4
-            // A comment
-            SET_ZERO A
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        $marker1 #0b1010
-            NOOP
-
-        $marker2 #456
-        $marker3
-        $marker3
-            // A comment
-            SET_ZERO A
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        $marker1 #123
-            // A comment
-            SET_ZERO A
-
-        $marker2
-            // A comment
-
-        $marker3
-            SET_ZERO B
-
-        $marker4 #0b1010
-            NOOP
-        """
-    ).splitlines(),
-])
-def test_check_multiple_marker_assignment_raises(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    with pytest.raises(AssemblyError):
-        assembler.check_multiple_marker_assignment(processed)
-
-
-@pytest.mark.parametrize("test_input", [
-    textwrap.dedent(
-        """\
-        $marker0
-            NOOP
-
-        $marker1
-            NOOP
-            // A comment
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        $marker1 #0b1010
-            NOOP
-
-        $marker2 #456
-        $marker3
-            // A comment
-            SET_ZERO A
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        $marker1 #123
-            // A comment
-            SET_ZERO A
-
-        $marker2
-            // A comment
-
-            SET_ZERO B
-
-        $marker4 #0b1010
-            NOOP
-        """
-    ).splitlines(),
-])
-def test_check_multiple_marker_assignment_doesnt_raise(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    assembler.check_multiple_marker_assignment(processed)
-
-
-@pytest.mark.parametrize("test_input", [
-    ("!alias #-70000",),
-    ("$marker #0xBEEEEF",),
-    ("DATA #123 #-40000",),
-    ("ADD #100000",),
-    ("AND [#100000]",),
+    "@ #987654",
+    "!alias #-70000",
+    "$variable #123 #-40000",
+    "ADD #100000",
+    "AND [#100000]",
 ])
 def test_check_numbers_in_range_raises(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
+    processed = assembler.ingest_raw_assembly_lines([test_input])
     with pytest.raises(AssemblyError):
         assembler.check_numbers_in_range(processed)
 
 
 @pytest.mark.parametrize("test_input", [
-    ("!alias #-700",),
-    ("$marker #0xBEEF",),
-    ("DATA #123 #-10000",),
-    ("ADD #0b1111111111",),
-    ("AND [#45]",),
+    "@ #987",
+    "!alias #-700",
+    "$variable #123 #-10000",
+    "ADD #0b1111111111",
+    "AND [#45]",
 ])
 def test_check_numbers_in_range_doesnt_raise(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
+    processed = assembler.ingest_raw_assembly_lines([test_input])
     assembler.check_numbers_in_range(processed)

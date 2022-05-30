@@ -216,9 +216,10 @@ def get_pattern(tokens):
 def process_assembly_lines(assembly_lines):
 
     check_numbers_in_range(assembly_lines)
-    check_multiple_alias_defs(assembly_lines)
-    check_for_duplicate_markers(assembly_lines)
-    check_multiple_marker_assignment(assembly_lines)
+    check_anchors_are_in_range(assembly_lines)
+    check_for_duplicate_alias_names(assembly_lines)
+    check_for_duplicate_label_names(assembly_lines)
+    check_for_duplicate_variable_names(assembly_lines)
 
     assign_machinecode_indecies(assembly_lines)
     check_for_colliding_indecies(assembly_lines)
@@ -266,7 +267,7 @@ def check_numbers_in_range(assembly_lines):
                 raise AssemblyError(msg)
 
 
-def check_multiple_alias_defs(assembly_lines):
+def check_for_duplicate_alias_names(assembly_lines):
     """
     Check if an alias has been defined multiple times.
 
@@ -281,7 +282,7 @@ def check_multiple_alias_defs(assembly_lines):
         !MY_ALIAS #456
 
     Args:
-        assembly_lines (List[AssemblyLine]): List of
+        assembly_lines (List(AssemblyLine)): List of
             processed lines of assembly.
     Raises:
         AssemblyError: If the same alias has been defined more than
@@ -318,23 +319,23 @@ def check_for_duplicate_label_names(assembly_lines):
 
     E.g. This is allowed::
 
-        $marker_1
+        &label_1
             NOOP
-        $marker_2
+        &label_2
             "hello"
 
     But this is not::
 
-        $marker_0
+        &label_0
             NOOP
-        $marker_1
+        &label_1
             ADD A
-        $marker_0
+        &label_0
             NOT ACC
 
-    As ``$marker_0`` is already assigned to the index holding the
+    As ``&label_0`` is already assigned to the index holding the
     ``NOOP`` instruction, so cannot also be assigned the index of the
-    ``NOT ACC`` instruction
+    ``NOT ACC`` instruction.
 
     Args:
         assembly_lines (List[AssemblyLine]): List of
@@ -368,57 +369,61 @@ def check_for_duplicate_label_names(assembly_lines):
                 label_lines[label] = assembly_line.line_no
 
 
-def check_multiple_marker_assignment(assembly_lines):
+def check_for_duplicate_variable_names(assembly_lines):
     """
-    Check if a line would be assigned more than one marker.
+    Check if a variable name has been used more than once.
 
     E.g. This is allowed::
 
-        &marker_1
-            NOOP
-        &marker_2
-            SET_ZERO A
+        $variable1
+        $variable2 #23 #300
 
     But this is not::
 
-        &marker_1
-        &marker_2
-            SET_ZERO A
+        $variable_0
+        $variable_1
+        $variable_0
 
-    As the ``SET_ZERO A`` instruction would have both ``&marker_1`` and
-    ``&marker_2`` assgned to it.
+    Because is creates ambiguity over which memory address
+    ``$variable_0`` should be.
 
     Args:
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
-        AssemblyError: If a line been assigned more than one marker.
+        AssemblyError: If the same variable name has been used more than
+            once.
     """
 
-    marker_queued = False
-    last_marker = ""
+    variables = set()
+    variable_lines = {}
     for assembly_line in assembly_lines:
-        if (marker_queued
-                and isinstance(assembly_line.pattern, assembly_patterns.Marker)):
-            details = (
-                "There is already a marker ({marker}) queued for "
-                "assignment to the next machinecode word.".format(
-                    marker=last_marker
+        line_is_variable = isinstance(
+            assembly_line.pattern,
+            (
+                assembly_patterns.Variable,
+                assembly_patterns.VariableDef,
+            )
+        )
+        if line_is_variable:
+            variable = assembly_line.pattern.name
+            if variable in variables:
+                details = (
+                    "The variable: \"{variable}\" has already been defined on "
+                    "line {prev_line}.".format(
+                        variable=variable,
+                        prev_line=variable_lines[variable],
+                    )
                 )
-            )
-            msg = ERROR_TEMPLATE.format(
-                line_no=assembly_line.line_no,
-                line=assembly_line.raw_line,
-                details=details,
-            )
-            raise AssemblyError(msg)
-
-        if isinstance(assembly_line.pattern, assembly_patterns.Marker):
-            marker_queued = True
-            last_marker = assembly_line.pattern.name
-
-        if assembly_line.pattern.machinecode and marker_queued:
-            marker_queued = False
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                variables.add(variable)
+                variable_lines[variable] = assembly_line.line_no
 
 
 def assign_machinecode_indecies(assembly_lines):
@@ -426,23 +431,30 @@ def assign_machinecode_indecies(assembly_lines):
     Assign indecies to all the machinecode words.
 
     Instructions can resolve to more than one word, and sections of
-    assembly can be anchored via an explicitly defined marker so the
-    machine code index has no correlation to the assembly line index.
+    assembly can be placed with a anchor so the machine code index has
+    no correlation to the assembly line index.
 
     Edits the assembly lines in place.
 
     Args:
-        assembly_lines (List[AssemblyLine]): List of
+        assembly_lines (List(AssemblyLine)): List of
             processed lines of assembly.
     """
     next_mc_index = 0
     for line in assembly_lines:
+        # Place the machinecode words that follow at the position
+        # specified by the anchor.
         if isinstance(line.pattern, Anchor):
             next_mc_index = line.pattern.value()
 
+        # Reserve a word in memory for the variable.
+        if isinstance(line.pattern, Variable):
+            next_mc_index += 1
+
+        # Increment index for each machinecode word.
         for word in line.pattern.machinecode:
             word.index = next_mc_index
-            next_mc_index = next_mc_index + 1
+            next_mc_index += 1
 
 
 def check_for_colliding_indecies(assembly_lines):

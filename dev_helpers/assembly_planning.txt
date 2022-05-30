@@ -53,7 +53,7 @@ $message
 
 Tokens
     !<name> - Alias
-    @<number> - Anchor
+    @ <number> - Anchor
     &<name> - Label
     $<name> - Variable
     #<number> - Number
