@@ -187,212 +187,6 @@ def test_ingest_raw_assembly_lines():
 
 
 @pytest.mark.parametrize("test_input", [
-    textwrap.dedent(
-        """\
-        NOOP
-        NOOP
-        // A comment
-            !myalias #123
-            !myalias #456
-        """
-    ).splitlines(),
-    textwrap.dedent(
-        """\
-            !foobar #0b1010
-        NOOP
-        // A comment
-            !myalias #123
-            !foobar #456
-        """
-    ).splitlines(),
-])
-def test_check_for_duplicate_alias_names_raises(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    with pytest.raises(AssemblyError):
-        assembler.check_for_duplicate_alias_names(processed)
-
-
-@pytest.mark.parametrize("test_input", [
-    textwrap.dedent(
-        """\
-        NOOP
-        NOOP
-        // A comment
-            !myalias #123
-            !otheralias #456
-        """
-    ).splitlines(),
-    textwrap.dedent(
-        """\
-            !foobar #0b1010
-        NOOP
-        // A comment
-            !myalias #123
-            !hello #456
-        """
-    ).splitlines(),
-])
-def test_check_for_duplicate_alias_names_doesnt_raise(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    assembler.check_for_duplicate_alias_names(processed)
-
-
-@pytest.mark.parametrize("test_input", [
-    textwrap.dedent(
-        """\
-        &label_0
-        &label_1
-        &label_0
-
-            NOOP
-            NOOP
-            // A comment
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-            NOOP
-            NOOP
-            // A comment
-
-        &label_0
-        &label_1
-        &label_0
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-            NOOP
-
-        &label2
-            // A comment
-            SET_ZERO A
-
-        &label1
-            NOOP
-            SET_ZERO B
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-
-            // A comment
-            SET_ZERO A
-
-        &label2
-            NOOP
-            SET_ZERO B
-
-        &label1
-            NOOP
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-
-            // A comment
-            SET_ZERO A
-
-        &label2
-            NOOP
-            SET_ZERO B
-
-        &label2
-            NOOP
-        """
-    ).splitlines(),
-])
-def test_check_for_duplicate_label_names_raises(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    with pytest.raises(AssemblyError):
-        assembler.check_for_duplicate_label_names(processed)
-
-
-@pytest.mark.parametrize("test_input",  [
-    textwrap.dedent(
-        """\
-        &label_0
-        &label_1
-        &label_2
-
-            NOOP
-            NOOP
-            // A comment
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-            NOOP
-            NOOP
-            // A comment
-
-        &label_0
-        &label_1
-        &label_2
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-            NOOP
-
-        &label2
-            // A comment
-            SET_ZERO A
-
-        &label3
-            NOOP
-            SET_ZERO B
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-
-            // A comment
-            SET_ZERO A
-
-        &label2
-            NOOP
-            SET_ZERO B
-
-        &label3
-            NOOP
-        """
-    ).splitlines(),
-
-    textwrap.dedent(
-        """\
-        &label1
-
-            // A comment
-            SET_ZERO A
-
-        &label2
-            NOOP
-            SET_ZERO B
-
-        &label3
-            NOOP
-        """
-    ).splitlines(),
-])
-def test_check_check_for_duplicate_label_names_doesnt_raise(test_input):
-    processed = assembler.ingest_raw_assembly_lines(test_input)
-    assembler.check_for_duplicate_label_names(processed)
-
-
-@pytest.mark.parametrize("test_input", [
     "@ #987654",
     "!alias #-70000",
     "$variable #123 #-40000",
@@ -415,3 +209,474 @@ def test_check_numbers_in_range_raises(test_input):
 def test_check_numbers_in_range_doesnt_raise(test_input):
     processed = assembler.ingest_raw_assembly_lines([test_input])
     assembler.check_numbers_in_range(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+
+    """\
+        NOOP
+        NOOP
+    // A comment
+    @ #-1
+        !myalias #123
+        !myalias #456
+    """
+    ,
+
+    """\
+        !foobar #0b1010
+    NOOP
+    @ #500000
+    // A comment
+        !myalias #123
+        !foobar #456
+    """
+    ,
+])
+def test_check_anchors_are_in_range_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    with pytest.raises(AssemblyError):
+        assembler.check_anchors_are_in_range(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+        NOOP
+        NOOP
+    // A comment
+    @ #0
+        !myalias #123
+        !myalias #456
+    """
+    ,
+
+    """\
+        !foobar #0b1010
+    NOOP
+    @ #65535
+    // A comment
+        !myalias #123
+        !foobar #456
+    """
+    ,
+
+    """\
+        !foobar #0b1010
+    @ #5000
+    NOOP
+    @ #13
+    // A comment
+        !myalias #123
+        !foobar #456
+    """
+    ,
+])
+def test_check_anchors_are_in_range_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.check_anchors_are_in_range(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+    NOOP
+    NOOP
+    // A comment
+        !myalias #123
+        !myalias #456
+    """
+    ,
+
+    """\
+        !foobar #0b1010
+    NOOP
+    // A comment
+        !myalias #123
+        !foobar #456
+    """
+])
+def test_check_for_duplicate_alias_names_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_duplicate_alias_names(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+    NOOP
+    NOOP
+    // A comment
+        !myalias #123
+        !otheralias #456
+    """
+    ,
+
+    """\
+        !foobar #0b1010
+    NOOP
+    // A comment
+        !myalias #123
+        !hello #456
+    """
+])
+def test_check_for_duplicate_alias_names_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.check_for_duplicate_alias_names(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+    &label_0
+    &label_1
+    &label_0
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    &label_0
+    &label_1
+    &label_0
+    """
+    ,
+
+    """\
+    &label1
+        NOOP
+
+    &label2
+        // A comment
+        SET_ZERO A
+
+    &label1
+        NOOP
+        SET_ZERO B
+    """
+    ,
+
+    """\
+    &label1
+
+        // A comment
+        SET_ZERO A
+
+    &label2
+        NOOP
+        SET_ZERO B
+
+    &label1
+        NOOP
+    """
+    ,
+
+    """\
+    &label1
+
+        // A comment
+        SET_ZERO A
+
+    &label2
+        NOOP
+        SET_ZERO B
+
+    &label2
+        NOOP
+    """
+])
+def test_check_for_duplicate_label_names_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_duplicate_label_names(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    &label_0
+    &label_1
+    &label_2
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    &label_0
+    &label_1
+    &label_2
+    """
+    ,
+
+    """\
+    &label1
+        NOOP
+
+    &label2
+        // A comment
+        SET_ZERO A
+
+    &label3
+        NOOP
+        SET_ZERO B
+    """
+    ,
+
+    """\
+    &label1
+
+        // A comment
+        SET_ZERO A
+
+    &label2
+        NOOP
+        SET_ZERO B
+
+    &label3
+        NOOP
+    """
+    ,
+
+    """\
+    &label1
+
+        // A comment
+        SET_ZERO A
+
+    &label2
+        NOOP
+        SET_ZERO B
+
+    &label3
+        NOOP
+    """
+])
+def test_check_for_duplicate_label_names_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.check_for_duplicate_label_names(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+    $var_0
+    $var_1 #1 #34 #0xFF
+    $var_0
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    $var_0
+    $var_1
+    $var_0
+    """
+    ,
+
+    """\
+    $var1
+        NOOP
+
+    $var2
+        // A comment
+        SET_ZERO A
+
+    $var1
+        NOOP
+        SET_ZERO B
+    """
+    ,
+
+    """\
+    $var1
+
+        // A comment
+        SET_ZERO A
+
+    $var2
+        NOOP
+        SET_ZERO B
+        ADD [$var1]
+
+    $var1
+        NOOP
+    """
+    ,
+
+    """\
+    $var1
+
+        // A comment
+        SET_ZERO A
+
+    $var2
+        NOOP
+        SET_ZERO B
+        ADD [$var1]
+
+    $var2
+        NOOP
+    """
+])
+def test_check_for_duplicate_variable_names_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_duplicate_variable_names(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    $var_0
+    $var_1
+    $var_2
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    $var_0
+    $var_1
+    $var_2
+    """
+    ,
+
+    """\
+    $var1
+        NOOP
+
+    $var2
+        // A comment
+        SET_ZERO A
+        ADD [$var1]
+
+    $var3
+        NOOP
+        SET_ZERO B
+    """
+    ,
+
+    """\
+    @ #32
+    $var1 #23 #2
+
+        // A comment
+        SET_ZERO A
+
+    $var2
+        NOOP
+        SET_ZERO B
+
+    $var3 #34 #1
+        NOOP
+    """
+    ,
+
+    """\
+    $var1
+
+        // A comment
+        SET_ZERO A
+
+    $var2
+        NOOP
+        SET_ZERO B
+        ADD [$var2]
+
+    $var3
+        NOOP
+    """
+])
+def test_check_for_duplicate_variable_names_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.check_for_duplicate_variable_names(processed)
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+        ADD A
+        """,
+        [
+            0,
+        ]
+    ),
+    (
+        """\
+        ADD A
+        ADD B
+        """,
+        [
+            0, 1
+        ]
+    ),
+    (
+        """\
+        @ #5
+        NOOP
+
+        @ #10
+        ADD B
+        """,
+        [
+            5, 10
+        ]
+    ),
+    (
+        """\
+        @ #5
+        NOOP
+        $variable
+        ADD A
+
+        @ #10
+        ADD B
+
+        $data #12 #5
+        """,
+        [
+            5, 7, 10, 11, 12
+        ]
+    ),
+])
+def test_assign_machinecode_indecies(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    expected_index = 0
+    for assembly_line in processed:
+        for word in assembly_line.pattern.machinecode:
+            assert word.index == expected[expected_index]
+            expected_index += 1
+
+

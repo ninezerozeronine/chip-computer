@@ -267,6 +267,35 @@ def check_numbers_in_range(assembly_lines):
                 raise AssemblyError(msg)
 
 
+def check_anchors_are_in_range(assembly_lines):
+    """
+    Check that the values used for any anchors are in range.
+
+    The value has to be between 0 and 65535 to fit into memory.
+
+    Args:
+        assembly_lines (List(AssemblyLine)): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If an achor sets a location outside the specified
+            range.
+    """
+    for line in assembly_lines:
+        if isinstance(line.pattern, assembly_patterns.Anchor):
+            if not 0 <= line.pattern.location < 65536:
+                details = (
+                    "The anchor specifies a value of {value} which is "
+                    "outside the supported range of 0 to 65535 "
+                    "(inclusive).".format(value=line.pattern.location)
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=line.line_no,
+                    line=line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+
+
 def check_for_duplicate_alias_names(assembly_lines):
     """
     Check if an alias has been defined multiple times.
@@ -444,14 +473,15 @@ def assign_machinecode_indecies(assembly_lines):
     for line in assembly_lines:
         # Place the machinecode words that follow at the position
         # specified by the anchor.
-        if isinstance(line.pattern, Anchor):
-            next_mc_index = line.pattern.value()
+        if isinstance(line.pattern, assembly_patterns.Anchor):
+            next_mc_index = line.pattern.location
 
-        # Reserve a word in memory for the variable.
-        if isinstance(line.pattern, Variable):
+        # Reserve a word in memory for the variable (but don't generate
+        # machinecode for it)
+        if isinstance(line.pattern, assembly_patterns.Variable):
             next_mc_index += 1
 
-        # Increment index for each machinecode word.
+        # Increment index for each machinecode word
         for word in line.pattern.machinecode:
             word.index = next_mc_index
             next_mc_index += 1
@@ -470,30 +500,29 @@ def check_for_colliding_indecies(assembly_lines):
 
     indecies_to_lines = {}
     for assembly_line in assembly_lines:
-        if assembly_line.has_machinecode():
-            for machinecode_word in assembly_line.machinecode:
-                index = machinecode_word.index
-                if index in indecies_to_lines:
-                    details = (
-                        "The machinecode word at index {index} "
-                        "from assembly line {curr_line} ({curr_line_content}) collides "
-                        "with the machinecode word already defined "
-                        "there from assembly line {prior_line} ({prior_line_content})".format(
-                            index=index,
-                            curr_line=assembly_line.line_no,
-                            curr_line_content=assembly_line.raw_line,
-                            prior_line=indecies_to_lines[index].line_no,
-                            prior_line_content=indecies_to_lines[index].raw_line
-                        )
+        for word in assembly_line.pattern.machinecode:
+            index = word.index
+            if index in indecies_to_lines:
+                details = (
+                    "The machinecode word at index {index} "
+                    "from assembly line {curr_line} ({curr_line_content}) collides "
+                    "with the machinecode word already defined "
+                    "there from assembly line {prior_line} ({prior_line_content})".format(
+                        index=index,
+                        curr_line=assembly_line.line_no,
+                        curr_line_content=assembly_line.raw_line,
+                        prior_line=indecies_to_lines[index].line_no,
+                        prior_line_content=indecies_to_lines[index].raw_line
                     )
-                    msg = ERROR_TEMPLATE.format(
-                        line_no=assembly_line.line_no,
-                        line=assembly_line.raw_line,
-                        details=details,
-                    )
-                    raise AssemblyError(msg)
-                else:
-                    indecies_to_lines[index] = assembly_line
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=assembly_line.line_no,
+                    line=assembly_line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                indecies_to_lines[index] = assembly_line
 
 
 def check_for_out_of_range_indecies(assembly_lines):
