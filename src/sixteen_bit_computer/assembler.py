@@ -230,8 +230,11 @@ def process_assembly_lines(assembly_lines):
     alias_map = build_alias_map(assembly_lines)
     resolve_aliases(assembly_lines, alias_map)
 
-    marker_map = build_marker_map(assembly_lines)
-    resolve_markers(assembly_lines, marker_map)
+    label_map = build_label_map(assembly_lines)
+    resolve_labels(assembly_lines, label_map)
+
+    variable_map = build_variable_map(assembly_lines)
+    resolve_variables(assembly_lines, variable_map)
 
 
 def check_numbers_in_range(assembly_lines):
@@ -499,30 +502,27 @@ def check_for_colliding_indecies(assembly_lines):
     """
 
     indecies_to_lines = {}
-    for assembly_line in assembly_lines:
-        for word in assembly_line.pattern.machinecode:
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
             index = word.index
             if index in indecies_to_lines:
                 details = (
-                    "The machinecode word at index {index} "
-                    "from assembly line {curr_line} ({curr_line_content}) collides "
+                    "The machinecode word at index {index} collides "
                     "with the machinecode word already defined "
                     "there from assembly line {prior_line} ({prior_line_content})".format(
                         index=index,
-                        curr_line=assembly_line.line_no,
-                        curr_line_content=assembly_line.raw_line,
                         prior_line=indecies_to_lines[index].line_no,
                         prior_line_content=indecies_to_lines[index].raw_line
                     )
                 )
                 msg = ERROR_TEMPLATE.format(
-                    line_no=assembly_line.line_no,
-                    line=assembly_line.raw_line,
+                    line_no=line.line_no,
+                    line=line.raw_line,
                     details=details,
                 )
                 raise AssemblyError(msg)
             else:
-                indecies_to_lines[index] = assembly_line
+                indecies_to_lines[index] = line
 
 
 def check_for_out_of_range_indecies(assembly_lines):
@@ -539,15 +539,13 @@ def check_for_out_of_range_indecies(assembly_lines):
         for word in line.pattern.machinecode:
             if (word.index < 0) or (word.index > ((2**16) - 1)):
                 details = (
-                    "The machinecode word(s) would be placed at an "
-                    "index that is not within the range 0-65535 "
-                    "inclusive. ({index})".format(
-                        index=word.index
-                    )
+                    "The machinecode word(s) would be placed at the "
+                    " index {index} which is not within the range "
+                    "0-65535 inclusive.".format(index=word.index)
                 )
                 msg = ERROR_TEMPLATE.format(
-                    line_no=assembly_line.line_no,
-                    line=assembly_line.raw_line,
+                    line_no=line.line_no,
+                    line=line.raw_line,
                     details=details,
                 )
                 raise AssemblyError(msg)
@@ -620,31 +618,33 @@ def resolve_aliases(assembly_lines, alias_map):
                     raise AssemblyError(msg)
 
 
-def build_marker_map(assembly_lines):
+def build_label_map(assembly_lines):
     """
-    Build a mapping of markers to thier values.
+    Build a mapping of labels to thier values.
 
     Args:
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict of str to int: Dictionary of marker name keys to thier values.
+        dict of str to int: Dictionary of label name keys to thier values.
     """
-    marker_map = {}
-    marker = None
+    labels_needing_values = []
+    label_map = {}
     for line in assembly_lines:
-        if isinstance(line.pattern, pattern.Marker):
-            marker = line.pattern.name
+        if isinstance(line.pattern, pattern.Label):
+            labels_needing_values.append(line.pattern.name)
+            continue
 
-        if marker is not None and line.pattern.machinecode:
-            marker_map[marker] = line.pattern.machinecode[0].index
-            marker = None
-    return marker_map
+        if line.pattern.machinecode:
+            for label in labels_needing_values:
+                label_map[label] = line.pattern.machinecode[0].index
+            labels_needing_values = []
+    return label_map
 
 
-def resolve_markers(assembly_lines, marker_map):
+def resolve_labels(assembly_lines, label_map):
     """
-    Resolve any references to markers in machinecode words.
+    Resolve any references to labels in machinecode words.
 
     Edits the assembly lines in place.
 
@@ -652,18 +652,64 @@ def resolve_markers(assembly_lines, marker_map):
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Raises:
-        AssemblyError: If a marker has been referenced but not defined.
+        AssemblyError: If a label has been referenced but not defined.
     """
     for line in assembly_lines:
         for word in line.pattern.machinecode:
             token = word.const_token
-            if isinstance(token, assembly_tokens.MARKER):
+            if isinstance(token, assembly_tokens.LABEL):
                 try:
-                    word.value = marker_map[token.value]
+                    word.value = label_map[token.value]
                 except KeyError:
                     details = (
-                        "The marker: {marker} has not been defined.".format(
-                            marker=token.value
+                        "The label: {label} has not been defined.".format(
+                            label=token.value
+                        )
+                    )
+                    msg = ERROR_TEMPLATE.format(
+                        line_no=assembly_line.line_no,
+                        line=assembly_line.raw_line,
+                        details=details,
+                    )
+                    raise AssemblyError(msg)
+
+
+def build_variable_map(assembly_lines):
+    """
+    Build a mapping of variables to thier values.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Returns:
+        dict of str to int: Dictionary of variable name keys to thier values.
+    """
+    variable_map = {}
+    return variable_map
+
+
+def resolve_variables(assembly_lines, variable_map):
+    """
+    Resolve any references to variables in machinecode words.
+
+    Edits the assembly lines in place.
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a variable has been referenced but not defined.
+    """
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            token = word.const_token
+            if isinstance(token, assembly_tokens.VARIABLE):
+                try:
+                    word.value = variable_map[token.value]
+                except KeyError:
+                    details = (
+                        "The variable: {variable} has not been defined.".format(
+                            label=token.value
                         )
                     )
                     msg = ERROR_TEMPLATE.format(

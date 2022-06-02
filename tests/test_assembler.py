@@ -680,3 +680,214 @@ def test_assign_machinecode_indecies(test_input, expected):
             expected_index += 1
 
 
+@pytest.mark.parametrize("test_input", [
+    """\
+    @ #10
+        NOOP
+    @ #10
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    $var_0 #1 #2 #3 #4
+    @ #2
+        NOOP
+    """
+    ,
+
+    """\
+    $var
+    @ #10
+        NOOP
+        ADD A
+        ADD #13
+        AND [$var]
+    @ #12
+        SET_ZERO A
+    """
+])
+def test_check_for_colliding_indecies_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_colliding_indecies(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    $var_0
+    $var_1 #1 #2 #3
+    $var_2
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+    @ #10
+        NOOP
+        NOOP
+    @ #12
+        ADD B
+    """
+    ,
+
+    """\
+    $var1
+        NOOP
+
+    $var2
+        // A comment
+        SET_ZERO A
+        ADD [$var1]
+
+    $var3
+        NOOP
+        SET_ZERO B
+    """
+])
+def test_check_for_colliding_indecies_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    assembler.check_for_colliding_indecies(processed)
+
+
+@pytest.mark.parametrize("test_input", [
+    """\
+    @ #-10
+        NOOP
+    @ #10
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+    @ #65534
+    $var_0 #1 #2 #3 #4
+        NOOP
+    """
+    ,
+
+    """\
+    $var
+    @ #700000
+        NOOP
+        ADD A
+        ADD #13
+        AND [$var]
+    """
+])
+def test_check_for_out_of_range_indecies_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_out_of_range_indecies(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    $var_0
+    $var_1 #1 #2 #3
+    $var_2
+
+        NOOP
+        NOOP
+        // A comment
+    @ #65535
+        NOOP
+    """
+    ,
+
+    """\
+    @ #0
+        NOOP
+        NOOP
+    @ #12345
+    """
+])
+def test_check_for_out_of_range_indecies_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    assembler.check_for_out_of_range_indecies(processed)
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+            ADD #34
+        """,
+        [
+            34,
+        ]
+    ),
+    (
+        """\
+            NOOP
+            ADD A
+        $var #1 #2 #3
+            ADD B
+        """,
+        [
+            1, 2, 3
+        ]
+    ),
+    (
+        """\
+        @ #5
+            NOOP
+
+        @ #10
+            ADD B
+
+        $var #5 #6 #7
+
+        @ #20
+        ADD #12
+        """,
+        [
+            5, 6, 7, 12
+        ]
+    ),
+    (
+        """\
+        @ #5
+        NOOP
+        $variable
+        ADD [#13]
+
+        @ #10
+        ADD B
+
+        $data #12 #5
+        """,
+        [
+            13, 12, 5
+        ]
+    ),
+])
+def test_resolve_numbers(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.resolve_numbers(processed)
+    expected_index = 0
+    for line in processed:
+        for word in line.pattern.machinecode:
+            if word.const_token:
+                assert word.value == expected[expected_index]
+                expected_index += 1

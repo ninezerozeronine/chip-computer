@@ -33,7 +33,6 @@ class Word(object):
         self.value = value
         self.const_token = const_token
         self.index = index
-    pass
 
 
 def get_summary_entry_template():
