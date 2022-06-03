@@ -6,6 +6,7 @@ from sixteen_bit_computer.assembly_tokens import (
     NUMBER,
     OPCODE,
     MODULE,
+    LABEL
 )
 from sixteen_bit_computer.assembly_patterns import (
     NullPattern,
@@ -889,5 +890,237 @@ def test_resolve_numbers(test_input, expected):
     for line in processed:
         for word in line.pattern.machinecode:
             if word.const_token:
+                assert word.value == expected[expected_index]
+                expected_index += 1
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+            ADD #34
+        """,
+        {}
+    ),
+    (
+        """\
+        !first #34
+            ADD A
+
+        $var #1 #2 #3
+            ADD B
+
+        !second #0b101
+        """,
+        {
+            "first":34,
+            "second":5
+        }
+    ),
+    (
+        """\
+        @ #5
+            NOOP
+
+        !first #1
+        @ #10
+            ADD B
+
+        $var #5 #6 #7
+
+        @ #20
+        ADD !first
+
+        !second #34
+        """,
+        {
+            "first":1,
+            "second":34
+        }
+    ),
+])
+def test_build_alias_map(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    alias_map = assembler.build_alias_map(processed)
+    assert alias_map == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+            !first #1
+            ADD !first
+        """,
+        [1]
+    ),
+    (
+        """\
+            ADD !first
+        !first #34
+
+        $var #1 #2 #3
+            ADD B
+
+        !second #0b101
+        """,
+        [34]
+    ),
+    (
+        """\
+        !one #1
+        !two #2
+        !three #3
+            NOOP
+
+        !first #55
+        @ #10
+            ADD B
+
+        $var #42 !one !two !three
+
+        @ #20
+        ADD !first
+        AND !second
+
+        !second #34
+
+        AND !second
+
+        ADD [!one]
+        """,
+        [1, 2, 3, 55, 34, 34, 1]
+    ),
+])
+def test_resolve_aliases(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    alias_map = assembler.build_alias_map(processed)
+    assembler.resolve_aliases(processed, alias_map)
+    expected_index = 0
+    for line in processed:
+        for word in line.pattern.machinecode:
+            if isinstance(word.const_token, ALIAS):
+                assert word.value == expected[expected_index]
+                expected_index += 1
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+            ADD #34
+        """,
+        {}
+    ),
+    (
+        """\
+        &first
+            ADD A
+
+        $var #1 #2 #3
+            ADD B
+
+        &second
+        """,
+        {
+            "first":0,
+        }
+    ),
+    (
+        """\
+        @ #5
+        &first
+            NOOP
+            NOOP
+            ADD A
+            ADD #1
+            ADD [#2]
+
+        &second
+            NOOP
+        """,
+        {
+            "first":5,
+            "second":12
+        }
+    ),
+    (
+        """\
+        @ #5
+        &first
+            NOOP
+            NOOP
+
+        $var
+
+        &second
+            ADD A
+
+        $var #1 #2 #2 #4
+
+        &third
+            ADD #1
+            ADD &first
+
+        &fourth
+            NOOP
+        """,
+        {
+            "first": 5,
+            "second": 8,
+            "third": 13,
+            "fourth": 17,
+        }
+    ),
+])
+def test_build_label_map(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    label_map = assembler.build_label_map(processed)
+    assert label_map == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+        &first
+            ADD &first
+            NOOP
+
+        @ #10
+        &second
+            AND [&second]
+
+        """,
+        [0, 10]
+    ),
+    (
+        """\
+            ADD &first
+            AND [&first]
+        
+        &second
+        $var1 #1 #2 #3
+            ADD B
+
+        @ #15
+        $var2
+        &first
+            NOOP
+            ADD &second
+        """,
+        [16, 16, 4]
+    ),
+])
+def test_resolve_labels(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    label_map = assembler.build_label_map(processed)
+    assembler.resolve_labels(processed, label_map)
+    expected_index = 0
+    for line in processed:
+        for word in line.pattern.machinecode:
+            if isinstance(word.const_token, LABEL):
                 assert word.value == expected[expected_index]
                 expected_index += 1

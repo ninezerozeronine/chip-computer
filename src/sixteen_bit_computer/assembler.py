@@ -631,7 +631,7 @@ def build_label_map(assembly_lines):
     labels_needing_values = []
     label_map = {}
     for line in assembly_lines:
-        if isinstance(line.pattern, pattern.Label):
+        if isinstance(line.pattern, assembly_patterns.Label):
             labels_needing_values.append(line.pattern.name)
             continue
 
@@ -682,9 +682,35 @@ def build_variable_map(assembly_lines):
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict of str to int: Dictionary of variable name keys to thier values.
+        dict of str to int: Dictionary of variable name keys to thier
+        values.
     """
     variable_map = {}
+
+    # Determine positions of Variables.
+    # Not a huge fan of how this duplicates what's going on in
+    # assign_machinecode_indecies
+    next_mc_index = 0
+    for line in assembly_lines:
+        # Place the machinecode words that follow at the position
+        # specified by the anchor.
+        if isinstance(line.pattern, assembly_patterns.Anchor):
+            next_mc_index = line.pattern.location
+
+        # Reserve a word in memory for the variable (but don't generate
+        # machinecode for it)
+        if isinstance(line.pattern, assembly_patterns.Variable):
+            variable_map[line.pattern.name] = next_mc_index
+            next_mc_index += 1
+
+        # Increment index for each machinecode word
+        next_mc_index += len(line.pattern.machinecode)
+
+    # Determine posisions of Variable Defs
+    for line in assembly_lines:
+        if isinstance(line.pattern, assembly_patterns.VariableDef):
+            variable_map[line.pattern.name] = line.pattern.machinecode[0].index
+
     return variable_map
 
 
