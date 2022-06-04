@@ -611,8 +611,8 @@ def resolve_aliases(assembly_lines, alias_map):
                         )
                     )
                     msg = ERROR_TEMPLATE.format(
-                        line_no=assembly_line.line_no,
-                        line=assembly_line.raw_line,
+                        line_no=line.line_no,
+                        line=line.raw_line,
                         details=details,
                     )
                     raise AssemblyError(msg)
@@ -667,8 +667,8 @@ def resolve_labels(assembly_lines, label_map):
                         )
                     )
                     msg = ERROR_TEMPLATE.format(
-                        line_no=assembly_line.line_no,
-                        line=assembly_line.raw_line,
+                        line_no=line.line_no,
+                        line=line.raw_line,
                         details=details,
                     )
                     raise AssemblyError(msg)
@@ -735,12 +735,12 @@ def resolve_variables(assembly_lines, variable_map):
                 except KeyError:
                     details = (
                         "The variable: {variable} has not been defined.".format(
-                            label=token.value
+                            variable=token.value
                         )
                     )
                     msg = ERROR_TEMPLATE.format(
-                        line_no=assembly_line.line_no,
-                        line=assembly_line.raw_line,
+                        line_no=line.line_no,
+                        line=line.raw_line,
                         details=details,
                     )
                     raise AssemblyError(msg)
@@ -751,8 +751,7 @@ def assembly_lines_to_dictionary(assembly_lines):
     Convert the assembly lines to a dictionary of indexes and values.
 
     The keys in the dictionary are the indexes of the machinecode words
-    to write, the values are the unsigned int equivalents of the
-    machinecode words.
+    to write, the values are the values of the machinecode words.
 
     Args:
         assembly_lines (List(AssemblyLine)): Fully processed assembly
@@ -764,6 +763,6 @@ def assembly_lines_to_dictionary(assembly_lines):
 
     assembly = {}
     for line in assembly_lines:
-        for word in pattern.machinecode:
+        for word in line.pattern.machinecode:
             assembly[word.index] = word.value
     return assembly

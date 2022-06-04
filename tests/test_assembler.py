@@ -1,12 +1,25 @@
 import pytest
 import textwrap
 from sixteen_bit_computer import assembler
+from sixteen_bit_computer.instruction_components import (
+    NOOP,
+    SET_ZERO,
+    ADD,
+    AND,
+    ACC,
+    A,
+    B,
+    C,
+    CONST,
+    M_CONST,
+)
 from sixteen_bit_computer.assembly_tokens import (
     ALIAS,
     NUMBER,
     OPCODE,
     MODULE,
-    LABEL
+    LABEL,
+    VARIABLE
 )
 from sixteen_bit_computer.assembly_patterns import (
     NullPattern,
@@ -18,9 +31,9 @@ from sixteen_bit_computer.exceptions import (
     NoMatchingTokensError,
     NoMatchingPatternsError,
 )
-
-# Test what happens when there is no assembly that follows a variable
-# or label
+from sixteen_bit_computer.instruction_listings import (
+    get_instruction_index
+)
 
 
 @pytest.mark.parametrize("test_input, expected", [
@@ -656,14 +669,17 @@ def test_check_for_duplicate_variable_names_doesnt_raise(test_input):
     (
         """\
         @ #5
-        NOOP
+            NOOP
         $variable
-        ADD A
+        &label1
+            ADD A
 
         @ #10
-        ADD B
+        &label2
+        // Comment
+            ADD B
 
-        $data #12 #5
+        $var1 #12 #5
         """,
         [
             5, 7, 10, 11, 12
@@ -1004,6 +1020,28 @@ def test_resolve_aliases(test_input, expected):
                 expected_index += 1
 
 
+@pytest.mark.parametrize("test_input", [
+        """\
+        !first #1
+            NOOP
+            ADD !second
+        """,
+
+        """\
+        !first #1
+            NOOP
+            ADD [!second]
+        """,
+])
+def test_resolve_aliases_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    alias_map = assembler.build_alias_map(processed)
+    with pytest.raises(AssemblyError):
+        assembler.resolve_aliases(processed, alias_map)
+
+
 @pytest.mark.parametrize("test_input, expected", [
     (
         """\
@@ -1124,3 +1162,262 @@ def test_resolve_labels(test_input, expected):
             if isinstance(word.const_token, LABEL):
                 assert word.value == expected[expected_index]
                 expected_index += 1
+
+
+@pytest.mark.parametrize("test_input", [
+        """\
+        &label1
+            NOOP
+            ADD &label2
+        """,
+
+        """\
+        @ #123
+        !first #1
+        &label1
+            NOOP
+            ADD [&label2]
+        """,
+
+        """\
+        @ #45
+        !first #1
+            NOOP
+            ADD [&label1]
+
+        &label1
+        """
+])
+def test_resolve_labels_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    label_map = assembler.build_label_map(processed)
+    with pytest.raises(AssemblyError):
+        assembler.resolve_labels(processed, label_map)
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+            ADD #34
+        """,
+        {}
+    ),
+    (
+        """\
+        $first
+            ADD A
+            NOOP
+
+        $second #1 #2 #3
+            ADD B
+
+        $third
+        """,
+        {
+            "first": 0,
+            "second": 3,
+            "third": 7,
+        }
+    ),
+    (
+        """\
+        @ #5
+        $first #1 #2
+            NOOP
+            NOOP
+            ADD A
+            ADD #1
+            ADD [#2]
+
+        $second
+            NOOP
+            ADD [$third]
+
+        @ #40
+        $third #1
+
+        """,
+        {
+            "first": 5,
+            "second": 14,
+            "third": 40
+        }
+    ),
+])
+def test_build_variable_map(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    variable_map = assembler.build_variable_map(processed)
+    assert variable_map == expected
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+        $var1
+
+        &first
+            ADD $var1
+            NOOP
+
+        @ #10
+        $var2
+        &second
+            AND [$var1]
+
+            ADD $var2
+
+        """,
+        [0, 0, 10]
+    ),
+    (
+        """\
+            ADD $var2
+            AND [$var3]
+        
+        &second
+        $var1 #1 #2 #3
+            ADD B
+
+        @ #15
+        $var2
+        &first
+            NOOP
+            ADD $var1
+        $var3
+        """,
+        [15, 19, 4]
+    ),
+])
+def test_resolve_variables(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    variable_map = assembler.build_variable_map(processed)
+    assembler.resolve_variables(processed, variable_map)
+    expected_index = 0
+    for line in processed:
+        for word in line.pattern.machinecode:
+            if isinstance(word.const_token, VARIABLE):
+                assert word.value == expected[expected_index]
+                expected_index += 1
+
+
+@pytest.mark.parametrize("test_input", [
+        """\
+        $var1
+            NOOP
+            ADD $var2
+        """,
+
+        """\
+        @ #123
+        !first #1
+        &label1
+            NOOP
+            ADD [$var2]
+        $var1 #1 #2
+        """,
+
+        """\
+        @ #45
+        $var1
+        !first #1
+            NOOP
+            ADD $var2
+
+        &label1
+        """
+])
+def test_resolve_variables_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.assign_machinecode_indecies(processed)
+    variable_map = assembler.build_variable_map(processed)
+    with pytest.raises(AssemblyError):
+        assembler.resolve_variables(processed, variable_map)
+
+
+@pytest.mark.parametrize("test_input, expected", [
+    (
+        """\
+        // A comment
+
+        &label2
+        !an_alias #23
+
+        $variable
+
+        &label1
+
+        @ #54
+        """,
+        {}
+    ),
+    (
+        """\
+            ADD #34
+        """,
+        {
+            0: get_instruction_index((ADD, CONST)),
+            1: 34,
+        }
+    ),
+    (
+        """\
+        @ #10
+            ADD #34
+            NOOP
+        $var1
+        $var2 #5
+        """,
+        {
+            10: get_instruction_index((ADD, CONST)),
+            11: 34,
+            12: get_instruction_index((NOOP,)),
+            14: 5,
+        }
+    ),
+    (
+        """\
+        &label0
+            ADD A
+            NOOP
+
+        $second #1 #2 !alias2
+            ADD B
+
+            ADD [&label0]
+            AND [!alias0]
+        !alias0 #25
+
+        // A comment
+        @ #456
+            AND C
+
+        !alias2 #999
+        """,
+        {
+            0: get_instruction_index((ADD, A)),
+            1: get_instruction_index((NOOP,)),
+            2: 1,
+            3: 2,
+            4: 999,
+            5: get_instruction_index((ADD, B)),
+            6: get_instruction_index((ADD, M_CONST)),
+            7: 0,
+            8: get_instruction_index((AND, M_CONST)),
+            9: 25,
+            456: get_instruction_index((AND, C)),
+        }
+    ),
+])
+def test_assembly_lines_to_dictionary(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    lines = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.process_assembly_lines(lines)
+    res = assembler.assembly_lines_to_dictionary(lines)
+    assert res == expected

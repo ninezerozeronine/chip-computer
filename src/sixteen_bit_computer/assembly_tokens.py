@@ -278,7 +278,7 @@ class NUMBER(Token):
      - ``#0XFFFC``
      - ``#0o271``
      - ``#-23``
-     - ``0b1001010``
+     - ``#0b1001010``
     """
 
     @classmethod
