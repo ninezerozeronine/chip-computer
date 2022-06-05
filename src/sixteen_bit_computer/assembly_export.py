@@ -1,6 +1,17 @@
-def assembly_to_arduino():
-    generate_arduino_header()
-    generate_arduino_cpp()
+"""
+Export processed assembly to various fileformats.
+"""
+
+from . import number_utils
+
+def assembly_to_arduino(assembly, progname, progname_short, h_filename):
+    """
+    
+    """
+    header = generate_arduino_header(progname)
+    cpp = generate_arduino_cpp(assembly, progname, progname_short, h_filename)
+    return header, cpp
+
 
 def generate_arduino_header(progname):
     """
@@ -154,9 +165,7 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
 def get_address_and_word_lines(assembly):
     """
 
-    """
-    machinecode = assembler.assembly_lines_to_dictionary(assembly)
-    
+    """    
     address_lines = []
     word_lines = []
 
@@ -206,5 +215,78 @@ def get_address_and_word_lines(assembly):
     return address_lines, word_lines
 
 
-def assembly_to_logisim():
-    pass
+def assembly_to_logisim(assembly, default_value=0):
+    """
+    
+    """
+    machinecode = assembly_lines_to_dictionary(assembly)
+    highest = max(machinecode)
+    words = []
+    for index in range(highest + 1):
+        value = machinecode.get(index, default_value)
+        words.append(value)
+
+    logisim_lines = ["v2.0 raw"]
+
+    for line_words in chunker(words, 16):
+        line_parts = []
+        for line_chunk_words in chunker(line_words, 4):
+            hex_strings = [
+                "{value:04X}".format(value=word)
+                for word
+                in line_chunk_words
+            ]
+            four_words_chunk = " ".join(hex_strings)
+            line_parts.append(four_words_chunk)
+        line = "  ".join(line_parts)
+        logisim_lines.append(line)
+
+    logisim_string = "\n".join(logisim_lines)
+    logisim_string += "\n"
+
+    return logisim_string
+
+
+def assembly_lines_to_dictionary(assembly_lines):
+    """
+    Convert the assembly lines to a dictionary of indexes and values.
+
+    The keys in the dictionary are the indexes of the machinecode words
+    to write, the values are the values of the machinecode words. The
+    values are converted to the unsighed equivalent if the number is
+    negative.
+
+    Args:
+        assembly_lines (List(AssemblyLine)): Fully processed assembly
+            lines to convert to a raw dictionary.
+
+    Returns:
+        Dict(int,int)
+    """
+
+    assembly = {}
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            assembly[word.index] = number_utils.get_positive_equivalent(
+                word.value, bitwidth=16
+            )
+    return assembly
+
+
+def chunker(seq, chunk_size):
+    """
+    Take a larger sequence and split it into smaller chunks.
+
+    E.g.::
+
+        chunker([0,1,2,3,4,5], 4) -> [0,1,2,3], [4,5]
+
+    Args:
+        seq (list): List of things to chunk up
+        chunk_size (int): How big each chunk should be.
+    Returns:
+        generator: Generator that yields each chunk.
+    """
+    return (
+        seq[pos:pos + chunk_size] for pos in range(0, len(seq), chunk_size)
+    )

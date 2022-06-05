@@ -744,25 +744,3 @@ def resolve_variables(assembly_lines, variable_map):
                         details=details,
                     )
                     raise AssemblyError(msg)
-
-
-def assembly_lines_to_dictionary(assembly_lines):
-    """
-    Convert the assembly lines to a dictionary of indexes and values.
-
-    The keys in the dictionary are the indexes of the machinecode words
-    to write, the values are the values of the machinecode words.
-
-    Args:
-        assembly_lines (List(AssemblyLine)): Fully processed assembly
-            lines to convert to a raw dictionary.
-
-    Returns:
-        Dict(int,int)
-    """
-
-    assembly = {}
-    for line in assembly_lines:
-        for word in line.pattern.machinecode:
-            assembly[word.index] = word.value
-    return assembly
