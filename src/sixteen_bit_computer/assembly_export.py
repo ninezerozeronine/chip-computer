@@ -1,12 +1,26 @@
 """
 Export processed assembly to various fileformats.
+
+Note that during this process negative numbers are converted to thier
+unsigned equivalents.
 """
 
 from . import number_utils
 
 def assembly_to_arduino(assembly, progname, progname_short, h_filename):
     """
-    
+    Generate cpp and header file for given assembly.
+
+    Args:
+        assembly (list(AssemblyLine)): Assembly lines to generate the
+            cpp file for.
+        progname (str): Identifier for this program in the cpp code.
+            Used for variable names in the code.
+        progname_short (str): Name that will display on the arduino
+            interface for this program.
+        h_filename (str): Name of the headerfile including extension.
+    Returns:
+        tuple (str, str): The header and cpp file contents.
     """
     header = generate_arduino_header(progname)
     cpp = generate_arduino_cpp(assembly, progname, progname_short, h_filename)
@@ -18,7 +32,9 @@ def generate_arduino_header(progname):
 
     Create arduino header file for the given assembly.
 
-    The header file looks approximately like this::
+    The header file looks approximately like this:
+
+    .. code-block:: none
 
         #ifndef PROG_PROGNAME_H
         #define PROG_PROGNAME_H
@@ -76,7 +92,9 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
     """
     Generate cpp file for program for Arduino.
 
-    The cpp file looks like this::
+    The cpp file looks like this:
+
+    .. code-block:: none
 
         #include "prog_progname.h"
 
@@ -108,6 +126,17 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
 
     The values of the machinecode words are converted to thier unsigned
     equivalents during this process.
+
+    Args:
+        assembly (list(AssemblyLine)): Assembly lines to generate the
+            cpp file for.
+        progname (str): Identifier for this program in the cpp code.
+            Used for variable names in the code.
+        progname_short (str): Name that will display on the arduino
+            interface for this program.
+        h_filename (str): Name of the headerfile including extension.
+    Returns:
+        str: String ready to be written to a file.
     """
 
     num_words = len(machinecode)
@@ -118,7 +147,7 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
     cpp_lines.append("")
 
 
-    cpp_lines.append("Number of words in the program")
+    cpp_lines.append("// Number of words in the program")
     cpp_lines.append(
         "extern const unsigned int num_{progname}_words "
         "= {progname};".format(
@@ -164,7 +193,40 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
 
 def get_address_and_word_lines(assembly):
     """
+    Generate the lines that actually specify address and word data.
 
+    Taking the address defition as an example:
+
+    .. code-block:: none
+
+        // Address of each word in the list of machinecode words
+        extern const unsigned int progname_addresses[] PROGMEM = {
+            0xFF00, // 0x003D - 0001 SET A #0xC
+            0xFF01, // 0x000C - 0001 
+            0xFF02, // 0x002F - 0002 SET B #1
+            0x00A1, // 0x0001 - 0002 
+            0x00A2, // 0x0000 - 0003 NOOP
+            0x00A3  // 0xFFFF - 0004 HALT
+        };
+
+    These would be the lines generated:
+
+    .. code-block:: none
+
+            0xFF00, // 0x003D - 0001 SET A #0xC
+            0xFF01, // 0x000C - 0001 
+            0xFF02, // 0x002F - 0002 SET B #1
+            0x00A1, // 0x0001 - 0002 
+            0x00A2, // 0x0000 - 0003 NOOP
+            0x00A3  // 0xFFFF - 0004 HALT
+
+    Args:
+        assembly (list(AssemblyLine)): The assembly to get address and
+            word lines for.
+
+    Returns:
+        tuple(list(str), list(str)): Lists of the address and word
+        lines.
     """    
     address_lines = []
     word_lines = []
@@ -208,7 +270,7 @@ def get_address_and_word_lines(assembly):
             )
             word_lines.append(word_line)
 
-    # Remove commas from last line
+    # Remove commas from last lines
     address_lines[-1][6] = " "
     word_lines[-1][6] = " "
 
@@ -217,7 +279,16 @@ def get_address_and_word_lines(assembly):
 
 def assembly_to_logisim(assembly, default_value=0):
     """
-    
+    Take assmebly and convert to Logisim ram format
+
+    Args:
+        assembly (list(AssemblyLine)): The assembly to convert.
+        default_value (int, optional): The value to use for addresses
+            that are less than the maximum specified address but not
+            specified.
+
+    Returns:
+        (str): String representing contects on the logisim file.
     """
     machinecode = assembly_lines_to_dictionary(assembly)
     highest = max(machinecode)
