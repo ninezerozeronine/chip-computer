@@ -22,6 +22,189 @@ from sixteen_bit_computer.instruction_components import (
     M_CONST,
 )
 
+def test_generate_arduino_header():
+    expected = textwrap.dedent(
+        """\
+        #ifndef PROG_PROGNAME_H
+        #define PROG_PROGNAME_H
+
+        #include <Arduino.h>
+
+        extern const unsigned int num_progname_words;
+        extern const unsigned int progname_addresses[];
+        extern const unsigned int progname_words[];
+
+        extern const char progname_program_name[];
+
+        #endif
+        """
+    )
+    assert assembly_export.generate_arduino_header("progname") == expected
+
+
+def test_generate_arduino_cpp():
+    expected = textwrap.dedent(
+        """\
+        #include "prog_progname.h"
+
+        // Number of words in the program
+        extern const unsigned int num_progname_words = 5;
+
+        // Address of each word in the list of machinecode words
+        extern const unsigned int progname_addresses[] PROGMEM = {{
+            0x0003, // 0x{noop_code:04X} - 0004     NOOP
+            0x0004, // 0x{add_a_code:04X} - 0005     ADD A
+            0x0005, // 0x{and_mconst_code:04X} - 0006     AND [#0xBEEF]
+            0x0006, // 0xBEEF - 0006
+            0x000A  // 0x0002 - 0009 $var #2
+        }};
+
+        // Value for each machinecode word
+        extern const unsigned int progname_words[] PROGMEM = {{
+            0x{noop_code:04X}, // 0x0003 - 0004     NOOP
+            0x{add_a_code:04X}, // 0x0004 - 0005     ADD A
+            0x{and_mconst_code:04X}, // 0x0005 - 0006     AND [#0xBEEF]
+            0xBEEF, // 0x0006 - 0006
+            0x0002  // 0x000A - 0009 $var #2
+        }};
+
+        // Max of seven characters
+        extern const char progname_program_name[] = "Prgname";
+        """
+    )
+
+    expected = expected.format(
+        noop_code=get_instruction_index((NOOP,)),
+        add_a_code=get_instruction_index((ADD, A)),
+        and_mconst_code=get_instruction_index((AND, M_CONST)),
+    )
+
+    raw_assembly = textwrap.dedent(
+        """\
+        // A comment
+
+        @ #3
+            NOOP
+            ADD A
+            AND [#0xBEEF]
+
+        @ #10
+        $var #2
+        """
+    )
+    dedent_and_split = textwrap.dedent(raw_assembly).splitlines()
+    lines = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.process_assembly_lines(lines)
+
+    progname = "progname"
+    progname_short = "Prgname"
+    h_filename = "prog_progname.h"
+
+    assert assembly_export.generate_arduino_cpp(
+        lines, progname, progname_short, h_filename
+    ) == expected
+
+
+def test_get_address_and_word_lines():
+    expected_addresses = [
+        "    0x0003, // 0x{noop_code:04X} - 0004     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
+        "    0x0004, // 0x{add_a_code:04X} - 0005     ADD A".format(
+            add_a_code=get_instruction_index((ADD, A))
+        ),
+        "    0x0005, // 0x{and_mconst_code:04X} - 0006     AND [#0xBEEF]".format(
+            and_mconst_code=get_instruction_index((AND, M_CONST)),
+        ),
+        "    0x0006, // 0xBEEF - 0006",
+        "    0x0007, // 0x{noop_code:04X} - 0007     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
+        "    0x0008, // 0x{and_mconst_code:04X} - 0008     AND &label".format(
+            and_mconst_code=get_instruction_index((AND, CONST)),
+        ),
+        "    0x0009, // 0x000A - 0008",
+        "    0x000A  // 0x03E9 - 0012 $var #1001",
+    ]
+
+    expected_words = [
+        "    0x{noop_code:04X}, // 0x0003 - 0004     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
+        "    0x{add_a_code:04X}, // 0x0004 - 0005     ADD A".format(
+            add_a_code=get_instruction_index((ADD, A))
+        ),
+        "    0x{and_mconst_code:04X}, // 0x0005 - 0006     AND [#0xBEEF]".format(
+            and_mconst_code=get_instruction_index((AND, M_CONST)),
+        ),
+        "    0xBEEF, // 0x0006 - 0006",
+        "    0x{noop_code:04X}, // 0x0007 - 0007     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
+        "    0x{and_mconst_code:04X}, // 0x0008 - 0008     AND &label".format(
+            and_mconst_code=get_instruction_index((AND, CONST)),
+        ),
+        "    0x000A, // 0x0009 - 0008",
+        "    0x03E9  // 0x000A - 0012 $var #1001",
+    ]
+
+    raw_assembly = textwrap.dedent(
+        """\
+        // A comment
+
+        @ #3
+            NOOP
+            ADD A
+            AND [#0xBEEF]
+            NOOP
+            AND &label
+
+        &label
+        @ #10
+        $var #1001
+        """
+    )
+    dedent_and_split = textwrap.dedent(raw_assembly).splitlines()
+    lines = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.process_assembly_lines(lines)
+
+    addresses, words = assembly_export.get_address_and_word_lines(lines)
+    assert addresses == expected_addresses
+    assert words == expected_words
+
+
+def test_assembly_lines_to_logisim():
+    expected = textwrap.dedent(
+        """\
+        v2.0 raw
+        BEEF BEEF BEEF BEEF  BEEF BEEF BEEF BEEF  BEEF BEEF BEEF BEEF  BEEF BEEF BEEF BEEF
+        {noop_code:04X} {noop_code:04X} {and_mconst_code:04X} FACE
+        """
+    )
+    expected = expected.format(
+        noop_code=get_instruction_index((NOOP,)),
+        and_mconst_code=get_instruction_index((AND, M_CONST)),
+    )
+
+    raw_assembly = textwrap.dedent(
+        """\
+        // A comment
+
+        @ #16
+            NOOP
+            NOOP
+            AND [#0xFACE]
+
+        // Another comment
+        """
+    )
+    dedent_and_split = textwrap.dedent(raw_assembly).splitlines()
+    lines = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.process_assembly_lines(lines)
+
+    assert assembly_export.assembly_to_logisim(
+        lines, default_value=0xBEEF) == expected 
+
 
 @pytest.mark.parametrize("test_input, expected", [
     (
@@ -112,7 +295,7 @@ def test_assembly_lines_to_dictionary(test_input, expected):
     ([0, 1, 2, 3, 4, 5, 6, 7],   3, [[0, 1, 2], [3, 4, 5], [6, 7]]),
 ])
 def test_chunker(seq, chunk_size, expected):
-    generator = export.chunker(seq, chunk_size)
+    generator = assembly_export.chunker(seq, chunk_size)
     generator_tester(generator, expected)
 
 
