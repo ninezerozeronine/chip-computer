@@ -7,6 +7,46 @@ from . import number_utils
 from .data_structures import get_summary_entry_template
 
 
+"""
+// A comment
+!alias #255
+
+@ #10
+$var #1 #2
+    NOOP
+    ADD A
+
+@ #20
+&label
+    NOOP
+    AND #0b101
+    ADD [!alias]
+
+
+
+ 1 // A comment     |
+ 2 !alias #255      |
+ 3                  |
+ 4 @ #5             |
+ 5 $var1 #1 #2      |  5 0x000A -          1 0x0001 #1
+                    |  6 0x000B -          2 0x0002 #2
+ 6     NOOP         |  7 0x000C -          0 0x0000
+ 7     ADD A        |  8 0x000D -         32 0x0020
+ 8                  |
+ 9 @ #20            |
+10 &label           |
+11     NOOP         | 20 0x0014 - &label   0 0x0000
+12     AND #0b111   | 21 0x0015 -         64 0x0040 
+                    | 22 0x0016 -          7 0x0007 #0b111
+13     ADD [!alias] | 23 0x0017 -         65 0x0041
+                    | 24 0x0018 -        255 0x0005 !alias
+14     AND $var     | 25 0x0019 -         64 0x0040
+                    | 26 0x001A -          5 0x0005 $var
+
+"""
+
+
+
 def generate_assembly_summary(asm_line_infos):
     """
     Produce a summary that combines assembly and machine code.

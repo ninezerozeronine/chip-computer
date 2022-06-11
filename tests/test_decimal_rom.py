@@ -85,5 +85,9 @@ def test_assemble_romdata(raw_value, disp_chars, base_bitdef, binary_mode_bitdef
 
 
 def test_gen_display_romdatas_doesnt_raise():
-    decimal_rom.gen_display_romdatas()
+    _ = decimal_rom.gen_display_romdatas()
+    assert True
+
+def test_gen_get_decimal_rom_doesnt_raise():
+    _ = decimal_rom.get_decimal_rom()
     assert True

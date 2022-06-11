@@ -3,9 +3,13 @@ Generate the data for the decimal display rom.
 """
 
 from .language_defs import (
-    SEGMENT_TO_BIT, CHARACTER_TO_SEGMENTS, CHAR_INDEX_TO_DIGIT_INDEX,
-    DISPLAY_OPTIONS
-    )
+    SEGMENT_TO_BIT,
+    CHARACTER_TO_SEGMENTS,
+    CHAR_INDEX_TO_DIGIT_INDEX,
+    DISPLAY_OPTIONS,
+    EMPTY_ADDRESS,
+    DECIMAL_ROM_DEFAULT
+)
 from .number_utils import number_to_bitstring
 from . import bitdef
 from .data_structures import RomData
