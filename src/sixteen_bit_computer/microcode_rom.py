@@ -8,11 +8,13 @@ from .operations import get_all_operations, fetch
 from .language_defs import (
     EMPTY_ADDRESS, MODULE_CONTROLS_DEFAULT, DECIMAL_ROM_DEFAULT
 )
-from .decimal_display import gen_display_romdatas
 from .data_structures import RomData
 from . import bitdef
 from . import number_utils
-
+from .rom_utils import (
+    romdatas_have_duplicate_addresses,
+    populate_empty_addresses
+)
 
 def get_rom():
     """
@@ -76,57 +78,6 @@ def collapse_datatemplates_to_romdatas(datatemplates):
                 RomData(address=address, data=datatemplate.data)
             )
     return romdatas
-
-
-def populate_empty_addresses(romdatas, all_addresses, default_data):
-    """
-    Form a complete set of rom data by filling any undefined addresses.
-
-    Args:
-        romdatas list(RomData): The romdatas defined by the
-            instructions.
-        all_addresses (list(str)): List of bitdefs representing every
-            address in the rom
-        default_data (str): The value to set for any address that isn't
-            in romdatas.
-    Returns:
-        list(RomData): List of RomDatas representing a completely full
-            rom
-    """
-
-    filled_addresses = {romdata.address: romdata.data for romdata in romdatas}
-    complete_rom = []
-    for address in all_addresses:
-        if address in filled_addresses:
-            complete_rom.append(
-                RomData(address=address, data=filled_addresses[address])
-            )
-        else:
-            complete_rom.append(
-                RomData(address=address, data=default_data)
-            )
-    return complete_rom
-
-
-def romdatas_have_duplicate_addresses(romdatas):
-    """
-    Check if any of the romdatas have duplicate addresses.
-
-    Args:
-        romdatas list(RomData): List of romdatas to check.
-    Returns:
-        Bool: Whether or not there were any duplicated addresses.
-    """
-
-    duplicates = False
-    addresses = []
-    for romdata in romdatas:
-        if romdata.address in addresses:
-            duplicates = True
-            break
-        else:
-            addresses.append(romdata.address)
-    return duplicates
 
 
 def slice_rom(rom):
@@ -216,26 +167,3 @@ def get_romdata_slice(romdatas, end, start):
         sliced_romdatas.append(sliced_romdata)
     return sliced_romdatas
 
-
-def get_decimal_rom():
-    """
-    Get complete representation of the decimal rom.
-
-    Returns:
-        list(RomData): All the defined data for the decima rom.
-
-    Raises:
-        RuntimeError: When the decimal romdata dataset has duplicate
-            addresses.
-    """
-
-    decimal_romdatas = gen_display_romdatas()
-    if romdatas_have_duplicate_addresses(decimal_romdatas):
-        raise RuntimeError("Decimal romdata set has duplicate addresses")
-    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
-    default_data = DECIMAL_ROM_DEFAULT
-    full_rom = populate_empty_addresses(
-        decimal_romdatas, all_addresses, default_data
-    )
-    full_rom.sort(key=lambda romdata: romdata.address)
-    return full_rom

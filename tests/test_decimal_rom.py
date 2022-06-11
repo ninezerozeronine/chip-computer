@@ -1,6 +1,6 @@
 import pytest
 
-from sixteen_bit_computer import decimal_display
+from sixteen_bit_computer import decimal_rom
 from sixteen_bit_computer.bitdef import remove_whitespace as rw
 from sixteen_bit_computer.language_defs import DISPLAY_OPTIONS
 from sixteen_bit_computer.data_structures import RomData
@@ -14,7 +14,7 @@ from sixteen_bit_computer.data_structures import RomData
     (255, -1),
 ])
 def test_to_2s_compliment(test_input, expected):
-    assert decimal_display.to_2s_compliment(test_input) == expected
+    assert decimal_rom.to_2s_compliment(test_input) == expected
 
 
 @pytest.mark.parametrize("test_input, expected", [
@@ -25,7 +25,7 @@ def test_to_2s_compliment(test_input, expected):
     (170, "000....10101010"),
 ])
 def test_value_to_addr_bitdef(test_input, expected):
-    assert decimal_display.value_to_addr_bitdef(test_input) == expected
+    assert decimal_rom.value_to_addr_bitdef(test_input) == expected
 
 @pytest.mark.parametrize("test_input, expected", [
     ("A", "01110111"),
@@ -34,12 +34,12 @@ def test_value_to_addr_bitdef(test_input, expected):
     (" ", "00000000"),
 ])
 def test_character_to_bitdef(test_input, expected):
-    assert decimal_display.character_to_bitdef(test_input) == expected
+    assert decimal_rom.character_to_bitdef(test_input) == expected
 
 @pytest.mark.parametrize("test_input", ["Q", ".", "?",])
 def test_character_to_bitdef_raises(test_input):
     with pytest.raises(ValueError):
-        decimal_display.character_to_bitdef(test_input)
+        decimal_rom.character_to_bitdef(test_input)
 
 @pytest.mark.parametrize("raw_value, disp_chars, base_bitdef, binary_mode_bitdef, expected", [
     (
@@ -80,10 +80,10 @@ def test_character_to_bitdef_raises(test_input):
     ),
 ])
 def test_assemble_romdata(raw_value, disp_chars, base_bitdef, binary_mode_bitdef, expected):
-    assert decimal_display.assemble_romdata(
+    assert decimal_rom.assemble_romdata(
         raw_value, disp_chars, base_bitdef, binary_mode_bitdef) == expected
 
 
 def test_gen_display_romdatas_doesnt_raise():
-    decimal_display.gen_display_romdatas()
+    decimal_rom.gen_display_romdatas()
     assert True

@@ -9,7 +9,10 @@ from .language_defs import (
 from .number_utils import number_to_bitstring
 from . import bitdef
 from .data_structures import RomData
-
+from .rom_utils import (
+    romdatas_have_duplicate_addresses,
+    populate_empty_addresses
+)
 
 def gen_display_romdatas():
     """
@@ -201,3 +204,27 @@ def character_to_bitdef(character):
     char_bitdef = bitdef.fill(char_bitdef, "0")
 
     return char_bitdef
+
+
+def get_decimal_rom():
+    """
+    Get complete representation of the decimal rom.
+
+    Returns:
+        list(RomData): All the defined data for the decima rom.
+
+    Raises:
+        RuntimeError: When the decimal romdata dataset has duplicate
+            addresses.
+    """
+
+    decimal_romdatas = gen_display_romdatas()
+    if romdatas_have_duplicate_addresses(decimal_romdatas):
+        raise RuntimeError("Decimal romdata set has duplicate addresses")
+    all_addresses = bitdef.collapse(EMPTY_ADDRESS)
+    default_data = DECIMAL_ROM_DEFAULT
+    full_rom = populate_empty_addresses(
+        decimal_romdatas, all_addresses, default_data
+    )
+    full_rom.sort(key=lambda romdata: romdata.address)
+    return full_rom
