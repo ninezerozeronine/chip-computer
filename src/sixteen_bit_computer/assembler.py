@@ -219,6 +219,7 @@ def process_assembly_lines(assembly_lines):
     check_anchors_are_in_range(assembly_lines)
     check_for_duplicate_alias_names(assembly_lines)
     check_for_duplicate_label_names(assembly_lines)
+    check_for_multiple_label_assignment(assembly_lines)
     check_for_duplicate_variable_names(assembly_lines)
 
     assign_machinecode_indecies(assembly_lines)
@@ -303,12 +304,16 @@ def check_for_duplicate_alias_names(assembly_lines):
     """
     Check if an alias has been defined multiple times.
 
-    E.g. This is allowed::
+    E.g. This is allowed:
+
+    .. code-block:: none
 
         !MY_ALIAS #123
         !OTHER_ALIAS #456
 
     But this is not::
+
+    .. code-block:: none
 
         !MY_ALIAS #123
         !MY_ALIAS #456
@@ -349,14 +354,18 @@ def check_for_duplicate_label_names(assembly_lines):
     """
     Check if a label name has been used more than once.
 
-    E.g. This is allowed::
+    E.g. This is allowed:
+
+    .. code-block:: none
 
         &label_1
             NOOP
         &label_2
-            "hello"
+            ADD #3
 
-    But this is not::
+    But this is not:
+
+    .. code-block:: none
 
         &label_0
             NOOP
@@ -401,16 +410,80 @@ def check_for_duplicate_label_names(assembly_lines):
                 label_lines[label] = assembly_line.line_no
 
 
+def check_for_multiple_label_assignment(assembly_lines):
+    """
+    Check if a single line will be assigned more than one label.
+
+    E.g. This is allowed:
+
+    .. code-block:: none
+
+        &label_1
+            NOOP
+        &label_2
+            AND A
+
+    But this is not:
+
+    .. code-block:: none
+
+        &label_0
+        &label_1
+            ADD A
+        &label_2
+            NOT ACC
+
+    Args:
+        assembly_lines (List[AssemblyLine]): List of
+            processed lines of assembly.
+    Raises:
+        AssemblyError: If a single line been assigned more than one
+            label.
+    """
+    label_queued = False
+    last_label = "INVALID"
+    last_line = -1
+    for line in assembly_lines:
+        if isinstance(line.pattern, assembly_patterns.Label):
+            if label_queued:
+                details = (
+                    "There is already a label ({label}) from line "
+                    "{last_line} queued for assignment to the next "
+                    "machinecode word.".format(
+                        label=last_label,
+                        last_line=last_line
+                    )
+                )
+                msg = ERROR_TEMPLATE.format(
+                    line_no=line.line_no,
+                    line=line.raw_line,
+                    details=details,
+                )
+                raise AssemblyError(msg)
+            else:
+                label_queued = True
+                last_label = line.pattern.name
+                last_line = line.line_no
+                continue
+
+        if line.pattern.machinecode:
+            label_queued = False
+
+
 def check_for_duplicate_variable_names(assembly_lines):
     """
     Check if a variable name has been used more than once.
 
-    E.g. This is allowed::
+    E.g. This is allowed:
+
+    .. code-block:: none
 
         $variable1
         $variable2 #23 #300
 
-    But this is not::
+    But this is not:
+
+    .. code-block:: none
 
         $variable_0
         $variable_1
@@ -620,13 +693,14 @@ def resolve_aliases(assembly_lines, alias_map):
 
 def build_label_map(assembly_lines):
     """
-    Build a mapping of labels to thier values.
+    Build a mapping of labels to thier machinecode indecies.
 
     Args:
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict of str to int: Dictionary of label name keys to thier values.
+        dict of str to int: Dictionary of label name keys to thier 
+            int machinecode indecies.
     """
     labels_needing_values = []
     label_map = {}

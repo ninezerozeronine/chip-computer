@@ -344,23 +344,26 @@ def test_check_for_duplicate_alias_names_doesnt_raise(test_input):
 @pytest.mark.parametrize("test_input", [
     """\
     &label_0
-    &label_1
-    &label_0
-
         NOOP
         NOOP
         // A comment
+
+    &label_0
+        AND A
     """
     ,
 
     """\
+    &label1
         NOOP
         NOOP
         // A comment
 
-    &label_0
-    &label_1
-    &label_0
+    &label2
+    $var
+        NOOP
+
+    &label1
     """
     ,
 
@@ -380,31 +383,13 @@ def test_check_for_duplicate_alias_names_doesnt_raise(test_input):
 
     """\
     &label1
-
+    &label1
         // A comment
         SET_ZERO A
 
     &label2
         NOOP
         SET_ZERO B
-
-    &label1
-        NOOP
-    """
-    ,
-
-    """\
-    &label1
-
-        // A comment
-        SET_ZERO A
-
-    &label2
-        NOOP
-        SET_ZERO B
-
-    &label2
-        NOOP
     """
 ])
 def test_check_for_duplicate_label_names_raises(test_input):
@@ -484,6 +469,131 @@ def test_check_for_duplicate_label_names_doesnt_raise(test_input):
     dedent_and_split = textwrap.dedent(test_input).splitlines()
     processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
     assembler.check_for_duplicate_label_names(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    &label_0
+    &label_1
+    &label_2
+
+        NOOP
+        NOOP
+        // A comment
+    """
+    ,
+
+    """\
+        NOOP
+        NOOP
+        // A comment
+
+    &label_0
+    &label_1
+    &label_2
+    """
+    ,
+
+    """\
+    &label1
+    $var_1
+    &label2
+        // A comment
+        SET_ZERO A
+
+    &label3
+        NOOP
+        SET_ZERO B
+    """
+    ,
+    """\
+    &label_4
+        NOOP
+        NOOP
+        // A comment
+
+    &label_0
+    &label_1
+    &label_2
+    """
+    ,
+
+    """\
+    &label1
+
+        // A comment
+        SET_ZERO A
+
+    &label2
+    &label4
+        NOOP
+        SET_ZERO B
+
+    &label3
+        NOOP
+    """
+])
+def test_check_for_multiple_label_assignment_raises(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    with pytest.raises(AssemblyError):
+        assembler.check_for_multiple_label_assignment(processed)
+
+
+@pytest.mark.parametrize("test_input",  [
+    """\
+    &label0
+    
+        NOOP
+        NOOP
+        // A comment
+    &label1
+    """
+    ,
+
+    """\
+        NOOP
+    &label1
+        NOOP
+        // A comment
+
+    &label0
+    """
+    ,
+
+    """\
+    &label1
+    $var_1 #12
+    &label2
+        // A comment
+        SET_ZERO A
+
+    &label3
+        NOOP
+        SET_ZERO B
+    """
+    ,
+    """\
+    &label0
+        NOOP
+    $var1
+        NOOP
+        // A comment
+
+
+    &label1
+    // A comment
+    $var #1 #2
+        NOOP
+    &label2
+        // A comment
+        AND A
+    """
+])
+def test_check_for_multiple_label_assignment_doesnt_raise(test_input):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    processed = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.check_for_multiple_label_assignment(processed)
 
 
 @pytest.mark.parametrize("test_input", [

@@ -216,8 +216,6 @@ def test_assembly_lines_to_logisim():
 
         $variable
 
-        &label1
-
         @ #54
         """,
         {}
