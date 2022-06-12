@@ -46,7 +46,7 @@ $var #1 #2
 
 
 
-def generate_assembly_summary(asm_line_infos):
+def generate_assembly_summary(assembly_lines):
     """
     Produce a summary that combines assembly and machine code.
 
@@ -74,96 +74,15 @@ def generate_assembly_summary(asm_line_infos):
         14 // comment
 
     Args:
-        asm_line_infos (list(dict)): List of dictionaries of information
+        assembly_lines (list(dict)): List of dictionaries of information
             about the parsed assembly.
     Returns:
         str: Printable summary.
     """
-    lines = generate_assembly_summary_lines(asm_line_infos)
+    label_map = assembler.create_label_map(assembly_lines)
+    summary_data = get_assembly_summary_data(assembly_lines, label_map)
+    lines = generate_assembly_summary_lines(summary_data)
     return "\n".join(lines)
-
-
-def generate_assembly_summary_lines(asm_line_infos):
-    """
-    Generate list of lines for an assembly summary
-
-    Args:
-        asm_line_infos (list(dict)): List of dictionaries of information
-            about the parsed assembly.
-    Returns:
-        list(str): List of lines for the summary.
-    """
-
-    summary_data = get_assembly_summary_data(asm_line_infos)
-    widest_values = get_widest_column_values(summary_data)
-    summary_line_template = (
-        "{asm_line_no: >{widest_asm_line_no}} "
-        "{raw_assembly_line: <{widest_asm_line}} "
-        "| "
-        "{mc_index_decimal: >{widest_mc_index_decimal}} "
-        "{mc_index_hex} "
-        "{mc_byte_sep} "
-        "{mc_label: <{widest_mc_label}} "
-        "{mc_byte_decimal: >{widest_mc_byte_decimal}} "
-        "{mc_byte_hex} "
-        "{mc_byte_constant}"
-    )
-    formatted_summary_lines = []
-    for entry in summary_data:
-        if assembly := entry.get["assembly"]:
-            asm_line_no = assembly["line_no"]
-            raw_assembly_line = assembly["raw"]
-        else:
-            asm_line_no = ""
-            raw_assembly_line = ""
-
-        if word := entry.get["word"]:
-            mc_index_decimal = word["index_decimal"]
-            mc_index_hex = word["index_hex"]
-            mc_byte_sep = "-"
-
-            if label := word.get("label"):
-                mc_label = label
-            else:
-                mc_label = ""
-
-            mc_byte_decimal = word["value_decimal"]
-            mc_byte_hex = word["value_hex"]
-
-            if const := word.get("const"):
-                mc_byte_constant = const
-            else:
-                mc_byte_constant = ""
-        else:
-            mc_index_decimal = ""
-            mc_index_hex = ""
-            mc_index_bitstring = ""
-            mc_byte_sep = ""
-            mc_label = ""
-            mc_byte_decimal = ""
-            mc_byte_bitstring = ""
-            mc_byte_hex = ""
-            mc_byte_constant = ""
-
-        formatted_line = summary_line_template.format(
-            asm_line_no=asm_line_no,
-            widest_asm_line_no=widest_values["asm_line_no"],
-            raw_assembly_line=raw_assembly_line,
-            widest_asm_line=widest_values["asm_line"],
-            mc_index_decimal=mc_index_decimal,
-            widest_mc_index_decimal=widest_values["mc_index_decimal"],
-            mc_index_hex=mc_index_hex,
-            mc_byte_sep=mc_byte_sep,
-            mc_label=mc_label,
-            widest_mc_label=widest_values["mc_label"],
-            mc_byte_decimal=mc_byte_decimal,
-            widest_mc_byte_decimal=widest_values["mc_byte_decimal"],
-            mc_byte_hex=mc_byte_hex,
-            mc_byte_constant=mc_byte_constant,
-        ).rstrip()
-        formatted_summary_lines.append(formatted_line)
-
-    return formatted_summary_lines
 
 
 def get_assembly_summary_data(assembly_lines, label_map):
@@ -243,6 +162,155 @@ def get_assembly_summary_data(assembly_lines, label_map):
     return assembly_summary
 
 
+def generate_assembly_summary_lines(summary_data):
+    """
+    Generate list of lines for an assembly summary
+
+    Args:
+        summary_data
+    Returns:
+        list(str): List of lines for the summary.
+    """
+
+    widest_values = get_widest_column_values(summary_data)
+
+    summary_lines = []
+    for entry in summary_data:
+        line_parts = []
+
+        # Assembly line number
+        line_no = entry.get("assembly", {}).get("line_no", "")
+        line_parts.append("{line_no: >{widest_asm_line_no}}".format(
+            line_no=line_no,
+            widest_asm_line_no=widest_values["asm_line_no"]
+        ))
+
+        # Assembly line
+        raw = entry.get("assembly", {}).get("raw", "")
+        line_parts.append("{raw_assembly_line: <{widest_asm_line}}".format(
+            raw_assembly_line=raw,
+            widest_asm_line=widest_values["asm_line"]
+        ))
+
+        # Assembly/machinecode separator
+        line_parts.append("|")
+
+        if word := entry.get("word"):
+
+            # Decimal word index
+            line_parts.append(
+                "{word_index_decimal: >{widest}}".format(
+                    word_index_decimal=word["index_decimal"],
+                    widest=widest_values["word_index_decimal"]
+            ))
+
+            # Hex word index
+            line_parts.append(word["index_hex"])
+
+            # Index/value seperator
+            line_parts.append("-")
+
+            # Label
+            if widest_values["word_label"] > 0:
+                label = word.get("label", "")
+                line_parts.append(
+                    "{label: <{widest}}".format(
+                        label=label,
+                        widest=widest_values["word_label"]
+                ))
+
+            # Decimal word value
+            line_parts.append(
+                "{word_value_decimal: >{widest}}".format(
+                    word_value_decimal=word["value_decimal"],
+                    widest=widest_values["word_value_decimal"]
+            ))
+
+            # Hex word value
+            line_parts.append(word["value_hex"])
+
+            # Constant
+            if const := word.get("const"):
+                line_parts.append(const)
+
+        summary_lines.append(" ".join(line_parts).rstrip())
+
+    return summary_lines
+
+
+    # summary_line_template = (
+    #     "{asm_line_no: >{widest_asm_line_no}} "
+    #     "{raw_assembly_line: <{widest_asm_line}} "
+    #     "| "
+    #     "{word_index_decimal: >{widest_word_index_decimal}} "
+    #     "{word_index_hex} "
+    #     "{word_sep} "
+    #     "{word_label: <{widest_word_label}}"
+    #     "{word_value_decimal: >{widest_word_value_decimal}} "
+    #     "{word_value_hex} "
+    #     "{word_value_constant}"
+    # )
+    # formatted_summary_lines = []
+    # for entry in summary_data:
+    #     if assembly := entry.get("assembly"):
+    #         asm_line_no = assembly["line_no"]
+    #         raw_assembly_line = assembly["raw"]
+    #     else:
+    #         asm_line_no = ""
+    #         raw_assembly_line = ""
+
+    #     if word := entry.get("word"):
+    #         word_index_decimal = word["index_decimal"]
+    #         word_index_hex = word["index_hex"]
+    #         word_sep = "-"
+
+    #         word_value_decimal = word["value_decimal"]
+    #         word_value_hex = word["value_hex"]
+
+    #         if label := word.get("label"):
+    #             word_label = label
+    #         else:
+    #             word_label = ""
+
+    #         if const := word.get("const"):
+    #             word_value_constant = const
+    #         else:
+    #             word_value_constant = ""
+    #     else:
+    #         word_index_decimal = ""
+    #         word_index_hex = ""
+    #         word_index_bitstring = ""
+    #         word_sep = ""
+    #         word_label = ""
+    #         word_value_decimal = ""
+    #         word_value_bitstring = ""
+    #         word_value_hex = ""
+    #         word_value_constant = ""
+
+    #     formatted_line = summary_line_template.format(
+    #         asm_line_no=asm_line_no,
+    #         widest_asm_line_no=widest_values["asm_line_no"],
+    #         raw_assembly_line=raw_assembly_line,
+    #         widest_asm_line=widest_values["asm_line"],
+    #         word_index_decimal=word_index_decimal,
+    #         widest_word_index_decimal=widest_values["word_index_decimal"],
+    #         word_index_hex=word_index_hex,
+    #         word_sep=word_sep,
+    #         word_label=word_label,
+    #         widest_word_label=widest_values["word_label"],
+    #         word_value_decimal=word_value_decimal,
+    #         widest_word_value_decimal=widest_values["word_value_decimal"],
+    #         word_value_hex=word_value_hex,
+    #         word_value_constant=word_value_constant,
+    #     ).rstrip()
+    #     formatted_summary_lines.append(formatted_line)
+
+    # return formatted_summary_lines
+
+
+
+
+
     # assembly_summary = []
 
     # for asm_line_info in asm_line_infos:
@@ -298,7 +366,7 @@ def get_widest_column_values(assembly_summary_data):
     }
 
     for entry in assembly_summary_data:
-        if assembly := entry.get["assembly"]:
+        if assembly := entry.get("assembly"):
             # Assembly line number width
             line_no_width = len(assembly["line_no"])
             if line_no_width > widest_values["asm_line_no"]:
@@ -309,7 +377,7 @@ def get_widest_column_values(assembly_summary_data):
             if asm_line_width > widest_values["asm_line"]:
                 widest_values["asm_line"] = asm_line_width
 
-        if word := entry.get["word"]:
+        if word := entry.get("word"):
             # Decimal word index width
             word_index_decimal_width = len(word["index_decimal"])
             if word_index_decimal_width > widest_values["word_index_decimal"]:
@@ -323,7 +391,7 @@ def get_widest_column_values(assembly_summary_data):
             # Label width
             if label := word.get("label"):
                 word_label_width = len(label)
-                if word_label_width > widest_values["mc_label"]:
-                    widest_values["mc_label"] = word_label_width
+                if word_label_width > widest_values["word_label"]:
+                    widest_values["word_label"] = word_label_width
 
     return widest_values
