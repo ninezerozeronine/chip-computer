@@ -11,8 +11,8 @@ setup(
     package_dir={'': 'src'},
     entry_points={
         "console_scripts": [
-            "ebc-assemble=sixteen_bit_computer.cli:assemble",
-            "ebc-gen-roms=sixteen_bit_computer.cli:gen_roms",
+            "sbc-assemble=sixteen_bit_computer.cli:assemble",
+            "sbc-gen-roms=sixteen_bit_computer.cli:gen_roms",
         ]
     }
 )

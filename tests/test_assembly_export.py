@@ -69,7 +69,7 @@ def test_generate_arduino_cpp():
         }};
 
         // Max of seven characters
-        extern const char progname_program_name[] = "Prgname";
+        extern const char progname_program_name[] = "DEFAULT";
         """
     )
 
@@ -97,11 +97,10 @@ def test_generate_arduino_cpp():
     assembler.process_assembly_lines(lines)
 
     progname = "progname"
-    progname_short = "Prgname"
     h_filename = "prog_progname.h"
 
     assert assembly_export.generate_arduino_cpp(
-        lines, progname, progname_short, h_filename
+        lines, progname, h_filename
     ) == expected
 
 

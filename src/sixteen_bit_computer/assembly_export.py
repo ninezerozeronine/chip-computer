@@ -8,26 +8,6 @@ unsigned equivalents.
 from . import number_utils
 from .utils import chunker
 
-def assembly_to_arduino(assembly, progname, progname_short, h_filename):
-    """
-    Generate cpp and header file for given assembly.
-
-    Args:
-        assembly (list(AssemblyLine)): Assembly lines to generate the
-            cpp file for.
-        progname (str): Identifier for this program in the cpp code.
-            Used for variable names in the code.
-        progname_short (str): Name that will display on the arduino
-            interface for this program.
-        h_filename (str): Name of the headerfile including extension.
-    Returns:
-        tuple (str, str): The header and cpp file contents.
-    """
-    header = generate_arduino_header(progname)
-    cpp = generate_arduino_cpp(assembly, progname, progname_short, h_filename)
-    return header, cpp
-
-
 def generate_arduino_header(progname):
     """
 
@@ -89,7 +69,7 @@ def generate_arduino_header(progname):
     return "\n".join(h_lines)
 
 
-def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
+def generate_arduino_cpp(assembly, progname, h_filename):
     """
     Generate cpp file for program for Arduino.
 
@@ -133,8 +113,6 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
             cpp file for.
         progname (str): Identifier for this program in the cpp code.
             Used for variable names in the code.
-        progname_short (str): Name that will display on the arduino
-            interface for this program.
         h_filename (str): Name of the headerfile including extension.
     Returns:
         str: String ready to be written to a file.
@@ -183,9 +161,9 @@ def generate_arduino_cpp(assembly, progname, progname_short, h_filename):
 
 
     cpp_lines.append("// Max of seven characters")
-    cpp_lines.append("extern const char {progname}_program_name[] = \"{progname_short}\";".format(
+    cpp_lines.append(
+        "extern const char {progname}_program_name[] = \"DEFAULT\";".format(
         progname=progname,
-        progname_short=progname_short[:7]
     ))
     cpp_lines.append("")
 

@@ -2,6 +2,56 @@ from . import number_utils
 from .utils import chunker
 
 
+def generate_arduino_header(header_file_basename, rom_var_name):
+    """
+    Create arduino header file
+
+    The header file looks like this::
+
+        #ifndef MC_ROM_0_H
+        #define MC_ROM_0_H
+
+        #include <Arduino.h>
+
+        extern const byte MC_ROM_0[];
+        extern const byte MC_ROM_0_LAST_BYTE;
+
+        #endif
+
+    Args:
+        header_file_basename (str): The basename of the header file.
+            E.g. if the header file is named mc_rom_0.h, the basename is
+            mc_rom_0.
+        rom_var_name(str): The variable name used for the rom data in
+            the arduino code.
+    Returns:
+        str: String ready to be written to a file.
+    """
+
+    h_lines = []
+    h_lines.append("#ifndef {header_file_basename}_H".format(
+        header_file_basename=header_file_basename.upper()
+    ))
+    h_lines.append("#define {header_file_basename}_H".format(
+        header_file_basename=header_file_basename.upper()
+    ))
+    h_lines.append("")
+    h_lines.append("#include <Arduino.h>")
+    h_lines.append("")
+    h_lines.append("extern const byte {rom_var_name}[];".format(
+        rom_var_name=rom_var_name
+    ))
+    h_lines.append(
+        "extern const byte {rom_var_name}_LAST_BYTE;".format(
+            rom_var_name=rom_var_name
+        )
+    )
+    h_lines.append("")
+    h_lines.append("#endif")
+    h_lines.append("")
+    return "\n".join(h_lines)
+
+
 def generate_arduino_cpp(
         bitstrings, rom_index, header_filename, rom_var_name
     ):
@@ -80,56 +130,6 @@ def generate_arduino_cpp(
     cpp_string = "\n".join(cpp_lines)
     cpp_string += "\n"
     return cpp_string
-
-
-def generate_arduino_header(header_file_basename, rom_var_name):
-    """
-    Create arduino header file
-
-    The header file looks like this::
-
-        #ifndef MC_ROM_0_H
-        #define MC_ROM_0_H
-
-        #include <Arduino.h>
-
-        extern const byte MC_ROM_0[];
-        extern const byte MC_ROM_0_LAST_BYTE;
-
-        #endif
-
-    Args:
-        header_file_basename (str): The basename of the header file.
-            E.g. if the header file is named mc_rom_0.h, the basename is
-            mc_rom_0.
-        rom_var_name(str): The variable name used for the rom data in
-            the arduino code.
-    Returns:
-        str: String ready to be written to a file.
-    """
-
-    h_lines = []
-    h_lines.append("#ifndef {header_file_basename}_H".format(
-        header_file_basename=header_file_basename.upper()
-    ))
-    h_lines.append("#define {header_file_basename}_H".format(
-        header_file_basename=header_file_basename.upper()
-    ))
-    h_lines.append("")
-    h_lines.append("#include <Arduino.h>")
-    h_lines.append("")
-    h_lines.append("extern const byte {rom_var_name}[];".format(
-        rom_var_name=rom_var_name
-    ))
-    h_lines.append(
-        "extern const byte {rom_var_name}_LAST_BYTE;".format(
-            rom_var_name=rom_var_name
-        )
-    )
-    h_lines.append("")
-    h_lines.append("#endif")
-    h_lines.append("")
-    return "\n".join(h_lines)
 
 
 def generate_logisim(bitstrings):

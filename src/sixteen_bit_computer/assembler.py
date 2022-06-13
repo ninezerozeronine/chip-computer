@@ -35,6 +35,12 @@ class AssemblyLine():
         self.line_no = line_no
 
 
+def assemble(lines):
+    assembly_lines = ingest_raw_assembly_lines(lines)
+    process_assembly_lines(assembly_lines)
+    return assembly_lines
+
+
 def ingest_raw_assembly_lines(lines):
     """
     Take strings and convert to :class:`~sixteen_bit_computer.assembler.AssemblyLine`
@@ -214,6 +220,9 @@ def get_pattern(tokens):
 
 
 def process_assembly_lines(assembly_lines):
+    """
+    
+    """
 
     check_numbers_in_range(assembly_lines)
     check_anchors_are_in_range(assembly_lines)
@@ -699,8 +708,8 @@ def build_label_map(assembly_lines):
         assembly_lines (List[AssemblyLine]): List of
             processed lines of assembly.
     Returns:
-        dict of str to int: Dictionary of label name keys to thier 
-            int machinecode indecies.
+        dict of str to int: Dictionary of string label name keys to thier 
+        int machinecode indecies.
     """
     labels_needing_values = []
     label_map = {}

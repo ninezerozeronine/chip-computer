@@ -26,9 +26,9 @@ in `docs`. This also runs the apidoc command on build with a convenience functio
 
 To run the tests, run:
 
-    tox tests
+    tox
 
-in the root directory. We need to specify the tests dir for now because there's lots of old tests being migrated from old_tests.
+in the root directory. Note that in pytest.ini the tests directory is specified as the test directory.
 
 Run:
 
@@ -41,6 +41,23 @@ To generate a coverage report run:
     tox -e cov
 
 in the root directory.
+
+# Development
+
+This is assuming the OS is Wondows and Anaconda is being used for Python/Environment managemnet.
+
+If one hasn't already been created, create a virtualenv with:
+
+    conda create --name sbcdevenv python=3.9
+
+Then activate the virtualenv:
+
+    conda activate sbcdevenv
+
+Then install the package into the dev env by running the following in the root directory:
+
+    python -m pip install .
+
 
 # Release
 
