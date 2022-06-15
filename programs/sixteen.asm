@@ -7,6 +7,8 @@
     NOOP
     ADD A
 
+@ #50
+&pointless
 $var #1 #2
 
     AND [!five]
@@ -24,3 +26,15 @@ $var #1 #2
     SET_ZERO ACC
     ADD $var
     ADD &label2
+    ADD [&pointless]
+    ADD &pointless
+    AND A
+    AND B
+    AND C
+    // AND ACC
+    ADD A
+    ADD B
+    ADD C
+    // ADD ACC
+    SET_ZERO A
+    // SET_ZERO #10
