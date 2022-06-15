@@ -10,6 +10,8 @@ from .exceptions import AssemblyError
 from .number_utils import number_to_bitstring
 from . import assembly_export
 from . import rom_export
+from . import microcode_rom
+from . import decimal_rom
 
 
 def assemble(
@@ -218,8 +220,8 @@ def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
     if file_prefix is None:
         file_prefix = ""
 
-    rom_data = rom.get_rom()
-    rom_slices = rom.slice_rom(rom_data)
+    rom_data = microcode_rom.get_rom()
+    rom_slices = microcode_rom.slice_rom(rom_data)
     for rom_index, rom_slice in rom_slices.items():
         slice_bitstrings = [romdata.data for romdata in rom_slice]
         file_basename = "{file_prefix}mc_rom_{rom_index}".format(
@@ -242,12 +244,12 @@ def gen_roms(output_dir=".", file_prefix=None, output_format="logisim"):
             )
 
     decimal_rom_index = len(rom_slices)
-    decimal_rom = rom.get_decimal_rom()
+    decimal_romdatas = decimal_rom.get_decimal_rom()
     decimal_file_basename = "{file_prefix}decimal_rom".format(
         file_prefix=file_prefix,
     )
     decimal_bitstrings = [
-        decimal_rom_entry.data for decimal_rom_entry in decimal_rom
+        decimal_rom_entry.data for decimal_rom_entry in decimal_romdatas
     ]
     if output_format == "logisim":
         output = rom_export.generate_logisim(decimal_bitstrings)
