@@ -4,10 +4,12 @@ def get_all_operations():
         noop_op,
         set_zero_op,
         simple_alu_ops,
+        halt_op,
     )
 
     return [
         noop_op,
         set_zero_op,
         simple_alu_ops,
+        halt_op,
     ]
