@@ -7,7 +7,13 @@ from .instruction_components import (
     HALT,
     SET_ZERO,
     ADD,
+    SUB,
     AND,
+    OR,
+    XOR,
+    NAND,
+    NOR,
+    NXOR,
     ACC,
     A,
     B,
@@ -18,7 +24,7 @@ from .instruction_components import (
 from . import operations
 
 
-_INSTRUCTION_SIGNATURES = frozenset([
+_INSTRUCTION_SIGNATURES = (
     (NOOP,),
     (SET_ZERO, ACC),
     (SET_ZERO, A),
@@ -29,44 +35,48 @@ _INSTRUCTION_SIGNATURES = frozenset([
     (ADD, C),
     (ADD, CONST),
     (ADD, M_CONST),
+    (SUB, A),
+    (SUB, B),
+    (SUB, C),
+    (SUB, CONST),
+    (SUB, M_CONST),
     (AND, A),
     (AND, B),
     (AND, C),
     (AND, CONST),
     (AND, M_CONST),
+    (OR, A),
+    (OR, B),
+    (OR, C),
+    (OR, CONST),
+    (OR, M_CONST),
+    (XOR, A),
+    (XOR, B),
+    (XOR, C),
+    (XOR, CONST),
+    (XOR, M_CONST),
+    (NAND, A),
+    (NAND, B),
+    (NAND, C),
+    (NAND, CONST),
+    (NAND, M_CONST),
+    (NOR, A),
+    (NOR, B),
+    (NOR, C),
+    (NOR, CONST),
+    (NOR, M_CONST),
+    (NXOR, A),
+    (NXOR, B),
+    (NXOR, C),
+    (NXOR, CONST),
+    (NXOR, M_CONST),
     (HALT,)
-])
+)
 """
 All possible instruction signatures.
 
 An instruction signature is a tuple of the :mod:`Instruction component
 <.instruction_components>` s it's made up of.
-"""
-
-
-_INSTRUCTION_INDECIES = {
-    (NOOP,): 0,
-    (SET_ZERO, ACC): 1,
-    (SET_ZERO, A): 2,
-    (SET_ZERO, B): 3,
-    (SET_ZERO, C): 4,
-    (ADD, A): 5,
-    (ADD, B): 6,
-    (ADD, C): 7,
-    (ADD, CONST): 8,
-    (ADD, M_CONST): 9,
-    (AND, A): 10,
-    (AND, B): 11,
-    (AND, C): 12,
-    (AND, CONST): 13,
-    (AND, M_CONST): 14,
-    (HALT,): 15
-}
-"""
-The index of all instructions.
-
-All the instructions need a unique index that eventually become the
-8 bits that uniquely identify it at the machinecode level.
 """
 
 
@@ -81,7 +91,7 @@ def get_instruction_index(signature):
     Returns:
         int: Index of the signature.
     """
-    return _INSTRUCTION_INDECIES[signature]
+    return _INSTRUCTION_SIGNATURES.index(signature)
 
 
 def all_signatures():

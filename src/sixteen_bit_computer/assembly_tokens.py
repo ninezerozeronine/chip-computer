@@ -10,7 +10,13 @@ from .instruction_components import (
     HALT,
     SET_ZERO,
     ADD,
+    SUB,
     AND,
+    OR,
+    XOR,
+    NAND,
+    NOR,
+    NXOR,
     ACC,
     A,
     B,
@@ -326,13 +332,19 @@ class OPCODE(Token):
     being fetched from, or what module the value is being loaded into,
     it's still a load.
     """
-    _OPCODE_STRINGS = frozenset([
+    _OPCODE_STRINGS = (
         "NOOP",
         "HALT",
         "SET_ZERO",
         "ADD",
+        "SUB",
         "AND",
-    ])
+        "OR",
+        "XOR",
+        "NAND",
+        "NOR",
+        "NXOR",
+    )
     """
     frozenset[str]: The set of strings that are supported as opcodes.
     """
@@ -341,7 +353,13 @@ class OPCODE(Token):
         "NOOP": NOOP,
         "SET_ZERO": SET_ZERO,
         "ADD": ADD,
+        "SUB": SUB,
         "AND": AND,
+        "OR": OR,
+        "XOR": XOR,
+        "NAND": NAND,
+        "NOR": NOR,
+        "NXOR": NXOR,
         "HALT": HALT,
     }
     """
