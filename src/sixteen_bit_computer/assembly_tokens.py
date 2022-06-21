@@ -9,6 +9,7 @@ from .instruction_components import (
     NOOP,
     HALT,
     SET_ZERO,
+    COPY,
     ADD,
     SUB,
     AND,
@@ -21,6 +22,8 @@ from .instruction_components import (
     A,
     B,
     C,
+    PC,
+    SP,
     CONST,
     M_ACC,
     M_A,
@@ -332,26 +335,11 @@ class OPCODE(Token):
     being fetched from, or what module the value is being loaded into,
     it's still a load.
     """
-    _OPCODE_STRINGS = (
-        "NOOP",
-        "HALT",
-        "SET_ZERO",
-        "ADD",
-        "SUB",
-        "AND",
-        "OR",
-        "XOR",
-        "NAND",
-        "NOR",
-        "NXOR",
-    )
-    """
-    frozenset[str]: The set of strings that are supported as opcodes.
-    """
 
     _OPCODE_TO_COMPONENT = {
         "NOOP": NOOP,
         "SET_ZERO": SET_ZERO,
+        "COPY": COPY,
         "ADD": ADD,
         "SUB": SUB,
         "AND": AND,
@@ -370,7 +358,7 @@ class OPCODE(Token):
 
     @classmethod
     def from_string(cls, _string):
-        if _string in cls._OPCODE_STRINGS:
+        if _string in cls._OPCODE_TO_COMPONENT:
             return cls(_string, _string)
         else:
             return None
@@ -399,18 +387,7 @@ class MODULE(Token):
         autodoc_default_options means all sort of private nonsense
         gets documented.
 
-    .. autoattribute:: _MODULE_STRINGS
     .. autoattribute:: _MODULE_TO_COMPONENT
-    """
-    _MODULE_STRINGS = frozenset([
-        "ACC",
-        "A",
-        "B",
-        "C",
-    ])
-    """
-    frozenset[str]: The set of strings that are supported as modules.
-
     """
 
     _MODULE_TO_COMPONENT = {
@@ -418,6 +395,8 @@ class MODULE(Token):
         "A": A,
         "B": B,
         "C": C,
+        "SP": SP,
+        "PC": PC,
     }
     """
     Dict[str, :mod:`instruction component<.instruction_components>`]:
@@ -427,7 +406,7 @@ class MODULE(Token):
 
     @classmethod
     def from_string(cls, _string):
-        if _string in cls._MODULE_STRINGS:
+        if _string in cls._MODULE_TO_COMPONENT:
             return cls(_string, _string)
         else:
             return None

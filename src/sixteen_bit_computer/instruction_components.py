@@ -22,6 +22,7 @@ class OpCode(Enum):
     NOOP = auto()
     HALT = auto()
     SET_ZERO = auto()
+    COPY = auto()
     LOAD = auto()
     STORE = auto()
     ADD = auto()
@@ -37,6 +38,7 @@ class OpCode(Enum):
 NOOP = OpCode.NOOP
 HALT = OpCode.HALT
 SET_ZERO = OpCode.SET_ZERO
+COPY = OpCode.COPY
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE
 ADD = OpCode.ADD
@@ -57,12 +59,16 @@ class Module(Enum):
     A = auto()
     B = auto()
     C = auto()
+    SP = auto()
+    PC = auto()
 
 
 ACC = Module.ACC
 A = Module.A
 B = Module.B
 C = Module.C
+SP = Module.SP
+PC = Module.PC
 
 
 class Constant(Enum):

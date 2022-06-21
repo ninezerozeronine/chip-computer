@@ -5,6 +5,7 @@ def get_all_operations():
         set_zero_op,
         simple_alu_ops,
         halt_op,
+        copy_op,
     )
 
     return [
@@ -12,4 +13,5 @@ def get_all_operations():
         set_zero_op,
         simple_alu_ops,
         halt_op,
+        copy_op,
     ]

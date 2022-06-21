@@ -1,7 +1,7 @@
 from .. import bitdef
 from .. import language_defs
 from ..data_structures import DataTemplate
-from ..instruction_components import ACC, A, B, C
+from ..instruction_components import ACC, A, B, C, PC, SP
 
 
 def assemble_instruction_steps(instruction_bitdef, flags_bitdefs, control_steps):
@@ -70,6 +70,8 @@ _COMPONENT_TO_MODULE_NAME = {
     A: "A",
     B: "B",
     C: "C",
+    SP: "SP",
+    PC: "PC",
 }
 
 

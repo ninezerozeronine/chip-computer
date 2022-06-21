@@ -27,7 +27,7 @@ from ..language_defs import (
 )
 
 
-_SUPPORTED_SIGNATURES = frozenset([
+_SUPPORTED_SIGNATURES = (
     (ADD, A),
     (ADD, B),
     (ADD, C),
@@ -68,7 +68,7 @@ _SUPPORTED_SIGNATURES = frozenset([
     (NXOR, C),
     (NXOR, CONST),
     (NXOR, M_CONST),
-])
+)
 
 
 def generate_machinecode(signature, const_tokens):
