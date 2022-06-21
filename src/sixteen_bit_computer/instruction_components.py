@@ -20,6 +20,7 @@ class OpCode(Enum):
     All the possible opcodes.
     """
     NOOP = auto()
+    HALT = auto()
     SET_ZERO = auto()
     LOAD = auto()
     STORE = auto()
@@ -28,6 +29,7 @@ class OpCode(Enum):
 
 
 NOOP = OpCode.NOOP
+HALT = OpCode.HALT
 SET_ZERO = OpCode.SET_ZERO
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE

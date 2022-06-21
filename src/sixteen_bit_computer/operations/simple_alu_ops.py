@@ -153,6 +153,7 @@ def _generate_control_steps(signature):
             MODULE_CONTROL["MEM"]["READ_FROM"],
             MODULE_CONTROL["ALU"]["A_IS_BUS"],
             MODULE_CONTROL["ALU"]["STORE_RESULT"],
+            MODULE_CONTROL["PC"]["COUNT"],
         ]
         step_1.extend(ALU_CONTROL_FLAGS["A"])
 

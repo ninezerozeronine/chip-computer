@@ -7,6 +7,7 @@ import re
 
 from .instruction_components import (
     NOOP,
+    HALT,
     SET_ZERO,
     ADD,
     AND,
@@ -327,6 +328,7 @@ class OPCODE(Token):
     """
     _OPCODE_STRINGS = frozenset([
         "NOOP",
+        "HALT",
         "SET_ZERO",
         "ADD",
         "AND",
@@ -340,6 +342,7 @@ class OPCODE(Token):
         "SET_ZERO": SET_ZERO,
         "ADD": ADD,
         "AND": AND,
+        "HALT": HALT,
     }
     """
     dict[str, :mod:`Instruction component<.instruction_components>`]:
