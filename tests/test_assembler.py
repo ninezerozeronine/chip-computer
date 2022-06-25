@@ -1131,17 +1131,17 @@ def test_resolve_aliases(test_input, expected):
 
 
 @pytest.mark.parametrize("test_input", [
-        """\
-        !first #1
-            NOOP
-            ADD !second
-        """,
+    """\
+    !first #1
+        NOOP
+        ADD !second
+    """,
 
-        """\
-        !first #1
-            NOOP
-            ADD [!second]
-        """,
+    """\
+    !first #1
+        NOOP
+        ADD [!second]
+    """,
 ])
 def test_resolve_aliases_raises(test_input):
     dedent_and_split = textwrap.dedent(test_input).splitlines()
@@ -1275,28 +1275,28 @@ def test_resolve_labels(test_input, expected):
 
 
 @pytest.mark.parametrize("test_input", [
-        """\
-        &label1
-            NOOP
-            ADD &label2
-        """,
+    """\
+    &label1
+        NOOP
+        ADD &label2
+    """,
 
-        """\
-        @ #123
-        !first #1
-        &label1
-            NOOP
-            ADD [&label2]
-        """,
+    """\
+    @ #123
+    !first #1
+    &label1
+        NOOP
+        ADD [&label2]
+    """,
 
-        """\
-        @ #45
-        !first #1
-            NOOP
-            ADD [&label1]
+    """\
+    @ #45
+    !first #1
+        NOOP
+        ADD [&label1]
 
-        &label1
-        """
+    &label1
+    """
 ])
 def test_resolve_labels_raises(test_input):
     dedent_and_split = textwrap.dedent(test_input).splitlines()
@@ -1417,30 +1417,30 @@ def test_resolve_variables(test_input, expected):
 
 
 @pytest.mark.parametrize("test_input", [
-        """\
-        $var1
-            NOOP
-            ADD $var2
-        """,
+    """\
+    $var1
+        NOOP
+        ADD $var2
+    """,
 
-        """\
-        @ #123
-        !first #1
-        &label1
-            NOOP
-            ADD [$var2]
-        $var1 #1 #2
-        """,
+    """\
+    @ #123
+    !first #1
+    &label1
+        NOOP
+        ADD [$var2]
+    $var1 #1 #2
+    """,
 
-        """\
-        @ #45
-        $var1
-        !first #1
-            NOOP
-            ADD $var2
+    """\
+    @ #45
+    $var1
+    !first #1
+        NOOP
+        ADD $var2
 
-        &label1
-        """
+    &label1
+    """
 ])
 def test_resolve_variables_raises(test_input):
     dedent_and_split = textwrap.dedent(test_input).splitlines()
@@ -1451,3 +1451,92 @@ def test_resolve_variables_raises(test_input):
         assembler.resolve_variables(processed, variable_map)
 
 
+def test_assemble_all_instructions():
+    test_data = """\
+        NOOP
+        SET_ZERO ACC
+        SET_ZERO A
+        SET_ZERO B
+        SET_ZERO C
+        JUMP_IF_EQ_ZERO ACC #456
+        JUMP_IF_EQ_ZERO A #456
+        JUMP_IF_EQ_ZERO B #456
+        JUMP_IF_EQ_ZERO C #456
+        JUMP_IF_EQ_ZERO PC #456
+        JUMP_IF_EQ_ZERO SP #456
+        JUMP_IF_NEQ_ZERO ACC #456
+        JUMP_IF_NEQ_ZERO A #456
+        JUMP_IF_NEQ_ZERO B #456
+        JUMP_IF_NEQ_ZERO C #456
+        JUMP_IF_NEQ_ZERO PC #456
+        JUMP_IF_NEQ_ZERO SP #456
+        COPY ACC A
+        COPY ACC B
+        COPY ACC C
+        COPY ACC SP
+        COPY A ACC
+        COPY A B
+        COPY A C
+        COPY A SP
+        COPY B ACC
+        COPY B A
+        COPY B C
+        COPY B SP
+        COPY C ACC
+        COPY C A
+        COPY C B
+        COPY C SP
+        COPY PC ACC
+        COPY PC A
+        COPY PC B
+        COPY PC C
+        COPY PC SP
+        COPY SP ACC
+        COPY SP A
+        COPY SP B
+        COPY SP C
+        ADD A
+        ADD B
+        ADD C
+        ADD #456
+        ADD [#123]
+        SUB A
+        SUB B
+        SUB C
+        SUB #456
+        SUB [#123]
+        AND A
+        AND B
+        AND C
+        AND #456
+        AND [#123]
+        OR A
+        OR B
+        OR C
+        OR #456
+        OR [#123]
+        XOR A
+        XOR B
+        XOR C
+        XOR #456
+        XOR [#123]
+        NAND A
+        NAND B
+        NAND C
+        NAND #456
+        NAND [#123]
+        NOR A
+        NOR B
+        NOR C
+        NOR #456
+        NOR [#123]
+        NXOR A
+        NXOR B
+        NXOR C
+        NXOR #456
+        NXOR [#123]
+        HALT
+    """
+    dedent_and_split = textwrap.dedent(test_data).splitlines()
+    assembler.assemble(dedent_and_split)
+    assert True

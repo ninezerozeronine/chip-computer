@@ -8,6 +8,7 @@ from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
     JUMP_IF_EQ_ZERO,
+    JUMP_IF_NEQ_ZERO,
     ACC,
     A,
     B,
@@ -18,8 +19,9 @@ from ..instruction_components import (
 )
 from .. import number_utils
 from ..language_defs import (
-    MODULE_CONTROLS_NONE,
+    MODULE_CONTROL,
     FLAGS,
+    ALU_CONTROL_FLAGS,
 )
 from . import utils
 
@@ -30,6 +32,12 @@ _SUPPORTED_SIGNATURES = (
     (JUMP_IF_EQ_ZERO, C, CONST),
     (JUMP_IF_EQ_ZERO, PC, CONST),
     (JUMP_IF_EQ_ZERO, SP, CONST),
+    (JUMP_IF_NEQ_ZERO, ACC, CONST),
+    (JUMP_IF_NEQ_ZERO, A, CONST),
+    (JUMP_IF_NEQ_ZERO, B, CONST),
+    (JUMP_IF_NEQ_ZERO, C, CONST),
+    (JUMP_IF_NEQ_ZERO, PC, CONST),
+    (JUMP_IF_NEQ_ZERO, SP, CONST),
 )
 
 
@@ -49,7 +57,7 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     return [
-        Word(value=get_instruction_index(signature))
+        Word(value=get_instruction_index(signature)),
         Word(const_token=const_tokens[0]),
     ]
 
@@ -89,7 +97,10 @@ def generate_microcode_templates():
         # location to jump to (this was the second instruction word).
         # Set the MAR with the value of PC so it can then be loaded from memory.
         step = 1
-        flags = [FLAGS["ZERO"]["HIGH"]]
+        if signature[0] == JUMP_IF_EQ_ZERO:
+            flags = [FLAGS["ZERO"]["HIGH"]]
+        elif signature[0] == JUMP_IF_NEQ_ZERO:
+            flags = [FLAGS["ZERO"]["LOW"]]
         module_controls = [
             MODULE_CONTROL["PC"]["OUT"],
             MODULE_CONTROL["MAR"]["IN"],
@@ -121,7 +132,10 @@ def generate_microcode_templates():
         # the constant that would have been jumped to and reset the step counter.
         # to fetch the next instruction.
         step = 1
-        flags = [FLAGS["ZERO"]["LOW"]]
+        if signature[0] == JUMP_IF_EQ_ZERO:
+            flags = [FLAGS["ZERO"]["LOW"]]
+        elif signature[0] == JUMP_IF_NEQ_ZERO:
+            flags = [FLAGS["ZERO"]["HIGH"]]
         module_controls = [
             MODULE_CONTROL["PC"]["COUNT"],
             MODULE_CONTROL["CU"]["STEP_RESET"],
@@ -132,8 +146,10 @@ def generate_microcode_templates():
             "module_controls": module_controls,
         })
 
-        instr_index = instruction_listings.get_instruction_index(signature)
-        data_templates.extend(utils.assemble_explicit_steps(microcode_defs))
+        instr_index = get_instruction_index(signature)
+        data_templates.extend(utils.assemble_explicit_instruction_steps(
+            instr_index, microcode_defs
+        ))
 
     return data_templates
 

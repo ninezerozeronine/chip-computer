@@ -9,6 +9,8 @@ from .instruction_components import (
     NOOP,
     HALT,
     SET_ZERO,
+    JUMP_IF_EQ_ZERO,
+    JUMP_IF_NEQ_ZERO,
     COPY,
     ADD,
     SUB,
@@ -339,6 +341,8 @@ class OPCODE(Token):
     _OPCODE_TO_COMPONENT = {
         "NOOP": NOOP,
         "SET_ZERO": SET_ZERO,
+        "JUMP_IF_EQ_ZERO": JUMP_IF_EQ_ZERO,
+        "JUMP_IF_NEQ_ZERO": JUMP_IF_NEQ_ZERO,
         "COPY": COPY,
         "ADD": ADD,
         "SUB": SUB,
