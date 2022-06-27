@@ -1,5 +1,5 @@
 """
-The JUMP_IF_EQ_ZERO operation.
+The JUMP_IF_EQ_ZERO  and JUMP_IF_NEQ_ZERO operations.
 
 Jumps to a location in memory of the given module is not equal to zero
 """

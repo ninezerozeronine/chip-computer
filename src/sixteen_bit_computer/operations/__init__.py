@@ -7,6 +7,7 @@ def get_all_operations():
         halt_op,
         copy_op,
         jump_if_xxx_zero_op,
+        jump_op,
     )
 
     return [
@@ -16,4 +17,5 @@ def get_all_operations():
         halt_op,
         copy_op,
         jump_if_xxx_zero_op,
+        jump_op,
     ]

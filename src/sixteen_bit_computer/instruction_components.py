@@ -24,6 +24,7 @@ class OpCode(Enum):
     SET_ZERO = auto()
     JUMP_IF_EQ_ZERO = auto()
     JUMP_IF_NEQ_ZERO = auto()
+    JUMP = auto()
     COPY = auto()
     LOAD = auto()
     STORE = auto()
@@ -42,6 +43,7 @@ HALT = OpCode.HALT
 SET_ZERO = OpCode.SET_ZERO
 JUMP_IF_EQ_ZERO = OpCode.JUMP_IF_EQ_ZERO
 JUMP_IF_NEQ_ZERO = OpCode.JUMP_IF_NEQ_ZERO
+JUMP = OpCode.JUMP
 COPY = OpCode.COPY
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE
