@@ -1470,6 +1470,18 @@ def test_assemble_all_instructions():
         JUMP_IF_NEQ_ZERO C #456
         JUMP_IF_NEQ_ZERO PC #456
         JUMP_IF_NEQ_ZERO SP #456
+        JUMP_IF_ACC_EQ A #555
+        JUMP_IF_ACC_EQ B #555
+        JUMP_IF_ACC_EQ C #555
+        JUMP_IF_ACC_EQ PC #555
+        JUMP_IF_ACC_EQ SP #555
+        JUMP_IF_ACC_EQ #789 #555
+        JUMP_IF_ACC_NEQ A #555
+        JUMP_IF_ACC_NEQ B #555
+        JUMP_IF_ACC_NEQ C #555
+        JUMP_IF_ACC_NEQ PC #555
+        JUMP_IF_ACC_NEQ SP #555
+        JUMP_IF_ACC_NEQ #789 #555
         JUMP #999
         COPY ACC A
         COPY ACC B

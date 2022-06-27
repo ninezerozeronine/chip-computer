@@ -4,7 +4,7 @@ The JUMP operation.
 Starts execution at a given location
 """
 
-from .. import instruction_listings
+from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
     JUMP,
@@ -38,7 +38,8 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     return [
-        Word(value=instruction_listings.get_instruction_index(signature))
+        Word(value=get_instruction_index(signature)),
+        Word(const_token=const_tokens[0]),
     ]
 
 
@@ -52,7 +53,7 @@ def generate_microcode_templates():
     data_templates = []
 
     for signature in _SUPPORTED_SIGNATURES:
-        instr_index = instruction_listings.get_instruction_index(signature)
+        instr_index = get_instruction_index(signature)
         instr_index_bitdef = number_utils.number_to_bitstring(
             instr_index, bit_width=8
         )

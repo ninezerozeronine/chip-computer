@@ -4,12 +4,12 @@
     NOOP
 
     SET_ZERO ACC
-    JUMP_IF_NOT_ZERO ACC &halt
+    JUMP_IF_NEQ_ZERO ACC &halt
 
     SET_ZERO A
-    JUMP_IF_NOT_ZERO A &halt
+    JUMP_IF_NEQ_ZERO A &halt
 
     JUMP &start
 
 &halt
-    HALT
+    JUMP &halt

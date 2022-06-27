@@ -16,12 +16,12 @@ from ..language_defs import (
 )
 
 
-_SUPPORTED_SIGNATURES = frozenset([
+_SUPPORTED_SIGNATURES = (
     (SET_ZERO, ACC),
     (SET_ZERO, A),
     (SET_ZERO, B),
     (SET_ZERO, C),
-])
+)
 """
 The list of signatures this operation supports.
 

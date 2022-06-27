@@ -7,6 +7,7 @@ def get_all_operations():
         halt_op,
         copy_op,
         jump_if_xxx_zero_op,
+        jump_if_acc_xxx_op,
         jump_op,
     )
 
@@ -17,5 +18,6 @@ def get_all_operations():
         halt_op,
         copy_op,
         jump_if_xxx_zero_op,
+        jump_if_acc_xxx_op,
         jump_op,
     ]
