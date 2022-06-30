@@ -3,6 +3,7 @@ def get_all_operations():
     from . import (
         noop_op,
         set_zero_op,
+        set_op,
         simple_alu_ops,
         halt_op,
         copy_op,
@@ -14,6 +15,7 @@ def get_all_operations():
     return [
         noop_op,
         set_zero_op,
+        set_op,
         simple_alu_ops,
         halt_op,
         copy_op,

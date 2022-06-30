@@ -1458,6 +1458,11 @@ def test_assemble_all_instructions():
         SET_ZERO A
         SET_ZERO B
         SET_ZERO C
+        SET ACC #222
+        SET A #222
+        SET B #222
+        SET C #222
+        SET SP #222
         JUMP_IF_EQ_ZERO ACC #456
         JUMP_IF_EQ_ZERO A #456
         JUMP_IF_EQ_ZERO B #456

@@ -22,6 +22,7 @@ class OpCode(Enum):
     NOOP = auto()
     HALT = auto()
     SET_ZERO = auto()
+    SET = auto()
     JUMP_IF_EQ_ZERO = auto()
     JUMP_IF_NEQ_ZERO = auto()
     JUMP_IF_ACC_EQ = auto()
@@ -43,6 +44,7 @@ class OpCode(Enum):
 NOOP = OpCode.NOOP
 HALT = OpCode.HALT
 SET_ZERO = OpCode.SET_ZERO
+SET = OpCode.SET
 JUMP_IF_EQ_ZERO = OpCode.JUMP_IF_EQ_ZERO
 JUMP_IF_NEQ_ZERO = OpCode.JUMP_IF_NEQ_ZERO
 JUMP_IF_ACC_EQ = OpCode.JUMP_IF_ACC_EQ
