@@ -2,9 +2,9 @@
 
     SET_ZERO ACC
 
-    ADD #5
-    ADD [$var]
-    HALT
-
-@ #15
-$var #5
+&start
+    COPY ACC A
+    COPY ACC B
+    COPY ACC C
+    ADD #1
+    JUMP &start
