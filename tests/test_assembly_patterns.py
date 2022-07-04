@@ -165,6 +165,8 @@ def test_Variable_name(test_input, variable_name):
     ("$myvar #32", True),
     ("$VAR_2 #0x12", True),
     ("$VAR_2 #0xFF #23 !myalias", True),
+    ("$var #123 &label", True),
+    ("$var &label2 &label", True),
 ])
 def test_VariableDef(test_input, is_variabledef):
     tokens = get_tokens(test_input)

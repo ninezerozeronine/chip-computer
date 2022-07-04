@@ -55,7 +55,8 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     return [
-        Word(value=instruction_listings.get_instruction_index(signature))
+        Word(value=instruction_listings.get_instruction_index(signature)),
+        Word(const_token=const_tokens[0]),
     ]
 
 

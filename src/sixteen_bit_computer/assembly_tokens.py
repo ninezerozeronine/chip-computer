@@ -35,6 +35,8 @@ from .instruction_components import (
     M_A,
     M_B,
     M_C,
+    M_SP,
+    M_PC,
     M_CONST,
 )
 
@@ -450,6 +452,8 @@ class MEMREF(Token):
         A: M_A,
         B: M_B,
         C: M_C,
+        SP: M_SP,
+        PC: M_PC,
         CONST: M_CONST,
     }
 

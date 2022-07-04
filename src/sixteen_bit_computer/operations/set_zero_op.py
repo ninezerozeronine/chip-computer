@@ -8,7 +8,14 @@ from .. import instruction_listings
 from .. import number_utils
 from . import utils
 from ..data_structures import Word
-from ..instruction_components import SET_ZERO, ACC, A, B, C
+from ..instruction_components import (
+    SET_ZERO,
+    ACC,
+    A,
+    B,
+    C,
+    SP,
+)
 from ..language_defs import (
     MODULE_CONTROL,
     ALU_CONTROL_FLAGS,
@@ -21,6 +28,7 @@ _SUPPORTED_SIGNATURES = (
     (SET_ZERO, A),
     (SET_ZERO, B),
     (SET_ZERO, C),
+    (SET_ZERO, SP),
 )
 """
 The list of signatures this operation supports.

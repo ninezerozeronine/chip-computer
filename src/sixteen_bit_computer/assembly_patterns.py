@@ -366,7 +366,7 @@ class VariableDef(Pattern):
             return None
 
         for token in tokens[1:]:
-            if not isinstance(token, (NUMBER, ALIAS)):
+            if not isinstance(token, (NUMBER, ALIAS, LABEL)):
                 return None
 
         return cls(tokens)

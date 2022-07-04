@@ -718,7 +718,7 @@ def build_label_map(assembly_lines):
             labels_needing_values.append(line.pattern.name)
             continue
 
-        if line.pattern.machinecode:
+        if isinstance(line.pattern, assembly_patterns.Instruction):
             for label in labels_needing_values:
                 label_map[label] = line.pattern.machinecode[0].index
             labels_needing_values = []

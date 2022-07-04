@@ -122,8 +122,11 @@ def test_get_address_and_word_lines():
         "    0x0008, // 0x{and_mconst_code:04X} - 0008     AND &label".format(
             and_mconst_code=get_instruction_index((AND, CONST)),
         ),
-        "    0x0009, // 0x000A - 0008",
-        "    0x000A  // 0x03E9 - 0012 $var #1001",
+        "    0x0009, // 0x000B - 0008",
+        "    0x000A, // 0x03E9 - 0011 $var #1001",
+        "    0x000B  // 0x{noop_code:04X} - 0014     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
     ]
 
     expected_words = [
@@ -140,11 +143,14 @@ def test_get_address_and_word_lines():
         "    0x{noop_code:04X}, // 0x0007 - 0007     NOOP".format(
             noop_code=get_instruction_index((NOOP,))
         ),
-        "    0x{and_mconst_code:04X}, // 0x0008 - 0008     AND &label".format(
-            and_mconst_code=get_instruction_index((AND, CONST)),
+        "    0x{and_const_code:04X}, // 0x0008 - 0008     AND &label".format(
+            and_const_code=get_instruction_index((AND, CONST)),
         ),
-        "    0x000A, // 0x0009 - 0008",
-        "    0x03E9  // 0x000A - 0012 $var #1001",
+        "    0x000B, // 0x0009 - 0008",
+        "    0x03E9, // 0x000A - 0011 $var #1001",
+        "    0x{noop_code:04X}  // 0x000B - 0014     NOOP".format(
+            noop_code=get_instruction_index((NOOP,))
+        ),
     ]
 
     raw_assembly = textwrap.dedent(
@@ -158,9 +164,11 @@ def test_get_address_and_word_lines():
             NOOP
             AND &label
 
-        &label
         @ #10
         $var #1001
+
+        &label
+            NOOP
         """
     )
     dedent_and_split = textwrap.dedent(raw_assembly).splitlines()

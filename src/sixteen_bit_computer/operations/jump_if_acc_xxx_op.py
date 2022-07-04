@@ -13,7 +13,6 @@ from ..instruction_components import (
     A,
     B,
     C,
-    PC,
     SP,
     CONST
 )
@@ -29,13 +28,11 @@ _SUPPORTED_SIGNATURES = (
     (JUMP_IF_ACC_EQ, A, CONST),
     (JUMP_IF_ACC_EQ, B, CONST),
     (JUMP_IF_ACC_EQ, C, CONST),
-    (JUMP_IF_ACC_EQ, PC, CONST),
     (JUMP_IF_ACC_EQ, SP, CONST),
     (JUMP_IF_ACC_EQ, CONST, CONST),
     (JUMP_IF_ACC_NEQ, A, CONST),
     (JUMP_IF_ACC_NEQ, B, CONST),
     (JUMP_IF_ACC_NEQ, C, CONST),
-    (JUMP_IF_ACC_NEQ, PC, CONST),
     (JUMP_IF_ACC_NEQ, SP, CONST),
     (JUMP_IF_ACC_NEQ, CONST, CONST),
 )

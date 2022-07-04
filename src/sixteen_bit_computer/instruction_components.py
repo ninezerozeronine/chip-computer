@@ -117,6 +117,8 @@ class MemoryReference(Enum):
     M_A = auto()
     M_B = auto()
     M_C = auto()
+    M_SP = auto()
+    M_PC = auto()
     M_CONST = auto()
 
 
@@ -124,4 +126,28 @@ M_ACC = MemoryReference.M_ACC
 M_A = MemoryReference.M_A
 M_B = MemoryReference.M_B
 M_C = MemoryReference.M_C
+M_SP = MemoryReference.M_SP
+M_PC = MemoryReference.M_PC
 M_CONST = MemoryReference.M_CONST
+
+
+_MEMORY_REF_TO_COMPONENT = {
+    M_ACC: ACC,
+    M_A: A,
+    M_B: B,
+    M_C: C,
+    M_SP: SP,
+    M_PC: PC,
+    M_CONST: CONST,
+}
+
+
+def memory_ref_to_component(memory_ref):
+    """
+    Given a memory reference, get the component it's referencing.
+
+    Args:
+        memory_ref (MemoryReference): The mrmory ref to convert.
+    """
+
+    return _MEMORY_REF_TO_COMPONENT[memory_ref]

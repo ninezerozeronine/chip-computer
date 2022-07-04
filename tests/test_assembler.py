@@ -1219,6 +1219,40 @@ def test_resolve_aliases_raises(test_input):
             "fourth": 17,
         }
     ),
+    (
+        """\
+        @ #5
+        &first
+            NOOP
+            NOOP
+
+        $var
+
+        &second
+            ADD A
+
+        $var #1 #2 #2 #4
+
+        &third
+            ADD #1
+            ADD &first
+
+        &fourth
+        $var2
+            NOOP
+
+        $var3 #12
+        &fifth
+            ADD A
+        """,
+        {
+            "first": 5,
+            "second": 8,
+            "third": 13,
+            "fourth": 18,
+            "fifth": 20,
+        }
+    ),
 ])
 def test_build_label_map(test_input, expected):
     dedent_and_split = textwrap.dedent(test_input).splitlines()
@@ -1257,7 +1291,7 @@ def test_build_label_map(test_input, expected):
             NOOP
             ADD &second
         """,
-        [16, 16, 4]
+        [16, 16, 7]
     ),
 ])
 def test_resolve_labels(test_input, expected):
@@ -1458,6 +1492,7 @@ def test_assemble_all_instructions():
         SET_ZERO A
         SET_ZERO B
         SET_ZERO C
+        SET_ZERO SP
         SET ACC #222
         SET A #222
         SET B #222
@@ -1467,27 +1502,34 @@ def test_assemble_all_instructions():
         JUMP_IF_EQ_ZERO A #456
         JUMP_IF_EQ_ZERO B #456
         JUMP_IF_EQ_ZERO C #456
-        JUMP_IF_EQ_ZERO PC #456
         JUMP_IF_EQ_ZERO SP #456
         JUMP_IF_NEQ_ZERO ACC #456
         JUMP_IF_NEQ_ZERO A #456
         JUMP_IF_NEQ_ZERO B #456
         JUMP_IF_NEQ_ZERO C #456
-        JUMP_IF_NEQ_ZERO PC #456
         JUMP_IF_NEQ_ZERO SP #456
         JUMP_IF_ACC_EQ A #555
         JUMP_IF_ACC_EQ B #555
         JUMP_IF_ACC_EQ C #555
-        JUMP_IF_ACC_EQ PC #555
         JUMP_IF_ACC_EQ SP #555
         JUMP_IF_ACC_EQ #789 #555
         JUMP_IF_ACC_NEQ A #555
         JUMP_IF_ACC_NEQ B #555
         JUMP_IF_ACC_NEQ C #555
-        JUMP_IF_ACC_NEQ PC #555
         JUMP_IF_ACC_NEQ SP #555
         JUMP_IF_ACC_NEQ #789 #555
-        JUMP #999
+        JUMP ACC
+        JUMP A
+        JUMP B
+        JUMP C
+        JUMP SP
+        JUMP #123
+        JUMP [ACC]
+        JUMP [A]
+        JUMP [B]
+        JUMP [C]
+        JUMP [SP]
+        JUMP [#123]
         COPY ACC A
         COPY ACC B
         COPY ACC C
