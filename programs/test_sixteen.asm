@@ -526,7 +526,311 @@ $v_jump_5 &copy_0
     SET SP #34392
     SET ACC #34392
     COPY SP C
-    JUMP_IF_ACC_EQ C &placeholder
+    JUMP_IF_ACC_EQ C &add_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // ADD
+    ////////////////////////////////////////////////////////////////
+
+&add_0
+    SET ACC #1
+    SET A #2
+    ADD A
+    JUMP_IF_ACC_EQ #3 &add_1
+    HALT
+
+&add_1
+    SET ACC #456
+    SET B #111
+    ADD B
+    JUMP_IF_ACC_EQ #567 &add_2
+    HALT
+
+&add_2
+    SET ACC #3333
+    SET C #2222
+    ADD C
+    JUMP_IF_ACC_EQ #5555 &add_3
+    HALT
+
+&add_3
+    SET ACC #123
+    ADD #-23
+    JUMP_IF_ACC_EQ #100 &add_4
+    HALT
+
+&add_4
+$v_add_0 #42
+    SET ACC #42
+    ADD [$v_add_0]
+    JUMP_IF_ACC_EQ #84 &sub_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // SUB
+    ////////////////////////////////////////////////////////////////
+
+&sub_0
+    SET ACC #1
+    SET A #2
+    SUB A
+    JUMP_IF_ACC_EQ #-1 &sub_1
+    HALT
+
+&sub_1
+    SET ACC #456
+    SET B #111
+    SUB B
+    JUMP_IF_ACC_EQ #345 &sub_2
+    HALT
+
+&sub_2
+    SET ACC #3333
+    SET C #2222
+    SUB C
+    JUMP_IF_ACC_EQ #1111 &sub_3
+    HALT
+
+&sub_3
+    SET_ZERO ACC
+    SUB #1
+    JUMP_IF_ACC_EQ #0xFFFF &sub_4
+    HALT
+
+&sub_4
+$v_sub_0 #42
+    SET ACC #42
+    SUB [$v_sub_0]
+    JUMP_IF_EQ_ZERO ACC &and_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // AND
+    ////////////////////////////////////////////////////////////////
+
+&and_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    AND A
+    JUMP_IF_ACC_EQ #0b0101 &and_1
+    HALT
+
+&and_1
+    SET ACC        #0b1111_0000_1111_0000
+    SET B          #0b1111_1111_1111_1111
+    AND B
+    JUMP_IF_ACC_EQ #0b1111_0000_1111_0000 &and_2
+    HALT
+
+&and_2
+    SET ACC        #0b1100_1111
+    SET C          #0b0000_0000
+    AND C
+    JUMP_IF_ACC_EQ #0b0000_0000 &and_3
+    HALT
+
+&and_3
+    SET ACC        #0b0011_1100_1111_0000
+    AND            #0b1111_1111_0000_1111
+    JUMP_IF_ACC_EQ #0b0011_1100_0000_0000 &and_4
+    HALT
+
+&and_4
+$v_and_0           #0b1
+    SET ACC        #0b1
+    AND [$v_and_0]
+    JUMP_IF_ACC_EQ #0b1 &or_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // OR
+    ////////////////////////////////////////////////////////////////
+
+&or_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    OR A
+    JUMP_IF_ACC_EQ #0b1111 &or_1
+    HALT
+
+&or_1
+    SET ACC        #0b1111_0000_1111_0000
+    SET B          #0b1111_1111_1111_1111
+    OR B
+    JUMP_IF_ACC_EQ #0b1111_1111_1111_1111 &or_2
+    HALT
+
+&or_2
+    SET ACC        #0b1100_1111
+    SET C          #0b0000_0000
+    OR C
+    JUMP_IF_ACC_EQ #0b1100_1111 &or_3
+    HALT
+
+&or_3
+    SET ACC        #0b0011_1100_1111_0000
+    OR             #0b1111_1111_0000_1111
+    JUMP_IF_ACC_EQ #0b1111_1111_1111_1111 &or_4
+    HALT
+
+&or_4
+$v_or_0            #0b1
+    SET ACC        #0b1
+    OR [$v_or_0]
+    JUMP_IF_ACC_EQ #0b1 &xor_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // XOR
+    ////////////////////////////////////////////////////////////////
+
+&xor_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    XOR A
+    JUMP_IF_ACC_EQ #0b1010 &xor_1
+    HALT
+
+&xor_1
+    SET ACC        #0b0011
+    SET B          #0b0101
+    XOR B
+    JUMP_IF_ACC_EQ #0b0110 &xor_2
+    HALT
+
+&xor_2
+    SET ACC        #0b1100_1111
+    SET C          #0b0000_0000
+    XOR C
+    JUMP_IF_ACC_EQ #0b1100_1111 &xor_3
+    HALT
+
+&xor_3
+    SET ACC        #0b0011_1100_1011_0001
+    XOR            #0b1111_1111_0000_1111
+    JUMP_IF_ACC_EQ #0b1100_0011_1011_1110 &xor_4
+    HALT
+
+&xor_4
+$v_xor_0           #0b1
+    SET ACC        #0b1
+    XOR [$v_xor_0]
+    JUMP_IF_ACC_EQ #0b0 &xor_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // NAND
+    ////////////////////////////////////////////////////////////////
+
+&nand_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    NAND A
+    JUMP_IF_ACC_EQ #0b1010 &nand_1
+    HALT
+
+&nand_1
+    SET ACC        #0b1111_0000_1111_0000
+    SET B          #0b1111_1111_1111_1111
+    NAND B
+    JUMP_IF_ACC_EQ #0b000_1111_0000_1111 &nand_2
+    HALT
+
+&nand_2
+    SET ACC         #0b1100_1111
+    SET C          #0b0000_0000
+    NAND C
+    JUMP_IF_ACC_EQ #0b1111_1111 &nand_3
+    HALT
+
+&nand_3
+    SET ACC        #0b0011_1100_1111_0000
+    NAND           #0b1111_1111_0000_1111
+    JUMP_IF_ACC_EQ #0b1100_0011_1111_1111 &nand_4
+    HALT
+
+&nand_4
+$v_nand_0          #0b1
+    SET ACC        #0b1
+    NAND [$v_nand_0]
+    JUMP_IF_ACC_EQ #0b0 &nor_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // OR
+    ////////////////////////////////////////////////////////////////
+
+&nor_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    NOR A
+    JUMP_IF_ACC_EQ #0b0000 &nor_1
+    HALT
+
+&nor_1
+    SET ACC        #0b1111_0000_1111_0000
+    SET B          #0b1111_1111_1111_1111
+    NOR B
+    JUMP_IF_ACC_EQ #0b0000_0000_0000_0000 &nor_2
+    HALT
+
+&nor_2
+    SET ACC        #0b1100_1111
+    SET C          #0b0000_0000
+    NOR C
+    JUMP_IF_ACC_EQ #0b0011_0000 &nor_3
+    HALT
+
+&nor_3
+    SET ACC        #0b0011_1100_1111_0000
+    NOR            #0b0111_1110_0000_1110
+    JUMP_IF_ACC_EQ #0b1000_0001_0000_0001 &nor_4
+    HALT
+
+&nor_4
+$v_nor_0           #0b1
+    SET ACC        #0b1
+    NOR [$v_nor_0]
+    JUMP_IF_ACC_EQ #0b0 &nxor_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // NXOR
+    ////////////////////////////////////////////////////////////////
+
+&nxor_0
+    SET ACC        #0b1111
+    SET A          #0b0101
+    NXOR A
+    JUMP_IF_ACC_EQ #0b0101 &nxor_1
+    HALT
+
+&nxor_1
+    SET ACC        #0b0011
+    SET B          #0b0101
+    NXOR B
+    JUMP_IF_ACC_EQ #0b1001 &nxor_2
+    HALT
+
+&nxor_2
+    SET ACC        #0b1100_1111
+    SET C          #0b0000_0000
+    NXOR C
+    JUMP_IF_ACC_EQ #0b0011_0000 &nxor_3
+    HALT
+
+&nxor_3
+    SET ACC        #0b0011_1100_1011_0001
+    NXOR           #0b1111_1111_0000_1111
+    JUMP_IF_ACC_EQ #0b0011_1100_0100_0001 &nxor_4
+    HALT
+
+&nxor_4
+$v_nxor_0          #0b1
+    SET ACC        #0b1
+    NXOR [$v_nxor_0]
+    JUMP_IF_ACC_EQ #0b1 &placeholder
     HALT
 
 &placeholder
