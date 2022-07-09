@@ -1487,49 +1487,46 @@ def test_resolve_variables_raises(test_input):
 
 def test_assemble_all_instructions():
     test_data = """\
-        NOOP
-        SET_ZERO ACC
-        SET_ZERO A
-        SET_ZERO B
-        SET_ZERO C
-        SET_ZERO SP
-        SET ACC #222
-        SET A #222
-        SET B #222
-        SET C #222
-        SET SP #222
-        JUMP_IF_EQ_ZERO ACC #456
-        JUMP_IF_EQ_ZERO A #456
-        JUMP_IF_EQ_ZERO B #456
-        JUMP_IF_EQ_ZERO C #456
-        JUMP_IF_EQ_ZERO SP #456
-        JUMP_IF_NEQ_ZERO ACC #456
-        JUMP_IF_NEQ_ZERO A #456
-        JUMP_IF_NEQ_ZERO B #456
-        JUMP_IF_NEQ_ZERO C #456
-        JUMP_IF_NEQ_ZERO SP #456
-        JUMP_IF_ACC_EQ A #555
-        JUMP_IF_ACC_EQ B #555
-        JUMP_IF_ACC_EQ C #555
-        JUMP_IF_ACC_EQ SP #555
-        JUMP_IF_ACC_EQ #789 #555
-        JUMP_IF_ACC_NEQ A #555
-        JUMP_IF_ACC_NEQ B #555
-        JUMP_IF_ACC_NEQ C #555
-        JUMP_IF_ACC_NEQ SP #555
-        JUMP_IF_ACC_NEQ #789 #555
-        JUMP ACC
-        JUMP A
-        JUMP B
-        JUMP C
-        JUMP SP
-        JUMP #123
-        JUMP [ACC]
-        JUMP [A]
-        JUMP [B]
-        JUMP [C]
-        JUMP [SP]
-        JUMP [#123]
+
+        // Arithmetic
+        ADD A
+        ADD B
+        ADD C
+        ADD #456
+        ADD [#123]
+        // ADDC A
+        // ADDC B
+        // ADDC C
+        // ADDC #456
+        // ADDC [#123]
+        SUB A
+        SUB B
+        SUB C
+        SUB #456
+        SUB [#123]
+        // SUBB A
+        // SUBB B
+        // SUBB C
+        // SUBB #456
+        // SUBB [#123]
+        // LSHIFT ACC
+        // LSHIFT A
+        // LSHIFT B
+        // LSHIFT C
+        // LSHIFTC ACC
+        // LSHIFTC A
+        // LSHIFTC B
+        // LSHIFTC C
+        INCR ACC
+        INCR A
+        INCR B
+        INCR C
+        DECR ACC
+        DECR A
+        DECR B
+        DECR C
+
+        // Data
         COPY ACC A
         COPY ACC B
         COPY ACC C
@@ -1555,47 +1552,134 @@ def test_assemble_all_instructions():
         COPY SP A
         COPY SP B
         COPY SP C
-        ADD A
-        ADD B
-        ADD C
-        ADD #456
-        ADD [#123]
-        SUB A
-        SUB B
-        SUB C
-        SUB #456
-        SUB [#123]
+        // LOAD [#123] ACC
+        // LOAD [#123] A
+        // LOAD [#123] B
+        // LOAD [#123] C
+        // STORE ACC [#123]
+        // STORE A [#123]
+        // STORE B [#123]
+        // STORE C [#123]
+        // PUSH ACC
+        // PUSH A
+        // PUSH B
+        // PUSH C
+        // PUSH PC
+        // POP ACC
+        // POP A
+        // POP B
+        // POP C
+        SET ACC #222
+        SET A #222
+        SET B #222
+        SET C #222
+        SET SP #222
+        SET_ZERO ACC
+        SET_ZERO A
+        SET_ZERO B
+        SET_ZERO C
+        SET_ZERO SP
+
+        // Program control
+        NOOP
+        JUMP ACC
+        JUMP A
+        JUMP B
+        JUMP C
+        JUMP SP
+        JUMP #123
+        JUMP [ACC]
+        JUMP [A]
+        JUMP [B]
+        JUMP [C]
+        JUMP [SP]
+        JUMP [#123]
+        // JUMP_IF_ACC_LT A #123
+        // JUMP_IF_ACC_LT B #123
+        // JUMP_IF_ACC_LT C #123
+        // JUMP_IF_ACC_LT SP #123
+        // JUMP_IF_ACC_LT #122 #123
+        // JUMP_IF_ACC_LTE A #123
+        // JUMP_IF_ACC_LTE B #123
+        // JUMP_IF_ACC_LTE C #123
+        // JUMP_IF_ACC_LTE SP #123
+        // JUMP_IF_ACC_LTE #122 #123
+        JUMP_IF_ACC_EQ A #555
+        JUMP_IF_ACC_EQ B #555
+        JUMP_IF_ACC_EQ C #555
+        JUMP_IF_ACC_EQ SP #555
+        JUMP_IF_ACC_EQ #789 #555
+        JUMP_IF_ACC_NEQ A #555
+        JUMP_IF_ACC_NEQ B #555
+        JUMP_IF_ACC_NEQ C #555
+        JUMP_IF_ACC_NEQ SP #555
+        JUMP_IF_ACC_NEQ #789 #555
+        // JUMP_IF_ACC_GTE A #111
+        // JUMP_IF_ACC_GTE B #111
+        // JUMP_IF_ACC_GTE C #111
+        // JUMP_IF_ACC_GTE SP #111
+        // JUMP_IF_ACC_GTE #999 #111
+        // JUMP_IF_ACC_GT A #111
+        // JUMP_IF_ACC_GT B #111
+        // JUMP_IF_ACC_GT C #111
+        // JUMP_IF_ACC_GT SP #111
+        // JUMP_IF_ACC_GT #999 #111
+        JUMP_IF_EQ_ZERO ACC #456
+        JUMP_IF_EQ_ZERO A #456
+        JUMP_IF_EQ_ZERO B #456
+        JUMP_IF_EQ_ZERO C #456
+        JUMP_IF_EQ_ZERO SP #456
+        JUMP_IF_NEQ_ZERO ACC #456
+        JUMP_IF_NEQ_ZERO A #456
+        JUMP_IF_NEQ_ZERO B #456
+        JUMP_IF_NEQ_ZERO C #456
+        JUMP_IF_NEQ_ZERO SP #456
+        // CALL ACC
+        // CALL A
+        // CALL B
+        // CALL C
+        // CALL #1
+        // RETURN
+        HALT
+
+        // Logical Operations
+        // NOT ACC
+        // NOT A
+        // NOT B
+        // NOT C
+        
         AND A
         AND B
         AND C
         AND #456
         AND [#123]
-        OR A
-        OR B
-        OR C
-        OR #456
-        OR [#123]
-        XOR A
-        XOR B
-        XOR C
-        XOR #456
-        XOR [#123]
         NAND A
         NAND B
         NAND C
         NAND #456
         NAND [#123]
+
+        OR A
+        OR B
+        OR C
+        OR #456
+        OR [#123]
         NOR A
         NOR B
         NOR C
         NOR #456
         NOR [#123]
+
+        XOR A
+        XOR B
+        XOR C
+        XOR #456
+        XOR [#123]
         NXOR A
         NXOR B
         NXOR C
         NXOR #456
         NXOR [#123]
-        HALT
     """
     dedent_and_split = textwrap.dedent(test_data).splitlines()
     assembler.assemble(dedent_and_split)

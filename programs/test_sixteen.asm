@@ -830,8 +830,71 @@ $v_nor_0           #0b1
 $v_nxor_0          #0b1
     SET ACC        #0b1
     NXOR [$v_nxor_0]
-    JUMP_IF_ACC_EQ #0b1 &placeholder
+    JUMP_IF_ACC_EQ #0b1 &incr_0
     HALT
+
+    ////////////////////////////////////////////////////////////////
+    // INCR
+    ////////////////////////////////////////////////////////////////
+
+&incr_0
+    SET ACC #32
+    INCR ACC 
+    JUMP_IF_ACC_EQ #33 &incr_1
+    HALT
+
+&incr_1
+    SET ACC #-31
+    SET A #-32
+    INCR A
+    JUMP_IF_ACC_EQ A &incr_2
+    HALT
+
+&incr_2
+    SET ACC #256
+    SET B #255
+    INCR B
+    JUMP_IF_ACC_EQ B &incr_3
+    HALT
+
+&incr_3
+    SET ACC #0xFFFF
+    SET C #0
+    INCR C
+    JUMP_IF_ACC_EQ C &decr_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // DECR
+    ////////////////////////////////////////////////////////////////
+
+&decr_0
+    SET ACC #32
+    DECR ACC 
+    JUMP_IF_ACC_EQ #31 &decr_1
+    HALT
+
+&decr_1
+    SET ACC #-33
+    SET A #-32
+    DECR A
+    JUMP_IF_ACC_EQ A &decr_2
+    HALT
+
+&decr_2
+    SET ACC #255
+    SET B #256
+    DECR B
+    JUMP_IF_ACC_EQ B &decr_3
+    HALT
+
+&decr_3
+    SET ACC #0xFFFF
+    SET C #0
+    DECR C
+    JUMP_IF_ACC_EQ C &placeholder
+    HALT
+
 
 &placeholder
     JUMP &start

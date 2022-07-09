@@ -10,6 +10,7 @@ def get_all_operations():
         jump_if_xxx_zero_op,
         jump_if_acc_xxx_op,
         jump_op,
+        incr_decr_ops,
     )
 
     return [
@@ -22,4 +23,5 @@ def get_all_operations():
         jump_if_xxx_zero_op,
         jump_if_acc_xxx_op,
         jump_op,
+        incr_decr_ops,
     ]
