@@ -19,48 +19,110 @@ class OpCode(Enum):
     """
     All the possible opcodes.
     """
-    NOOP = auto()
-    HALT = auto()
-    SET_ZERO = auto()
-    SET = auto()
-    JUMP_IF_EQ_ZERO = auto()
-    JUMP_IF_NEQ_ZERO = auto()
-    JUMP_IF_ACC_EQ = auto()
-    JUMP_IF_ACC_NEQ = auto()
-    JUMP = auto()
+
+    #Arithmetic
+    ADD = auto()
+    ADDC = auto()
+    SUB = auto()
+    SUBB = auto()
+    LSHIFT = auto()
+    LSHIFTC = auto()
+    INCR = auto()
+    DECR= auto()
+
+    # Data
     COPY = auto()
     LOAD = auto()
     STORE = auto()
-    ADD = auto()
-    SUB = auto()
+    PUSH = auto()
+    POP = auto()
+    SET = auto()
+    SET_ZERO = auto()
+
+    # Program Control
+    NOOP = auto()
+    JUMP = auto()
+    JUMP_IF_ACC_LT = auto()
+    JUMP_IF_ACC_LTE = auto()
+    JUMP_IF_ACC_EQ = auto()
+    JUMP_IF_ACC_NEQ = auto()
+    JUMP_IF_ACC_GTE = auto()
+    JUMP_IF_ACC_GT = auto()
+    JUMP_IF_EQ_ZERO = auto()
+    JUMP_IF_NEQ_ZERO = auto()
+    JUMP_IF_NEGATIVE_FLAG = auto()
+    JUMP_IF_NOT_NEGATIVE_FLAG = auto()
+    JUMP_IF_CARRY_FLAG = auto()
+    JUMP_IF_NOT_CARRY_FLAG = auto()
+    JUMP_IF_BORROW_FLAG = auto()
+    JUMP_IF_NOT_BORROW_FLAG = auto()
+    JUMP_IF_ZERO_FLAG = auto()
+    JUMP_IF_NOT_ZERO_FLAG = auto()
+    CALL = auto()
+    RETURN = auto()
+    HALT = auto()
+
+    # Logic
+    NOT = auto()
     AND = auto()
-    OR = auto()
-    XOR = auto()
     NAND = auto()
+    OR = auto()
     NOR = auto()
+    XOR = auto()
     NXOR = auto()
 
+    # Misc
+    ROT_LEFT = auto()
 
-NOOP = OpCode.NOOP
-HALT = OpCode.HALT
-SET_ZERO = OpCode.SET_ZERO
-SET = OpCode.SET
-JUMP_IF_EQ_ZERO = OpCode.JUMP_IF_EQ_ZERO
-JUMP_IF_NEQ_ZERO = OpCode.JUMP_IF_NEQ_ZERO
-JUMP_IF_ACC_EQ = OpCode.JUMP_IF_ACC_EQ
-JUMP_IF_ACC_NEQ = OpCode.JUMP_IF_ACC_NEQ
-JUMP = OpCode.JUMP
+
+ADD = OpCode.ADD
+ADDC = OpCode.ADDC
+SUB = OpCode.SUB
+SUBB = OpCode.SUBB
+LSHIFT = OpCode.LSHIFT
+LSHIFTC = OpCode.LSHIFTC
+INCR = OpCode.INCR
+DECR = OpCode.DECR
+
 COPY = OpCode.COPY
 LOAD = OpCode.LOAD
 STORE = OpCode.STORE
-ADD = OpCode.ADD
-SUB = OpCode.SUB
+PUSH = OpCode.PUSH
+POP = OpCode.POP
+SET = OpCode.SET
+SET_ZERO = OpCode.SET_ZERO
+
+NOOP = OpCode.NOOP
+JUMP = OpCode.JUMP
+JUMP_IF_ACC_LT = OpCode.JUMP_IF_ACC_LT
+JUMP_IF_ACC_LTE = OpCode.JUMP_IF_ACC_LTE
+JUMP_IF_ACC_EQ = OpCode.JUMP_IF_ACC_EQ
+JUMP_IF_ACC_NEQ = OpCode.JUMP_IF_ACC_NEQ
+JUMP_IF_ACC_GTE = OpCode.JUMP_IF_ACC_GTE
+JUMP_IF_ACC_GT = OpCode.JUMP_IF_ACC_GT
+JUMP_IF_EQ_ZERO = OpCode.JUMP_IF_EQ_ZERO
+JUMP_IF_NEQ_ZERO = OpCode.JUMP_IF_NEQ_ZERO
+JUMP_IF_NEGATIVE_FLAG = OpCode.JUMP_IF_NEGATIVE_FLAG
+JUMP_IF_NOT_NEGATIVE_FLAG = OpCode.JUMP_IF_NOT_NEGATIVE_FLAG
+JUMP_IF_CARRY_FLAG = OpCode.JUMP_IF_CARRY_FLAG
+JUMP_IF_NOT_CARRY_FLAG = OpCode.JUMP_IF_NOT_CARRY_FLAG
+JUMP_IF_BORROW_FLAG = OpCode.JUMP_IF_BORROW_FLAG
+JUMP_IF_NOT_BORROW_FLAG = OpCode.JUMP_IF_NOT_BORROW_FLAG
+JUMP_IF_ZERO_FLAG = OpCode.JUMP_IF_ZERO_FLAG
+JUMP_IF_NOT_ZERO_FLAG = OpCode.JUMP_IF_NOT_ZERO_FLAG
+CALL = OpCode.CALL
+RETURN = OpCode.RETURN
+HALT = OpCode.HALT
+
+NOT = OpCode.NOT
 AND = OpCode.AND
-OR = OpCode.OR
-XOR = OpCode.XOR
 NAND = OpCode.NAND
+OR = OpCode.OR
 NOR = OpCode.NOR
+XOR = OpCode.XOR
 NXOR = OpCode.NXOR
+
+ROT_LEFT = OpCode.ROT_LEFT
 
 
 class Module(Enum):
