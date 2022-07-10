@@ -1552,14 +1552,60 @@ def test_assemble_all_instructions():
         COPY SP A
         COPY SP B
         COPY SP C
-        // LOAD [#123] ACC
-        // LOAD [#123] A
-        // LOAD [#123] B
-        // LOAD [#123] C
-        // STORE ACC [#123]
-        // STORE A [#123]
-        // STORE B [#123]
-        // STORE C [#123]
+        LOAD [ACC] ACC
+        LOAD [ACC] A
+        LOAD [ACC] B
+        LOAD [ACC] C
+        LOAD [A] ACC
+        LOAD [A] A
+        LOAD [A] B
+        LOAD [A] C
+        LOAD [B] ACC
+        LOAD [B] A
+        LOAD [B] B
+        LOAD [B] C
+        LOAD [C] ACC
+        LOAD [C] A
+        LOAD [C] B
+        LOAD [C] C
+        LOAD [SP] ACC
+        LOAD [SP] A
+        LOAD [SP] B
+        LOAD [SP] C
+        LOAD [#123] ACC
+        LOAD [#123] A
+        LOAD [#123] B
+        LOAD [#123] C
+        STORE ACC [ACC]
+        STORE ACC [A]
+        STORE ACC [B]
+        STORE ACC [C]
+        STORE ACC [SP]
+        STORE ACC [#345]
+        STORE A [ACC]
+        STORE A [A]
+        STORE A [B]
+        STORE A [C]
+        STORE A [SP]
+        STORE A [#345]
+        STORE B [ACC]
+        STORE B [A]
+        STORE B [B]
+        STORE B [C]
+        STORE B [SP]
+        STORE B [#345]
+        STORE C [ACC]
+        STORE C [A]
+        STORE C [B]
+        STORE C [C]
+        STORE C [SP]
+        STORE C [#345]
+        STORE SP [ACC]
+        STORE SP [A]
+        STORE SP [B]
+        STORE SP [C]
+        STORE SP [SP]
+        STORE SP [#345]
         // PUSH ACC
         // PUSH A
         // PUSH B

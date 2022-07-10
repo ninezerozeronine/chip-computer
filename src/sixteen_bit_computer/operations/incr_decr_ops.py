@@ -56,10 +56,11 @@ def generate_machinecode(signature, const_tokens):
 
 def generate_microcode_templates():
     """
-    Generate microcode for the JUMP operation.
+    Generate microcode for the INCR and DECR operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the JUMP microcode.
+        list(DataTemplate): DataTemplates for all the INCR and DECR
+        microcode.
     """
     data_templates = []
 
@@ -79,6 +80,11 @@ def generate_microcode_templates():
             step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
         elif signature[0] == DECR:
             step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+        else:
+            raise RuntimeError(
+                "Unexpected signature {sig} in incr/decr "
+                "microcode generation".format(sig=signature)
+            )
 
         step_1 = [
             MODULE_CONTROL["ALU"]["OUT"],

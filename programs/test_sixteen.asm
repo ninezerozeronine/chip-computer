@@ -358,38 +358,38 @@
     JUMP &jump_6
     HALT
 
-&jump_6
 $v_jump_0 &jump7
+&jump_6
     SET ACC $v_jump_0
     JUMP [ACC]
     HALT
 
-&jump7
 $v_jump_1 &jump8
+&jump7
     SET A $v_jump_1
     JUMP [A]
     HALT
 
-&jump8
 $v_jump_2 &jump9
+&jump8
     SET B $v_jump_2
     JUMP [B]
     HALT
 
-&jump9
 $v_jump_3 &jump10
+&jump9
     SET C $v_jump_3
     JUMP [C]
     HALT
 
-&jump10
 $v_jump_4 &jump11
+&jump10
     SET SP $v_jump_4
     JUMP [SP]
     HALT
 
-&jump11
 $v_jump_5 &copy_0
+&jump11
     JUMP [$v_jump_5]
     HALT
 
@@ -560,8 +560,8 @@ $v_jump_5 &copy_0
     JUMP_IF_ACC_EQ #100 &add_4
     HALT
 
-&add_4
 $v_add_0 #42
+&add_4
     SET ACC #42
     ADD [$v_add_0]
     JUMP_IF_ACC_EQ #84 &sub_0
@@ -598,8 +598,8 @@ $v_add_0 #42
     JUMP_IF_ACC_EQ #0xFFFF &sub_4
     HALT
 
-&sub_4
 $v_sub_0 #42
+&sub_4
     SET ACC #42
     SUB [$v_sub_0]
     JUMP_IF_EQ_ZERO ACC &and_0
@@ -636,8 +636,8 @@ $v_sub_0 #42
     JUMP_IF_ACC_EQ #0b0011_1100_0000_0000 &and_4
     HALT
 
-&and_4
 $v_and_0           #0b1
+&and_4
     SET ACC        #0b1
     AND [$v_and_0]
     JUMP_IF_ACC_EQ #0b1 &or_0
@@ -674,8 +674,8 @@ $v_and_0           #0b1
     JUMP_IF_ACC_EQ #0b1111_1111_1111_1111 &or_4
     HALT
 
-&or_4
 $v_or_0            #0b1
+&or_4
     SET ACC        #0b1
     OR [$v_or_0]
     JUMP_IF_ACC_EQ #0b1 &xor_0
@@ -712,8 +712,8 @@ $v_or_0            #0b1
     JUMP_IF_ACC_EQ #0b1100_0011_1011_1110 &xor_4
     HALT
 
-&xor_4
 $v_xor_0           #0b1
+&xor_4
     SET ACC        #0b1
     XOR [$v_xor_0]
     JUMP_IF_ACC_EQ #0b0 &xor_0
@@ -750,8 +750,8 @@ $v_xor_0           #0b1
     JUMP_IF_ACC_EQ #0b1100_0011_1111_1111 &nand_4
     HALT
 
-&nand_4
 $v_nand_0          #0b1
+&nand_4
     SET ACC        #0b1
     NAND [$v_nand_0]
     JUMP_IF_ACC_EQ #0b0 &nor_0
@@ -788,8 +788,8 @@ $v_nand_0          #0b1
     JUMP_IF_ACC_EQ #0b1000_0001_0000_0001 &nor_4
     HALT
 
-&nor_4
 $v_nor_0           #0b1
+&nor_4
     SET ACC        #0b1
     NOR [$v_nor_0]
     JUMP_IF_ACC_EQ #0b0 &nxor_0
@@ -826,8 +826,8 @@ $v_nor_0           #0b1
     JUMP_IF_ACC_EQ #0b0011_1100_0100_0001 &nxor_4
     HALT
 
-&nxor_4
 $v_nxor_0          #0b1
+&nxor_4
     SET ACC        #0b1
     NXOR [$v_nxor_0]
     JUMP_IF_ACC_EQ #0b1 &incr_0
@@ -892,7 +892,457 @@ $v_nxor_0          #0b1
     SET ACC #0xFFFF
     SET C #0
     DECR C
-    JUMP_IF_ACC_EQ C &placeholder
+    JUMP_IF_ACC_EQ C &load_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // LOAD
+    ////////////////////////////////////////////////////////////////
+
+$v_load_0 #24004
+&load_0
+    SET ACC $v_load_0
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ #24004 &load_1
+    HALT
+
+$v_load_1 #11709
+&load_1
+    SET ACC $v_load_1
+    LOAD [ACC] A
+    SET ACC #11709
+    JUMP_IF_ACC_EQ A &load_2
+    HALT
+
+$v_load_2 #59692
+&load_2
+    SET ACC $v_load_2
+    LOAD [ACC] B
+    SET ACC #59692
+    JUMP_IF_ACC_EQ B &load_3
+    HALT
+
+$v_load_3 #12087
+&load_3
+    SET ACC $v_load_3
+    LOAD [ACC] C
+    SET ACC #12087
+    JUMP_IF_ACC_EQ C &load_4
+    HALT
+
+$v_load_4 #20982
+&load_4
+    SET A $v_load_4
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ #20982 &load_5
+    HALT
+
+$v_load_5 #51597
+&load_5
+    SET A $v_load_5
+    LOAD [A] A
+    SET ACC #51597
+    JUMP_IF_ACC_EQ A &load_6
+    HALT
+
+$v_load_6 #22009
+&load_6
+    SET A $v_load_6
+    LOAD [A] B
+    SET ACC #22009
+    JUMP_IF_ACC_EQ B &load_7
+    HALT
+
+$v_load_7 #11703
+&load_7
+    SET A $v_load_7
+    LOAD [A] C
+    SET ACC #11703
+    JUMP_IF_ACC_EQ C &load_8
+    HALT
+
+$v_load_8 #57854
+&load_8
+    SET B $v_load_8
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ #57854 &load_9
+    HALT
+
+$v_load_9 #37360
+&load_9
+    SET B $v_load_9
+    LOAD [B] A
+    SET ACC #37360
+    JUMP_IF_ACC_EQ A &load_10
+    HALT
+
+$v_load_10 #57819
+&load_10
+    SET B $v_load_10
+    LOAD [B] B
+    SET ACC #57819
+    JUMP_IF_ACC_EQ B &load_11
+    HALT
+
+$v_load_11 #60912
+&load_11
+    SET B $v_load_11
+    LOAD [B] C
+    SET ACC #60912
+    JUMP_IF_ACC_EQ C &load_12
+    HALT
+
+$v_load_12 #38245
+&load_12
+    SET C $v_load_12
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ #38245 &load_13
+    HALT
+
+$v_load_13 #25454
+&load_13
+    SET C $v_load_13
+    LOAD [C] A
+    SET ACC #25454
+    JUMP_IF_ACC_EQ A &load_14
+    HALT
+
+$v_load_14 #25444
+&load_14
+    SET C $v_load_14
+    LOAD [C] B
+    SET ACC #25444
+    JUMP_IF_ACC_EQ B &load_15
+    HALT
+
+$v_load_15 #20527
+&load_15
+    SET C $v_load_15
+    LOAD [C] C
+    SET ACC #20527
+    JUMP_IF_ACC_EQ C &load_16
+    HALT
+
+$v_load_16 #60336
+&load_16
+    SET SP $v_load_16
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #60336 &load_17
+    HALT
+
+$v_load_17 #56769
+&load_17
+    SET SP $v_load_17
+    LOAD [SP] A
+    SET ACC #56769
+    JUMP_IF_ACC_EQ A &load_18
+    HALT
+
+$v_load_18 #49044
+&load_18
+    SET SP $v_load_18
+    LOAD [SP] B
+    SET ACC #49044
+    JUMP_IF_ACC_EQ B &load_19
+    HALT
+
+$v_load_19 #34177
+&load_19
+    SET SP $v_load_19
+    LOAD [SP] C
+    SET ACC #34177
+    JUMP_IF_ACC_EQ C &load_20
+    HALT
+
+$v_load_20 #56580
+&load_20
+    LOAD [$v_load_20] ACC
+    JUMP_IF_ACC_EQ #56580 &load_21
+    HALT
+
+$v_load_21 #47253
+&load_21
+    LOAD [$v_load_21] A
+    SET ACC #47253
+    JUMP_IF_ACC_EQ A &load_22
+    HALT
+
+$v_load_22 #55439
+&load_22
+    LOAD [$v_load_22] B
+    SET ACC #55439
+    JUMP_IF_ACC_EQ B &load_23
+    HALT
+
+$v_load_23 #7661
+&load_23
+    LOAD [$v_load_23] C
+    SET ACC #7661
+    JUMP_IF_ACC_EQ C &store_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // STORE
+    ////////////////////////////////////////////////////////////////
+
+$v_store_0
+&store_0
+    SET ACC $v_store_0
+    STORE ACC [ACC]
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ $v_store_0 &store_1
+    HALT
+
+$v_store_1
+&store_1
+    SET ACC #31763
+    SET A $v_store_1
+    STORE ACC [A]
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ #31763 &store_2
+    HALT
+
+$v_store_2
+&store_2
+    SET ACC #35606
+    SET B $v_store_2
+    STORE ACC [B]
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ #35606 &store_3
+    HALT
+
+$v_store_3
+&store_3
+    SET ACC #27292
+    SET C $v_store_3
+    STORE ACC [C]
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ #27292 &store_4
+    HALT
+
+$v_store_4
+&store_4
+    SET ACC #13156
+    SET SP $v_store_4
+    STORE ACC [SP]
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #13156 &store_5
+    HALT
+
+$v_store_5
+&store_5
+    SET ACC #36181
+    STORE ACC [$v_store_5]
+    LOAD [$v_store_5] ACC
+    JUMP_IF_ACC_EQ #36181 &store_6
+    HALT
+
+$v_store_6
+&store_6
+    SET A #11935
+    SET ACC $v_store_6
+    STORE A [ACC]
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ #11935 &store_7
+    HALT
+
+$v_store_7
+&store_7
+    SET A $v_store_7
+    STORE A [A]
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ $v_store_7 &store_8
+    HALT
+
+$v_store_8
+&store_8
+    SET A #27215
+    SET B $v_store_8
+    STORE A [B]
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ #27215 &store_9
+    HALT
+
+$v_store_9
+&store_9
+    SET A #31533
+    SET C $v_store_9
+    STORE A [C]
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ #31533 &store_10
+    HALT
+
+$v_store_10
+&store_10
+    SET A #65214
+    SET SP $v_store_10
+    STORE A [SP]
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #65214 &store_11
+    HALT
+
+$v_store_11
+&store_11
+    SET A #25149
+    STORE A [$v_store_11]
+    LOAD [$v_store_11] ACC
+    JUMP_IF_ACC_EQ #25149 &store_12
+    HALT
+
+$v_store_12
+&store_12
+    SET B #61844
+    SET ACC $v_store_12
+    STORE B [ACC]
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ #61844 &store_13
+    HALT
+
+$v_store_13
+&store_13
+    SET B #22749
+    SET A $v_store_13
+    STORE B [A]
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ #22749 &store_14
+    HALT
+
+$v_store_14
+&store_14
+    SET B $v_store_14
+    STORE B [B]
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ $v_store_14 &store_15
+    HALT
+
+$v_store_15
+&store_15
+    SET B #21277
+    SET C $v_store_15
+    STORE B [C]
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ #21277 &store_16
+    HALT
+
+$v_store_16
+&store_16
+    SET B #64660
+    SET SP $v_store_16
+    STORE B [SP]
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #64660 &store_17
+    HALT
+
+$v_store_17
+&store_17
+    SET B #54157
+    STORE B [$v_store_17]
+    LOAD [$v_store_17] ACC
+    JUMP_IF_ACC_EQ #54157 &store_18
+    HALT
+
+$v_store_18
+&store_18
+    SET C #46522
+    SET ACC $v_store_18
+    STORE C [ACC]
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ #46522 &store_19
+    HALT
+
+$v_store_19
+&store_19
+    SET C #7117
+    SET A $v_store_19
+    STORE C [A]
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ #7117 &store_20
+    HALT
+
+$v_store_20
+&store_20
+    SET C #49497
+    SET B $v_store_20
+    STORE C [B]
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ #49497 &store_21
+    HALT
+
+$v_store_21
+&store_21
+    SET C $v_store_21
+    STORE C [C]
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ $v_store_21 &store_22
+    HALT
+
+$v_store_22
+&store_22
+    SET C #12486
+    SET SP $v_store_22
+    STORE C [SP]
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #12486 &store_23
+    HALT
+
+$v_store_23
+&store_23
+    SET C #63220
+    STORE C [$v_store_23]
+    LOAD [$v_store_23] ACC
+    JUMP_IF_ACC_EQ #63220 &store_24
+    HALT
+
+$v_store_24
+&store_24
+    SET SP #50736
+    SET ACC $v_store_24
+    STORE SP [ACC]
+    LOAD [ACC] ACC
+    JUMP_IF_ACC_EQ #50736 &store_25
+    HALT
+
+$v_store_25
+&store_25
+    SET SP #44571
+    SET A $v_store_25
+    STORE SP [A]
+    LOAD [A] ACC
+    JUMP_IF_ACC_EQ #44571 &store_26
+    HALT
+
+$v_store_26
+&store_26
+    SET SP #28464
+    SET B $v_store_26
+    STORE SP [B]
+    LOAD [B] ACC
+    JUMP_IF_ACC_EQ #28464 &store_27
+    HALT
+
+$v_store_27
+&store_27
+    SET SP #34092
+    SET C $v_store_27
+    STORE SP [C]
+    LOAD [C] ACC
+    JUMP_IF_ACC_EQ #34092 &store_28
+    HALT
+
+$v_store_28
+&store_28
+    SET SP $v_store_28
+    STORE SP [SP]
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ $v_store_28 &store_29
+    HALT
+
+$v_store_29
+&store_29
+    SET SP #30456
+    STORE SP [$v_store_29]
+    LOAD [$v_store_29] ACC
+    JUMP_IF_ACC_EQ #30456 &placeholder
     HALT
 
 
