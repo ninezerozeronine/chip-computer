@@ -1430,7 +1430,38 @@ $v_store_29
     SET C #4242
     PUSH C
     LOAD [SP] ACC
-    JUMP_IF_ACC_EQ #4242 &placeholder
+    JUMP_IF_ACC_EQ #4242 &not_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // NOT
+    ////////////////////////////////////////////////////////////////
+
+&not_0
+    SET ACC        #0b1001_0100_0011_1111
+    NOT ACC
+    JUMP_IF_ACC_EQ #0b0110_1011_1100_0000 &not_1
+    HALT
+
+&not_1
+    SET A   #0b1010_1010_0101_0101
+    SET ACC #0b0101_0101_1010_1010
+    NOT A
+    JUMP_IF_ACC_EQ A &not_2
+    HALT
+
+&not_2
+    SET B   #0b1111_1111_1111_1111
+    SET ACC #0b0000_0000_0000_0000
+    NOT B
+    JUMP_IF_ACC_EQ B &not_3
+    HALT
+
+&not_3
+    SET C   #0b0000_0000_0000_0000
+    SET ACC #0b1111_1111_1111_1111
+    NOT C
+    JUMP_IF_ACC_EQ C &placeholder
     HALT
 
 &placeholder

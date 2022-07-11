@@ -1688,10 +1688,10 @@ def test_assemble_all_instructions():
         HALT
 
         // Logical Operations
-        // NOT ACC
-        // NOT A
-        // NOT B
-        // NOT C
+        NOT ACC
+        NOT A
+        NOT B
+        NOT C
         
         AND A
         AND B
