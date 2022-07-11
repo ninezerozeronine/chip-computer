@@ -1606,15 +1606,14 @@ def test_assemble_all_instructions():
         STORE SP [C]
         STORE SP [SP]
         STORE SP [#345]
-        // PUSH ACC
-        // PUSH A
-        // PUSH B
-        // PUSH C
-        // PUSH PC
-        // POP ACC
-        // POP A
-        // POP B
-        // POP C
+        PUSH ACC
+        PUSH A
+        PUSH B
+        PUSH C
+        POP ACC
+        POP A
+        POP B
+        POP C
         SET ACC #222
         SET A #222
         SET B #222

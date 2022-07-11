@@ -12,6 +12,7 @@ def get_all_operations():
         jump_op,
         incr_decr_ops,
         load_store_ops,
+        push_pop_ops,
     )
 
     return [
@@ -26,4 +27,5 @@ def get_all_operations():
         jump_op,
         incr_decr_ops,
         load_store_ops,
+        push_pop_ops,
     ]

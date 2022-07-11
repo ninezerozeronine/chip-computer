@@ -1342,9 +1342,96 @@ $v_store_29
     SET SP #30456
     STORE SP [$v_store_29]
     LOAD [$v_store_29] ACC
-    JUMP_IF_ACC_EQ #30456 &placeholder
+    JUMP_IF_ACC_EQ #30456 &push_0
     HALT
 
+    ////////////////////////////////////////////////////////////////
+    // PUSH
+    ////////////////////////////////////////////////////////////////
+
+&push_0
+    NOOP
+    NOOP
+&push_1
+    NOOP
+    NOOP
+    NOOP
+    SET SP &push_1    
+
+    SET ACC #567
+    PUSH ACC
+    SET_ZERO ACC
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #567 &push_2
+    HALT
+
+&push_2
+    SET SP &push_1 
+    SET A #123
+    PUSH A
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #123 &push_3
+    HALT
+
+&push_3
+    SET SP &push_1 
+    SET B #333
+    PUSH B
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #333 &push_4
+    HALT
+
+&push_4
+    SET SP &push_1 
+    SET C !zero_one
+    PUSH C
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ !zero_one &pop_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // POP
+    ////////////////////////////////////////////////////////////////
+
+&pop_0
+    NOOP
+    NOOP
+&pop_1
+    NOOP
+    NOOP
+    NOOP
+    SET SP &pop_1    
+
+    SET ACC !one_zero
+    PUSH ACC
+    SET_ZERO ACC
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ !one_zero &pop_2
+    HALT
+
+&pop_2
+    SET SP &pop_1 
+    SET A #5681
+    PUSH A
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #5681 &pop_3
+    HALT
+
+&pop_3
+    SET SP &pop_1 
+    SET B #22222
+    PUSH B
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #22222 &pop_4
+    HALT
+
+&pop_4
+    SET SP &pop_1 
+    SET C #4242
+    PUSH C
+    LOAD [SP] ACC
+    JUMP_IF_ACC_EQ #4242 &placeholder
+    HALT
 
 &placeholder
     JUMP &start
