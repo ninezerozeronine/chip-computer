@@ -15,6 +15,7 @@ def get_all_operations():
         push_pop_ops,
         not_op,
         rot_left_op,
+        call_return_ops,
     )
 
     return [
@@ -32,4 +33,5 @@ def get_all_operations():
         push_pop_ops,
         not_op,
         rot_left_op,
+        call_return_ops,
     ]

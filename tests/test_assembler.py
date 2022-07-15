@@ -1679,12 +1679,12 @@ def test_assemble_all_instructions():
         JUMP_IF_NEQ_ZERO B #456
         JUMP_IF_NEQ_ZERO C #456
         JUMP_IF_NEQ_ZERO SP #456
-        // CALL ACC
-        // CALL A
-        // CALL B
-        // CALL C
-        // CALL #1
-        // RETURN
+        CALL ACC
+        CALL A
+        CALL B
+        CALL C
+        CALL #1
+        RETURN
         HALT
 
         // Logical Operations
