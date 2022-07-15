@@ -1192,7 +1192,7 @@ $v_jump_5 &jiae_0
     SET_ZERO SP
     JUMP_IF_NEQ_ZERO SP &jinez_halt_4
 
-    JUMP &not_0
+    JUMP &call_0
 
 &jinez_halt_0
     HALT
@@ -1203,6 +1203,55 @@ $v_jump_5 &jiae_0
 &jinez_halt_3
     HALT
 &jinez_halt_4
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // CALL
+    ////////////////////////////////////////////////////////////////
+
+&increment_acc
+    INCR ACC
+    RETURN
+    HALT
+
+&increment_a
+    INCR A
+    RETURN
+    HALT
+
+&call_0
+    SET A #0
+    SET ACC &increment_a
+    CALL ACC
+    SET ACC #1
+    JUMP_IF_ACC_EQ A &call_1
+    HALT
+
+&call_1
+    SET ACC #0
+    SET A &increment_acc
+    CALL A
+    JUMP_IF_ACC_EQ #1 &call_2
+    HALT
+
+&call_2
+    SET ACC #0
+    SET B &increment_acc
+    CALL B
+    JUMP_IF_ACC_EQ #1 &call_3
+    HALT
+
+&call_3
+    SET ACC #0
+    SET C &increment_acc
+    CALL C
+    JUMP_IF_ACC_EQ #1 &call_4
+    HALT
+
+&call_4
+    SET ACC #0
+    CALL &increment_acc
+    JUMP_IF_ACC_EQ #1 &not_0
     HALT
 
     ////////////////////////////////////////////////////////////////
