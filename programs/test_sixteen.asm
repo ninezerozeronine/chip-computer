@@ -1461,8 +1461,32 @@ $v_nxor_0          #0b1
 &nxor_4
     SET ACC        #0b1
     NXOR [$v_nxor_0]
-    JUMP_IF_ACC_EQ #0b1 &placeholder
+    JUMP_IF_ACC_EQ #0b1 &rot_left_0
     HALT
+
+    ////////////////////////////////////////////////////////////////
+    // ROT_LEFT
+    ////////////////////////////////////////////////////////////////
+
+&rot_left_0
+    SET ACC        #0b0100_0001_1111_0000
+    ROT_LEFT ACC
+    JUMP_IF_ACC_EQ #0b1000_0011_1110_0000 &rot_left_1
+
+&rot_left_1
+    SET A   #0b1000_1000_1000_1000
+    SET ACC #0b0001_0001_0001_0001
+    JUMP_IF_ACC_EQ A &rot_left_2
+
+&rot_left_2
+    SET B   #0b1001_1001_1001_1001
+    SET ACC #0b0011_0011_0011_0011
+    JUMP_IF_ACC_EQ B &rot_left_2
+
+&rot_left_3
+    SET C   #0b0000_1111_0000_1111
+    SET ACC #0b0001_1110_0001_1110
+    JUMP_IF_ACC_EQ C &placeholder
 
 
 &placeholder
