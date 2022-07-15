@@ -1725,6 +1725,12 @@ def test_assemble_all_instructions():
         NXOR C
         NXOR #456
         NXOR [#123]
+
+        // Misc
+        ROT_LEFT ACC
+        ROT_LEFT A
+        ROT_LEFT B
+        ROT_LEFT C
     """
     dedent_and_split = textwrap.dedent(test_data).splitlines()
     assembler.assemble(dedent_and_split)

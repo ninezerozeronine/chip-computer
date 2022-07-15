@@ -103,9 +103,14 @@ def generate_machinecode(signature, const_tokens):
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
 
-    return [
+    machinecode = [
         Word(value=get_instruction_index(signature))
     ]
+
+    for const_token in const_tokens:
+        machinecode.append(Word(const_token=const_token))
+
+    return machinecode
 
 
 def generate_microcode_templates():

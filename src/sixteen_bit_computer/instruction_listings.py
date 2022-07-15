@@ -300,10 +300,10 @@ _INSTRUCTION_SIGNATURES = (
     (NXOR, C),
     (NXOR, CONST),
     (NXOR, M_CONST),
-    # (ROT_LEFT, ACC),
-    # (ROT_LEFT, A),
-    # (ROT_LEFT, B),
-    # (ROT_LEFT, C),
+    (ROT_LEFT, ACC),
+    (ROT_LEFT, A),
+    (ROT_LEFT, B),
+    (ROT_LEFT, C),
 )
 """
 All possible instruction signatures.

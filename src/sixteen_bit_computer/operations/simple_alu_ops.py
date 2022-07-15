@@ -76,23 +76,15 @@ def generate_machinecode(signature, const_tokens):
         raise ValueError
 
     if signature[1] in (A, B, C):
-        return _add_module_machinecode(signature)
+        return [
+            Word(value=get_instruction_index(signature))
+        ]
 
     if signature[1] in (CONST, M_CONST):
-        return _add_const_machinecode(signature, const_tokens)
-
-
-def _add_module_machinecode(signature):
-    return [
-        Word(value=get_instruction_index(signature))
-    ]
-
-
-def _add_const_machinecode(signature, const_tokens):
-    return [
-        Word(value=get_instruction_index(signature)),
-        Word(const_token=const_tokens[0]),
-    ]
+        return [
+            Word(value=get_instruction_index(signature)),
+            Word(const_token=const_tokens[0]),
+        ]
 
 
 def generate_microcode_templates():
