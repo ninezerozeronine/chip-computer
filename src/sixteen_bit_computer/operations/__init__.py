@@ -17,6 +17,7 @@ def get_all_operations():
         rot_left_op,
         call_return_ops,
         jump_if_acc_cmp_ops,
+        jump_if_flag_not_flag_ops,
     )
 
     return [
@@ -36,4 +37,5 @@ def get_all_operations():
         rot_left_op,
         call_return_ops,
         jump_if_acc_cmp_ops,
+        jump_if_flag_not_flag_ops,
     ]

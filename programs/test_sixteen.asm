@@ -1522,7 +1522,7 @@ $v_jump_5 &jialt_0
     SET_ZERO SP
     JUMP_IF_NEQ_ZERO SP &jinez_halt_4
 
-    JUMP &call_0
+    JUMP &jinf_0
 
 &jinez_halt_0
     HALT
@@ -1533,6 +1533,158 @@ $v_jump_5 &jialt_0
 &jinez_halt_3
     HALT
 &jinez_halt_4
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_NEGATIVE_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jinf_0
+    SET ACC #10
+    SUB #20
+    JUMP_IF_NEGATIVE_FLAG &jinf_1
+    HALT
+
+&jinf_1
+    SET ACC #222
+    SUB #5
+    JUMP_IF_NEGATIVE_FLAG &jinf_halt_0
+    JUMP &jinnf_0
+
+&jinf_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_NOT_NEGATIVE_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jinnf_0
+    SET ACC #10
+    SUB #5
+    JUMP_IF_NOT_NEGATIVE_FLAG &jinnf_1
+    HALT
+
+&jinnf_1
+    SET ACC #5
+    SUB #10
+    JUMP_IF_NOT_NEGATIVE_FLAG &jinnf_halt_0
+    JUMP &jicbf_0
+
+&jinnf_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_CARRYBORROW_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jicbf_0
+    SET ACC #0xFFFF
+    ADD #1
+    JUMP_IF_CARRYBORROW_FLAG &jicbf_1
+    HALT
+
+&jicbf_1
+    SET ACC #5
+    ADD #10
+    JUMP_IF_CARRYBORROW_FLAG &jicbf_halt_0
+    JUMP &jincbf_0
+
+&jicbf_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_NOT_CARRYBORROW_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jincbf_0
+    SET ACC #18
+    ADD #5
+    JUMP_IF_NOT_CARRYBORROW_FLAG &jincbf_1
+    HALT
+
+&jincbf_1
+    SET ACC #0xFFFF
+    ADD #55
+    JUMP_IF_NOT_CARRYBORROW_FLAG &jincbf_halt_0
+    JUMP &jief_0
+
+&jincbf_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_EQUAL_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jief_0
+    SET ACC #34
+    SUB #34
+    JUMP_IF_EQUAL_FLAG &jief_1
+    HALT
+
+&jief_1
+    SET ACC #5
+    ADD #10
+    JUMP_IF_EQUAL_FLAG &jief_halt_0
+    JUMP &jinef_0
+
+&jief_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_NOT_EQUAL_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jinef_0
+    SET ACC #34
+    ADD #5
+    JUMP_IF_NOT_EQUAL_FLAG &jinef_1
+    HALT
+
+&jinef_1
+    SET ACC #34
+    SUB #34
+    JUMP_IF_NOT_EQUAL_FLAG &jinef_halt_0
+    JUMP &jizf_0
+
+&jinef_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_ZERO_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jizf_0
+    SET ACC #0
+    ADD #0
+    JUMP_IF_ZERO_FLAG &jizf_1
+    HALT
+
+&jizf_1
+    SET ACC #1
+    ADD #1
+    JUMP_IF_ZERO_FLAG &jizf_halt_0
+    JUMP &jinzf_0
+
+&jizf_halt_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // JUMP_IF_NOT_ZERO_FLAG
+    ////////////////////////////////////////////////////////////////
+
+&jinzf_0
+    SET ACC #1
+    ADD #1
+    JUMP_IF_NOT_ZERO_FLAG &jinzf_1
+    HALT
+
+&jinzf_1
+    SET ACC #0
+    ADD #0
+    JUMP_IF_NOT_ZERO_FLAG &jinzf_halt_0
+    JUMP &call_0
+
+&jinzf_halt_0
     HALT
 
     ////////////////////////////////////////////////////////////////
