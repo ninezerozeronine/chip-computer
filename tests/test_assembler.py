@@ -1639,16 +1639,16 @@ def test_assemble_all_instructions():
         JUMP [C]
         JUMP [SP]
         JUMP [#123]
-        // JUMP_IF_ACC_LT A #123
-        // JUMP_IF_ACC_LT B #123
-        // JUMP_IF_ACC_LT C #123
-        // JUMP_IF_ACC_LT SP #123
-        // JUMP_IF_ACC_LT #122 #123
-        // JUMP_IF_ACC_LTE A #123
-        // JUMP_IF_ACC_LTE B #123
-        // JUMP_IF_ACC_LTE C #123
-        // JUMP_IF_ACC_LTE SP #123
-        // JUMP_IF_ACC_LTE #122 #123
+        JUMP_IF_ACC_LT A #123
+        JUMP_IF_ACC_LT B #123
+        JUMP_IF_ACC_LT C #123
+        JUMP_IF_ACC_LT SP #123
+        JUMP_IF_ACC_LT #122 #123
+        JUMP_IF_ACC_LTE A #123
+        JUMP_IF_ACC_LTE B #123
+        JUMP_IF_ACC_LTE C #123
+        JUMP_IF_ACC_LTE SP #123
+        JUMP_IF_ACC_LTE #122 #123
         JUMP_IF_ACC_EQ A #555
         JUMP_IF_ACC_EQ B #555
         JUMP_IF_ACC_EQ C #555
@@ -1659,16 +1659,16 @@ def test_assemble_all_instructions():
         JUMP_IF_ACC_NEQ C #555
         JUMP_IF_ACC_NEQ SP #555
         JUMP_IF_ACC_NEQ #789 #555
-        // JUMP_IF_ACC_GTE A #111
-        // JUMP_IF_ACC_GTE B #111
-        // JUMP_IF_ACC_GTE C #111
-        // JUMP_IF_ACC_GTE SP #111
-        // JUMP_IF_ACC_GTE #999 #111
-        // JUMP_IF_ACC_GT A #111
-        // JUMP_IF_ACC_GT B #111
-        // JUMP_IF_ACC_GT C #111
-        // JUMP_IF_ACC_GT SP #111
-        // JUMP_IF_ACC_GT #999 #111
+        JUMP_IF_ACC_GTE A #111
+        JUMP_IF_ACC_GTE B #111
+        JUMP_IF_ACC_GTE C #111
+        JUMP_IF_ACC_GTE SP #111
+        JUMP_IF_ACC_GTE #999 #111
+        JUMP_IF_ACC_GT A #111
+        JUMP_IF_ACC_GT B #111
+        JUMP_IF_ACC_GT C #111
+        JUMP_IF_ACC_GT SP #111
+        JUMP_IF_ACC_GT #999 #111
         JUMP_IF_EQ_ZERO ACC #456
         JUMP_IF_EQ_ZERO A #456
         JUMP_IF_EQ_ZERO B #456

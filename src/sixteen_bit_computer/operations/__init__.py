@@ -16,6 +16,7 @@ def get_all_operations():
         not_op,
         rot_left_op,
         call_return_ops,
+        jump_if_acc_cmp_ops,
     )
 
     return [
@@ -34,4 +35,5 @@ def get_all_operations():
         not_op,
         rot_left_op,
         call_return_ops,
+        jump_if_acc_cmp_ops,
     ]
