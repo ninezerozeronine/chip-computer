@@ -1509,10 +1509,10 @@ def test_assemble_all_instructions():
         // SUBB C
         // SUBB #456
         // SUBB [#123]
-        // LSHIFT ACC
-        // LSHIFT A
-        // LSHIFT B
-        // LSHIFT C
+        LSHIFT ACC
+        LSHIFT A
+        LSHIFT B
+        LSHIFT C
         // LSHIFTC ACC
         // LSHIFTC A
         // LSHIFTC B

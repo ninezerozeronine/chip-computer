@@ -1,7 +1,7 @@
 """
 The JUMP_IF_<FLAG> and JUMP_IF_NOT_<FLAG> operations.
 
-Jumps to a location in memory of the given module is not equal to zero
+Jumps to a location in memory if the given flag is set (or not).
 """
 
 from ..instruction_listings import get_instruction_index
@@ -70,7 +70,6 @@ _OPERATION_TO_FLAGS = {
         "false_flags":[FLAGS["ZERO"]["HIGH"]],
     },
 }
-
 
 
 def generate_machinecode(signature, const_tokens):

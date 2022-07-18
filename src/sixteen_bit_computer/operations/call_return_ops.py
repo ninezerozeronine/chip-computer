@@ -1,5 +1,5 @@
 """
-The CALL AND RETURN operations.
+The CALL and RETURN operations.
 
 CALL: Push the current program counter (i.e. the next instruction to be
 executed) onto the stack, then set the program counter (i.e. jump) to
@@ -43,7 +43,7 @@ _SUPPORTED_SIGNATURES = (
 
 def generate_machinecode(signature, const_tokens):
     """
-    Generate machinecode for the CALL AND RETURN instructions.
+    Generate machinecode for the CALL and RETURN operations.
 
     Args:
         signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
@@ -68,10 +68,10 @@ def generate_machinecode(signature, const_tokens):
 
 def generate_microcode_templates():
     """
-    Generate microcode for the CALL AND RETURN operations.
+    Generate microcode for the CALL and RETURN operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the CALL AND RETURN
+        list(DataTemplate): DataTemplates for all the CALL and RETURN
         microcode.
     """
     data_templates = []

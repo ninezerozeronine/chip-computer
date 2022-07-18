@@ -42,7 +42,38 @@ $v_add_0 #42
 &add_4
     SET ACC #42
     ADD [$v_add_0]
-    JUMP_IF_ACC_EQ #84 &sub_0
+    JUMP_IF_ACC_EQ #84 &lshift_0
+    HALT
+
+    ////////////////////////////////////////////////////////////////
+    // LSHIFT
+    ////////////////////////////////////////////////////////////////
+
+&lshift_0
+    SET ACC        #0b0011_1101_0000_0001
+    LSHIFT ACC
+    JUMP_IF_ACC_EQ #0b0111_1010_0000_0010 &lshift_1
+    HALT
+
+&lshift_1
+    SET A   #0b0101_0101_0101_0101
+    SET ACC #0b1010_1010_1010_1010
+    LSHIFT A
+    JUMP_IF_ACC_EQ A &lshift_2
+    HALT
+
+&lshift_2
+    SET B   #0b1111_1111_1111_1111
+    SET ACC #0b1111_1111_1111_1110
+    LSHIFT B
+    JUMP_IF_ACC_EQ B &lshift_2
+    HALT
+
+&lshift_3
+    SET C   #0b0000_1000_1000_1000
+    SET ACC #0b0001_0001_0001_0000
+    LSHIFT C
+    JUMP_IF_ACC_EQ C &sub_0
     HALT
 
     ////////////////////////////////////////////////////////////////
@@ -82,6 +113,7 @@ $v_sub_0 #42
     SUB [$v_sub_0]
     JUMP_IF_EQ_ZERO ACC &incr_0
     HALT
+
 
     ////////////////////////////////////////////////////////////////
     // INCR
