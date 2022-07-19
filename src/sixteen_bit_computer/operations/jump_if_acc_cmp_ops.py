@@ -55,23 +55,23 @@ _SUPPORTED_SIGNATURES = (
 CONTROLS_MAP = {
     JUMP_IF_ACC_LT : {
         "gen_flags_controls": ALU_CONTROL_FLAGS["COMPARE_LT_GTE"],
-        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
-        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
     },
     JUMP_IF_ACC_LTE : {
         "gen_flags_controls": ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
-        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
-        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
     },
     JUMP_IF_ACC_GTE : {
         "gen_flags_controls": ALU_CONTROL_FLAGS["COMPARE_LT_GTE"],
-        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
-        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
     },
     JUMP_IF_ACC_GT : {
         "gen_flags_controls": ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"],
-        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
-        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
     },
 }
 
