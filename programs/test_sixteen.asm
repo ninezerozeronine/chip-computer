@@ -66,7 +66,7 @@ $v_add_0 #42
     SET B   #0b1111_1111_1111_1111
     SET ACC #0b1111_1111_1111_1110
     LSHIFT B
-    JUMP_IF_ACC_EQ B &lshift_2
+    JUMP_IF_ACC_EQ B &lshift_3
     HALT
 
 &lshift_3
@@ -140,8 +140,8 @@ $v_sub_0 #42
     HALT
 
 &incr_3
-    SET ACC #0xFFFF
-    SET C #0
+    SET ACC #0
+    SET C #0xFFFF
     INCR C
     JUMP_IF_ACC_EQ C &decr_0
     HALT
@@ -1370,7 +1370,7 @@ $v_jump_5 &jialt_0
     JUMP_IF_ACC_GTE SP &jiagte_halt_3
 
     SET ACC #10001
-    JUMP_IF_ACC_GTE #999 &jiagte_halt_4
+    JUMP_IF_ACC_GTE #12000 &jiagte_halt_4
     JUMP &jiagt_0
 
 &jiagte_halt_0
@@ -1437,7 +1437,7 @@ $v_jump_5 &jialt_0
     JUMP_IF_ACC_GT SP &jiagt_halt_3
 
     SET ACC #10
-    JUMP_IF_ACC_GT #5 &jiagt_halt_4
+    JUMP_IF_ACC_GT #15 &jiagt_halt_4
     JUMP &jiez_0
 
 &jiagt_halt_0
@@ -1648,8 +1648,9 @@ $v_jump_5 &jialt_0
     ////////////////////////////////////////////////////////////////
 
 &jief_0
-    SET ACC #34
-    SUB #34
+    // See the note on the ALU module because this is a bit magic.
+    SET ACC #1
+    SUB #2
     JUMP_IF_EQUAL_FLAG &jief_1
     HALT
 
@@ -1673,8 +1674,9 @@ $v_jump_5 &jialt_0
     HALT
 
 &jinef_1
-    SET ACC #34
-    SUB #34
+    // See the note on the ALU module because this is a bit magic.
+    SET ACC #1
+    SUB #2
     JUMP_IF_NOT_EQUAL_FLAG &jinef_halt_0
     JUMP &jizf_0
 
@@ -1842,24 +1844,24 @@ $v_and_0           #0b1
     ////////////////////////////////////////////////////////////////
 
 &nand_0
-    SET ACC        #0b1111
-    SET A          #0b0101
+    SET ACC        #0b0000_0000_0000_1111
+    SET A          #0b1111_1111_1111_0101
     NAND A
-    JUMP_IF_ACC_EQ #0b1010 &nand_1
+    JUMP_IF_ACC_EQ #0b1111_1111_1111_1010 &nand_1
     HALT
 
 &nand_1
     SET ACC        #0b1111_0000_1111_0000
     SET B          #0b1111_1111_1111_1111
     NAND B
-    JUMP_IF_ACC_EQ #0b000_1111_0000_1111 &nand_2
+    JUMP_IF_ACC_EQ #0b0000_1111_0000_1111 &nand_2
     HALT
 
 &nand_2
-    SET ACC         #0b1100_1111
-    SET C          #0b0000_0000
+    SET ACC        #0b1111_1111_1100_1111
+    SET C          #0b1111_1111_0000_0000
     NAND C
-    JUMP_IF_ACC_EQ #0b1111_1111 &nand_3
+    JUMP_IF_ACC_EQ #0b0000_0000_1111_1111 &nand_3
     HALT
 
 &nand_3
@@ -1868,11 +1870,11 @@ $v_and_0           #0b1
     JUMP_IF_ACC_EQ #0b1100_0011_1111_1111 &nand_4
     HALT
 
-$v_nand_0          #0b1
+$v_nand_0          #0b0000_0000_0000_0001
 &nand_4
-    SET ACC        #0b1
+    SET ACC        #0b0000_0000_0000_0001
     NAND [$v_nand_0]
-    JUMP_IF_ACC_EQ #0b0 &or_0
+    JUMP_IF_ACC_EQ #0b1111_1111_1111_1110 &or_0
     HALT
 
     ////////////////////////////////////////////////////////////////
@@ -1918,10 +1920,10 @@ $v_or_0            #0b1
     ////////////////////////////////////////////////////////////////
 
 &nor_0
-    SET ACC        #0b1111
-    SET A          #0b0101
+    SET ACC        #0b1111_0101_0000_1111
+    SET A          #0b0010_0010_1111_0101
     NOR A
-    JUMP_IF_ACC_EQ #0b0000 &nor_1
+    JUMP_IF_ACC_EQ #0b0000_1000_0000_0000 &nor_1
     HALT
 
 &nor_1
@@ -1932,10 +1934,10 @@ $v_or_0            #0b1
     HALT
 
 &nor_2
-    SET ACC        #0b1100_1111
-    SET C          #0b0000_0000
+    SET ACC        #0b0000_0000_1100_1111
+    SET C          #0b0000_1111_0000_0000
     NOR C
-    JUMP_IF_ACC_EQ #0b0011_0000 &nor_3
+    JUMP_IF_ACC_EQ #0b1111_0000_0011_0000 &nor_3
     HALT
 
 &nor_3
@@ -1944,11 +1946,11 @@ $v_or_0            #0b1
     JUMP_IF_ACC_EQ #0b1000_0001_0000_0001 &nor_4
     HALT
 
-$v_nor_0           #0b1
+$v_nor_0           #0b0100_0000_0000_0001
 &nor_4
-    SET ACC        #0b1
+    SET ACC        #0b0000_0010_0000_0001
     NOR [$v_nor_0]
-    JUMP_IF_ACC_EQ #0b0 &xor_0
+    JUMP_IF_ACC_EQ #0b1011_1101_1111_1110 &xor_0
     HALT
 
     ////////////////////////////////////////////////////////////////
@@ -1994,24 +1996,24 @@ $v_xor_0           #0b1
     ////////////////////////////////////////////////////////////////
 
 &nxor_0
-    SET ACC        #0b1111
-    SET A          #0b0101
+    SET ACC        #0b1111_1111_1111_1111
+    SET A          #0b0000_0000_0000_0101
     NXOR A
-    JUMP_IF_ACC_EQ #0b0101 &nxor_1
+    JUMP_IF_ACC_EQ #0b0000_0000_0000_0101 &nxor_1
     HALT
 
 &nxor_1
-    SET ACC        #0b0011
-    SET B          #0b0101
+    SET ACC        #0b1111_1111_1111_0011
+    SET B          #0b1111_1111_1111_0101
     NXOR B
-    JUMP_IF_ACC_EQ #0b1001 &nxor_2
+    JUMP_IF_ACC_EQ #0b1111_1111_1111_1001 &nxor_2
     HALT
 
 &nxor_2
-    SET ACC        #0b1100_1111
-    SET C          #0b0000_0000
+    SET ACC        #0b0111_1100_1100_1111
+    SET C          #0b1011_0000_0000_0000
     NXOR C
-    JUMP_IF_ACC_EQ #0b0011_0000 &nxor_3
+    JUMP_IF_ACC_EQ #0b0011_0011_0011_0000 &nxor_3
     HALT
 
 &nxor_3
@@ -2020,11 +2022,11 @@ $v_xor_0           #0b1
     JUMP_IF_ACC_EQ #0b0011_1100_0100_0001 &nxor_4
     HALT
 
-$v_nxor_0          #0b1
+$v_nxor_0          #0b1110_1111_1110_1111
 &nxor_4
-    SET ACC        #0b1
+    SET ACC        #0b1111_1110_1110_1111
     NXOR [$v_nxor_0]
-    JUMP_IF_ACC_EQ #0b1 &rot_left_0
+    JUMP_IF_ACC_EQ #0b1110_1110_1111_1111 &rot_left_0
     HALT
 
     ////////////////////////////////////////////////////////////////

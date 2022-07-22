@@ -8,6 +8,23 @@ Jumps to a location in memory based on the result of the
 comparison between the given module or constant and ACC.
 """
 
+
+
+# 1001     SET ACC #2                  | 1053 0x041D -                   109 0x006D
+#                                      | 1054 0x041E -                     2 0x0002 #2
+# 1002     JUMP_IF_ACC_LT A &jialt_1   | 1055 0x041F -                   132 0x0084
+#                                      | 1056 0x0420 -                  1058 0x0422 &jialt_1
+# 1003     HALT                        | 1057 0x0421 -                   186 0x00BA
+# 1004                                 |
+# 1005 &jialt_1                        |
+# 1006     SET B #123                  | 1058 0x0422 - &jialt_1          111 0x006
+
+# At 1057 instead of halting this jumped to 186
+
+
+
+
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -206,7 +223,6 @@ def generate_templates_for_signature(signature):
         step_0_module_controls = [
             MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
             MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-            MODULE_CONTROL["PC"]["COUNT"],
         ]
         step_0_module_controls.extend(CONTROLS_MAP[signature[0]]["gen_flags_controls"])
         microcode_defs.append({
