@@ -320,11 +320,51 @@ X A1 9 -400 800 100 R 50 50 1 1 I
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_74HCT138
+# power_GND
 #
-DEF eight-bit-computer_74HCT138 U 0 40 Y Y 1 F N
+DEF power_GND #PWR 0 0 Y Y 1 F P
+F0 "#PWR" 0 -250 50 H I C CNN
+F1 "power_GND" 0 -150 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 6 0 1 0 0 0 0 -50 50 -50 0 -100 -50 -50 0 -50 N
+X GND 1 0 0 0 D 50 50 1 1 W N
+ENDDRAW
+ENDDEF
+#
+# power_PWR_FLAG
+#
+DEF power_PWR_FLAG #FLG 0 0 N N 1 F P
+F0 "#FLG" 0 75 50 H I C CNN
+F1 "power_PWR_FLAG" 0 150 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 6 0 1 0 0 0 0 50 -40 75 0 100 40 75 0 50 N
+X pwr 1 0 0 0 U 50 50 0 0 w
+ENDDRAW
+ENDDEF
+#
+# power_VCC
+#
+DEF power_VCC #PWR 0 0 Y Y 1 F P
+F0 "#PWR" 0 -150 50 H I C CNN
+F1 "power_VCC" 0 150 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+C 0 75 25 0 1 0 N
+P 2 0 1 0 0 0 0 50 N
+X VCC 1 0 0 0 U 50 50 1 1 W N
+ENDDRAW
+ENDDEF
+#
+# sixteen-bit-computer_74HCT138
+#
+DEF sixteen-bit-computer_74HCT138 U 0 40 Y Y 1 F N
 F0 "U" -300 450 50 H V C CNN
-F1 "eight-bit-computer_74HCT138" -300 -550 50 H V C CNN
+F1 "sixteen-bit-computer_74HCT138" -300 -550 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -351,11 +391,11 @@ X Y6 9 500 -300 200 L 50 50 1 0 O I
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_74HCT161
+# sixteen-bit-computer_74HCT161
 #
-DEF eight-bit-computer_74HCT161 U 0 40 Y Y 1 F N
+DEF sixteen-bit-computer_74HCT161 U 0 40 Y Y 1 F N
 F0 "U" -300 650 50 H V C CNN
-F1 "eight-bit-computer_74HCT161" -300 -650 50 H V C CNN
+F1 "sixteen-bit-computer_74HCT161" -300 -650 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -382,11 +422,11 @@ X ~SPE 9 -500 0 200 R 50 50 1 0 I I
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_74HCT173
+# sixteen-bit-computer_74HCT173
 #
-DEF eight-bit-computer_74HCT173 U 0 40 Y Y 1 F N
+DEF sixteen-bit-computer_74HCT173 U 0 40 Y Y 1 F N
 F0 "U" -300 750 50 H V C CNN
-F1 "eight-bit-computer_74HCT173" -300 -750 50 H V C CNN
+F1 "sixteen-bit-computer_74HCT173" -300 -750 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -413,11 +453,11 @@ X ~E1 9 -500 -200 200 R 50 50 1 0 I I
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_74HCT245
+# sixteen-bit-computer_74HCT245
 #
-DEF eight-bit-computer_74HCT245 U 0 30 Y Y 1 F N
+DEF sixteen-bit-computer_74HCT245 U 0 30 Y Y 1 F N
 F0 "U" -300 700 50 H V L CNN
-F1 "eight-bit-computer_74HCT245" 100 -600 50 H V L CNN
+F1 "sixteen-bit-computer_74HCT245" 100 -600 50 H V L CNN
 F2 "" -350 0 50 H I C CNN
 F3 "" -350 0 50 H I C CNN
 DRAW
@@ -445,11 +485,11 @@ X A8 9 -550 -450 300 R 50 50 1 1 T
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_74HCT377
+# sixteen-bit-computer_74HCT377
 #
-DEF eight-bit-computer_74HCT377 U 0 40 Y Y 1 L N
+DEF sixteen-bit-computer_74HCT377 U 0 40 Y Y 1 L N
 F0 "U" -300 650 50 H V C CNN
-F1 "eight-bit-computer_74HCT377" 350 -700 50 H V C CNN
+F1 "sixteen-bit-computer_74HCT377" 350 -700 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -480,11 +520,11 @@ X Q3 9 500 200 200 L 50 50 1 0 O
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_Aux_connection
+# sixteen-bit-computer_Aux_connection
 #
-DEF eight-bit-computer_Aux_connection J 0 40 Y Y 1 F N
+DEF sixteen-bit-computer_Aux_connection J 0 40 Y Y 1 F N
 F0 "J" 0 500 50 H V C CNN
-F1 "eight-bit-computer_Aux_connection" 0 -600 50 H V C CNN
+F1 "sixteen-bit-computer_Aux_connection" 0 -600 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -524,11 +564,11 @@ X NC 9 200 -400 150 L 50 50 1 1 N
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_Bus_connection
+# sixteen-bit-computer_Bus_connection
 #
-DEF eight-bit-computer_Bus_connection J 0 40 Y Y 1 F N
+DEF sixteen-bit-computer_Bus_connection J 0 40 Y Y 1 F N
 F0 "J" -100 800 50 H V C CNN
-F1 "eight-bit-computer_Bus_connection" -50 -900 50 H V C CNN
+F1 "sixteen-bit-computer_Bus_connection" -50 -900 50 H V C CNN
 F2 "" -100 400 50 H I C CNN
 F3 "" -100 400 50 H I C CNN
 $FPLIST
@@ -586,11 +626,11 @@ X BUS_08 9 100 -100 150 L 50 50 1 1 P
 ENDDRAW
 ENDDEF
 #
-# eight-bit-computer_Control_signal_backplane
+# sixteen-bit-computer_Control_signal_backplane
 #
-DEF eight-bit-computer_Control_signal_backplane J 0 40 Y Y 1 F N
+DEF sixteen-bit-computer_Control_signal_backplane J 0 40 Y Y 1 F N
 F0 "J" 0 1600 50 H V C CNN
-F1 "eight-bit-computer_Control_signal_backplane" 0 -1700 50 H V C CNN
+F1 "sixteen-bit-computer_Control_signal_backplane" 0 -1700 50 H V C CNN
 F2 "" 0 0 50 H I C CNN
 F3 "" 0 0 50 H I C CNN
 $FPLIST
@@ -693,46 +733,6 @@ X B_OUT 6 200 1000 150 L 50 50 1 1 P
 X C_IN 7 200 900 150 L 50 50 1 1 P
 X C_OUT 8 200 800 150 L 50 50 1 1 P
 X ALU_ST_RS 9 200 700 150 L 50 50 1 1 P
-ENDDRAW
-ENDDEF
-#
-# power_GND
-#
-DEF power_GND #PWR 0 0 Y Y 1 F P
-F0 "#PWR" 0 -250 50 H I C CNN
-F1 "power_GND" 0 -150 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 6 0 1 0 0 0 0 -50 50 -50 0 -100 -50 -50 0 -50 N
-X GND 1 0 0 0 D 50 50 1 1 W N
-ENDDRAW
-ENDDEF
-#
-# power_PWR_FLAG
-#
-DEF power_PWR_FLAG #FLG 0 0 N N 1 F P
-F0 "#FLG" 0 75 50 H I C CNN
-F1 "power_PWR_FLAG" 0 150 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-P 6 0 1 0 0 0 0 50 -40 75 0 100 40 75 0 50 N
-X pwr 1 0 0 0 U 50 50 0 0 w
-ENDDRAW
-ENDDEF
-#
-# power_VCC
-#
-DEF power_VCC #PWR 0 0 Y Y 1 F P
-F0 "#PWR" 0 -150 50 H I C CNN
-F1 "power_VCC" 0 150 50 H V C CNN
-F2 "" 0 0 50 H I C CNN
-F3 "" 0 0 50 H I C CNN
-DRAW
-C 0 75 25 0 1 0 N
-P 2 0 1 0 0 0 0 50 N
-X VCC 1 0 0 0 U 50 50 1 1 W N
 ENDDRAW
 ENDDEF
 #

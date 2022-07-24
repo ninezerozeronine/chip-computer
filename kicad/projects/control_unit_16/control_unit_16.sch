@@ -14,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L eight-bit-computer:74HCT161 U5
+L sixteen-bit-computer:74HCT161 U5
 U 1 1 5FD857CC
 P 3250 1600
 F 0 "U5" H 3000 2250 50  0000 C CNN
@@ -25,7 +25,7 @@ F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 3250 1600 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT138 U9
+L sixteen-bit-computer:74HCT138 U9
 U 1 1 5FD88A13
 P 5250 1400
 F 0 "U9" H 5000 1850 50  0000 C CNN
@@ -80,7 +80,7 @@ F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 9300 8950 50
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT173 U3
+L sixteen-bit-computer:74HCT173 U3
 U 1 1 5FD8D05D
 P 2400 6450
 F 0 "U3" H 2150 7200 50  0000 C CNN
@@ -91,34 +91,34 @@ F 3 "http://www.ti.com/lit/ds/symlink/cd74hc173.pdf" H 2400 6450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:Aux_connection J4
+L sixteen-bit-computer:Aux_connection J4
 U 1 1 5FD8D921
 P 11150 1500
 F 0 "J4" H 11062 2125 50  0000 C CNN
 F 1 "Aux_connection" H 11062 2034 50  0000 C CNN
-F 2 "eight-bit-computer:aux-connection" H 11150 1500 50  0001 C CNN
+F 2 "sixteen-bit-computer:aux-connection" H 11150 1500 50  0001 C CNN
 F 3 "~" H 11150 1500 50  0001 C CNN
 	1    11150 1500
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:Bus_connection J3
+L sixteen-bit-computer:Bus_connection J3
 U 1 1 5FD8FB3B
 P 9700 1800
 F 0 "J3" H 9562 2725 50  0000 C CNN
 F 1 "Bus_connection" H 9562 2634 50  0000 C CNN
-F 2 "eight-bit-computer:bus-connection" H 9600 2200 50  0001 C CNN
+F 2 "sixteen-bit-computer:bus-connection" H 9600 2200 50  0001 C CNN
 F 3 "~" H 9600 2200 50  0001 C CNN
 	1    9700 1800
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:Control_signal_backplane J2
+L sixteen-bit-computer:Control_signal_backplane J2
 U 1 1 5FD91862
 P 9400 5450
 F 0 "J2" H 9287 7175 50  0000 C CNN
 F 1 "Control_signal_backplane" H 9287 7084 50  0000 C CNN
-F 2 "eight-bit-computer:backplane-connector-single-row" H 9400 5450 50  0001 C CNN
+F 2 "sixteen-bit-computer:backplane-connector-single-row" H 9400 5450 50  0001 C CNN
 F 3 "~" H 9400 5450 50  0001 C CNN
 	1    9400 5450
 	1    0    0    -1  
@@ -129,7 +129,7 @@ U 1 1 5FD956D3
 P 6700 2150
 F 0 "D20" H 6450 2100 50  0000 C CNN
 F 1 "LED" H 6300 2100 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2150 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2150 50  0001 C CNN
 F 3 "~" H 6700 2150 50  0001 C CNN
 	1    6700 2150
 	-1   0    0    -1  
@@ -140,7 +140,7 @@ U 1 1 5FD96F8F
 P 6700 2000
 F 0 "D19" H 6450 1950 50  0000 C CNN
 F 1 "LED" H 6300 1950 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2000 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2000 50  0001 C CNN
 F 3 "~" H 6700 2000 50  0001 C CNN
 	1    6700 2000
 	-1   0    0    -1  
@@ -151,7 +151,7 @@ U 1 1 5FD994D8
 P 6700 1850
 F 0 "D18" H 6450 1800 50  0000 C CNN
 F 1 "LED" H 6300 1800 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1850 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1850 50  0001 C CNN
 F 3 "~" H 6700 1850 50  0001 C CNN
 	1    6700 1850
 	-1   0    0    -1  
@@ -162,7 +162,7 @@ U 1 1 5FD994E2
 P 6700 1700
 F 0 "D17" H 6450 1650 50  0000 C CNN
 F 1 "LED" H 6300 1650 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1700 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1700 50  0001 C CNN
 F 3 "~" H 6700 1700 50  0001 C CNN
 	1    6700 1700
 	-1   0    0    -1  
@@ -173,7 +173,7 @@ U 1 1 5FD9D16A
 P 6700 1550
 F 0 "D16" H 6450 1500 50  0000 C CNN
 F 1 "LED" H 6300 1500 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1550 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1550 50  0001 C CNN
 F 3 "~" H 6700 1550 50  0001 C CNN
 	1    6700 1550
 	-1   0    0    -1  
@@ -184,7 +184,7 @@ U 1 1 5FD9D170
 P 6700 1400
 F 0 "D15" H 6450 1350 50  0000 C CNN
 F 1 "LED" H 6300 1350 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1400 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1400 50  0001 C CNN
 F 3 "~" H 6700 1400 50  0001 C CNN
 	1    6700 1400
 	-1   0    0    -1  
@@ -195,7 +195,7 @@ U 1 1 5FD9D176
 P 6700 1250
 F 0 "D14" H 6450 1200 50  0000 C CNN
 F 1 "LED" H 6300 1200 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1250 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1250 50  0001 C CNN
 F 3 "~" H 6700 1250 50  0001 C CNN
 	1    6700 1250
 	-1   0    0    -1  
@@ -206,7 +206,7 @@ U 1 1 5FD9D17C
 P 6700 1100
 F 0 "D13" H 6450 1050 50  0000 C CNN
 F 1 "LED" H 6300 1050 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1100 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1100 50  0001 C CNN
 F 3 "~" H 6700 1100 50  0001 C CNN
 	1    6700 1100
 	-1   0    0    -1  
@@ -217,7 +217,7 @@ U 1 1 5FDA12E0
 P 5650 3500
 F 0 "D5" H 5400 3450 50  0000 C CNN
 F 1 "LED" H 5250 3450 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3500 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3500 50  0001 C CNN
 F 3 "~" H 5650 3500 50  0001 C CNN
 	1    5650 3500
 	-1   0    0    1   
@@ -228,7 +228,7 @@ U 1 1 5FDA12E6
 P 5650 3650
 F 0 "D6" H 5400 3600 50  0000 C CNN
 F 1 "LED" H 5250 3600 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3650 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3650 50  0001 C CNN
 F 3 "~" H 5650 3650 50  0001 C CNN
 	1    5650 3650
 	-1   0    0    1   
@@ -239,7 +239,7 @@ U 1 1 5FDA12EC
 P 5650 3800
 F 0 "D7" H 5400 3750 50  0000 C CNN
 F 1 "LED" H 5250 3750 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3800 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3800 50  0001 C CNN
 F 3 "~" H 5650 3800 50  0001 C CNN
 	1    5650 3800
 	-1   0    0    1   
@@ -250,7 +250,7 @@ U 1 1 5FDA12F2
 P 5650 3950
 F 0 "D8" H 5400 3900 50  0000 C CNN
 F 1 "LED" H 5250 3900 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3950 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 3950 50  0001 C CNN
 F 3 "~" H 5650 3950 50  0001 C CNN
 	1    5650 3950
 	-1   0    0    1   
@@ -261,7 +261,7 @@ U 1 1 5FDA12F8
 P 5650 4100
 F 0 "D9" H 5400 4050 50  0000 C CNN
 F 1 "LED" H 5250 4050 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4100 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4100 50  0001 C CNN
 F 3 "~" H 5650 4100 50  0001 C CNN
 	1    5650 4100
 	-1   0    0    1   
@@ -272,7 +272,7 @@ U 1 1 5FDA12FE
 P 5650 4250
 F 0 "D10" H 5400 4200 50  0000 C CNN
 F 1 "LED" H 5250 4200 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4250 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4250 50  0001 C CNN
 F 3 "~" H 5650 4250 50  0001 C CNN
 	1    5650 4250
 	-1   0    0    1   
@@ -283,7 +283,7 @@ U 1 1 5FDA1304
 P 5650 4400
 F 0 "D11" H 5400 4350 50  0000 C CNN
 F 1 "LED" H 5250 4350 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4400 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4400 50  0001 C CNN
 F 3 "~" H 5650 4400 50  0001 C CNN
 	1    5650 4400
 	-1   0    0    1   
@@ -294,7 +294,7 @@ U 1 1 5FDA130A
 P 5650 4550
 F 0 "D12" H 5400 4500 50  0000 C CNN
 F 1 "LED" H 5250 4500 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4550 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 5650 4550 50  0001 C CNN
 F 3 "~" H 5650 4550 50  0001 C CNN
 	1    5650 4550
 	-1   0    0    1   
@@ -886,7 +886,7 @@ LIN_STEP_6
 Text Label 5750 1800 0    50   ~ 0
 LIN_STEP_7
 $Comp
-L eight-bit-computer:74HCT245 U8
+L sixteen-bit-computer:74HCT245 U8
 U 1 1 5FED6485
 P 4600 3750
 F 0 "U8" H 4400 4450 50  0000 C CNN
@@ -1021,7 +1021,7 @@ U 1 1 5FFC385A
 P 6100 5850
 F 0 "D1" H 5850 5800 50  0000 C CNN
 F 1 "LED" H 5700 5800 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 5850 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 5850 50  0001 C CNN
 F 3 "~" H 6100 5850 50  0001 C CNN
 	1    6100 5850
 	-1   0    0    1   
@@ -1032,7 +1032,7 @@ U 1 1 5FFC3860
 P 6100 6000
 F 0 "D2" H 5850 5950 50  0000 C CNN
 F 1 "LED" H 5700 5950 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6000 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6000 50  0001 C CNN
 F 3 "~" H 6100 6000 50  0001 C CNN
 	1    6100 6000
 	-1   0    0    1   
@@ -1043,7 +1043,7 @@ U 1 1 5FFC3866
 P 6100 6150
 F 0 "D3" H 5850 6100 50  0000 C CNN
 F 1 "LED" H 5700 6100 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6150 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6150 50  0001 C CNN
 F 3 "~" H 6100 6150 50  0001 C CNN
 	1    6100 6150
 	-1   0    0    1   
@@ -1054,7 +1054,7 @@ U 1 1 5FFC386C
 P 6100 6300
 F 0 "D4" H 5850 6250 50  0000 C CNN
 F 1 "LED" H 5700 6250 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6300 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6100 6300 50  0001 C CNN
 F 3 "~" H 6100 6300 50  0001 C CNN
 	1    6100 6300
 	-1   0    0    1   
@@ -1634,7 +1634,7 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6250 7100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U7
+L sixteen-bit-computer:74HCT245 U7
 U 1 1 5FFC3890
 P 4750 6100
 F 0 "U7" H 4550 6800 50  0000 C CNN
@@ -1773,7 +1773,7 @@ INST_01
 Text Label 2100 4200 2    50   ~ 0
 INST_00
 $Comp
-L eight-bit-computer:74HCT377 U4
+L sixteen-bit-computer:74HCT377 U4
 U 1 1 5FD843AB
 P 2600 4000
 F 0 "U4" H 2350 4650 50  0000 C CNN

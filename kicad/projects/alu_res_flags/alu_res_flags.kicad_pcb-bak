@@ -34,7 +34,7 @@
   )
 
   (setup
-    (last_trace_width 0.762)
+    (last_trace_width 0.254)
     (user_trace_width 0.762)
     (trace_clearance 0.2)
     (zone_clearance 0.508)
@@ -80,7 +80,7 @@
       (psnegative false)
       (psa4output false)
       (plotreference true)
-      (plotvalue false)
+      (plotvalue true)
       (plotinvisibletext false)
       (padsonsilk true)
       (subtractmaskfromsilk false)
@@ -6939,7 +6939,7 @@
   (segment (start 122.174 71.628) (end 110.744 71.628) (width 0.254) (layer F.Cu) (net 155))
   (segment (start 122.428 71.882) (end 122.174 71.628) (width 0.254) (layer F.Cu) (net 155))
 
-  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 5FC45D68) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 5FC5CA5C) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))

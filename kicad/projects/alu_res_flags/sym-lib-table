@@ -1,4 +1,4 @@
 (sym_lib_table
-  (lib (name eight-bit-computer)(type Legacy)(uri ${KIPRJMOD}/../../symbol_libs/eight-bit-computer.lib)(options "")(descr ""))
+  (lib (name sixteen-bit-computer)(type Legacy)(uri ${KIPRJMOD}/../../symbol_libs/sixteen-bit-computer.lib)(options "")(descr ""))
   (lib (name alu_res_flags-rescue)(type Legacy)(uri ${KIPRJMOD}/alu_res_flags-rescue.lib)(options "")(descr ""))
 )
