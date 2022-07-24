@@ -14,22 +14,22 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L control_unit_16-rescue:74HCT161-eight-bit-computer U5
+L sixteen-bit-computer:74HC161 U5
 U 1 1 5FD857CC
 P 3250 1600
 F 0 "U5" H 3000 2250 50  0000 C CNN
-F 1 "74HCT161" H 3550 2250 50  0000 C CNN
+F 1 "74HC161" H 3550 2250 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 3250 1600 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 3250 1600 50  0001 C CNN
 	1    3250 1600
 	1    0    0    -1  
 $EndComp
 $Comp
-L control_unit_16-rescue:74HCT138-eight-bit-computer U9
+L sixteen-bit-computer:74HC138 U9
 U 1 1 5FD88A13
 P 5250 1400
 F 0 "U9" H 5000 1850 50  0000 C CNN
-F 1 "74HCT138" H 5500 1850 50  0000 C CNN
+F 1 "74HC138" H 5500 1850 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 5250 1400 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/sn74hct138.pdf" H 5250 1400 50  0001 C CNN
 	1    5250 1400
@@ -80,18 +80,18 @@ F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/doc0006.pdf" H 9300 8950 50
 	1    0    0    -1  
 $EndComp
 $Comp
-L control_unit_16-rescue:74HCT173-eight-bit-computer U3
+L sixteen-bit-computer:74HC173 U3
 U 1 1 5FD8D05D
 P 2400 6450
 F 0 "U3" H 2150 7200 50  0000 C CNN
-F 1 "74HCT173" H 2650 7200 50  0000 C CNN
+F 1 "74HC173" H 2650 7200 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 2400 6450 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/cd74hc173.pdf" H 2400 6450 50  0001 C CNN
 	1    2400 6450
 	1    0    0    -1  
 $EndComp
 $Comp
-L control_unit_16-rescue:Aux_connection-eight-bit-computer J4
+L sixteen-bit-computer:Aux_connection J4
 U 1 1 5FD8D921
 P 11150 1500
 F 0 "J4" H 11062 2125 50  0000 C CNN
@@ -102,7 +102,7 @@ F 3 "~" H 11150 1500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L control_unit_16-rescue:Bus_connection-eight-bit-computer J3
+L sixteen-bit-computer:Bus_connection J3
 U 1 1 5FD8FB3B
 P 9700 1800
 F 0 "J3" H 9562 2725 50  0000 C CNN
@@ -113,7 +113,7 @@ F 3 "~" H 9600 2200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L control_unit_16-rescue:Control_signal_backplane-eight-bit-computer J2
+L sixteen-bit-computer:Control_signal_backplane J2
 U 1 1 5FD91862
 P 9400 5450
 F 0 "J2" H 9287 7175 50  0000 C CNN
@@ -337,7 +337,7 @@ L 74xx:74HCT04 U1
 U 1 1 5FDAA11A
 P 1350 1600
 F 0 "U1" H 1350 1917 50  0000 C CNN
-F 1 "74HCT04" H 1350 1826 50  0000 C CNN
+F 1 "74HC04" H 1350 1826 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1350 1600 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1350 1600 50  0001 C CNN
 	1    1350 1600
@@ -348,7 +348,7 @@ L 74xx:74HCT04 U1
 U 2 1 5FDAB5DB
 P 1350 2100
 F 0 "U1" H 1350 2417 50  0000 C CNN
-F 1 "74HCT04" H 1350 2326 50  0000 C CNN
+F 1 "74HC04" H 1350 2326 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1350 2100 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1350 2100 50  0001 C CNN
 	2    1350 2100
@@ -359,7 +359,7 @@ L 74xx:74HCT04 U1
 U 3 1 5FDACA10
 P 12400 5200
 F 0 "U1" H 12400 5517 50  0000 C CNN
-F 1 "74HCT04" H 12400 5426 50  0000 C CNN
+F 1 "74HC04" H 12400 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 12400 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12400 5200 50  0001 C CNN
 	3    12400 5200
@@ -370,7 +370,7 @@ L 74xx:74HCT04 U1
 U 4 1 5FDAE4A7
 P 13000 5200
 F 0 "U1" H 13000 5517 50  0000 C CNN
-F 1 "74HCT04" H 13000 5426 50  0000 C CNN
+F 1 "74HC04" H 13000 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 13000 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13000 5200 50  0001 C CNN
 	4    13000 5200
@@ -381,7 +381,7 @@ L 74xx:74HCT04 U1
 U 5 1 5FDAF775
 P 13550 5200
 F 0 "U1" H 13550 5517 50  0000 C CNN
-F 1 "74HCT04" H 13550 5426 50  0000 C CNN
+F 1 "74HC04" H 13550 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 13550 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 13550 5200 50  0001 C CNN
 	5    13550 5200
@@ -392,7 +392,7 @@ L 74xx:74HCT04 U1
 U 6 1 5FDB0B8C
 P 14100 5200
 F 0 "U1" H 14100 5517 50  0000 C CNN
-F 1 "74HCT04" H 14100 5426 50  0000 C CNN
+F 1 "74HC04" H 14100 5426 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 14100 5200 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 14100 5200 50  0001 C CNN
 	6    14100 5200
@@ -403,7 +403,7 @@ L 74xx:74HCT04 U1
 U 7 1 5FDB292F
 P 11350 5000
 F 0 "U1" H 11580 5046 50  0000 L CNN
-F 1 "74HCT04" H 11580 4955 50  0000 L CNN
+F 1 "74HC04" H 11580 4955 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 11350 5000 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11350 5000 50  0001 C CNN
 	7    11350 5000
@@ -886,11 +886,11 @@ LIN_STEP_6
 Text Label 5750 1800 0    50   ~ 0
 LIN_STEP_7
 $Comp
-L control_unit_16-rescue:74HCT245-eight-bit-computer U8
+L sixteen-bit-computer:74HC245 U8
 U 1 1 5FED6485
 P 4600 3750
 F 0 "U8" H 4400 4450 50  0000 C CNN
-F 1 "74HCT245" H 4850 4450 50  0000 C CNN
+F 1 "74HC245" H 4850 4450 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 4250 3750 50  0001 C CNN
 F 3 "" H 4250 3750 50  0001 C CNN
 	1    4600 3750
@@ -1634,11 +1634,11 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6250 7100 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L control_unit_16-rescue:74HCT245-eight-bit-computer U7
+L sixteen-bit-computer:74HC245 U7
 U 1 1 5FFC3890
 P 4750 6100
 F 0 "U7" H 4550 6800 50  0000 C CNN
-F 1 "74HCT245" H 5000 6800 50  0000 C CNN
+F 1 "74HC245" H 5000 6800 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 4400 6100 50  0001 C CNN
 F 3 "" H 4400 6100 50  0001 C CNN
 	1    4750 6100
@@ -1773,11 +1773,11 @@ INST_01
 Text Label 2100 4200 2    50   ~ 0
 INST_00
 $Comp
-L control_unit_16-rescue:74HCT377-eight-bit-computer U4
+L sixteen-bit-computer:74HC377 U4
 U 1 1 5FD843AB
 P 2600 4000
 F 0 "U4" H 2350 4650 50  0000 C CNN
-F 1 "74HCT377" H 2850 4650 50  0000 C CNN
+F 1 "74HC377" H 2850 4650 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 2600 4000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2600 4000 50  0001 C CNN
 	1    2600 4000

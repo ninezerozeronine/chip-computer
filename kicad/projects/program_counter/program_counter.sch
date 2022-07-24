@@ -36,121 +36,121 @@ F 3 "~" H 12250 6000 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U6
+L sixteen-bit-computer:74HC245 U6
 U 1 1 5FCA6309
 P 5800 6000
 F 0 "U6" H 5550 6700 50  0000 C CNN
-F 1 "74HCT245" H 6050 6700 50  0000 C CNN
+F 1 "74HC245" H 6050 6700 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 5450 6000 50  0001 C CNN
 F 3 "" H 5450 6000 50  0001 C CNN
 	1    5800 6000
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U4
+L sixteen-bit-computer:74HC245 U4
 U 1 1 5FCA733A
 P 3700 6000
 F 0 "U4" H 3500 6700 50  0000 C CNN
-F 1 "74HCT245" H 3950 6700 50  0000 C CNN
+F 1 "74HC245" H 3950 6700 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 3350 6000 50  0001 C CNN
 F 3 "" H 3350 6000 50  0001 C CNN
 	1    3700 6000
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 1 1 5FCA7FA7
 P 1400 3100
 F 0 "U1" H 1400 3417 50  0000 C CNN
-F 1 "74HCT04" H 1400 3326 50  0000 C CNN
+F 1 "74HC04" H 1400 3326 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1400 3100 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1400 3100 50  0001 C CNN
 	1    1400 3100
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 2 1 5FCA89A6
 P 1400 3650
 F 0 "U1" H 1400 3967 50  0000 C CNN
-F 1 "74HCT04" H 1400 3876 50  0000 C CNN
+F 1 "74HC04" H 1400 3876 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1400 3650 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1400 3650 50  0001 C CNN
 	2    1400 3650
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 3 1 5FCA9DFB
 P 1700 5450
 F 0 "U1" H 1700 5767 50  0000 C CNN
-F 1 "74HCT04" H 1700 5676 50  0000 C CNN
+F 1 "74HC04" H 1700 5676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 1700 5450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1700 5450 50  0001 C CNN
 	3    1700 5450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 4 1 5FCAA994
 P 12500 1850
 F 0 "U1" H 12500 2167 50  0000 C CNN
-F 1 "74HCT04" H 12500 2076 50  0000 C CNN
+F 1 "74HC04" H 12500 2076 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 12500 1850 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12500 1850 50  0001 C CNN
 	4    12500 1850
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 5 1 5FCABCA3
 P 12500 2400
 F 0 "U1" H 12500 2717 50  0000 C CNN
-F 1 "74HCT04" H 12500 2626 50  0000 C CNN
+F 1 "74HC04" H 12500 2626 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 12500 2400 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12500 2400 50  0001 C CNN
 	5    12500 2400
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 6 1 5FCAC5E4
 P 12500 2950
 F 0 "U1" H 12500 3267 50  0000 C CNN
-F 1 "74HCT04" H 12500 3176 50  0000 C CNN
+F 1 "74HC04" H 12500 3176 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 12500 2950 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12500 2950 50  0001 C CNN
 	6    12500 2950
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 7 1 5FCAD347
 P 11500 2450
 F 0 "U1" H 11730 2496 50  0000 L CNN
-F 1 "74HCT04" H 11730 2405 50  0000 L CNN
+F 1 "74HC04" H 11730 2405 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 11500 2450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 11500 2450 50  0001 C CNN
 	7    11500 2450
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U2
+L sixteen-bit-computer:74HC245 U2
 U 1 1 5FCAF774
 P 2450 9250
 F 0 "U2" H 2250 9950 50  0000 C CNN
-F 1 "74HCT245" H 2700 9950 50  0000 C CNN
+F 1 "74HC245" H 2700 9950 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 2100 9250 50  0001 C CNN
 F 3 "" H 2100 9250 50  0001 C CNN
 	1    2450 9250
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U8
+L sixteen-bit-computer:74HC245 U8
 U 1 1 5FCAFEA6
 P 6950 9250
 F 0 "U8" H 6750 9950 50  0000 C CNN
-F 1 "74HCT245" H 7200 9950 50  0000 C CNN
+F 1 "74HC245" H 7200 9950 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm" H 6600 9250 50  0001 C CNN
 F 3 "" H 6600 9250 50  0001 C CNN
 	1    6950 9250
@@ -436,11 +436,11 @@ F 3 "~" H 4050 3100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT161 U3
+L sixteen-bit-computer:74HC161 U3
 U 1 1 5FCA368E
 P 3200 2450
 F 0 "U3" H 2950 3100 50  0000 C CNN
-F 1 "74HCT161" H 3450 3100 50  0000 C CNN
+F 1 "74HC161" H 3450 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 3200 2450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 3200 2450 50  0001 C CNN
 	1    3200 2450
@@ -579,11 +579,11 @@ F 3 "~" H 5900 3100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT161 U5
+L sixteen-bit-computer:74HC161 U5
 U 1 1 5FD16858
 P 5050 2450
 F 0 "U5" H 4800 3100 50  0000 C CNN
-F 1 "74HCT161" H 5300 3100 50  0000 C CNN
+F 1 "74HC161" H 5300 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 5050 2450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 5050 2450 50  0001 C CNN
 	1    5050 2450
@@ -615,11 +615,11 @@ F 3 "~" H 7750 3100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT161 U7
+L sixteen-bit-computer:74HC161 U7
 U 1 1 5FD1A3E7
 P 6900 2450
 F 0 "U7" H 6650 3100 50  0000 C CNN
-F 1 "74HCT161" H 7150 3100 50  0000 C CNN
+F 1 "74HC161" H 7150 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 6900 2450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 6900 2450 50  0001 C CNN
 	1    6900 2450
@@ -643,11 +643,11 @@ F 3 "~" H 9600 3100 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT161 U9
+L sixteen-bit-computer:74HC161 U9
 U 1 1 5FD1C8F3
 P 8750 2450
 F 0 "U9" H 8500 3100 50  0000 C CNN
-F 1 "74HCT161" H 9000 3100 50  0000 C CNN
+F 1 "74HC161" H 9000 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm" H 8750 2450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd54hc163.pdf" H 8750 2450 50  0001 C CNN
 	1    8750 2450

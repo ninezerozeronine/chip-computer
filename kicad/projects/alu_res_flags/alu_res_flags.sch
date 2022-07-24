@@ -14,143 +14,143 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L sixteen-bit-computer:74HCT27 U6
+L sixteen-bit-computer:74HC27 U6
 U 1 1 5FB0B931
 P 7400 7250
 F 0 "U6" H 7700 7450 50  0000 C CNN
-F 1 "74HCT27" H 7400 7450 50  0000 C CNN
+F 1 "74HC27" H 7400 7450 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 7250 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 7250 50  0001 C CNN
 	1    7400 7250
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U6
+L sixteen-bit-computer:74HC27 U6
 U 2 1 5FB0CD47
 P 7400 7700
 F 0 "U6" H 7700 7900 50  0000 C CNN
-F 1 "74HCT27" H 7400 7900 50  0000 C CNN
+F 1 "74HC27" H 7400 7900 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 7700 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 7700 50  0001 C CNN
 	2    7400 7700
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U6
+L sixteen-bit-computer:74HC27 U6
 U 3 1 5FB0E763
 P 7400 8150
 F 0 "U6" H 7700 8350 50  0000 C CNN
-F 1 "74HCT27" H 7400 8350 50  0000 C CNN
+F 1 "74HC27" H 7400 8350 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 8150 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 8150 50  0001 C CNN
 	3    7400 8150
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U6
+L sixteen-bit-computer:74HC27 U6
 U 4 1 5FB1033F
 P 17550 3750
 F 0 "U6" H 17300 4100 50  0000 L CNN
-F 1 "74HCT27" H 17650 4100 50  0000 L CNN
+F 1 "74HC27" H 17650 4100 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 17550 3750 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 17550 3750 50  0001 C CNN
 	4    17550 3750
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U7
+L sixteen-bit-computer:74HC27 U7
 U 1 1 5FB13856
 P 7400 8850
 F 0 "U7" H 7700 9050 50  0000 C CNN
-F 1 "74HCT27" H 7400 9050 50  0000 C CNN
+F 1 "74HC27" H 7400 9050 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 8850 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 8850 50  0001 C CNN
 	1    7400 8850
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U7
+L sixteen-bit-computer:74HC27 U7
 U 2 1 5FB14A4F
 P 7400 9300
 F 0 "U7" H 7700 9500 50  0000 C CNN
-F 1 "74HCT27" H 7400 9500 50  0000 C CNN
+F 1 "74HC27" H 7400 9500 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 9300 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 9300 50  0001 C CNN
 	2    7400 9300
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U7
+L sixteen-bit-computer:74HC27 U7
 U 3 1 5FB1651F
 P 7400 9750
 F 0 "U7" H 7700 9950 50  0000 C CNN
-F 1 "74HCT27" H 7400 9950 50  0000 C CNN
+F 1 "74HC27" H 7400 9950 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 7400 9750 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 7400 9750 50  0001 C CNN
 	3    7400 9750
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT27 U7
+L sixteen-bit-computer:74HC27 U7
 U 4 1 5FB17B44
 P 18700 3750
 F 0 "U7" H 18450 4100 50  0000 L CNN
-F 1 "74HCT27" H 18800 4100 50  0000 L CNN
+F 1 "74HC27" H 18800 4100 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 18700 3750 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct27.pdf" H 18700 3750 50  0001 C CNN
 	4    18700 3750
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT377 U2
+L sixteen-bit-computer:74HC377 U2
 U 1 1 5FB1FEEC
 P 3250 5100
 F 0 "U2" H 3000 5750 50  0000 C CNN
-F 1 "74HCT377" H 3500 5750 50  0000 C CNN
+F 1 "74HC377" H 3500 5750 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 3250 5100 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 3250 5100 50  0001 C CNN
 	1    3250 5100
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U10
+L sixteen-bit-computer:74HC245 U10
 U 1 1 5FB232A9
 P 10800 4900
 F 0 "U10" H 10600 5600 50  0000 C CNN
-F 1 "74HCT245" H 11050 5600 50  0000 C CNN
+F 1 "74HC245" H 11050 5600 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 10450 4900 50  0001 C CNN
 F 3 "" H 10450 4900 50  0001 C CNN
 	1    10800 4900
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U4
+L sixteen-bit-computer:74HC245 U4
 U 1 1 5FB23C97
 P 6800 2650
 F 0 "U4" H 6600 3350 50  0000 C CNN
-F 1 "74HCT245" H 7050 3350 50  0000 C CNN
+F 1 "74HC245" H 7050 3350 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6450 2650 50  0001 C CNN
 F 3 "" H 6450 2650 50  0001 C CNN
 	1    6800 2650
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U5
+L sixteen-bit-computer:74HC245 U5
 U 1 1 5FB24682
 P 6800 4850
 F 0 "U5" H 6600 5550 50  0000 C CNN
-F 1 "74HCT245" H 7050 5550 50  0000 C CNN
+F 1 "74HC245" H 7050 5550 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6450 4850 50  0001 C CNN
 F 3 "" H 6450 4850 50  0001 C CNN
 	1    6800 4850
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT377 U3
+L sixteen-bit-computer:74HC377 U3
 U 1 1 5FB25053
 P 3300 2900
 F 0 "U3" H 3050 3550 50  0000 C CNN
-F 1 "74HCT377" H 3550 3550 50  0000 C CNN
+F 1 "74HC377" H 3550 3550 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 3300 2900 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 3300 2900 50  0001 C CNN
 	1    3300 2900
@@ -201,11 +201,11 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 13150 5050 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U12
+L sixteen-bit-computer:74HC245 U12
 U 1 1 5FB32788
 P 16500 8050
 F 0 "U12" H 16300 8750 50  0000 C CNN
-F 1 "74HCT245" H 16750 8750 50  0000 C CNN
+F 1 "74HC245" H 16750 8750 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 16150 8050 50  0001 C CNN
 F 3 "" H 16150 8050 50  0001 C CNN
 	1    16500 8050
@@ -496,11 +496,11 @@ F 3 "~" H 13850 7300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT173 U11
+L sixteen-bit-computer:74HC173 U11
 U 1 1 5FB1DAED
 P 13800 8800
 F 0 "U11" H 13550 9550 50  0000 C CNN
-F 1 "74HCT173" H 14050 9550 50  0000 C CNN
+F 1 "74HC173" H 14050 9550 50  0000 C CNN
 F 2 "Package_DIP:DIP-16_W7.62mm_Socket" H 13800 8800 50  0001 C CNN
 F 3 "http://www.ti.com/lit/ds/symlink/cd74hc173.pdf" H 13800 8800 50  0001 C CNN
 	1    13800 8800
@@ -702,77 +702,77 @@ F 3 "~" H 12050 2600 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 1 1 5FB8CBBD
 P 1750 3400
 F 0 "U1" H 1750 3717 50  0000 C CNN
-F 1 "74HCT04" H 1750 3626 50  0000 C CNN
+F 1 "74HC04" H 1750 3626 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1750 3400 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 3400 50  0001 C CNN
 	1    1750 3400
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 2 1 5FB8E6DD
 P 12150 9000
 F 0 "U1" H 12150 9317 50  0000 C CNN
-F 1 "74HCT04" H 12150 9226 50  0000 C CNN
+F 1 "74HC04" H 12150 9226 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 12150 9000 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12150 9000 50  0001 C CNN
 	2    12150 9000
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 3 1 5FB8F91F
 P 9850 8450
 F 0 "U1" H 9850 8767 50  0000 C CNN
-F 1 "74HCT04" H 9850 8676 50  0000 C CNN
+F 1 "74HC04" H 9850 8676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 9850 8450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 9850 8450 50  0001 C CNN
 	3    9850 8450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 4 1 5FB920C9
 P 5000 2100
 F 0 "U1" H 5000 2417 50  0000 C CNN
-F 1 "74HCT04" H 5000 2326 50  0000 C CNN
+F 1 "74HC04" H 5000 2326 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 5000 2100 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 5000 2100 50  0001 C CNN
 	4    5000 2100
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 5 1 5FB93894
 P 17550 4800
 F 0 "U1" H 17550 5117 50  0000 C CNN
-F 1 "74HCT04" H 17550 5026 50  0000 C CNN
+F 1 "74HC04" H 17550 5026 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 17550 4800 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 17550 4800 50  0001 C CNN
 	5    17550 4800
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 6 1 5FB95C2E
 P 18750 4800
 F 0 "U1" H 18750 5117 50  0000 C CNN
-F 1 "74HCT04" H 18750 5026 50  0000 C CNN
+F 1 "74HC04" H 18750 5026 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 18750 4800 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 18750 4800 50  0001 C CNN
 	6    18750 4800
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 7 1 5FB98A6E
 P 16300 3750
 F 0 "U1" H 16050 4100 50  0000 L CNN
-F 1 "74HCT04" H 16400 4100 50  0000 L CNN
+F 1 "74HC04" H 16400 4100 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 16300 3750 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 16300 3750 50  0001 C CNN
 	7    16300 3750
@@ -1002,11 +1002,11 @@ Wire Wire Line
 Text Label 10600 1900 0    50   ~ 0
 VCC
 $Comp
-L sixteen-bit-computer:74HCT245 U9
+L sixteen-bit-computer:74HC245 U9
 U 1 1 5FB211D5
 P 10800 2850
 F 0 "U9" H 10600 3550 50  0000 C CNN
-F 1 "74HCT245" H 11050 3550 50  0000 C CNN
+F 1 "74HC245" H 11050 3550 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 10450 2850 50  0001 C CNN
 F 3 "" H 10450 2850 50  0001 C CNN
 	1    10800 2850
@@ -1740,22 +1740,22 @@ RES_15
 Text Label 15950 8000 2    50   ~ 0
 RES_15
 $Comp
-L sixteen-bit-computer:74HCT30 U8
+L sixteen-bit-computer:74HC30 U8
 U 1 1 5FBBC8A7
 P 8800 8450
 F 0 "U8" H 9267 8975 50  0000 C CNN
-F 1 "74HCT30" H 9267 8884 50  0000 C CNN
+F 1 "74HC30" H 9267 8884 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 8800 8450 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 8800 8450 50  0001 C CNN
 	1    8800 8450
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT30 U8
+L sixteen-bit-computer:74HC30 U8
 U 2 1 5FBBF1CA
 P 19750 3750
 F 0 "U8" H 19980 3796 50  0000 L CNN
-F 1 "74HCT30" H 19980 3705 50  0000 L CNN
+F 1 "74HC30" H 19980 3705 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 19750 3750 50  0001 C CNN
 F 3 "https://www.ti.com/lit/ds/symlink/cd74hct30.pdf" H 19750 3750 50  0001 C CNN
 	2    19750 3750

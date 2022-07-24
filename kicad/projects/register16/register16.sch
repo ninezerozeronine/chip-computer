@@ -47,33 +47,33 @@ F 3 "~" H 8850 4950 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT377 U3
+L sixteen-bit-computer:74HC377 U3
 U 1 1 5F855C32
 P 1950 5950
 F 0 "U3" H 2350 5550 50  0000 C CNN
-F 1 "74HCT377" H 2500 5450 50  0000 C CNN
+F 1 "74HC377" H 2500 5450 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1950 5950 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 1950 5950 50  0001 C CNN
 	1    1950 5950
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT377 U2
+L sixteen-bit-computer:74HC377 U2
 U 1 1 5F857635
 P 1950 4150
 F 0 "U2" H 2350 3750 50  0000 C CNN
-F 1 "74HCT377" H 2500 3650 50  0000 C CNN
+F 1 "74HC377" H 2500 3650 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1950 4150 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 1950 4150 50  0001 C CNN
 	1    1950 4150
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U5
+L sixteen-bit-computer:74HC245 U5
 U 1 1 5F858330
 P 4500 6250
 F 0 "U5" H 4850 6800 50  0000 C CNN
-F 1 "74HCT245" H 5000 6700 50  0000 C CNN
+F 1 "74HC245" H 5000 6700 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 4150 6250 50  0001 C CNN
 F 3 "" H 4150 6250 50  0001 C CNN
 	1    4500 6250
@@ -102,99 +102,99 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 9950 2400 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 1 1 5F89775D
 P 900 4350
 F 0 "U1" H 900 4050 50  0000 C CNN
-F 1 "74HCT04" H 900 4150 50  0000 C CNN
+F 1 "74HC04" H 900 4150 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 900 4350 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 900 4350 50  0001 C CNN
 	1    900  4350
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 2 1 5F898EF8
 P 3600 3300
 F 0 "U1" H 3600 3000 50  0000 C CNN
-F 1 "74HCT04" H 3600 3100 50  0000 C CNN
+F 1 "74HC04" H 3600 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3600 3300 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3600 3300 50  0001 C CNN
 	2    3600 3300
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 3 1 5F899C5B
 P 2150 950
 F 0 "U1" H 2150 1267 50  0000 C CNN
-F 1 "74HCT04" H 2150 1176 50  0000 C CNN
+F 1 "74HC04" H 2150 1176 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2150 950 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2150 950 50  0001 C CNN
 	3    2150 950 
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 4 1 5F89C4C9
 P 2150 1450
 F 0 "U1" H 2150 1767 50  0000 C CNN
-F 1 "74HCT04" H 2150 1676 50  0000 C CNN
+F 1 "74HC04" H 2150 1676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2150 1450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2150 1450 50  0001 C CNN
 	4    2150 1450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 5 1 5F89DBF3
 P 3000 950
 F 0 "U1" H 3000 1267 50  0000 C CNN
-F 1 "74HCT04" H 3000 1176 50  0000 C CNN
+F 1 "74HC04" H 3000 1176 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3000 950 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3000 950 50  0001 C CNN
 	5    3000 950 
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 6 1 5F89F049
 P 3000 1450
 F 0 "U1" H 3000 1767 50  0000 C CNN
-F 1 "74HCT04" H 3000 1676 50  0000 C CNN
+F 1 "74HC04" H 3000 1676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3000 1450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3000 1450 50  0001 C CNN
 	6    3000 1450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 7 1 5F8A0462
 P 1100 1150
 F 0 "U1" H 1330 1196 50  0000 L CNN
-F 1 "74HCT04" H 1330 1105 50  0000 L CNN
+F 1 "74HC04" H 1330 1105 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1100 1150 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1100 1150 50  0001 C CNN
 	7    1100 1150
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U6
+L sixteen-bit-computer:74HC245 U6
 U 1 1 5F8AC977
 P 6850 1650
 F 0 "U6" H 7200 2250 50  0000 C CNN
-F 1 "74HCT245" H 7350 2100 50  0000 C CNN
+F 1 "74HC245" H 7350 2100 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6500 1650 50  0001 C CNN
 F 3 "" H 6500 1650 50  0001 C CNN
 	1    6850 1650
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U7
+L sixteen-bit-computer:74HC245 U7
 U 1 1 5F8ADF71
 P 6850 3750
 F 0 "U7" H 7200 4350 50  0000 C CNN
-F 1 "74HCT245" H 7350 4200 50  0000 C CNN
+F 1 "74HC245" H 7350 4200 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6500 3750 50  0001 C CNN
 F 3 "" H 6500 3750 50  0001 C CNN
 	1    6850 3750
@@ -1202,11 +1202,11 @@ F 3 "~" H 4650 1050 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L sixteen-bit-computer:74HCT245 U4
+L sixteen-bit-computer:74HC245 U4
 U 1 1 5F854F6D
 P 4500 4150
 F 0 "U4" H 4850 4700 50  0000 C CNN
-F 1 "74HCT245" H 5000 4600 50  0000 C CNN
+F 1 "74HC245" H 5000 4600 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 4150 4150 50  0001 C CNN
 F 3 "" H 4150 4150 50  0001 C CNN
 	1    4500 4150
