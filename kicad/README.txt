@@ -15,6 +15,6 @@ footprint_libs
     The templates are set up to point to these.
 
 
-Library referncing it achieved via the KiCad variable replacement in the project library settings:
+Library referncing is achieved via the KiCad variable replacement in the project library settings:
     ${KIPRJMOD}\..\..\symbol_libs\eight-bit-computer.lib
     ${KIPRJMOD}\..\..\footprint_libs\eight-bit-computer.pretty
