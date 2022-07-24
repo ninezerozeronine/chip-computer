@@ -19,3 +19,6 @@ The center of the leftmost pin on the bottom right connector is 4.4 inches /
 
 The center of the rightmost pin on the bottom right connector is is 0.5 inches / 
 12.7 mm from the right edge.
+
+The center of the lowest pin on the ECNZ connector on the left edge is 0.95
+inches / 24.13 mm from the bottom edge.
