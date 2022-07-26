@@ -344,22 +344,22 @@ F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12500 13
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HC245 U6
+L sixteen-bit-computer:74HCT245 U6
 U 1 1 5F9AAB74
 P 1800 9350
 F 0 "U6" H 1550 10050 50  0000 C CNN
-F 1 "74HC245" H 2050 10050 50  0000 C CNN
+F 1 "74HCT245" H 2050 10050 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1450 9350 50  0001 C CNN
 F 3 "" H 1450 9350 50  0001 C CNN
 	1    1800 9350
 	1    0    0    -1  
 $EndComp
 $Comp
-L sixteen-bit-computer:74HC245 U4
+L sixteen-bit-computer:74HCT245 U4
 U 1 1 5F9AC31C
 P 1800 7200
 F 0 "U4" H 1550 7900 50  0000 C CNN
-F 1 "74HC245" H 2050 7900 50  0000 C CNN
+F 1 "74HCT245" H 2050 7900 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1450 7200 50  0001 C CNN
 F 3 "" H 1450 7200 50  0001 C CNN
 	1    1800 7200
