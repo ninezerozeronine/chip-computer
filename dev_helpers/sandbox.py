@@ -1,3 +1,18 @@
+"""
+Things to test with oscilloscope
+
+ - Interference between lines with HC chips on both ends.
+  - Signals going the same way.
+  - Signals going different ways.
+  - Ground next to it.
+ - The effect of an LED + resistor on a data line.
+ - Compare bus line + inactive buffers to regular signal line.
+ - What effect logic level shifters have on the signal.
+
+
+
+"""
+
 import sys
 import os
 from pprint import pprint

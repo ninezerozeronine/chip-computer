@@ -756,16 +756,6 @@ Wire Wire Line
 	6100 3350 6300 3350
 Wire Wire Line
 	6300 3200 6000 3200
-Wire Wire Line
-	6000 3200 6000 4550
-Wire Wire Line
-	6000 4550 6850 4550
-Wire Wire Line
-	6850 2450 6000 2450
-Wire Wire Line
-	6000 2450 6000 1100
-Wire Wire Line
-	6000 1100 6300 1100
 $Comp
 L power:GND #PWR0101
 U 1 1 5FA3D458
@@ -1040,7 +1030,6 @@ Wire Wire Line
 	7850 1650 7850 2450
 Wire Wire Line
 	7850 2450 6850 2450
-Connection ~ 6850 2450
 Wire Wire Line
 	6850 2800 7850 2800
 Wire Wire Line
@@ -1050,7 +1039,6 @@ Wire Wire Line
 	7850 3900 7850 4550
 Wire Wire Line
 	7850 4550 6850 4550
-Connection ~ 6850 4550
 Text Label 6850 700  0    50   ~ 0
 VCC
 Text Label 6850 2450 0    50   ~ 0
@@ -1275,4 +1263,62 @@ Wire Wire Line
 Connection ~ 8000 5450
 Wire Wire Line
 	8000 5450 8000 5900
+$Comp
+L Device:R_US R1
+U 1 1 62FF3B9E
+P 5200 2150
+F 0 "R1" H 5268 2196 50  0000 L CNN
+F 1 "10K" H 5268 2105 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5240 2140 50  0001 C CNN
+F 3 "~" H 5200 2150 50  0001 C CNN
+	1    5200 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J11
+U 1 1 62FF46DF
+P 5400 2300
+F 0 "J11" H 5372 2274 50  0000 R CNN
+F 1 "LED_CONTROL" H 5372 2183 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 5400 2300 50  0001 C CNN
+F 3 "~" H 5400 2300 50  0001 C CNN
+	1    5400 2300
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J12
+U 1 1 62FF5407
+P 6650 5000
+F 0 "J12" H 6678 4976 50  0000 L CNN
+F 1 "TOP_POWER" H 6678 4885 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 6650 5000 50  0001 C CNN
+F 3 "~" H 6650 5000 50  0001 C CNN
+	1    6650 5000
+	1    0    0    -1  
+$EndComp
+Text Label 6450 5100 2    50   ~ 0
+GND
+Text Label 6450 5000 2    50   ~ 0
+VCC
+Text Label 5200 2600 2    50   ~ 0
+GND
+Text Label 5200 2000 2    50   ~ 0
+VCC
+Text Label 4600 2300 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	4600 2300 5200 2300
+Text Label 5550 1100 0    50   ~ 0
+LED_CONTROL
+Text Label 5500 3000 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	6000 3200 6000 3000
+Wire Wire Line
+	6000 3000 5500 3000
+Wire Wire Line
+	5550 1100 6300 1100
+Connection ~ 5200 2300
+Wire Wire Line
+	5200 2400 5200 2600
 $EndSCHEMATC
