@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name sixteen-bit-computer)(type Legacy)(uri ${KIPRJMOD}/../../symbol_libs/sixteen-bit-computer.lib)(options "")(descr ""))
+)

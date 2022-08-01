@@ -1,5 +1,17 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP 74HC109
+D Dual JK Flip-Flop, Set & Reset
+K JK
+F http://www.ti.com/lit/gpn/sn74HC109
+$ENDCMP
+#
+$CMP 74HC126
+D Quad buffer 3-State outputs
+K Buffer 3State
+F http://www.ti.com/lit/gpn/sn74HC126
+$ENDCMP
+#
 $CMP 74HC138
 D Decoder 3 to 8 active low outputs
 K TTL DECOD DECOD8
