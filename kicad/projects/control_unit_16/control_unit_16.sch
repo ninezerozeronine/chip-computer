@@ -750,16 +750,9 @@ Wire Wire Line
 	4750 1700 4450 1700
 Wire Wire Line
 	4450 1700 4450 1050
-Wire Wire Line
-	4750 1800 4450 1800
-Wire Wire Line
-	4450 1800 4450 1700
 Connection ~ 4450 1700
 Wire Wire Line
-	4450 1800 4450 2100
-Wire Wire Line
 	4450 2100 5250 2100
-Connection ~ 4450 1800
 Wire Wire Line
 	4750 1600 4650 1600
 Wire Wire Line
@@ -914,13 +907,6 @@ Wire Wire Line
 Wire Wire Line
 	4050 3350 3850 3350
 Wire Wire Line
-	3650 4550 3950 4550
-Wire Wire Line
-	3950 4550 4600 4550
-Connection ~ 3950 4550
-Wire Wire Line
-	3950 3200 3950 4550
-Wire Wire Line
 	3650 2800 3850 2800
 Wire Wire Line
 	3850 2800 4600 2800
@@ -1073,12 +1059,7 @@ F 3 "~" H 3450 5300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	4200 5550 4100 5550
-Wire Wire Line
 	4200 5700 4000 5700
-Connection ~ 4100 6900
-Wire Wire Line
-	4100 5550 4100 6900
 Wire Wire Line
 	3450 5150 4000 5150
 Wire Wire Line
@@ -1134,8 +1115,6 @@ Wire Wire Line
 	2900 6050 4200 6050
 Wire Wire Line
 	4200 6150 2900 6150
-Wire Wire Line
-	4100 6900 4750 6900
 Wire Wire Line
 	4200 6550 3750 6550
 Text Label 1650 6850 2    50   ~ 0
@@ -1669,8 +1648,6 @@ Wire Wire Line
 Wire Wire Line
 	5350 6550 5300 6550
 Wire Wire Line
-	3450 6900 4100 6900
-Wire Wire Line
 	3750 6550 3750 7100
 Wire Wire Line
 	3750 7100 6050 7100
@@ -1783,4 +1760,74 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 2600 4000 50  0001 C CNN
 	1    2600 4000
 	1    0    0    -1  
 $EndComp
+$Comp
+L Connector:Conn_01x02_Male J6
+U 1 1 6335DBD4
+P 6050 2750
+F 0 "J6" H 6022 2632 50  0000 R CNN
+F 1 "LED_CONTROL" H 6000 2750 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 6050 2750 50  0001 C CNN
+F 3 "~" H 6050 2750 50  0001 C CNN
+	1    6050 2750
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J7
+U 1 1 6335CB5D
+P 11350 2300
+F 0 "J7" H 11378 2276 50  0000 L CNN
+F 1 "TOP_POWER" H 11378 2185 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 11350 2300 50  0001 C CNN
+F 3 "~" H 11350 2300 50  0001 C CNN
+	1    11350 2300
+	1    0    0    -1  
+$EndComp
+Text Label 10950 2300 0    50   ~ 0
+VCC
+Text Label 10950 2400 0    50   ~ 0
+GND
+Text Label 5850 2450 0    50   ~ 0
+VCC
+Text Label 5600 2850 0    50   ~ 0
+GND
+Wire Wire Line
+	10950 2300 11150 2300
+Wire Wire Line
+	10950 2400 11150 2400
+$Comp
+L Device:R_US R1
+U 1 1 633FD3D9
+P 5850 2600
+F 0 "R1" H 5918 2646 50  0000 L CNN
+F 1 "R_US" H 5918 2555 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5890 2590 50  0001 C CNN
+F 3 "~" H 5850 2600 50  0001 C CNN
+	1    5850 2600
+	1    0    0    -1  
+$EndComp
+Text Label 5250 2750 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	5250 2750 5850 2750
+Wire Wire Line
+	5600 2850 5850 2850
+Text Label 4200 5000 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	3450 6900 4750 6900
+Wire Wire Line
+	4200 5550 4200 5000
+Text Label 3950 2650 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	3950 3200 3950 2650
+Wire Wire Line
+	3650 4550 4600 4550
+Text Label 3850 1800 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	4450 1700 4450 2100
+Wire Wire Line
+	3850 1800 4750 1800
+Connection ~ 5850 2750
 $EndSCHEMATC
