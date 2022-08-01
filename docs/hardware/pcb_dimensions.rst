@@ -24,7 +24,8 @@ The center of the lowest pin on the ECNZ connector on the left edge is 0.95
 inches / 24.13 mm from the bottom edge.
 
 The center of the topmost pin of the LED control jumper is 1.1 inches /
-27.94 mm from the top edge of the PCB.
+27.94 mm from the top edge of the PCB. The top is connected to the control
+pins, the bottom is connected to ground.
 
 The center of the leftmost pin on the ALU result out connector is 2.15 inches /
 54.61 mm from the left edge.
