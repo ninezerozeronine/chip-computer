@@ -987,10 +987,6 @@ Wire Wire Line
 	18450 6100 18800 6100
 Wire Wire Line
 	10800 3650 9550 3650
-Wire Wire Line
-	9550 3650 9550 2300
-Wire Wire Line
-	9550 2300 10250 2300
 Text Label 10600 3650 0    50   ~ 0
 GND
 Wire Wire Line
@@ -1018,10 +1014,6 @@ Wire Wire Line
 	10100 3950 10100 4500
 Wire Wire Line
 	10100 4500 10250 4500
-Wire Wire Line
-	10250 4350 9550 4350
-Wire Wire Line
-	9550 4350 9550 5700
 Wire Wire Line
 	9550 5700 10800 5700
 Text Label 10600 5700 0    50   ~ 0
@@ -1704,9 +1696,6 @@ Connection ~ 18350 4250
 Wire Wire Line
 	18350 4250 18100 4250
 Wire Wire Line
-	9550 2300 9550 2250
-Connection ~ 9550 2300
-Wire Wire Line
 	9550 1950 9550 1900
 Wire Wire Line
 	9550 1900 10100 1900
@@ -1716,9 +1705,6 @@ Wire Wire Line
 Wire Wire Line
 	9550 3950 10100 3950
 Connection ~ 10100 3950
-Wire Wire Line
-	9550 4300 9550 4350
-Connection ~ 9550 4350
 Wire Wire Line
 	5600 3900 6800 3900
 Wire Wire Line
@@ -1822,4 +1808,49 @@ Connection ~ 19450 6100
 Connection ~ 19950 6100
 Wire Wire Line
 	19950 6100 19450 6100
+$Comp
+L Connector:Conn_01x02_Male J6
+U 1 1 63142DBE
+P 14350 4200
+F 0 "J6" H 14200 4200 50  0000 L CNN
+F 1 "LED_CONTROL" H 13750 4100 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 14350 4200 50  0001 C CNN
+F 3 "~" H 14350 4200 50  0001 C CNN
+	1    14350 4200
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R1
+U 1 1 63154A86
+P 14150 4050
+F 0 "R1" H 14218 4096 50  0000 L CNN
+F 1 "10K" H 14218 4005 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 14190 4040 50  0001 C CNN
+F 3 "~" H 14150 4050 50  0001 C CNN
+	1    14150 4050
+	1    0    0    -1  
+$EndComp
+Text Label 14150 3900 2    50   ~ 0
+VCC
+Text Label 14150 4450 2    50   ~ 0
+GND
+Text Label 13500 4200 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	13500 4200 14150 4200
+Text Label 8850 2300 0    50   ~ 0
+LED_CONTROL
+Text Label 8900 4350 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	9550 4300 9550 5700
+Wire Wire Line
+	9550 2250 9550 3650
+Wire Wire Line
+	8850 2300 10250 2300
+Wire Wire Line
+	8900 4350 10250 4350
+Connection ~ 14150 4200
+Wire Wire Line
+	14150 4300 14150 4450
 $EndSCHEMATC
