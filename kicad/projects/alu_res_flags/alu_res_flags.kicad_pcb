@@ -2,7 +2,7 @@
 
   (general
     (thickness 1.6)
-    (drawings 36)
+    (drawings 38)
     (tracks 1587)
     (zones 0)
     (modules 61)
@@ -34,7 +34,7 @@
   )
 
   (setup
-    (last_trace_width 0.762)
+    (last_trace_width 0.254)
     (user_trace_width 0.762)
     (trace_clearance 0.2)
     (zone_clearance 0.508)
@@ -466,7 +466,7 @@
     (descr "Through hole angled pin header, 1x02, 2.54mm pitch, 6mm pin length, single row")
     (tags "Through hole angled pin header THT 1x02 2.54mm single row")
     (path /63142DBE)
-    (fp_text reference J6 (at 4.385 -2.27) (layer F.SilkS)
+    (fp_text reference J6 (at 0 -3.048) (layer F.SilkS)
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (fp_text value LED_CONTROL (at 4.385 4.81) (layer F.Fab)
@@ -5396,6 +5396,12 @@
     )
   )
 
+  (gr_text GND (at 245.11 89.408) (layer F.SilkS) (tstamp 62E8971C)
+    (effects (font (size 1.524 1.524) (thickness 0.254)))
+  )
+  (gr_text PULLUP (at 247.142 81.026) (layer F.SilkS) (tstamp 62E8971C)
+    (effects (font (size 1.524 1.524) (thickness 0.254)))
+  )
   (gr_arc (start 52.705 151.765) (end 50.8 151.765) (angle -90) (layer Edge.Cuts) (width 0.05))
   (gr_arc (start 52.705 57.785) (end 52.705 55.88) (angle -90) (layer Edge.Cuts) (width 0.05))
   (gr_arc (start 252.095 57.785) (end 254 57.785) (angle -90) (layer Edge.Cuts) (width 0.05))
@@ -7055,7 +7061,7 @@
   (segment (start 248.92 96.52) (end 248.92 90.336) (width 0.254) (layer F.Cu) (net 159))
   (segment (start 242.404 83.82) (end 241.3 83.82) (width 0.254) (layer F.Cu) (net 159))
 
-  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 62DE27A5) (hatch edge 0.508)
+  (zone (net 1) (net_name GND) (layer B.Cu) (tstamp 62E89823) (hatch edge 0.508)
     (connect_pads (clearance 0.508))
     (min_thickness 0.254)
     (fill yes (arc_segments 32) (thermal_gap 0.508) (thermal_bridge_width 0.508))
