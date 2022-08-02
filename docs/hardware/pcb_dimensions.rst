@@ -5,6 +5,8 @@ Width: 8 inches / 203.20mm
 
 Height: 3.85 inches / 97.97mm
 
+The corders are rounded with a 0.075 inch / 1.91 mm radius
+
 The centre of the leftmost pin of the top left connector is 0.1 inches / 2.54 mm
 from the left edge.
 
@@ -29,3 +31,4 @@ pins, the bottom is connected to ground.
 
 The center of the leftmost pin on the ALU result out connector is 2.15 inches /
 54.61 mm from the left edge.
+

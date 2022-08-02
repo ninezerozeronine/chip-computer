@@ -280,12 +280,12 @@ $EndComp
 $Comp
 L sixteen-bit-computer:Bus_connection J3
 U 1 1 5FDDF8C7
-P 12200 7000
-F 0 "J3" H 12062 7925 50  0000 C CNN
-F 1 "Bus_connection" H 12062 7834 50  0000 C CNN
-F 2 "sixteen-bit-computer:bus-connection" H 12100 7400 50  0001 C CNN
-F 3 "~" H 12100 7400 50  0001 C CNN
-	1    12200 7000
+P 12400 7200
+F 0 "J3" H 12262 8125 50  0000 C CNN
+F 1 "Bus_connection" H 12262 8034 50  0000 C CNN
+F 2 "sixteen-bit-computer:bus-connection" H 12300 7600 50  0001 C CNN
+F 3 "~" H 12300 7600 50  0001 C CNN
+	1    12400 7200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -517,37 +517,37 @@ Wire Wire Line
 	12300 5050 12300 4950
 Wire Wire Line
 	12300 4850 12300 4750
-Text Label 12300 6300 0    50   ~ 0
+Text Label 12500 6500 0    50   ~ 0
 BUS_00
-Text Label 12300 6400 0    50   ~ 0
+Text Label 12500 6600 0    50   ~ 0
 BUS_01
-Text Label 12300 6500 0    50   ~ 0
+Text Label 12500 6700 0    50   ~ 0
 BUS_02
-Text Label 12300 6600 0    50   ~ 0
+Text Label 12500 6800 0    50   ~ 0
 BUS_03
-Text Label 12300 6700 0    50   ~ 0
+Text Label 12500 6900 0    50   ~ 0
 BUS_04
-Text Label 12300 6800 0    50   ~ 0
+Text Label 12500 7000 0    50   ~ 0
 BUS_05
-Text Label 12300 6900 0    50   ~ 0
+Text Label 12500 7100 0    50   ~ 0
 BUS_06
-Text Label 12300 7000 0    50   ~ 0
+Text Label 12500 7200 0    50   ~ 0
 BUS_07
-Text Label 12300 7100 0    50   ~ 0
+Text Label 12500 7300 0    50   ~ 0
 BUS_08
-Text Label 12300 7200 0    50   ~ 0
+Text Label 12500 7400 0    50   ~ 0
 BUS_09
-Text Label 12300 7300 0    50   ~ 0
+Text Label 12500 7500 0    50   ~ 0
 BUS_10
-Text Label 12300 7400 0    50   ~ 0
+Text Label 12500 7600 0    50   ~ 0
 BUS_11
-Text Label 12300 7500 0    50   ~ 0
+Text Label 12500 7700 0    50   ~ 0
 BUS_12
-Text Label 12300 7600 0    50   ~ 0
+Text Label 12500 7800 0    50   ~ 0
 BUS_13
-Text Label 12300 7700 0    50   ~ 0
+Text Label 12500 7900 0    50   ~ 0
 BUS_14
-Text Label 12300 7800 0    50   ~ 0
+Text Label 12500 8000 0    50   ~ 0
 BUS_15
 Text Label 1300 1600 2    50   ~ 0
 CLK_ENABLE
@@ -653,15 +653,9 @@ Wire Wire Line
 Wire Wire Line
 	13200 4200 12550 4200
 Wire Wire Line
-	12150 3700 12050 3700
-Wire Wire Line
 	12050 3700 12050 3300
 Wire Wire Line
-	12150 3800 12050 3800
-Wire Wire Line
 	12050 3800 12050 3900
-Wire Wire Line
-	12150 3900 12050 3900
 Connection ~ 12050 3900
 Wire Wire Line
 	12050 3900 12050 4200
@@ -708,51 +702,49 @@ Wire Wire Line
 $Comp
 L Connector:Conn_01x16_Female J4
 U 1 1 6002B91E
-P 13050 7000
-F 0 "J4" H 12942 7885 50  0000 C CNN
-F 1 "MAR_content_in" H 12942 7794 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 13050 7000 50  0001 C CNN
-F 3 "~" H 13050 7000 50  0001 C CNN
-	1    13050 7000
+P 13250 7200
+F 0 "J4" H 13142 8085 50  0000 C CNN
+F 1 "MAR_content_in" H 13142 7994 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 13250 7200 50  0001 C CNN
+F 3 "~" H 13250 7200 50  0001 C CNN
+	1    13250 7200
 	-1   0    0    -1  
 $EndComp
-Text Label 13250 6300 0    50   ~ 0
+Text Label 13450 6500 0    50   ~ 0
 MAR_00
-Text Label 13250 6400 0    50   ~ 0
+Text Label 13450 6600 0    50   ~ 0
 MAR_01
-Text Label 13250 6500 0    50   ~ 0
+Text Label 13450 6700 0    50   ~ 0
 MAR_02
-Text Label 13250 6600 0    50   ~ 0
+Text Label 13450 6800 0    50   ~ 0
 MAR_03
-Text Label 13250 6700 0    50   ~ 0
+Text Label 13450 6900 0    50   ~ 0
 MAR_04
-Text Label 13250 6900 0    50   ~ 0
+Text Label 13450 7100 0    50   ~ 0
 MAR_06
-Text Label 13250 7000 0    50   ~ 0
+Text Label 13450 7200 0    50   ~ 0
 MAR_07
-Text Label 13250 7100 0    50   ~ 0
+Text Label 13450 7300 0    50   ~ 0
 MAR_08
-Text Label 13250 6800 0    50   ~ 0
+Text Label 13450 7000 0    50   ~ 0
 MAR_05
-Text Label 13250 7200 0    50   ~ 0
+Text Label 13450 7400 0    50   ~ 0
 MAR_09
-Text Label 13250 7300 0    50   ~ 0
+Text Label 13450 7500 0    50   ~ 0
 MAR_10
-Text Label 13250 7400 0    50   ~ 0
+Text Label 13450 7600 0    50   ~ 0
 MAR_11
-Text Label 13250 7500 0    50   ~ 0
+Text Label 13450 7700 0    50   ~ 0
 MAR_12
-Text Label 13250 7600 0    50   ~ 0
+Text Label 13450 7800 0    50   ~ 0
 MAR_13
-Text Label 13250 7700 0    50   ~ 0
+Text Label 13450 7900 0    50   ~ 0
 MAR_14
-Text Label 13250 7800 0    50   ~ 0
+Text Label 13450 8000 0    50   ~ 0
 MAR_15
 Wire Wire Line
 	12050 3300 12550 3300
 Connection ~ 12050 3300
-Wire Wire Line
-	12550 3400 12550 3300
 Connection ~ 12550 3300
 Wire Wire Line
 	12550 3300 13200 3300
@@ -1351,8 +1343,8 @@ $Comp
 L Connector:Conn_01x05_Female J6
 U 1 1 62395782
 P 14950 4950
-F 0 "J6" H 14850 5400 50  0000 C CNN
-F 1 "Conn_01x05_Female" H 14850 5300 50  0000 C CNN
+F 0 "J6" H 14850 5300 50  0000 C CNN
+F 1 "CONTROL_INPUTS" H 14400 5300 50  0000 C CNN
 F 2 "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Horizontal" H 14950 4950 50  0001 C CNN
 F 3 "~" H 14950 4950 50  0001 C CNN
 	1    14950 4950
@@ -1363,18 +1355,18 @@ ENABLE_BUS_OUTPUT
 Text Label 15150 4850 0    50   ~ 0
 CLK_ENABLE
 Text Label 15150 4750 0    50   ~ 0
-EXT_CLOCK_IN
+EXT_CLK_IN
 Text Label 3350 7300 2    50   ~ 0
 ENABLE_BUS_OUTPUT
 Text Label 15150 5050 0    50   ~ 0
-ENABLE_CLOCK_OUTPUT
+ENABLE_CLK_OUTPUT
 Text Label 3050 2350 2    50   ~ 0
-EXT_CLOCK_IN
-Text Label 14950 7900 0    50   ~ 0
-DATA_CLOCK_OUT
-Text Label 14450 7800 2    50   ~ 0
+EXT_CLK_IN
+Text Label 15050 5550 2    50   ~ 0
+DATA_CLK_OUT
+Text Label 15050 5850 2    50   ~ 0
 W_TO_MEM_OUT
-Text Label 14450 7900 2    50   ~ 0
+Text Label 15050 5750 2    50   ~ 0
 R_FM_MEM_OUT
 Wire Wire Line
 	3450 5450 3600 5450
@@ -1461,9 +1453,7 @@ Connection ~ 9200 8850
 Wire Wire Line
 	9200 8850 8350 8850
 Text Label 2400 3400 0    50   ~ 0
-DATA_CLOCK_OUT
-Text Label 1550 3400 2    50   ~ 0
-DATA_CLK
+DATA_CLK_OUT
 Text Label 1550 4550 2    50   ~ 0
 R_FM_MEM
 Text Label 1550 5200 2    50   ~ 0
@@ -1485,7 +1475,7 @@ Wire Wire Line
 Wire Wire Line
 	1850 4800 1850 4900
 Text Label 1750 3700 2    50   ~ 0
-ENABLE_CLOCK_OUTPUT
+ENABLE_CLK_OUTPUT
 Wire Wire Line
 	1850 3700 1850 3650
 Text Label 15150 5150 0    50   ~ 0
@@ -1654,71 +1644,69 @@ Text Label 4400 9400 0    50   ~ 0
 GND
 Text Label 5850 9400 0    50   ~ 0
 GND
-Text Label 14950 7800 0    50   ~ 0
+Text Label 15050 5650 2    50   ~ 0
 CTL_CLK_OUT
-Text Label 14450 6200 2    50   ~ 0
+Text Label 14650 8000 2    50   ~ 0
 EXT_BUS_15
-Text Label 14450 6300 2    50   ~ 0
+Text Label 14650 7900 2    50   ~ 0
 EXT_BUS_14
-Text Label 14450 6400 2    50   ~ 0
+Text Label 14650 7800 2    50   ~ 0
 EXT_BUS_13
-Text Label 14450 6500 2    50   ~ 0
+Text Label 14650 7700 2    50   ~ 0
 EXT_BUS_12
-Text Label 14450 6600 2    50   ~ 0
+Text Label 14650 7600 2    50   ~ 0
 EXT_BUS_11
-Text Label 14450 6700 2    50   ~ 0
+Text Label 14650 7500 2    50   ~ 0
 EXT_BUS_10
-Text Label 14450 6800 2    50   ~ 0
+Text Label 14650 7400 2    50   ~ 0
 EXT_BUS_09
-Text Label 14450 6900 2    50   ~ 0
+Text Label 14650 7300 2    50   ~ 0
 EXT_BUS_08
-Text Label 14450 7000 2    50   ~ 0
+Text Label 14650 7200 2    50   ~ 0
 EXT_BUS_07
-Text Label 14450 7100 2    50   ~ 0
+Text Label 14650 7100 2    50   ~ 0
 EXT_BUS_06
-Text Label 14450 7200 2    50   ~ 0
+Text Label 14650 7000 2    50   ~ 0
 EXT_BUS_05
-Text Label 14450 7300 2    50   ~ 0
+Text Label 14650 6900 2    50   ~ 0
 EXT_BUS_04
-Text Label 14450 7400 2    50   ~ 0
+Text Label 14650 6800 2    50   ~ 0
 EXT_BUS_03
-Text Label 14450 7500 2    50   ~ 0
-EXT_BUS_02
-Text Label 14450 7600 2    50   ~ 0
+Text Label 14650 6600 2    50   ~ 0
 EXT_BUS_01
-Text Label 14450 7700 2    50   ~ 0
+Text Label 14650 6500 2    50   ~ 0
 EXT_BUS_00
-Text Label 14950 7700 0    50   ~ 0
+Text Label 15800 6500 2    50   ~ 0
 EXT_ADDR_00
-Text Label 14950 7600 0    50   ~ 0
+Text Label 15800 6600 2    50   ~ 0
 EXT_ADDR_01
-Text Label 14950 7500 0    50   ~ 0
+Text Label 15800 6700 2    50   ~ 0
 EXT_ADDR_02
-Text Label 14950 7400 0    50   ~ 0
+Text Label 15800 6800 2    50   ~ 0
 EXT_ADDR_03
-Text Label 14950 7300 0    50   ~ 0
+Text Label 15800 6900 2    50   ~ 0
 EXT_ADDR_04
-Text Label 14950 7200 0    50   ~ 0
+Text Label 15800 7000 2    50   ~ 0
 EXT_ADDR_05
-Text Label 14950 7100 0    50   ~ 0
+Text Label 15800 7100 2    50   ~ 0
 EXT_ADDR_06
-Text Label 14950 7000 0    50   ~ 0
+Text Label 15800 7200 2    50   ~ 0
 EXT_ADDR_07
-Text Label 14950 6900 0    50   ~ 0
+Text Label 15800 7300 2    50   ~ 0
 EXT_ADDR_08
-Text Label 14950 6800 0    50   ~ 0
+Text Label 15800 7400 2    50   ~ 0
 EXT_ADDR_09
-Text Label 14950 6700 0    50   ~ 0
+Text Label 15800 7500 2    50   ~ 0
 EXT_ADDR_10
-Text Label 14950 6600 0    50   ~ 0
+Text Label 15800 7600 2    50   ~ 0
 EXT_ADDR_11
-Text Label 14950 6500 0    50   ~ 0
+Text Label 15800 7700 2    50   ~ 0
 EXT_ADDR_12
-Text Label 14950 6400 0    50   ~ 0
+Text Label 15800 7800 2    50   ~ 0
 EXT_ADDR_13
-Text Label 14950 6300 0    50   ~ 0
+Text Label 15800 7900 2    50   ~ 0
 EXT_ADDR_14
-Text Label 14950 6200 0    50   ~ 0
+Text Label 15800 8000 2    50   ~ 0
 EXT_ADDR_15
 Text Label 1550 4000 2    50   ~ 0
 CTL_CLK
@@ -1771,17 +1759,6 @@ Connection ~ 2150 3400
 Wire Wire Line
 	2150 5200 2300 5200
 Connection ~ 2150 5200
-$Comp
-L Connector_Generic:Conn_02x18_Odd_Even J5
-U 1 1 610B27CF
-P 14750 7000
-F 0 "J5" H 14800 8017 50  0000 C CNN
-F 1 "Conn_02x18_Odd_Even" H 14800 7926 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_2x18_P2.54mm_Vertical" H 14750 7000 50  0001 C CNN
-F 3 "~" H 14750 7000 50  0001 C CNN
-	1    14750 7000
-	-1   0    0    -1  
-$EndComp
 $Comp
 L Device:R_Network08_US RN6
 U 1 1 61115368
@@ -1843,13 +1820,13 @@ EXT_ADDR_15
 Wire Wire Line
 	8700 1900 8800 1900
 Wire Wire Line
-	800  7850 1800 7850
+	800  7850 1350 7850
 Wire Wire Line
-	800  8850 1800 8850
+	800  8850 1350 8850
 Wire Wire Line
-	7100 7850 8350 7850
+	7100 7850 7900 7850
 Wire Wire Line
-	7100 8850 8350 8850
+	7100 8850 7900 8850
 Wire Wire Line
 	6900 2000 8800 2000
 Wire Wire Line
@@ -1890,4 +1867,104 @@ Wire Wire Line
 	11700 2100 11800 2100
 Wire Wire Line
 	11700 1900 12100 1900
+Wire Wire Line
+	12550 3300 12550 3500
+Wire Wire Line
+	12050 3700 12250 3700
+Wire Wire Line
+	12050 3800 12250 3800
+Wire Wire Line
+	12050 3900 12250 3900
+Wire Wire Line
+	12850 3700 12950 3700
+Wire Wire Line
+	12850 3900 12950 3900
+Wire Wire Line
+	12550 4100 12550 4200
+NoConn ~ 11100 4700
+NoConn ~ 11100 4800
+NoConn ~ 11100 4900
+NoConn ~ 11100 5000
+NoConn ~ 11100 5100
+NoConn ~ 11100 5200
+NoConn ~ 11100 5300
+NoConn ~ 11100 5400
+NoConn ~ 11100 5500
+NoConn ~ 11100 5600
+NoConn ~ 11100 5700
+NoConn ~ 11100 5800
+NoConn ~ 11100 5900
+NoConn ~ 11100 6000
+NoConn ~ 11100 6100
+NoConn ~ 11100 6200
+NoConn ~ 11100 6300
+NoConn ~ 11100 6400
+NoConn ~ 11100 6500
+NoConn ~ 11100 6800
+NoConn ~ 11100 6900
+NoConn ~ 11100 7000
+NoConn ~ 11100 7100
+NoConn ~ 11100 7200
+NoConn ~ 11100 7300
+NoConn ~ 11100 7400
+NoConn ~ 11100 7600
+NoConn ~ 11100 7700
+NoConn ~ 11100 7800
+Wire Wire Line
+	1350 7950 1350 7850
+Connection ~ 1350 7850
+Wire Wire Line
+	1350 7850 1800 7850
+Wire Wire Line
+	1350 8750 1350 8850
+Connection ~ 1350 8850
+Wire Wire Line
+	1350 8850 1800 8850
+Wire Wire Line
+	7900 7950 7900 7850
+Connection ~ 7900 7850
+Wire Wire Line
+	7900 7850 8350 7850
+Wire Wire Line
+	7900 8750 7900 8850
+Connection ~ 7900 8850
+Wire Wire Line
+	7900 8850 8350 8850
+$Comp
+L Connector:Conn_01x16_Female J5
+U 1 1 631B4820
+P 14850 7200
+F 0 "J5" H 14200 8050 50  0000 L CNN
+F 1 "EXT_BUS" H 14350 8050 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical" H 14850 7200 50  0001 C CNN
+F 3 "~" H 14850 7200 50  0001 C CNN
+	1    14850 7200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x16_Female J8
+U 1 1 631B867F
+P 16000 7200
+F 0 "J8" H 15300 8050 50  0000 L CNN
+F 1 "EXT_ADDR" H 15500 8050 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical" H 16000 7200 50  0001 C CNN
+F 3 "~" H 16000 7200 50  0001 C CNN
+	1    16000 7200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x04_Female J7
+U 1 1 631DADAA
+P 15250 5650
+F 0 "J7" H 14500 5900 50  0000 L CNN
+F 1 "CLOCK_RWMEM_OUT" H 14700 5900 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical" H 15250 5650 50  0001 C CNN
+F 3 "~" H 15250 5650 50  0001 C CNN
+	1    15250 5650
+	1    0    0    -1  
+$EndComp
+Text Label 14650 6700 2    50   ~ 0
+EXT_BUS_02
+Text Label 1550 3400 2    50   ~ 0
+DATA_CLK
 $EndSCHEMATC
