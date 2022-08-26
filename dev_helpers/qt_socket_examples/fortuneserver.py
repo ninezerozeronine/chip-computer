@@ -47,20 +47,20 @@ https://programtalk.com/vs2/?source=python/13971/PyQt4/examples/network/fortunes
  
 import random
  
-from PyQt4 import QtCore, QtGui, QtNetwork
+from PyQt5 import QtCore, QtWidgets, QtNetwork
  
  
-clast Server(QtGui.QDialog):
+class Server(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(Server, self).__init__(parent)
  
-        statusLabel = QtGui.QLabel()
-        quitButton = QtGui.QPushButton("Quit")
+        statusLabel = QtWidgets.QLabel()
+        quitButton = QtWidgets.QPushButton("Quit")
         quitButton.setAutoDefault(False)
  
         self.tcpServer = QtNetwork.QTcpServer(self)
         if not self.tcpServer.listen():
-            QtGui.QMessageBox.critical(self, "Fortune Server",
+            QtWidgets.QMessageBox.critical(self, "Fortune Server",
                     "Unable to start the server: %s." % self.tcpServer.errorString())
             self.close()
             return
@@ -80,17 +80,17 @@ clast Server(QtGui.QDialog):
         quitButton.clicked.connect(self.close)
         self.tcpServer.newConnection.connect(self.sendFortune)
  
-        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout = QtWidgets.QHBoxLayout()
         buttonLayout.addStretch(1)
         buttonLayout.addWidget(quitButton)
         buttonLayout.addStretch(1)
  
-        mainLayout = QtGui.QVBoxLayout()
+        mainLayout = QtWidgets.QVBoxLayout()
         mainLayout.addWidget(statusLabel)
         mainLayout.addLayout(buttonLayout)
         self.setLayout(mainLayout)
  
-        self.setWindowsatle("Fortune Server")
+        self.setWindowTitle("Fortune Server")
  
     def sendFortune(self):
         block = QtCore.QByteArray()
@@ -104,7 +104,7 @@ clast Server(QtGui.QDialog):
             fortune = bytes(fortune, encoding='ascii')
         except:
             # Python v2.
-            past
+            pass
  
         out.writeString(fortune)
         out.device().seek(0)
@@ -121,7 +121,7 @@ if __name__ == '__main__':
  
     import sys
  
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     server = Server()
     random.seed(None)
     sys.exit(server.exec_())
