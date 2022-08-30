@@ -3,20 +3,29 @@ The low level hardware interface to the computer.
 """
 
 from machine import Pin, PWM, Timer
+import time
 
+# Clock sources
 MICROCONTROLLER = 100
 CRYSTAL = 101
 
+# Clock pin modes
 _STATIC = 200
 _TIMER = 201
 _PWM = 202
 
-_DATA_BUS = 300
-_ADDRESS_BUS = 301
-_CONTROL_CLOCK_BUS = 302
-_DATA_CLOCK_BUS = 303
-_WTM_BUS = 304
-_RFM_BUS = 305
+# Pieces of data that can be read from the computer
+_DATA = 300
+_ADDRESS = 301
+_CONTROL_CLOCK = 302
+_DATA_CLOCK = 303
+_WTM = 304
+_RFM = 305
+
+# Sources for the data and control clocks, and read from/write to memory
+# signals fed to the peripherals 
+_FRONT_PANEL = 400
+_CPU = 401
 
 _CPU_CLOCK_PIN_NO = 25
 
@@ -49,13 +58,11 @@ class Interface():
 
         self._read_from_mem = False
         self._write_to_mem = False
-        self._interface_read_write_mem_assert = False
-        self._cpu_read_write_mem_assert = False
+        self._read_write_mem_source = _FRONT_PANEL
 
         self._data_clock = False
         self._control_clock = False
-        self._interface_clock_bus_assert = False
-        self._cpu_clock_bus_assert = False
+        self._data_control_clock_source = _FRONT_PANEL
 
         self._cpu_clock_input_enabled = False
 
@@ -67,7 +74,7 @@ class Interface():
         self._timer = Timer()
 
         # Pins to control shift registers that read the state of the buses
-        self._bus_in_input_reg_clock_pin = Pin(
+        self._bus_in_storage_reg_clock_pin = Pin(
             _BUS_IN_INPUT_REG_CLOCK_PIN_NO, mode=Pin.OUT, value=False
         )
         self._bus_in_parallel_load_pin = Pin(
@@ -108,10 +115,10 @@ class Interface():
         """
 
         # Clamp data to 16 bit value
-        if address < 0:
-            address = 0
-        if address > 65536:
-            address = 65536
+        if data < 0:
+            data = 0
+        if data > 65535:
+            data = 65535
 
         self._data = data
         self._shift_out()
@@ -121,7 +128,7 @@ class Interface():
         Get the data currently on the data bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_DATA_BUS]
+        return bus_states[_DATA]
 
     def set_interface_data_assert(self, state):
         """
@@ -151,8 +158,8 @@ class Interface():
         # Clamp address to 16 bit value
         if address < 0:
             address = 0
-        if address > 65536:
-            address = 65536
+        if address > 65535:
+            address = 65535
 
         self._address = address
         self._shift_out()
@@ -162,7 +169,7 @@ class Interface():
         Get the address currently on the address bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_ADDRESS_BUS]
+        return bus_states[_ADDRESS]
 
     def set_interface_address_assert(self, state):
         """
@@ -189,43 +196,30 @@ class Interface():
         Get the state of the read from memory bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_RFM_BUS]
+        return bus_states[_RFM]
 
     def get_write_to_mem(self):
         """
         Get the state of the write to memory bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_WTM_BUS]
+        return bus_states[_WTM]
 
-    def set_interface_read_write_mem_assert(self, state):
+    def set_read_write_mem_source(self, source):
         """
-        Set whether the interface should assert onto the write to and
-        read from memory buses.
-        """
-
-        # Protect from CPU and interface  asserting onto the bus
-        if not (self._cpu_read_write_mem_assert and state):
-            self._interface_read_write_mem_assert = state
-            self._shift_out()
-
-    def set_cpu_read_write_mem_assert(self, state):
-        """
-        Set whether the CPU should assert onto the write to and read
-        from memory buses.
+        Set the source of the read and write memory lines fed to the
+        peripherals.
         """
 
-        # Protect from CPU and interface  asserting onto the bus
-        if not (self._interface_read_write_mem_assert and state):
-            self._cpu_read_write_mem_assert = state
-            self._shift_out()
+        self._read_write_mem_source = source
+        self._shift_out()
 
     def get_data_clock(self):
         """
         Get the state of the data clock bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_DATA_CLOCK_BUS]
+        return bus_states[_DATA_CLOCK]
 
     def set_data_clock(self, state):
         """
@@ -239,7 +233,7 @@ class Interface():
         Get the state of the control clock bus.
         """
         bus_states = self._shift_in()
-        return bus_states[_CONTROL_CLOCK_BUS]
+        return bus_states[_CONTROL_CLOCK]
 
     def set_control_clock(self, state):
         """
@@ -248,25 +242,12 @@ class Interface():
         self._control_clock = state
         self._shift_out()
 
-    def set_interface_clock_bus_assert(self, state):
+    def set_data_control_clock_source(self, source):
         """
         Set whether the interface should assert onto the clock buses.
         """
-
-        # Protect from CPU and interface  asserting onto the bus
-        if not (self._cpu_clock_bus_assert and state):
-            self._interface_clock_bus_assert = state
-            self._shift_out()
-
-    def set_cpu_clock_bus_assert(self, state):
-        """
-        Set whether the CPU should assert onto the clock buses.
-        """
-
-        # Protect from CPU and interface  asserting onto the bus
-        if not (self._interface_clock_bus_assert and state):
-            self._cpu_clock_bus_assert = state
-            self._shift_out()
+        self._data_control_clock_source = source
+        self._shift_out()
 
     def set_cpu_clock_input_enabled(self, state):
         """
@@ -282,7 +263,6 @@ class Interface():
         if source in (MICROCONTROLLER, CRYSTAL):
             self._source = source
         self._shift_out()
-
 
     def set_reset(self, state):
         """
@@ -329,6 +309,8 @@ class Interface():
             # We were either in static or timer mode so just
             # re-init the timer.
             self._timer.init(
+                # Need to double the frequency as the callback only
+                # toogles the state
                 freq=frequency * 2,
                 mode=Timer.PERIODIC,
                 callback=self._timer_callback
@@ -353,64 +335,164 @@ class Interface():
     def _shift_in(self):
         """
         Shift in the state of the buses
+
+        The data for each shift register is:
+
+         - SR0: Address 15-8
+
+         - SR1: Address 7-0
+
+         - SR2: Data 15-8
+
+         - SR3: Data 7-0
+
+         - SR4-0: Control clock
+         - SR4-1: Data clock
+         - SR4-2: Write to memory
+         - SR4-3: Read from memory
+         - SR4-4: <blank>
+         - SR4-5: <blank>
+         - SR4-6: <blank>
+         - SR4-7: <blank>
         """
 
-        return {}
+        # Capture the state of the pins
+        self._bus_in_storage_reg_clock_pin.value(True)
+        time.sleep_us(1)
+        self._bus_in_storage_reg_clock_pin.value(False)
+        time.sleep_us(1)
+
+        # Load it into the shift register (pin is active low)
+        self._bus_in_parallel_load_pin.value(False)
+        time.sleep_us(1)
+        self._bus_in_parallel_load_pin.value(True)
+        time.sleep_us(1)
+
+        ret = {}
+
+        # Shift past the last 4 bits in SR4
+        self._shift_in_bit()
+        self._shift_in_bit()
+        self._shift_in_bit()
+        self._shift_in_bit()
+
+        # Get the first 4 bits of SR4
+        ret[_RFM] = self._shift_in_bit()
+        ret[_WTM] = self._shift_in_bit()
+        ret[_DATA_CLOCK] = self._shift_in_bit()
+        ret[_CONTROL_CLOCK] = self._shift_in_bit()
+
+        # Get SR3 then SR2 which make up the data bus
+        data = 0 
+        for i in range(16):
+            data |= self._shift_in_bit() << i
+        ret[_DATA] = data
+
+        # Get SR1 then SR0 which make up the address bus
+        address = 0 
+        for i in range(16):
+            address |= self._shift_in_bit() << i
+        ret[_ADDRESS] = address
+
+        return ret
+
+    def _shift_in_bit(self):
+        """
+        Shift in a single bit.
+        """
+
+        ret = self._bus_in_serial_read_pin.value()
+        time.sleep_us(1)
+        self._bus_in_shift_clock_pin.value(True)
+        time.sleep_us(1)
+        self._bus_in_shift_clock_pin.value(False)
+        time.sleep_us(1)
+
+        return bool(ret)
 
     def _shift_out(self):
         """
         Shift out the control signals.
 
-        The control signals on each shift register are:
+        The data for each shift register is:
 
-         - SR0: Address 0-7
-         - SR1: Address 8-15
-         - SR2: Data 0-7
-         - SR3: Data 8-15
+         - SR0: Address 15-8
+
+         - SR1: Address 7-0
+
+         - SR2: Data 15-8
+
+         - SR3: Data 7-0
+
          - SR4-0: Control clock
          - SR4-1: Data clock
          - SR4-2: Write to memory
          - SR4-3: Read from memory
-         - SR4-4: Clock source
-         - SR4-5: Reset
-         - SR4-6: <blank>
-         - SR4-7: <blank>
-         - SR5-0: Interface address bus assert
-         - SR5-1: Interface data bus assert
-         - SR5-2: Interface clock bus asset
-         - SR5-3: Interface RFM/WTM bus assert
-         - SR5-4: CPU address bus assert
-         - SR5-5: CPU data bus assert
-         - SR5-6: CPU clock bus asset
-         - SR5-7: CPU RFM/WTM bus assert
+         - SR4-4: Reset
+         - SR4-5: Clock source
+         - SR4-6: Interface address bus assert
+         - SR4-7: Interface data bus assert
+
+         - SR5-0: CPU address bus assert
+         - SR5-1: CPU data bus assert
+         - SR5-2: Data/control clock source
+         - SR5-3: RFM/WTM source
+         - SR5-4: <blank>
+         - SR5-5: <blank>
+         - SR5-6: <blank>
+         - SR5-7: <blank>
         """
 
         # Convert the logical values here to the hardware values i.e.,
         # account for active low inputs on some of the chips.
 
         # Shift Register 5
-        self._shift_bit_out(self._cpu_read_write_mem_assert)
-        self._shift_bit_out(self._cpu_clock_bus_assert)
+        if self._read_write_mem_source == _FRONT_PANEL:
+            self._shift_bit_out(False)
+        else:
+            self._shift_bit_out(True)
+        if self._data_control_clock_source == _FRONT_PANEL:
+            self._shift_bit_out(False)
+        else:
+            self._shift_bit_out(True)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
-        self._shift_bit_out(self._interface_read_write_mem_assert)
-        self._shift_bit_out(self._interface_clock_bus_assert)
-        self._shift_bit_out(not self._interface_data_assert)
-        self._shift_bit_out(not self._interface_address_assert)
+
 
         # Shift Register 4
-        self._shift_bit_out(False)
-        self._shift_bit_out(False)
-        self._shift_bit_out(self._reset)
+        self._shift_bit_out(not self._interface_data_assert)
+        self._shift_bit_out(not self._interface_address_assert)
         if self._clock_source == MICROCONTROLLER:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
+        self._shift_bit_out(self._reset)
         self._shift_bit_out(self._read_from_mem)
         self._shift_bit_out(self._write_to_mem)
         self._shift_bit_out(self._data_clock)
         self._shift_bit_out(self._control_clock)
 
+        # Shift Register 3
+        for i in range(8):
+            self._shift_bit_out(1 & self._data >> i)
+
+        # Shift Register 2
+        for i in range(8, 16):
+            self._shift_bit_out(1 & self._data >> i)
+
+        # Shift Register 1
+        for i in range(8):
+            self._shift_bit_out(1 & self._address >> i)
+
+        # Shift Register 0
+        for i in range(8, 16):
+            self._shift_bit_out(1 & self._address >> i)
+        
+        # Output all the shifted in bits.
+        self._bus_out_output_reg_clock_pin.value(True)
+        time.sleep_us(1)
+        self._bus_out_output_reg_clock_pin.value(False)
+        time.sleep_us(1)
 
     def _shift_bit_out(self, bit):
         """
@@ -419,8 +501,11 @@ class Interface():
         This doesn't latch it into the output register though.
         """
         self._bus_out_serial_in_pin.value(bit)
+        time.sleep_us(1)
         self._bus_out_shift_clock_pin.value(True)
+        time.sleep_us(1)
         self._bus_out_shift_clock_pin.value(False)
+        time.sleep_us(1)
 
     def _timer_callback(self, timer):
         """

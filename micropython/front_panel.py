@@ -216,9 +216,9 @@ class FrontPanel():
             for address, word in addresses_and_words:
                 interface.set_address(address)
                 interface.set_data(word)
-                time.sleep_us(10)
+                time.sleep_us(1)
                 self._send_cpu_like_clock_cycle()
-                time.sleep_us(10)
+                time.sleep_us(1)
 
             interface.set_read_from_mem(False)
             interface.set_write_to_mem(False)
@@ -262,8 +262,9 @@ class FrontPanel():
         """
         for _ in range(num_pulses):
             interface.set_clock_pin_static_state(True)
-            time.sleep_ms(1)
+            time.sleep_us(1)
             interface.set_clock_pin_static_state(False)
+            time.sleep_us(1)
 
     def _adjust_clock_frequency(self, frequency):
         """
@@ -278,10 +279,10 @@ class FrontPanel():
         Create a clock cycle comparable to that genertaed by the CPU.
         """
         interface.set_control_clock(True)
-        time.sleep_us(10)
+        time.sleep_us(1)
         interface.set_data_clock(True)
-        time.sleep_us(10)
+        time.sleep_us(1)
         interface.set_control_clock(False)
-        time.sleep_us(10)
+        time.sleep_us(1)
         interface.set_data_clock(False)
-        time.sleep_us(10)
+        time.sleep_us(1)
