@@ -44,9 +44,9 @@ https://programtalk.com/vs2/?source=python/13971/PyQt4/examples/network/fortunec
 ##
 #############################################################################
  
- 
+import json
+
 from PyQt5 import QtCore, QtGui, QtWidgets, QtNetwork
- 
  
 class Client(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -106,32 +106,46 @@ class Client(QtWidgets.QDialog):
         self.tcpSocket.abort()
         self.tcpSocket.connectToHost(self.hostLineEdit.text(),
                 int(self.portLineEdit.text()))
+        data = {
+            "foo": 1,
+            "bar": [5, 10]
+        }
+
+        to_send = json.dumps(data).encode("ascii")
+        num_bytes_sent = self.tcpSocket.write(to_send)
+        print(f"Sent {num_bytes_sent} bytes.")
  
     def readFortune(self):
-        instr = QtCore.QDataStream(self.tcpSocket)
-        instr.setVersion(QtCore.QDataStream.Qt_4_0)
+        qba = self.tcpSocket.readAll()
+        print(str(qba))
+        print(json.loads(qba.data().decode("ascii")))
+
+        nextFortune = "always the same"
+
+        # instr = QtCore.QDataStream(self.tcpSocket)
+        # instr.setVersion(QtCore.QDataStream.Qt_4_0)
  
-        if self.blockSize == 0:
-            if self.tcpSocket.bytesAvailable() < 2:
-                return
+        # if self.blockSize == 0:
+        #     if self.tcpSocket.bytesAvailable() < 2:
+        #         return
  
-        self.blockSize = instr.readUInt16()
+        # self.blockSize = instr.readUInt16()
  
-        if self.tcpSocket.bytesAvailable() < self.blockSize:
-            return
+        # if self.tcpSocket.bytesAvailable() < self.blockSize:
+        #     return
  
-        nextFortune = instr.readString()
+        # nextFortune = instr.readString()
  
-        try:
-            # Python v3.
-            nextFortune = str(nextFortune, encoding='ascii')
-        except TypeError:
-            # Python v2.
-            pass
+        # try:
+        #     # Python v3.
+        #     nextFortune = str(nextFortune, encoding='ascii')
+        # except TypeError:
+        #     # Python v2.
+        #     pass
  
-        if nextFortune == self.currentFortune:
-            QtCore.QTimer.singleShot(0, self.requestNewFortune)
-            return
+        # if nextFortune == self.currentFortune:
+        #     QtCore.QTimer.singleShot(0, self.requestNewFortune)
+        #     return
  
         self.currentFortune = nextFortune
         self.statusLabel.setText(self.currentFortune)

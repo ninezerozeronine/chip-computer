@@ -18,6 +18,7 @@ async def tcp_echo_client(data):
 
     print(f"Writer closed? {writer.is_closing()}")
 
+    # Note that keys become strings during a json.dumps.
     # print(f'Send: {data!r}')
     # send_json_string = json.dumps(data)
     # writer.write(send_json_string.encode(encoding="utf-8"))
