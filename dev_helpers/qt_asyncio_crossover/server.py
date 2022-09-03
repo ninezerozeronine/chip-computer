@@ -24,9 +24,9 @@ async def handle_echo(reader, writer):
     writer.close()
     await writer.wait_closed()
 
-    print("Closing")
-    writer.close()
-    await writer.wait_closed()
+    # print("Closing")
+    # writer.close()
+    # await writer.wait_closed()
 
     # data = await reader.read(100)
     # message = data.decode(encoding="utf-8")
