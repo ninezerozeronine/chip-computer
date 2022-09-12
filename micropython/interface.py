@@ -5,6 +5,17 @@ The low level hardware interface to the computer.
 from machine import Pin, PWM, Timer
 import time
 
+from gpiodefs import (
+    INPUT_STORAGE_CLOCK_GPIO_NO,
+    INPUT_PARALLEL_LOAD_GPIO_NO,
+    INPUT_SHIFT_CLOCK_GPIO_NO,
+    INPUT_SERIAL_READ_GPIO_NO,
+    OUTPUT_SERIAL_OUT_GPIO_NO,
+    OUTPUT_SHIFT_CLOCK_GPIO_NO,
+    OUTPUT_OUTPUT_CLOCK_GPIO_NO,
+    CPU_CLOCK_GPIO_NO,
+)
+
 # Clock sources
 MICROCONTROLLER = 100
 CRYSTAL = 101
@@ -24,19 +35,8 @@ _RFM = 305
 
 # Sources for the data and control clocks, and read from/write to memory
 # signals fed to the peripherals 
-_FRONT_PANEL = 400
-_CPU = 401
-
-_CPU_CLOCK_PIN_NO = 25
-
-_BUS_IN_INPUT_REG_CLOCK_PIN_NO = 1
-_BUS_IN_PARALLEL_LOAD_PIN_NO = 2
-_BUS_IN_SHIFT_CLOCK_PIN_NO = 4
-_BUS_IN_SERIAL_READ_PIN_NO = 5
-
-_BUS_OUT_SERIAL_IN_PIN_NO = 6
-_BUS_OUT_SHIFT_CLOCK_PIN_N0 = 7
-_BUS_OUT_OUTPUT_REG_CLOCK_PIN_NO = 9
+FRONT_PANEL = 400
+CPU = 401
 
 
 class Interface():
@@ -67,45 +67,51 @@ class Interface():
         self._cpu_clock_input_enabled = False
 
         self._clock_mode = _STATIC
-        self._clock_pin = Pin(_CPU_CLOCK_PIN_NO, mode=Pin.OUT, value=False)
+        self._clock_pin = Pin(CPU_CLOCK_GPIO_NO, mode=Pin.OUT, value=False)
         self._pwm = PWM(self._clock_pin)
         self._pwm.deinit()
-        self._clock_pin = Pin(_CPU_CLOCK_PIN_NO, mode=Pin.OUT, value=False)
+        self._clock_pin = Pin(CPU_CLOCK_GPIO_NO, mode=Pin.OUT, value=False)
         self._timer = Timer()
 
-        # Pins to control shift registers that read the state of the buses
-        self._bus_in_storage_reg_clock_pin = Pin(
-            _BUS_IN_INPUT_REG_CLOCK_PIN_NO, mode=Pin.OUT, value=False
+        # Pins to control shift registers that read the state of the
+        # buses
+        # Clocks in all 8 bits to an intermediate storage register (not
+        #the shift register).
+        self._input_storage_reg_clock_pin = Pin(
+            INPUT_STORAGE_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
-        self._bus_in_parallel_load_pin = Pin(
-            _BUS_IN_PARALLEL_LOAD_PIN_NO, mode=Pin.OUT, value=True
+        # Loads the data from the intermediate storage register to the
+        # shift register. Pin is active low.
+        self.  = Pin(
+            INPUT_PARALLEL_LOAD_GPIO_NO, mode=Pin.OUT, value=True
         )
-        self._bus_in_shift_clock_pin = Pin(
-            _BUS_IN_SHIFT_CLOCK_PIN_NO, mode=Pin.OUT, value=False
+        # Moves each bit along one position in the shift register.
+        self._input_shift_reg_clock_pin = Pin(
+            INPUT_SHIFT_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
-        self._bus_in_serial_read_pin = Pin(
-            _BUS_IN_SERIAL_READ_PIN_NO, mode=Pin.IN, pull=Pin.PULL_DOWN
+        # Used to read the shifted out bit from the last 74HC597.
+        self._input_serial_read_pin = Pin(
+            INPUT_SERIAL_READ_GPIO_NO, mode=Pin.IN, pull=Pin.PULL_DOWN
         )
 
         # Pins to control shift registers that assert onto the buses
-        self._bus_out_serial_in_pin = Pin(
-            _BUS_OUT_SERIAL_IN_PIN_NO, mode=Pin.OUT, value=False
+        # Outputs a bit to be shifted into the shift registers.
+        self._output_serial_out_pin = Pin(
+            OUTPUT_SERIAL_OUT_GPIO_NO, mode=Pin.OUT, value=False
         )
-        self._bus_out_shift_clock_pin = Pin(
-            _BUS_OUT_SHIFT_CLOCK_PIN_N0, mode=Pin.OUT, value=False
+        # Shifts all the bits in the shift registers along one place.
+        self._output_shift_clock_pin = Pin(
+            OUTPUT_SHIFT_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
-        self._bus_out_output_reg_clock_pin = Pin(
-            _BUS_OUT_OUTPUT_REG_CLOCK_PIN_NO, mode=Pin.OUT, value=False
+        # Transfers all the bits in the shift registers to the output
+        # register.
+        self._output_output_clock_pin = Pin(
+            OUTPUT_OUTPUT_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
 
         self._clock_source = MICROCONTROLLER
 
         self._reset = False
-
-        self._address_assert = False
-        self._data_assert = False
-        self._ctl_data_clks_assert = False
-        self._wtm_rfm_assert = False
 
         self._shift_out()
 
@@ -191,6 +197,20 @@ class Interface():
             self._cpu_address_assert = state
             self._shift_out()
 
+    def set_read_from_mem(self, state):
+        """
+        Set the state of the read from memory line.
+        """
+        self._read_from_mem = state
+        self._shift_out()
+
+    def set_write_to_mem(self, state):
+        """
+        Set the state of the write to memory line.
+        """
+        self._write_to_mem = state
+        self._shift_out()
+
     def get_read_from_mem(self):
         """
         Get the state of the read from memory bus.
@@ -242,11 +262,11 @@ class Interface():
         self._control_clock = state
         self._shift_out()
 
-    def set_data_control_clock_source(self, source):
+    def set_control_data_clock_source(self, source):
         """
-        Set whether the interface should assert onto the clock buses.
+        Set the source of the control and data clocks.
         """
-        self._data_control_clock_source = source
+        self._control_data_clock_source = source
         self._shift_out()
 
     def set_cpu_clock_input_enabled(self, state):
@@ -285,7 +305,7 @@ class Interface():
         if self._clock_mode == _PWM:
             self._pwm.deinit()
             self._clock_pin = Pin(
-                _CPU_CLOCK_PIN_NO, mode=Pin.OUT, value=False
+                CPU_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
             )
 
         # Set the pin to the desired state
@@ -303,7 +323,7 @@ class Interface():
             if self._clock_mode == _PWM:
                 self._pwm.deinit()
                 self._clock_pin = Pin(
-                    _CPU_CLOCK_PIN_NO, mode=Pin.OUT, value=False
+                    CPU_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
                 )
 
             # We were either in static or timer mode so just
@@ -357,15 +377,15 @@ class Interface():
         """
 
         # Capture the state of the pins
-        self._bus_in_storage_reg_clock_pin.value(True)
+        self._input_storage_reg_clock_pin.value(True)
         time.sleep_us(1)
-        self._bus_in_storage_reg_clock_pin.value(False)
+        self._input_storage_reg_clock_pin.value(False)
         time.sleep_us(1)
 
         # Load it into the shift register (pin is active low)
-        self._bus_in_parallel_load_pin.value(False)
+        self._input_parallel_load_pin.value(False)
         time.sleep_us(1)
-        self._bus_in_parallel_load_pin.value(True)
+        self._input_parallel_load_pin.value(True)
         time.sleep_us(1)
 
         ret = {}
@@ -401,11 +421,11 @@ class Interface():
         Shift in a single bit.
         """
 
-        ret = self._bus_in_serial_read_pin.value()
+        ret = self._input_serial_read_pin.value()
         time.sleep_us(1)
-        self._bus_in_shift_clock_pin.value(True)
+        self._input_shift_reg_clock_pin.value(True)
         time.sleep_us(1)
-        self._bus_in_shift_clock_pin.value(False)
+        self._input_shift_reg_clock_pin.value(False)
         time.sleep_us(1)
 
         return bool(ret)
@@ -426,17 +446,17 @@ class Interface():
 
          - SR4-0: Control clock
          - SR4-1: Data clock
-         - SR4-2: Write to memory
-         - SR4-3: Read from memory
+         - SR4-2: Read from memory
+         - SR4-3: Write to memory
          - SR4-4: Reset
-         - SR4-5: Clock source
-         - SR4-6: Interface address bus assert
-         - SR4-7: Interface data bus assert
+         - SR4-5: CPU Clock source (Panel/crystal)
+         - SR4-6: Data/control clock source
+         - SR4-7: RFM/WTM source
 
-         - SR5-0: CPU address bus assert
-         - SR5-1: CPU data bus assert
-         - SR5-2: Data/control clock source
-         - SR5-3: RFM/WTM source
+         - SR5-0: Interface address bus assert
+         - SR5-1: Interface data bus assert
+         - SR5-2: CPU address bus assert
+         - SR5-3: CPU data bus assert
          - SR5-4: <blank>
          - SR5-5: <blank>
          - SR5-6: <blank>
@@ -447,6 +467,12 @@ class Interface():
         # account for active low inputs on some of the chips.
 
         # Shift Register 5
+        self._shift_bit_out(self._cpu_data_assert)
+        self._shift_bit_out(self._cpu_address_assert)
+        self._shift_bit_out(not self._interface_data_assert)
+        self._shift_bit_out(not self._interface_address_assert)
+
+        # Shift Register 4
         if self._read_write_mem_source == _FRONT_PANEL:
             self._shift_bit_out(False)
         else:
@@ -455,20 +481,13 @@ class Interface():
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        self._shift_bit_out(self._cpu_data_assert)
-        self._shift_bit_out(self._cpu_address_assert)
-
-
-        # Shift Register 4
-        self._shift_bit_out(not self._interface_data_assert)
-        self._shift_bit_out(not self._interface_address_assert)
         if self._clock_source == MICROCONTROLLER:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
         self._shift_bit_out(self._reset)
-        self._shift_bit_out(self._read_from_mem)
         self._shift_bit_out(self._write_to_mem)
+        self._shift_bit_out(self._read_from_mem)
         self._shift_bit_out(self._data_clock)
         self._shift_bit_out(self._control_clock)
 
@@ -489,9 +508,9 @@ class Interface():
             self._shift_bit_out(1 & self._address >> i)
         
         # Output all the shifted in bits.
-        self._bus_out_output_reg_clock_pin.value(True)
+        self._output_output_clock_pin.value(True)
         time.sleep_us(1)
-        self._bus_out_output_reg_clock_pin.value(False)
+        self._output_output_clock_pin.value(False)
         time.sleep_us(1)
 
     def _shift_bit_out(self, bit):
@@ -500,11 +519,11 @@ class Interface():
 
         This doesn't latch it into the output register though.
         """
-        self._bus_out_serial_in_pin.value(bit)
+        self._output_serial_out_pin.value(bit)
         time.sleep_us(1)
-        self._bus_out_shift_clock_pin.value(True)
+        self._output_shift_clock_pin.value(True)
         time.sleep_us(1)
-        self._bus_out_shift_clock_pin.value(False)
+        self._output_shift_clock_pin.value(False)
         time.sleep_us(1)
 
     def _timer_callback(self, timer):
