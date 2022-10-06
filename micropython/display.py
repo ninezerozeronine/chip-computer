@@ -24,6 +24,6 @@ class Display():
 
     def set_user_input(self, user_input):
         """
-        Set the value of the current userinput
+        Set the value of the current user input
         """
         self._user_input = user_input

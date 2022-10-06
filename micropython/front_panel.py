@@ -45,7 +45,8 @@ STOP = 102
 FRONT_PANEL = 200
 CRYSTAL = 201
 
-
+# Maximum 16 bit value
+_MAX_VALUE = 2**16 - 1
 
 class FrontPanel():
     """
@@ -58,13 +59,16 @@ class FrontPanel():
         """
 
         self._panel_mode = STOP
-        self._cpu_clock_source = interface.MICROCONTROLLER
+        self._cpu_clock_source = FRONT_PANEL
         self._frequency = 10000
         self._readwrite_address = 0
         self._user_input = 0
         self._user_input_string = ""
         self._interface = interface.Interface()
+        self._panel_mode = RUN
         self.stop()
+
+        self._display = display.Display()
 
     def step():
         """
@@ -124,17 +128,8 @@ class FrontPanel():
             # Disable the clock on the CPU
             self._interface.set_cpu_clock_input_enabled(False)
 
-            if self._cpu_clock_source == FRONT_PANEL:
-                self._interface.set_cpu_clock_source(interface.MICROCONTROLLER)
-                self._interface.set_clock_pin_frequency(
-                    self._adjust_clock_frequency(self._frequency)
-                )
-
-            if self._cpu_clock_source == CRYSTAL:
-                self._interface.set_cpu_clock_source(interface.CRYTSAL)
-
-            # Enable the clock on the CPU
-            self._interface.set_cpu_clock_input_enabled(True)
+            # Set the clock source for the CPU
+            self._set_clock_source()
 
             self._panel_mode = RUN
 
@@ -230,7 +225,7 @@ class FrontPanel():
 
         self._frequency = frequency
 
-        if (self._panel_mode == RUN and self._clock_source == FRONT_PANEL):
+        if (self._panel_mode == RUN and self._cpu_clock_source == FRONT_PANEL):
             self._interface.set_cpu_clock_input_enabled(False)
             self._interface.set_clock_pin_frequency(
                 self._adjust_clock_frequency(self._frequency)
@@ -256,24 +251,26 @@ class FrontPanel():
         self._clock_source = clock_source
 
         if self._panel_mode == RUN:
-            self._interface.set_cpu_clock_input_enabled(False)
+            self._set_clock_source()
 
-            if self._clock_source == FRONT_PANEL:
-                self._interface.set_clock_source(interface.MICROCONTROLLER)
-                self._interface.set_clock_pin_frequency(
-                    self._adjust_clock_frequency(self._frequency)
-                )
-            if self.clock_source == CRYSTAL:
-                self._interface.set_clock_source(interface.CRYSTAL)
-
-            self._interface.set_cpu_clock_input_enabled(True)
-
-    def set_readwrite_address(self, address):
+    def _set_clock_source(self):
         """
-        Set the address data is read from and written to
+        Set the clock source for the CPU.
+
+        No safe guards.
         """
-        if not isinstance(address, int):
-            return
+
+        self._interface.set_cpu_clock_input_enabled(False)
+
+        if self._clock_source == FRONT_PANEL:
+            self._interface.set_clock_source(interface.MICROCONTROLLER)
+            self._interface.set_clock_pin_frequency(
+                self._adjust_clock_frequency(self._frequency)
+            )
+        if self.clock_source == CRYSTAL:
+            self._interface.set_clock_source(interface.CRYSTAL)
+
+        self._interface.set_cpu_clock_input_enabled(True)
 
     def set_readwrite_address_from_user_input(self):
         """
@@ -284,30 +281,81 @@ class FrontPanel():
         If the user input is valid, that new address is set, the user
         input cleared and the word at the new address read and displayed.
         """
-        pass
+
+        if not self._is_valid_address(self._user_input):
+            return
+
+        self._readwrite_address = address
+        self._display.
+
+        if self._panel_mode == STOP:
+            self._display.set_rwaddr(self._readwrite_address)
+            self._get_and_display_current_word()
 
     def incr_readwrite_address(self):
         """
+        Increment the current readwrite address by one.
 
+        If the value is at the max, wrap back to zero.
         """
-        pass
+        
+        # Increment, wrapping if necessary
+        self._readwrite_address += 1
+        if self._readwrite_address > _MAX_VALUE:
+            self._readwrite_address = 0
+
+        if self._panel_mode == STOP
+            self._display.set_rwaddr(self._readwrite_address)
+            self._get_and_display_current_word()
 
     def decr_readwrite_address(self):
         """
-        
+        Decrement the current readwrite address by one.
+
+        If the value goes below zero, wrap back to the max
         """
-        pass
+        
+        # Decrement, wrapping if necessary
+        self._readwrite_address -= 1
+        if self._readwrite_address < 0:
+            self._readwrite_address = _MAX_VALUE
+
+        if self._panel_mode == STOP:
+            self._display.set_readwrite_address(self._readwrite_address)
+            self._get_and_display_current_word()
 
     def set_word_from_user_input(self):
         """
-
+        Set the word at the readwrite address from the current user
+        input.
         """
-        pass
+
+        # Check user input is valid
+        if not self._is_valid_word(self._user_input):
+            return
+
+        if self._panel_mode == STOP:
+            # Set word at current readwrite address
+            self._set_word(self._readwrite_address, int(self._user_input))
+
+            # Read word at readwrite address and set to display
+            self._get_and_display_current_word()
 
     def set_word_from_user_input_then_incr_addr(self):
         """
+        Set word from user input, then increment readwrite addr.
 
+        The readwrite addr will wrap if necessary
         """
+
+        # Check user input is valid
+
+        # Set word at current readwrite address
+
+        # Increment readwrite, wrapping if necessary
+
+        # Read word at readwrite address and set to display
+
         pass
 
     def propose_user_input_character(self, character):
@@ -320,11 +368,8 @@ class FrontPanel():
         if len(self._user_input_string) >= 8:
             return
 
-        new_user_input_str = self._user_input_string + character
-        try:
-            new_user_input = float(_user_input_string)
-        except
-            return
+        self._user_input_string += character
+        self._display.set_user_input(self._user_input_string)
 
     def clear_user_input(self):
         """
@@ -336,53 +381,7 @@ class FrontPanel():
         """
 
         """
-        pass
-
-
-    def get_word(self, address):
-        """
-        Get a word from the device on the data bus at the given address.
-        """
-
-        word = 0
-
-        if self._panel_mode == STOP:
-            self._interface.set_address(address)
-            self._interface.set_read_from_mem(True)
-            self._interface.set_write_to_mem(False)
-            self._interface.set_interface_address_assert(True)
-            self._interface.set_interface_read_write_mem_assert(True)
-            time.sleep_us(10)
-            word = self._interface.get_data()
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(False)
-            self._interface.set_interface_address_assert(False)
-            self._interface.set_interface_read_write_mem_assert(False)
-
-        return word
-
-    def set_word(self, address, word):
-        """
-        Set a word on the device on the data bus at the given address.
-        """
-        if self._panel_mode == STOP:
-            self._interface.set_address(address)
-            self._interface.set_data(word)
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(True)
-            self._interface.set_interface_address_assert(True)
-            self._interface.set_interface_data_assert(True)
-            self._interface.set_interface_read_write_mem_assert(True)
-            self._interface.set_interface_clock_assert(True)
-            time.sleep_us(10)
-            self._send_cpu_like_clock_cycle()
-            time.sleep_us(10)
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(False)
-            self._interface.set_interface_address_assert(False)
-            self._interface.set_interface_data_assert(False)
-            self._interface.set_interface_read_write_mem_assert(False)
-            self._interface.set_interface_clock_assert(False)
+        pass      
 
     def set_words(self, addresses_and_words):
         """
@@ -452,3 +451,82 @@ class FrontPanel():
         time.sleep_us(1)
         self._interface.set_data_clock(False)
         time.sleep_us(1)
+
+    def _set_word(self, address, word):
+        """
+        Set a word on the device on the data bus at the given address.
+        """
+        if self._panel_mode == STOP:
+            self._interface.set_address(address)
+            self._interface.set_data(word)
+            self._interface.set_read_from_mem(False)
+            self._interface.set_write_to_mem(True)
+            self._interface.set_interface_address_assert(True)
+            self._interface.set_interface_data_assert(True)
+            self._interface.set_interface_read_write_mem_assert(True)
+            self._interface.set_interface_clock_assert(True)
+            time.sleep_us(10)
+            self._send_cpu_like_clock_cycle()
+            time.sleep_us(10)
+            self._interface.set_read_from_mem(False)
+            self._interface.set_write_to_mem(False)
+            self._interface.set_interface_address_assert(False)
+            self._interface.set_interface_data_assert(False)
+            self._interface.set_interface_read_write_mem_assert(False)
+            self._interface.set_interface_clock_assert(False)
+
+    def _get_word(self, address):
+        """
+        Get a word from the device on the data bus at the given address.
+        """
+
+        word = 0
+
+        if self._panel_mode == STOP:
+            self._interface.set_address(address)
+            self._interface.set_read_from_mem(True)
+            self._interface.set_write_to_mem(False)
+            self._interface.set_interface_address_assert(True)
+            self._interface.set_interface_read_write_mem_assert(True)
+            time.sleep_us(10)
+            word = self._interface.get_data()
+            self._interface.set_read_from_mem(False)
+            self._interface.set_write_to_mem(False)
+            self._interface.set_interface_address_assert(False)
+            self._interface.set_interface_read_write_mem_assert(False)
+
+        return word
+
+    def _is_valid_address(self, _address):
+        """
+        Check if the passed in address is valid
+        """
+        try
+            address = int(_address)
+        except
+            return False
+
+        if not 0 <= address <= _MAX_VALUE:
+            return False
+
+        return True
+
+    def _is_valid_word(self, _word):
+        """
+        Check if the passed in word is valid
+        """
+        try
+            word = int(_word)
+        except
+            return False
+
+        if not 0 <= word <= _MAX_VALUE:
+            return False
+
+        return True
+
+
+
+
+
+
