@@ -16,7 +16,7 @@ from gpiodefs import (
     CPU_CLOCK_GPIO_NO,
 )
 
-# Clock sources
+# CPU_Clock sources
 MICROCONTROLLER = 100
 CRYSTAL = 101
 
@@ -58,11 +58,11 @@ class Interface():
 
         self._read_from_mem = False
         self._write_to_mem = False
-        self._read_write_mem_source = _FRONT_PANEL
+        self._read_write_mem_source = FRONT_PANEL
 
         self._data_clock = False
         self._control_clock = False
-        self._data_control_clock_source = _FRONT_PANEL
+        self._data_control_clock_source = FRONT_PANEL
 
         self._cpu_clock_input_enabled = False
 
@@ -82,7 +82,7 @@ class Interface():
         )
         # Loads the data from the intermediate storage register to the
         # shift register. Pin is active low.
-        self.  = Pin(
+        self._input_parallel_load_pin = Pin(
             INPUT_PARALLEL_LOAD_GPIO_NO, mode=Pin.OUT, value=True
         )
         # Moves each bit along one position in the shift register.
@@ -109,7 +109,7 @@ class Interface():
             OUTPUT_OUTPUT_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
 
-        self._clock_source = MICROCONTROLLER
+        self._cpu_clock_source = MICROCONTROLLER
 
         self._reset = False
 
@@ -276,12 +276,12 @@ class Interface():
         self._cpu_clock_input_enabled = state
         self._shift_out()
 
-    def set_clock_source(self, source):
+    def set_cpu_clock_source(self, source):
         """
         Set the source for the clock.
         """
         if source in (MICROCONTROLLER, CRYSTAL):
-            self._source = source
+            self._cpu_clock_source = source
         self._shift_out()
 
     def set_reset(self, state):
@@ -348,7 +348,7 @@ class Interface():
                 self._pwm = PWM(self._clock_pin)
 
             self._pwm.duty_u16(32768)
-            self._pwm.freq(frequency)
+            self._pwm.freq(int(frequency))
 
             self._clock_mode = _PWM
 
@@ -473,15 +473,15 @@ class Interface():
         self._shift_bit_out(not self._interface_address_assert)
 
         # Shift Register 4
-        if self._read_write_mem_source == _FRONT_PANEL:
+        if self._read_write_mem_source == FRONT_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        if self._data_control_clock_source == _FRONT_PANEL:
+        if self._data_control_clock_source == FRONT_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        if self._clock_source == MICROCONTROLLER:
+        if self._cpu_clock_source == MICROCONTROLLER:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)

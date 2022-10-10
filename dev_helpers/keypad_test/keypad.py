@@ -39,13 +39,11 @@ class Keypad():
 
         self._last_states = []
         self._current_states = []
-        self._pressed_callbacks = []
-        self._released_callbacks = []
+        self._callbacks = []
         for _ in range(self._num_rows):
             self._last_states.append([0] * self._num_columns)
             self._current_states.append([0] * self._num_columns)
-            self._pressed_callbacks.append([None] * self._num_columns)
-            self._released_callbacks.append([None] * self._num_columns)
+            self._callbacks.append([None] * self._num_columns)
 
     def _update_current_states(self):
         """
@@ -62,7 +60,7 @@ class Keypad():
             column_pin.init(mode=Pin.OPEN_DRAIN)
             column_pin.value(1)
 
-    def _call_pressed_callbacks(self):
+    def _call_callbacks_from_presses(self):
         """
 
         """
@@ -73,22 +71,7 @@ class Keypad():
                     and
                     self._current_states[row_index][column_index] == 1
                 ):
-                    callback = self._pressed_callbacks[row_index][column_index]
-                    if callback is not None:
-                        callback()
-
-    def _call_released_callbacks(self):
-        """
-
-        """
-        for row_index in range(self._num_rows):
-            for column_index in range(self._num_columns):
-                if (
-                    self._last_states[row_index][column_index] == 1
-                    and
-                    self._current_states[row_index][column_index] == 0
-                ):
-                    callback = self._released_callbacks[row_index][column_index]
+                    callback = self._callbacks[row_index][column_index]
                     if callback is not None:
                         callback()
 
@@ -107,22 +90,14 @@ class Keypad():
 
     def update(self):
         self._update_current_states()
-        self._call_pressed_callbacks()
-        self._call_released_callbacks()
+        self._call_callbacks_from_presses()
         self._copy_current_to_last()
 
-    def set_pressed_callback(self, row_index, column_index, callback):
+    def set_callback(self, row_index, column_index, callback):
         """
 
         """
-        self._pressed_callbacks[row_index][column_index] = callback
-
-    def set_released_callback(self, row_index, column_index, callback):
-        """
-
-        """
-        self._released_callbacks[row_index][column_index] = callback
-
+        self._callbacks[row_index][column_index] = callback
 
 
 

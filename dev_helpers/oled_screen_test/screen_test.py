@@ -5,11 +5,15 @@ import ssd1306
 
 
 # using default address 0x3C
-i2c = I2C(sda=Pin(4), scl=Pin(5))
-display = ssd1306.SSD1306_I2C(128, 64, i2c)
+i2c = I2C(0, sda=Pin(0), scl=Pin(1))
+display = ssd1306.SSD1306_I2C(128, 32, i2c)
 
 # Print Hello World on the first line:
 display.text('Hello, World!', 0, 0, 1)
+display.text('Hello, World', 0, 8, 1)
+display.text('Hello, World', 0, 16, 1)
+display.text('Hello, World', 0, 24, 1)
+display.rect(10, 10, 40, 20, 1)
 display.show()
 
 # def display_test():
