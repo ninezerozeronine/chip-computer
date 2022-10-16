@@ -1,0 +1,99 @@
+https://wavedrom.com/
+
+Safe clock enable and disable
+
+{
+    "signal" : [
+        {
+            "name": "Input clock",
+            "wave": "lhlhlhlhlhlhlhl"
+        },
+        {
+            "name": "Clock Enable",
+            "wave": "lnh..pl.nh..pl."
+        },
+        {
+            "name": "Data Clock",
+            "wave": "l..hlhl..hlhl.."
+        },
+        {
+            "name": "Control Clock",
+            "wave": "h..lhlh..lhlh.."
+        },
+    ]
+}
+
+Resetting after a halt
+
+{
+    "signal" : [
+        {
+            "name": "Input clock",
+            "wave": "lhlhlhlhlh"
+        },
+        {
+            "name": "Clock enable",
+            "wave": "h.........",
+        },
+        {
+            "name": "Halt",
+            "wave": "l..h..l....",
+            "phase": 0.8
+        },
+        {
+            "name": "Reset",
+            "wave": "l....hl...",
+        },
+        {
+            "name": "Data Clock",
+            "wave": "lhl....hlh"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "hlh....lhl"
+        },
+    ]
+}
+
+Step reset
+
+{
+    "signal" :
+    [
+        {
+            "name": "Data Clock",
+            "wave": "lhlhlhlhl"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "hlhlhlhlh"
+        },
+        {
+            "name": "Instruction Register",
+            "wave": "==.......",
+        },
+        {
+            "name": "Mirror Instruction Register",
+            "wave": "=.=......",
+        },
+        {
+            "name": "Step Reset",
+            "wave": "l....h.l.",
+            "phase": 0.6
+        },
+        {
+            "name": "Step Reset delay",
+            "wave": "l....h.l.",
+            "phase": 0.3
+        },
+        {
+            "name": "Microstep",
+            "wave": "=.=.=.=.=",
+            "data": ["3", "4", "5", "0", "1"]
+        },
+    ],
+    "head": {
+        "tick": 0,
+        "every": 0
+    }
+}

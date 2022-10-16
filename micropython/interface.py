@@ -62,7 +62,7 @@ class Interface():
 
         self._data_clock = False
         self._control_clock = False
-        self._data_control_clock_source = FRONT_PANEL
+        self._control_data_clock_source = FRONT_PANEL
 
         self._cpu_clock_input_enabled = False
 
@@ -230,9 +230,9 @@ class Interface():
         Set the source of the read and write memory lines fed to the
         peripherals.
         """
-
-        self._read_write_mem_source = source
-        self._shift_out()
+        if source in (FRONT_PANEL, CPU):
+            self._read_write_mem_source = source
+            self._shift_out()
 
     def get_data_clock(self):
         """
@@ -266,8 +266,9 @@ class Interface():
         """
         Set the source of the control and data clocks.
         """
-        self._control_data_clock_source = source
-        self._shift_out()
+        if source in (FRONT_PANEL, CPU):
+            self._control_data_clock_source = source
+            self._shift_out()
 
     def set_cpu_clock_input_enabled(self, state):
         """
@@ -282,7 +283,7 @@ class Interface():
         """
         if source in (MICROCONTROLLER, CRYSTAL):
             self._cpu_clock_source = source
-        self._shift_out()
+            self._shift_out()
 
     def set_reset(self, state):
         """
@@ -368,8 +369,8 @@ class Interface():
 
          - SR4-0: Control clock
          - SR4-1: Data clock
-         - SR4-2: Write to memory
-         - SR4-3: Read from memory
+         - SR4-2: Read from memory
+         - SR4-3: Write to memory
          - SR4-4: <blank>
          - SR4-5: <blank>
          - SR4-6: <blank>
@@ -397,8 +398,8 @@ class Interface():
         self._shift_in_bit()
 
         # Get the first 4 bits of SR4
-        ret[_RFM] = self._shift_in_bit()
         ret[_WTM] = self._shift_in_bit()
+        ret[_RFM] = self._shift_in_bit()
         ret[_DATA_CLOCK] = self._shift_in_bit()
         ret[_CONTROL_CLOCK] = self._shift_in_bit()
 
@@ -450,7 +451,7 @@ class Interface():
          - SR4-3: Write to memory
          - SR4-4: Reset
          - SR4-5: CPU Clock source (Panel/crystal)
-         - SR4-6: Data/control clock source
+         - SR4-6: Control/data clock source
          - SR4-7: RFM/WTM source
 
          - SR5-0: Interface address bus assert
@@ -477,7 +478,7 @@ class Interface():
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        if self._data_control_clock_source == FRONT_PANEL:
+        if self._control_data_clock_source == FRONT_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
