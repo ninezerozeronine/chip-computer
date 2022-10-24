@@ -201,15 +201,19 @@ class Interface():
         """
         Set the state of the read from memory line.
         """
-        self._read_from_mem = state
-        self._shift_out()
+        # Prevent reading and writing to mem at the same time.
+        if not (self._write_to_mem and state):
+            self._read_from_mem = state
+            self._shift_out()
 
     def set_write_to_mem(self, state):
         """
         Set the state of the write to memory line.
         """
-        self._write_to_mem = state
-        self._shift_out()
+        # Prevent reading and writing to mem at the same time.
+        if not (self._read_from_mem and state):
+            self._write_to_mem = state
+            self._shift_out()
 
     def get_read_from_mem(self):
         """
