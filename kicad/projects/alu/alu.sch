@@ -16,12 +16,12 @@ $EndDescr
 $Comp
 L sixteen-bit-computer:Aux_connection J5
 U 1 1 5F95F4FF
-P 13600 7650
-F 0 "J5" H 13512 8275 50  0000 C CNN
-F 1 "Aux_connection" H 13512 8184 50  0000 C CNN
-F 2 "sixteen-bit-computer:aux-connection" H 13600 7650 50  0001 C CNN
-F 3 "~" H 13600 7650 50  0001 C CNN
-	1    13600 7650
+P 13950 5050
+F 0 "J5" H 13862 5675 50  0000 C CNN
+F 1 "Aux_connection" H 13862 5584 50  0000 C CNN
+F 2 "sixteen-bit-computer:aux-connection" H 13950 5050 50  0001 C CNN
+F 3 "~" H 13950 5050 50  0001 C CNN
+	1    13950 5050
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -38,12 +38,12 @@ $EndComp
 $Comp
 L sixteen-bit-computer:Control_signal_backplane J3
 U 1 1 5F960B16
-P 15000 7200
-F 0 "J3" H 14887 8925 50  0000 C CNN
-F 1 "Control_signal_backplane" H 14887 8834 50  0000 C CNN
-F 2 "sixteen-bit-computer:backplane-connector-single-row-annotated" H 15000 7200 50  0001 C CNN
-F 3 "~" H 15000 7200 50  0001 C CNN
-	1    15000 7200
+P 15850 5550
+F 0 "J3" H 15737 7275 50  0000 C CNN
+F 1 "Control_signal_backplane" H 15737 7184 50  0000 C CNN
+F 2 "sixteen-bit-computer:backplane-connector-single-row-annotated" H 15850 5550 50  0001 C CNN
+F 3 "~" H 15850 5550 50  0001 C CNN
+	1    15850 5550
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -357,12 +357,12 @@ $EndComp
 $Comp
 L Connector:Conn_01x16_Female J1
 U 1 1 5F9AD90D
-P 12650 4500
-F 0 "J1" V 12700 3650 50  0000 L CNN
-F 1 "ACC_CONTENTS" V 12700 4650 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 12650 4500 50  0001 C CNN
-F 3 "~" H 12650 4500 50  0001 C CNN
-	1    12650 4500
+P 13100 3000
+F 0 "J1" V 13150 2150 50  0000 L CNN
+F 1 "ACC_CONTENTS" V 13150 3150 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Horizontal" H 13100 3000 50  0001 C CNN
+F 3 "~" H 13100 3000 50  0001 C CNN
+	1    13100 3000
 	0    1    -1   0   
 $EndComp
 $Comp
@@ -511,12 +511,12 @@ $EndComp
 $Comp
 L Connector:Conn_01x18_Female J2
 U 1 1 5FA0675E
-P 14850 4500
-F 0 "J2" V 14900 3550 50  0000 L CNN
-F 1 "RES_AEQB_CRYBRW_OUT" V 14900 4450 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x18_P2.54mm_Horizontal" H 14850 4500 50  0001 C CNN
-F 3 "~" H 14850 4500 50  0001 C CNN
-	1    14850 4500
+P 15300 3000
+F 0 "J2" V 15350 2050 50  0000 L CNN
+F 1 "RES_AEQB_CRYBRW_OUT" V 15350 2950 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x18_P2.54mm_Horizontal" H 15300 3000 50  0001 C CNN
+F 3 "~" H 15300 3000 50  0001 C CNN
+	1    15300 3000
 	0    1    -1   0   
 $EndComp
 $Comp
@@ -533,53 +533,53 @@ $EndComp
 $Comp
 L power:VCC #PWR01
 U 1 1 5FA0E4B4
-P 15200 3650
-F 0 "#PWR01" H 15200 3500 50  0001 C CNN
-F 1 "VCC" H 15217 3823 50  0000 C CNN
-F 2 "" H 15200 3650 50  0001 C CNN
-F 3 "" H 15200 3650 50  0001 C CNN
-	1    15200 3650
+P 15600 2150
+F 0 "#PWR01" H 15600 2000 50  0001 C CNN
+F 1 "VCC" H 15617 2323 50  0000 C CNN
+F 2 "" H 15600 2150 50  0001 C CNN
+F 3 "" H 15600 2150 50  0001 C CNN
+	1    15600 2150
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR02
 U 1 1 5FA1038F
-P 15200 4000
-F 0 "#PWR02" H 15200 3750 50  0001 C CNN
-F 1 "GND" H 15205 3827 50  0000 C CNN
-F 2 "" H 15200 4000 50  0001 C CNN
-F 3 "" H 15200 4000 50  0001 C CNN
-	1    15200 4000
+P 15600 2500
+F 0 "#PWR02" H 15600 2250 50  0001 C CNN
+F 1 "GND" H 15605 2327 50  0000 C CNN
+F 2 "" H 15600 2500 50  0001 C CNN
+F 3 "" H 15600 2500 50  0001 C CNN
+	1    15600 2500
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:PWR_FLAG #FLG01
 U 1 1 5FA12019
-P 15200 3650
-F 0 "#FLG01" H 15200 3725 50  0001 C CNN
-F 1 "PWR_FLAG" V 15200 3778 50  0000 L CNN
-F 2 "" H 15200 3650 50  0001 C CNN
-F 3 "~" H 15200 3650 50  0001 C CNN
-	1    15200 3650
+P 15600 2150
+F 0 "#FLG01" H 15600 2225 50  0001 C CNN
+F 1 "PWR_FLAG" V 15600 2278 50  0000 L CNN
+F 2 "" H 15600 2150 50  0001 C CNN
+F 3 "~" H 15600 2150 50  0001 C CNN
+	1    15600 2150
 	0    1    1    0   
 $EndComp
 $Comp
 L power:PWR_FLAG #FLG02
 U 1 1 5FA13D2F
-P 15200 4000
-F 0 "#FLG02" H 15200 4075 50  0001 C CNN
-F 1 "PWR_FLAG" V 15200 4128 50  0000 L CNN
-F 2 "" H 15200 4000 50  0001 C CNN
-F 3 "~" H 15200 4000 50  0001 C CNN
-	1    15200 4000
+P 15600 2500
+F 0 "#FLG02" H 15600 2575 50  0001 C CNN
+F 1 "PWR_FLAG" V 15600 2628 50  0000 L CNN
+F 2 "" H 15600 2500 50  0001 C CNN
+F 3 "~" H 15600 2500 50  0001 C CNN
+	1    15600 2500
 	0    1    1    0   
 $EndComp
-Text Label 15150 3650 2    50   ~ 0
+Text Label 15550 2150 2    50   ~ 0
 VCC
-Text Label 15150 4000 2    50   ~ 0
+Text Label 15550 2500 2    50   ~ 0
 GND
-Connection ~ 15200 3650
-Connection ~ 15200 4000
+Connection ~ 15600 2150
+Connection ~ 15600 2500
 Text Label 6350 8750 0    50   ~ 0
 BUS_00
 Text Label 6350 8650 0    50   ~ 0
@@ -612,24 +612,24 @@ Text Label 6350 7350 0    50   ~ 0
 BUS_14
 Text Label 6350 7250 0    50   ~ 0
 BUS_15
-Text Label 13800 7250 0    50   ~ 0
+Text Label 14150 4650 0    50   ~ 0
 VCC
 Wire Wire Line
-	13800 7350 13800 7250
+	14150 4750 14150 4650
 Wire Wire Line
-	13800 7550 13800 7450
-Text Label 13800 7450 0    50   ~ 0
+	14150 4950 14150 4850
+Text Label 14150 4850 0    50   ~ 0
 GND
-NoConn ~ 13800 7750
-NoConn ~ 13800 7950
-NoConn ~ 13800 8150
-Text Label 15200 6900 0    50   ~ 0
+NoConn ~ 14150 5150
+NoConn ~ 14150 5350
+NoConn ~ 14150 5550
+Text Label 16050 5250 0    50   ~ 0
 S0
-Text Label 15200 7000 0    50   ~ 0
+Text Label 16050 5350 0    50   ~ 0
 S1
-Text Label 15200 7100 0    50   ~ 0
+Text Label 16050 5450 0    50   ~ 0
 S2
-Text Label 15200 7200 0    50   ~ 0
+Text Label 16050 5550 0    50   ~ 0
 S3
 Text Label 2250 2000 2    50   ~ 0
 S0
@@ -703,70 +703,38 @@ NoConn ~ 5700 2400
 NoConn ~ 5700 2500
 NoConn ~ 3450 2400
 NoConn ~ 3450 2500
-Text Label 13350 4700 3    50   ~ 0
+Text Label 13800 3200 3    50   ~ 0
 ACC_00
-Text Label 13250 4700 3    50   ~ 0
+Text Label 13700 3200 3    50   ~ 0
 ACC_01
-Text Label 13150 4700 3    50   ~ 0
+Text Label 13600 3200 3    50   ~ 0
 ACC_02
-Text Label 13050 4700 3    50   ~ 0
+Text Label 13500 3200 3    50   ~ 0
 ACC_03
-Text Label 12950 4700 3    50   ~ 0
+Text Label 13400 3200 3    50   ~ 0
 ACC_04
-Text Label 12750 4700 3    50   ~ 0
+Text Label 13200 3200 3    50   ~ 0
 ACC_06
-Text Label 12850 4700 3    50   ~ 0
+Text Label 13300 3200 3    50   ~ 0
 ACC_05
-Text Label 12650 4700 3    50   ~ 0
+Text Label 13100 3200 3    50   ~ 0
 ACC_07
-Text Label 12550 4700 3    50   ~ 0
+Text Label 13000 3200 3    50   ~ 0
 ACC_08
-Text Label 12450 4700 3    50   ~ 0
+Text Label 12900 3200 3    50   ~ 0
 ACC_09
-Text Label 12350 4700 3    50   ~ 0
+Text Label 12800 3200 3    50   ~ 0
 ACC_10
-Text Label 12250 4700 3    50   ~ 0
+Text Label 12700 3200 3    50   ~ 0
 ACC_11
-Text Label 12150 4700 3    50   ~ 0
+Text Label 12600 3200 3    50   ~ 0
 ACC_12
-Text Label 12050 4700 3    50   ~ 0
+Text Label 12500 3200 3    50   ~ 0
 ACC_13
-Text Label 11950 4700 3    50   ~ 0
+Text Label 12400 3200 3    50   ~ 0
 ACC_14
-Text Label 11850 4700 3    50   ~ 0
+Text Label 12300 3200 3    50   ~ 0
 ACC_15
-Text Label 15650 4700 3    50   ~ 0
-RES_00
-Text Label 15550 4700 3    50   ~ 0
-RES_01
-Text Label 15450 4700 3    50   ~ 0
-RES_02
-Text Label 15350 4700 3    50   ~ 0
-RES_03
-Text Label 15250 4700 3    50   ~ 0
-RES_04
-Text Label 15150 4700 3    50   ~ 0
-RES_05
-Text Label 15050 4700 3    50   ~ 0
-RES_06
-Text Label 14950 4700 3    50   ~ 0
-RES_07
-Text Label 14850 4700 3    50   ~ 0
-RES_08
-Text Label 14750 4700 3    50   ~ 0
-RES_09
-Text Label 14650 4700 3    50   ~ 0
-RES_10
-Text Label 14550 4700 3    50   ~ 0
-RES_11
-Text Label 14450 4700 3    50   ~ 0
-RES_12
-Text Label 14350 4700 3    50   ~ 0
-RES_13
-Text Label 14250 4700 3    50   ~ 0
-RES_14
-Text Label 14150 4700 3    50   ~ 0
-RES_15
 Text Label 1250 9800 2    50   ~ 0
 RES_00
 Text Label 1250 9700 2    50   ~ 0
@@ -831,11 +799,11 @@ Text Label 10300 5050 0    50   ~ 0
 SEL_15
 Text Label 8050 5050 0    50   ~ 0
 SEL_11
-Text Label 15200 6800 0    50   ~ 0
+Text Label 16050 5150 0    50   ~ 0
 A_IS_BUS
-Text Label 15200 7300 0    50   ~ 0
+Text Label 16050 5650 0    50   ~ 0
 M
-Text Label 15200 7400 0    50   ~ 0
+Text Label 16050 5750 0    50   ~ 0
 CARRY_IN
 Text Label 1100 2600 2    50   ~ 0
 CARRY_IN
@@ -1293,34 +1261,34 @@ NoConn ~ 14300 1000
 NoConn ~ 14300 1550
 NoConn ~ 15250 1000
 NoConn ~ 15250 1550
-NoConn ~ 15200 5700
-NoConn ~ 15200 5800
-NoConn ~ 15200 5900
-NoConn ~ 15200 6000
-NoConn ~ 15200 6100
-NoConn ~ 15200 6200
-NoConn ~ 15200 6300
-NoConn ~ 15200 6400
-NoConn ~ 15200 6500
-NoConn ~ 15200 6600
-NoConn ~ 15200 6700
-NoConn ~ 15200 7500
-NoConn ~ 15200 7600
-NoConn ~ 15200 7700
-NoConn ~ 15200 7800
-NoConn ~ 15200 7900
-NoConn ~ 15200 8000
-NoConn ~ 15200 8100
-NoConn ~ 15200 8300
-NoConn ~ 15200 8200
-NoConn ~ 15200 8400
-NoConn ~ 15200 8500
-NoConn ~ 15200 8600
-NoConn ~ 15200 8700
-NoConn ~ 15200 8800
-Text Label 14050 4700 3    50   ~ 0
+NoConn ~ 16050 4050
+NoConn ~ 16050 4150
+NoConn ~ 16050 4250
+NoConn ~ 16050 4350
+NoConn ~ 16050 4450
+NoConn ~ 16050 4550
+NoConn ~ 16050 4650
+NoConn ~ 16050 4750
+NoConn ~ 16050 4850
+NoConn ~ 16050 4950
+NoConn ~ 16050 5050
+NoConn ~ 16050 5850
+NoConn ~ 16050 5950
+NoConn ~ 16050 6050
+NoConn ~ 16050 6150
+NoConn ~ 16050 6250
+NoConn ~ 16050 6350
+NoConn ~ 16050 6450
+NoConn ~ 16050 6650
+NoConn ~ 16050 6550
+NoConn ~ 16050 6750
+NoConn ~ 16050 6850
+NoConn ~ 16050 6950
+NoConn ~ 16050 7050
+NoConn ~ 16050 7150
+Text Label 14500 3200 3    50   ~ 0
 CARRY_BORROW_OUT
-Text Label 13950 4700 3    50   ~ 0
+Text Label 14400 3200 3    50   ~ 0
 A_EQ_B
 Wire Wire Line
 	8850 2600 9050 2600
@@ -1373,58 +1341,58 @@ $EndComp
 $Comp
 L Device:CP C12
 U 1 1 5FC1FB19
-P 14550 3800
-F 0 "C12" H 14668 3846 50  0000 L CNN
-F 1 "33uF" H 14668 3755 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14588 3650 50  0001 C CNN
-F 3 "~" H 14550 3800 50  0001 C CNN
-	1    14550 3800
+P 14950 2300
+F 0 "C12" H 15068 2346 50  0000 L CNN
+F 1 "33uF" H 15068 2255 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14988 2150 50  0001 C CNN
+F 3 "~" H 14950 2300 50  0001 C CNN
+	1    14950 2300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	14550 3650 15200 3650
+	14950 2150 15600 2150
 Wire Wire Line
-	14550 3950 14550 4000
+	14950 2450 14950 2500
 Wire Wire Line
-	14550 4000 15200 4000
+	14950 2500 15600 2500
 $Comp
 L Device:CP C14
 U 1 1 5FC812BA
-P 14100 3800
-F 0 "C14" H 14218 3846 50  0000 L CNN
-F 1 "33uF" H 14218 3755 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14138 3650 50  0001 C CNN
-F 3 "~" H 14100 3800 50  0001 C CNN
-	1    14100 3800
+P 14500 2300
+F 0 "C14" H 14618 2346 50  0000 L CNN
+F 1 "33uF" H 14618 2255 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14538 2150 50  0001 C CNN
+F 3 "~" H 14500 2300 50  0001 C CNN
+	1    14500 2300
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:CP C13
 U 1 1 5FC81852
-P 13650 3800
-F 0 "C13" H 13768 3846 50  0000 L CNN
-F 1 "33uF" H 13768 3755 50  0000 L CNN
-F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 13688 3650 50  0001 C CNN
-F 3 "~" H 13650 3800 50  0001 C CNN
-	1    13650 3800
+P 14050 2300
+F 0 "C13" H 14168 2346 50  0000 L CNN
+F 1 "33uF" H 14168 2255 50  0000 L CNN
+F 2 "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm" H 14088 2150 50  0001 C CNN
+F 3 "~" H 14050 2300 50  0001 C CNN
+	1    14050 2300
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	13650 3650 14100 3650
-Connection ~ 14550 3650
-Connection ~ 14100 3650
+	14050 2150 14500 2150
+Connection ~ 14950 2150
+Connection ~ 14500 2150
 Wire Wire Line
-	14100 3650 14550 3650
+	14500 2150 14950 2150
 Wire Wire Line
-	14550 4000 14100 4000
+	14950 2500 14500 2500
 Wire Wire Line
-	13650 4000 13650 3950
-Connection ~ 14550 4000
+	14050 2500 14050 2450
+Connection ~ 14950 2500
 Wire Wire Line
-	14100 3950 14100 4000
-Connection ~ 14100 4000
+	14500 2450 14500 2500
+Connection ~ 14500 2500
 Wire Wire Line
-	14100 4000 13650 4000
+	14500 2500 14050 2500
 Connection ~ 13700 1550
 Wire Wire Line
 	13700 1550 13700 1800
@@ -1731,50 +1699,48 @@ BUS_BUF_12
 $Comp
 L Connector:Conn_01x02_Female J6
 U 1 1 62F464B6
-P 12650 5450
-F 0 "J6" V 12700 5250 50  0000 L CNN
-F 1 "TOP_POWER" V 12700 5400 50  0000 L CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 12650 5450 50  0001 C CNN
-F 3 "~" H 12650 5450 50  0001 C CNN
-	1    12650 5450
+P 11450 950
+F 0 "J6" V 11500 750 50  0000 L CNN
+F 1 "TOP_POWER" V 11500 900 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 11450 950 50  0001 C CNN
+F 3 "~" H 11450 950 50  0001 C CNN
+	1    11450 950 
 	0    1    -1   0   
 $EndComp
-Text Label 12650 5650 3    50   ~ 0
+Text Label 11450 1150 3    50   ~ 0
 VCC
-Text Label 12550 5650 3    50   ~ 0
+Text Label 11350 1150 3    50   ~ 0
 GND
-Text Label 12500 6100 0    50   ~ 0
+Text Label 12550 4650 2    50   ~ 0
 VCC
-Text Label 12500 6850 0    50   ~ 0
+Text Label 12550 5200 2    50   ~ 0
 GND
 $Comp
-L Connector:Conn_01x02_Male J7
+L Connector:Conn_01x03_Male J7
 U 1 1 62F6F8F1
-P 12700 6500
-F 0 "J7" H 12550 6400 50  0000 L CNN
-F 1 "LED_CONTROL" H 12150 6500 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 12700 6500 50  0001 C CNN
-F 3 "~" H 12700 6500 50  0001 C CNN
-	1    12700 6500
+P 12750 4750
+F 0 "J7" H 12600 4650 50  0000 L CNN
+F 1 "LED_CONTROL" H 12200 4750 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Horizontal" H 12750 4750 50  0001 C CNN
+F 3 "~" H 12750 4750 50  0001 C CNN
+	1    12750 4750
 	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_US R2
 U 1 1 62F7CD19
-P 12500 6350
-F 0 "R2" H 12568 6396 50  0000 L CNN
-F 1 "10K" H 12568 6305 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 12540 6340 50  0001 C CNN
-F 3 "~" H 12500 6350 50  0001 C CNN
-	1    12500 6350
+P 12250 4900
+F 0 "R2" H 12318 4946 50  0000 L CNN
+F 1 "10K" H 12318 4855 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 12290 4890 50  0001 C CNN
+F 3 "~" H 12250 4900 50  0001 C CNN
+	1    12250 4900
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	12500 6200 12500 6100
-Text Label 11850 6500 0    50   ~ 0
+Text Label 11600 4750 0    50   ~ 0
 LED_CONTROL
 Wire Wire Line
-	11850 6500 12500 6500
+	11600 4750 12250 4750
 Text Label 700  6650 0    50   ~ 0
 LED_CONTROL
 Wire Wire Line
@@ -1799,7 +1765,206 @@ Text Label 650  8800 0    50   ~ 0
 LED_CONTROL
 Wire Wire Line
 	650  8800 1250 8800
+Connection ~ 12250 4750
+$Comp
+L sixteen-bit-computer:74HCT245 U14
+U 1 1 64944998
+P 11250 7650
+F 0 "U14" H 11000 8350 50  0000 C CNN
+F 1 "74HCT245" H 11500 8350 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 10900 7650 50  0001 C CNN
+F 3 "" H 10900 7650 50  0001 C CNN
+	1    11250 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C17
+U 1 1 6494499E
+P 12550 7650
+F 0 "C17" H 12665 7696 50  0000 L CNN
+F 1 "0.1uF" H 12665 7605 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 12588 7500 50  0001 C CNN
+F 3 "~" H 12550 7650 50  0001 C CNN
+	1    12550 7650
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C18
+U 1 1 649449A4
+P 15200 7700
+F 0 "C18" H 15315 7746 50  0000 L CNN
+F 1 "0.1uF" H 15315 7655 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 15238 7550 50  0001 C CNN
+F 3 "~" H 15200 7700 50  0001 C CNN
+	1    15200 7700
+	1    0    0    -1  
+$EndComp
+Text Label 10700 8100 2    50   ~ 0
+RES_00
+Text Label 10700 8000 2    50   ~ 0
+RES_01
+Text Label 10700 7900 2    50   ~ 0
+RES_02
+Text Label 10700 7800 2    50   ~ 0
+RES_03
+Text Label 10700 7700 2    50   ~ 0
+RES_04
+Text Label 10700 7600 2    50   ~ 0
+RES_05
+Text Label 10700 7500 2    50   ~ 0
+RES_06
+Text Label 10700 7400 2    50   ~ 0
+RES_07
+Text Label 13350 8100 2    50   ~ 0
+RES_08
+Text Label 13350 8000 2    50   ~ 0
+RES_09
+Text Label 13350 7900 2    50   ~ 0
+RES_10
+Text Label 13350 7800 2    50   ~ 0
+RES_11
+Text Label 13350 7700 2    50   ~ 0
+RES_12
+Text Label 13350 7600 2    50   ~ 0
+RES_13
+Text Label 13350 7500 2    50   ~ 0
+RES_14
+Text Label 13350 7400 2    50   ~ 0
+RES_15
+Text Label 11800 8100 0    50   ~ 0
+RES_HCT_BUF_00
+Text Label 11800 8000 0    50   ~ 0
+RES_HCT_BUF_01
+Text Label 11800 7900 0    50   ~ 0
+RES_HCT_BUF_02
+Text Label 11800 7800 0    50   ~ 0
+RES_HCT_BUF_03
+Text Label 11800 7700 0    50   ~ 0
+RES_HCT_BUF_04
+Text Label 11800 7600 0    50   ~ 0
+RES_HCT_BUF_05
+Text Label 11800 7500 0    50   ~ 0
+RES_HCT_BUF_06
+Text Label 11800 7400 0    50   ~ 0
+RES_HCT_BUF_07
+Text Label 14450 8100 0    50   ~ 0
+RES_HCT_BUF_08
+Text Label 14450 8000 0    50   ~ 0
+RES_HCT_BUF_09
+Text Label 14450 7900 0    50   ~ 0
+RES_HCT_BUF_10
+Text Label 14450 7800 0    50   ~ 0
+RES_HCT_BUF_11
+Text Label 14450 7700 0    50   ~ 0
+RES_HCT_BUF_12
+Text Label 14450 7600 0    50   ~ 0
+RES_HCT_BUF_13
+Text Label 14450 7500 0    50   ~ 0
+RES_HCT_BUF_14
+Text Label 14450 7400 0    50   ~ 0
+RES_HCT_BUF_15
 Wire Wire Line
-	12500 6600 12500 6850
-Connection ~ 12500 6500
+	10700 7250 10450 7250
+Wire Wire Line
+	10450 7250 10450 6700
+Wire Wire Line
+	10450 6700 11250 6700
+Text Label 11250 8450 3    50   ~ 0
+GND
+Text Label 13900 8450 3    50   ~ 0
+GND
+Text Label 13900 6700 1    50   ~ 0
+VCC
+Text Label 11250 6700 1    50   ~ 0
+VCC
+Wire Wire Line
+	13350 7250 13100 7250
+Wire Wire Line
+	13100 7250 13100 6700
+Wire Wire Line
+	15200 6700 15200 7550
+Wire Wire Line
+	15200 7850 15200 8450
+Wire Wire Line
+	15200 8450 13900 8450
+Wire Wire Line
+	11250 6700 12550 6700
+Wire Wire Line
+	12550 6700 12550 7500
+Connection ~ 11250 6700
+Wire Wire Line
+	12550 7800 12550 8450
+Wire Wire Line
+	12550 8450 11250 8450
+Wire Wire Line
+	13900 6700 15200 6700
+Wire Wire Line
+	13100 6700 13900 6700
+Connection ~ 13900 6700
+$Comp
+L sixteen-bit-computer:74HCT245 U15
+U 1 1 649449DF
+P 13900 7650
+F 0 "U15" H 13650 8350 50  0000 C CNN
+F 1 "74HCT245" H 14150 8350 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 13550 7650 50  0001 C CNN
+F 3 "" H 13550 7650 50  0001 C CNN
+	1    13900 7650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	13350 7100 12950 7100
+Wire Wire Line
+	12950 7100 12950 8450
+Wire Wire Line
+	12950 8450 13900 8450
+Connection ~ 13900 8450
+Wire Wire Line
+	10700 7100 10250 7100
+Wire Wire Line
+	10250 7100 10250 8450
+Wire Wire Line
+	10250 8450 11250 8450
+Connection ~ 11250 8450
+Wire Wire Line
+	12250 4750 12550 4750
+Wire Wire Line
+	12250 5050 12550 5050
+Wire Wire Line
+	12550 5050 12550 5200
+Wire Wire Line
+	12550 5050 12550 4850
+Connection ~ 12550 5050
+Text Label 16100 3200 3    50   ~ 0
+RES_HCT_BUF_00
+Text Label 16000 3200 3    50   ~ 0
+RES_HCT_BUF_01
+Text Label 15900 3200 3    50   ~ 0
+RES_HCT_BUF_02
+Text Label 15800 3200 3    50   ~ 0
+RES_HCT_BUF_03
+Text Label 15700 3200 3    50   ~ 0
+RES_HCT_BUF_04
+Text Label 15600 3200 3    50   ~ 0
+RES_HCT_BUF_05
+Text Label 15500 3200 3    50   ~ 0
+RES_HCT_BUF_06
+Text Label 15400 3200 3    50   ~ 0
+RES_HCT_BUF_07
+Text Label 15300 3200 3    50   ~ 0
+RES_HCT_BUF_08
+Text Label 15200 3200 3    50   ~ 0
+RES_HCT_BUF_09
+Text Label 15100 3200 3    50   ~ 0
+RES_HCT_BUF_10
+Text Label 15000 3200 3    50   ~ 0
+RES_HCT_BUF_11
+Text Label 14900 3200 3    50   ~ 0
+RES_HCT_BUF_12
+Text Label 14800 3200 3    50   ~ 0
+RES_HCT_BUF_13
+Text Label 14700 3200 3    50   ~ 0
+RES_HCT_BUF_14
+Text Label 14600 3200 3    50   ~ 0
+RES_HCT_BUF_15
 $EndSCHEMATC
