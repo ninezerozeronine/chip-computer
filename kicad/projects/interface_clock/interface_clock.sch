@@ -2527,4 +2527,42 @@ Wire Wire Line
 Connection ~ 15000 8750
 Wire Wire Line
 	15000 8750 15450 8750
+$Comp
+L Device:R R16
+U 1 1 63709FE1
+P 3000 3600
+F 0 "R16" H 3070 3646 50  0000 L CNN
+F 1 "10K" H 3070 3555 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2930 3600 50  0001 C CNN
+F 3 "~" H 3000 3600 50  0001 C CNN
+	1    3000 3600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R17
+U 1 1 6370AB2E
+P 5700 3650
+F 0 "R17" H 5500 3700 50  0000 L CNN
+F 1 "10K" H 5500 3600 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5630 3650 50  0001 C CNN
+F 3 "~" H 5700 3650 50  0001 C CNN
+	1    5700 3650
+	1    0    0    -1  
+$EndComp
+Connection ~ 5700 3850
+Wire Wire Line
+	5700 3450 5950 3450
+Connection ~ 5950 3450
+Wire Wire Line
+	5700 3850 5700 3800
+Wire Wire Line
+	5700 3450 5700 3500
+Wire Wire Line
+	3250 3850 3000 3850
+Wire Wire Line
+	3000 3850 3000 3750
+Connection ~ 3250 3850
+Wire Wire Line
+	3000 3450 3350 3450
+Connection ~ 3350 3450
 $EndSCHEMATC

@@ -1961,7 +1961,7 @@ EXT_CLK_IN
 Text Label 13550 8150 2    50   ~ 0
 CLOCK_SEL
 Text Label 13550 7950 2    50   ~ 0
-EXT_RESET
+RESET
 $Comp
 L Device:LED D1
 U 1 1 63873307
