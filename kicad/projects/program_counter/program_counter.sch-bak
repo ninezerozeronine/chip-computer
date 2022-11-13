@@ -1196,13 +1196,6 @@ Wire Wire Line
 Wire Wire Line
 	1400 8300 1800 8300
 Wire Wire Line
-	1400 8600 1400 8700
-Wire Wire Line
-	1900 8700 1400 8700
-Connection ~ 1400 8700
-Wire Wire Line
-	1400 8700 1400 10050
-Wire Wire Line
 	1900 8850 1800 8850
 Wire Wire Line
 	1800 8850 1800 8300
@@ -1212,8 +1205,6 @@ Wire Wire Line
 Wire Wire Line
 	6950 8300 6300 8300
 Wire Wire Line
-	5900 8600 5900 8700
-Wire Wire Line
 	5900 10050 6950 10050
 Wire Wire Line
 	6400 8850 6300 8850
@@ -1222,11 +1213,6 @@ Wire Wire Line
 Connection ~ 6300 8300
 Wire Wire Line
 	6300 8300 5900 8300
-Wire Wire Line
-	6400 8700 5900 8700
-Connection ~ 5900 8700
-Wire Wire Line
-	5900 8700 5900 10050
 Wire Wire Line
 	4050 1650 5050 1650
 Connection ~ 4050 1650
@@ -1424,4 +1410,64 @@ Wire Wire Line
 Connection ~ 3150 4950
 Wire Wire Line
 	3150 4950 2350 4950
+Text Label 12200 8800 2    50   ~ 0
+VCC
+Text Label 12200 8900 2    50   ~ 0
+GND
+Text Label 5450 7550 2    50   ~ 0
+VCC
+Text Label 5450 8050 2    50   ~ 0
+GND
+$Comp
+L Connector:Conn_01x02_Female J6
+U 1 1 62EB3B20
+P 12400 8800
+F 0 "J6" H 12450 8700 50  0000 L CNN
+F 1 "TOP_POWER" H 12450 8800 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 12400 8800 50  0001 C CNN
+F 3 "~" H 12400 8800 50  0001 C CNN
+	1    12400 8800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Male J5
+U 1 1 62EB40E6
+P 5650 7850
+F 0 "J5" H 5550 7750 50  0000 L CNN
+F 1 "LED_CONTROL" H 5100 7850 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 5650 7850 50  0001 C CNN
+F 3 "~" H 5650 7850 50  0001 C CNN
+	1    5650 7850
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R1
+U 1 1 62EEAC6F
+P 5450 7700
+F 0 "R1" H 5518 7746 50  0000 L CNN
+F 1 "10K" H 5518 7655 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5490 7690 50  0001 C CNN
+F 3 "~" H 5450 7700 50  0001 C CNN
+	1    5450 7700
+	1    0    0    -1  
+$EndComp
+Connection ~ 5450 7850
+Text Label 4900 7850 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	5450 7950 5450 8050
+Wire Wire Line
+	4900 7850 5450 7850
+Wire Wire Line
+	1400 8600 1400 10050
+Wire Wire Line
+	5900 8600 5900 10050
+Text Label 5300 8700 0    50   ~ 0
+LED_CONTROL
+Text Label 800  8700 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	800  8700 1900 8700
+Wire Wire Line
+	5300 8700 6400 8700
 $EndSCHEMATC
