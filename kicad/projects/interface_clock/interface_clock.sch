@@ -16,12 +16,12 @@ $EndDescr
 $Comp
 L 74xx:74HC04 U2
 U 1 1 5FDA77B5
-P 15400 9050
-F 0 "U2" H 15400 9367 50  0000 C CNN
-F 1 "74HC04" H 15400 9276 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 15400 9050 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 15400 9050 50  0001 C CNN
-	1    15400 9050
+P 2900 7300
+F 0 "U2" H 2900 7617 50  0000 C CNN
+F 1 "74HC04" H 2900 7526 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 2900 7300 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2900 7300 50  0001 C CNN
+	1    2900 7300
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -49,12 +49,12 @@ $EndComp
 $Comp
 L 74xx:74HC04 U2
 U 4 1 5FDABC36
-P 2900 7300
-F 0 "U2" H 2900 7617 50  0000 C CNN
-F 1 "74HC04" H 2900 7526 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 2900 7300 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2900 7300 50  0001 C CNN
-	4    2900 7300
+P 15400 9050
+F 0 "U2" H 15400 9367 50  0000 C CNN
+F 1 "74HC04" H 15400 9276 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 15400 9050 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 15400 9050 50  0001 C CNN
+	4    15400 9050
 	1    0    0    -1  
 $EndComp
 $Comp

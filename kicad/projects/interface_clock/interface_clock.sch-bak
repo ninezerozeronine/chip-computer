@@ -2699,4 +2699,18 @@ Wire Wire Line
 	11400 900  11400 1900
 Wire Wire Line
 	15100 9050 14950 9050
+Wire Wire Line
+	7850 1400 7850 1200
+Text Label 7850 1200 2    50   ~ 0
+VCC
+Wire Wire Line
+	7550 1600 7450 1600
+Wire Wire Line
+	7450 1600 7450 1200
+Wire Wire Line
+	7450 1200 7850 1200
+Text Label 7550 2050 2    50   ~ 0
+GND
+Wire Wire Line
+	7550 1800 7550 2050
 $EndSCHEMATC
