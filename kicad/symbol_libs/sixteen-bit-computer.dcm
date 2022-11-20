@@ -8,8 +8,8 @@ $ENDCMP
 #
 $CMP 74HC109
 D Dual JK Flip-Flop, Set & Reset
-K JK
-F http://www.ti.com/lit/gpn/sn74HC109
+K TTL JK
+F https://www.ti.com/lit/ds/symlink/sn54hc109-sp.pdf
 $ENDCMP
 #
 $CMP 74HC126
