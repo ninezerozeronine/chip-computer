@@ -2487,17 +2487,6 @@ F 3 "https://www.ti.com/lit/ds/symlink/sn54hc109-sp.pdf" H 7850 1700 50  0001 C 
 $EndComp
 $Comp
 L sixteen-bit-computer:74HC109 U14
-U 2 1 637B8E39
-P 13550 1100
-F 0 "U14" H 13700 1500 50  0000 C CNN
-F 1 "74HC109" H 13800 1400 50  0000 C CNN
-F 2 "Package_DIP:DIP-16_W7.62mm" H 13550 1100 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/sn54hc109-sp.pdf" H 13550 1100 50  0001 C CNN
-	2    13550 1100
-	1    0    0    -1  
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC109 U14
 U 3 1 637BB42F
 P 8900 8350
 F 0 "U14" H 9130 8396 50  0000 L CNN
@@ -2673,7 +2662,7 @@ Wire Notes Line
 	10250 7850 15900 7850
 Text Notes 14650 8050 0    50   ~ 0
 Reset signal disabling clock
-Text Label 13550 650  2    50   ~ 0
+Text Label 13250 650  2    50   ~ 0
 VCC
 NoConn ~ 13850 1000
 NoConn ~ 13850 1200
@@ -2683,15 +2672,7 @@ Wire Wire Line
 	13550 1400 13550 1550
 Wire Wire Line
 	13550 800  13550 650 
-Wire Wire Line
-	13250 1200 13250 1100
-Connection ~ 13250 1100
-Wire Wire Line
-	13250 1100 13250 1000
-Connection ~ 13250 1000
-Wire Wire Line
-	13250 1000 13250 850 
-Text Label 13250 850  2    50   ~ 0
+Text Label 13250 1350 2    50   ~ 0
 GND
 Wire Wire Line
 	15700 9050 15700 8450
@@ -2713,4 +2694,24 @@ Text Label 7550 2050 2    50   ~ 0
 GND
 Wire Wire Line
 	7550 1800 7550 2050
+$Comp
+L sixteen-bit-computer:74HC109 U14
+U 2 1 637B8E39
+P 13550 1100
+F 0 "U14" H 13700 1500 50  0000 C CNN
+F 1 "74HC109" H 13800 1400 50  0000 C CNN
+F 2 "Package_DIP:DIP-16_W7.62mm" H 13550 1100 50  0001 C CNN
+F 3 "https://www.ti.com/lit/ds/symlink/sn54hc109-sp.pdf" H 13550 1100 50  0001 C CNN
+	2    13550 1100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	13250 1350 13250 1200
+Wire Wire Line
+	13250 1100 13250 1000
+Connection ~ 13250 1000
+Wire Wire Line
+	13550 650  13250 650 
+Wire Wire Line
+	13250 650  13250 1000
 $EndSCHEMATC
