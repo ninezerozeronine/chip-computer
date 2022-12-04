@@ -38,23 +38,23 @@ $EndComp
 $Comp
 L sixteen-bit-computer:74HC245 U6
 U 1 1 5FCA6309
-P 5800 6000
-F 0 "U6" H 5550 6700 50  0000 C CNN
-F 1 "74HC245" H 6050 6700 50  0000 C CNN
-F 2 "Package_DIP:DIP-20_W7.62mm" H 5450 6000 50  0001 C CNN
-F 3 "" H 5450 6000 50  0001 C CNN
-	1    5800 6000
+P 6700 6000
+F 0 "U6" H 6450 6700 50  0000 C CNN
+F 1 "74HC245" H 6950 6700 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm" H 6350 6000 50  0001 C CNN
+F 3 "" H 6350 6000 50  0001 C CNN
+	1    6700 6000
 	1    0    0    -1  
 $EndComp
 $Comp
 L sixteen-bit-computer:74HC245 U4
 U 1 1 5FCA733A
-P 3700 6000
-F 0 "U4" H 3500 6700 50  0000 C CNN
-F 1 "74HC245" H 3950 6700 50  0000 C CNN
-F 2 "Package_DIP:DIP-20_W7.62mm" H 3350 6000 50  0001 C CNN
-F 3 "" H 3350 6000 50  0001 C CNN
-	1    3700 6000
+P 4600 6000
+F 0 "U4" H 4400 6700 50  0000 C CNN
+F 1 "74HC245" H 4850 6700 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm" H 4250 6000 50  0001 C CNN
+F 3 "" H 4250 6000 50  0001 C CNN
+	1    4600 6000
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -82,12 +82,12 @@ $EndComp
 $Comp
 L 74xx:74HC04 U1
 U 3 1 5FCA9DFB
-P 1700 5450
-F 0 "U1" H 1700 5767 50  0000 C CNN
-F 1 "74HC04" H 1700 5676 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 1700 5450 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1700 5450 50  0001 C CNN
-	3    1700 5450
+P 1750 4950
+F 0 "U1" H 1750 5267 50  0000 C CNN
+F 1 "74HC04" H 1750 5176 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 1750 4950 50  0001 C CNN
+F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1750 4950 50  0001 C CNN
+	3    1750 4950
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -258,23 +258,23 @@ $EndComp
 $Comp
 L Device:C C4
 U 1 1 5FCC872C
-P 4850 5200
-F 0 "C4" H 4965 5246 50  0000 L CNN
-F 1 "0.1uF" H 4965 5155 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 4888 5050 50  0001 C CNN
-F 3 "~" H 4850 5200 50  0001 C CNN
-	1    4850 5200
+P 5750 5200
+F 0 "C4" H 5865 5246 50  0000 L CNN
+F 1 "0.1uF" H 5865 5155 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 5788 5050 50  0001 C CNN
+F 3 "~" H 5750 5200 50  0001 C CNN
+	1    5750 5200
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:C C2
 U 1 1 5FCCA816
-P 2750 5200
-F 0 "C2" H 2865 5246 50  0000 L CNN
-F 1 "0.1uF" H 2865 5155 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 2788 5050 50  0001 C CNN
-F 3 "~" H 2750 5200 50  0001 C CNN
-	1    2750 5200
+P 3650 5200
+F 0 "C2" H 3765 5246 50  0000 L CNN
+F 1 "0.1uF" H 3765 5155 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 3688 5050 50  0001 C CNN
+F 3 "~" H 3650 5200 50  0001 C CNN
+	1    3650 5200
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -892,37 +892,37 @@ Text Label 6400 9100 2    50   ~ 0
 CTNT_14
 Text Label 6400 9000 2    50   ~ 0
 CTNT_15
-Text Label 5250 6450 2    50   ~ 0
+Text Label 6150 6450 2    50   ~ 0
 BUS_00
-Text Label 5250 6350 2    50   ~ 0
+Text Label 6150 6350 2    50   ~ 0
 BUS_01
-Text Label 5250 6250 2    50   ~ 0
+Text Label 6150 6250 2    50   ~ 0
 BUS_02
-Text Label 5250 6150 2    50   ~ 0
+Text Label 6150 6150 2    50   ~ 0
 BUS_03
-Text Label 5250 6050 2    50   ~ 0
+Text Label 6150 6050 2    50   ~ 0
 BUS_04
-Text Label 5250 5950 2    50   ~ 0
+Text Label 6150 5950 2    50   ~ 0
 BUS_05
-Text Label 5250 5850 2    50   ~ 0
+Text Label 6150 5850 2    50   ~ 0
 BUS_06
-Text Label 3150 6450 2    50   ~ 0
+Text Label 4050 6450 2    50   ~ 0
 BUS_08
-Text Label 3150 6350 2    50   ~ 0
+Text Label 4050 6350 2    50   ~ 0
 BUS_09
-Text Label 3150 6250 2    50   ~ 0
+Text Label 4050 6250 2    50   ~ 0
 BUS_10
-Text Label 3150 6150 2    50   ~ 0
+Text Label 4050 6150 2    50   ~ 0
 BUS_11
-Text Label 3150 6050 2    50   ~ 0
+Text Label 4050 6050 2    50   ~ 0
 BUS_12
-Text Label 3150 5950 2    50   ~ 0
+Text Label 4050 5950 2    50   ~ 0
 BUS_13
-Text Label 3150 5850 2    50   ~ 0
+Text Label 4050 5850 2    50   ~ 0
 BUS_14
-Text Label 3150 5750 2    50   ~ 0
+Text Label 4050 5750 2    50   ~ 0
 BUS_15
-Text Label 5250 5750 2    50   ~ 0
+Text Label 6150 5750 2    50   ~ 0
 BUS_07
 Wire Wire Line
 	7500 9700 7900 9700
@@ -1252,95 +1252,91 @@ Wire Wire Line
 	8750 3850 8750 3250
 Connection ~ 6900 3850
 Connection ~ 8750 3250
-Text Label 4250 6450 0    50   ~ 0
+Text Label 5150 6450 0    50   ~ 0
 CTNT_08
-Text Label 4250 6350 0    50   ~ 0
+Text Label 5150 6350 0    50   ~ 0
 CTNT_09
-Text Label 4250 6250 0    50   ~ 0
+Text Label 5150 6250 0    50   ~ 0
 CTNT_10
-Text Label 4250 6150 0    50   ~ 0
+Text Label 5150 6150 0    50   ~ 0
 CTNT_11
-Text Label 4250 6050 0    50   ~ 0
+Text Label 5150 6050 0    50   ~ 0
 CTNT_12
-Text Label 4250 5950 0    50   ~ 0
+Text Label 5150 5950 0    50   ~ 0
 CTNT_13
-Text Label 4250 5850 0    50   ~ 0
+Text Label 5150 5850 0    50   ~ 0
 CTNT_14
-Text Label 4250 5750 0    50   ~ 0
+Text Label 5150 5750 0    50   ~ 0
 CTNT_15
-Text Label 6350 6150 0    50   ~ 0
+Text Label 7250 6150 0    50   ~ 0
 CTNT_03
-Text Label 6350 6250 0    50   ~ 0
+Text Label 7250 6250 0    50   ~ 0
 CTNT_02
-Text Label 6350 6350 0    50   ~ 0
+Text Label 7250 6350 0    50   ~ 0
 CTNT_01
-Text Label 6350 6450 0    50   ~ 0
+Text Label 7250 6450 0    50   ~ 0
 CTNT_00
-Text Label 6350 6050 0    50   ~ 0
+Text Label 7250 6050 0    50   ~ 0
 CTNT_04
-Text Label 6350 5950 0    50   ~ 0
+Text Label 7250 5950 0    50   ~ 0
 CTNT_05
-Text Label 6350 5850 0    50   ~ 0
+Text Label 7250 5850 0    50   ~ 0
 CTNT_06
-Text Label 6350 5750 0    50   ~ 0
+Text Label 7250 5750 0    50   ~ 0
 CTNT_07
 Wire Wire Line
-	3700 5050 2750 5050
+	4600 5050 3650 5050
 Wire Wire Line
-	4850 6800 5800 6800
+	5750 6800 6700 6800
 Wire Wire Line
-	5800 5050 4850 5050
+	6700 5050 5750 5050
 Wire Wire Line
-	3150 5600 2750 5600
-Connection ~ 2750 5600
+	4050 5600 3650 5600
+Connection ~ 3650 5600
 Wire Wire Line
-	2750 5600 2750 6800
+	3650 5600 3650 6800
 Wire Wire Line
-	5250 5600 4850 5600
-Connection ~ 4850 5600
+	6150 5600 5750 5600
+Connection ~ 5750 5600
 Wire Wire Line
-	4850 5600 4850 6800
+	5750 5600 5750 6800
 Wire Wire Line
-	2750 5350 2750 5600
+	3650 5350 3650 5600
 Wire Wire Line
-	4850 5350 4850 5600
+	5750 5350 5750 5600
 Wire Wire Line
-	5250 5450 4300 5450
+	6150 5450 5200 5450
 Wire Wire Line
-	4300 5450 4300 4950
+	5200 5450 5200 4950
 Wire Wire Line
-	4300 4950 3150 4950
+	5200 4950 4050 4950
 Wire Wire Line
-	2350 4950 2350 5450
+	4600 5050 4600 4850
 Wire Wire Line
-	3700 5050 3700 4850
+	4600 4850 6700 4850
 Wire Wire Line
-	3700 4850 5800 4850
+	6700 4850 6700 5050
+Connection ~ 4600 5050
+Connection ~ 6700 5050
 Wire Wire Line
-	5800 4850 5800 5050
-Connection ~ 3700 5050
-Connection ~ 5800 5050
+	4600 4850 3350 4850
+Connection ~ 4600 4850
 Wire Wire Line
-	3700 4850 1850 4850
-Connection ~ 3700 4850
+	3650 6800 4600 6800
+Connection ~ 5750 6800
+Connection ~ 4600 6800
 Wire Wire Line
-	2750 6800 3700 6800
-Connection ~ 4850 6800
-Connection ~ 3700 6800
-Wire Wire Line
-	3700 6800 4850 6800
-Text Label 1400 5450 2    50   ~ 0
+	4600 6800 5750 6800
+Text Label 1450 4950 2    50   ~ 0
 PC_OUT
-Text Label 2000 5450 0    50   ~ 0
+Text Label 2250 4950 0    50   ~ 0
 ~PC_OUT
 Wire Wire Line
-	2000 5450 2350 5450
-Wire Wire Line
-	1850 6800 2750 6800
-Connection ~ 2750 6800
-Text Label 1850 6800 2    50   ~ 0
+	2750 6800 3650 6800
+Connection ~ 3650 6800
+Text Label 2750 6800 2    50   ~ 0
 GND
-Text Label 1850 4850 2    50   ~ 0
+Text Label 2750 4850 2    50   ~ 0
 VCC
 $Comp
 L Device:C C9
@@ -1406,17 +1402,15 @@ Wire Wire Line
 Wire Wire Line
 	8200 8800 8850 8800
 Wire Wire Line
-	3150 5450 3150 4950
-Connection ~ 3150 4950
-Wire Wire Line
-	3150 4950 2350 4950
+	4050 5450 4050 4950
+Connection ~ 4050 4950
 Text Label 12200 8800 2    50   ~ 0
 VCC
 Text Label 12200 8900 2    50   ~ 0
 GND
-Text Label 5450 7550 2    50   ~ 0
+Text Label 14200 8450 2    50   ~ 0
 VCC
-Text Label 5450 8050 2    50   ~ 0
+Text Label 14200 8850 2    50   ~ 0
 GND
 $Comp
 L Connector:Conn_01x02_Female J6
@@ -1430,34 +1424,31 @@ F 3 "~" H 12400 8800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Connector:Conn_01x02_Male J5
+L Connector:Conn_01x03_Male J5
 U 1 1 62EB40E6
-P 5650 7850
-F 0 "J5" H 5550 7750 50  0000 L CNN
-F 1 "LED_CONTROL" H 5100 7850 50  0000 L CNN
-F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal" H 5650 7850 50  0001 C CNN
-F 3 "~" H 5650 7850 50  0001 C CNN
-	1    5650 7850
+P 14400 8650
+F 0 "J5" H 14300 8550 50  0000 L CNN
+F 1 "LED_CONTROL" H 13850 8650 50  0000 L CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Horizontal" H 14400 8650 50  0001 C CNN
+F 3 "~" H 14400 8650 50  0001 C CNN
+	1    14400 8650
 	-1   0    0    -1  
 $EndComp
 $Comp
 L Device:R_US R1
 U 1 1 62EEAC6F
-P 5450 7700
-F 0 "R1" H 5518 7746 50  0000 L CNN
-F 1 "10K" H 5518 7655 50  0000 L CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5490 7690 50  0001 C CNN
-F 3 "~" H 5450 7700 50  0001 C CNN
-	1    5450 7700
+P 13800 8800
+F 0 "R1" H 13868 8846 50  0000 L CNN
+F 1 "10K" H 13868 8755 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 13840 8790 50  0001 C CNN
+F 3 "~" H 13800 8800 50  0001 C CNN
+	1    13800 8800
 	1    0    0    -1  
 $EndComp
-Connection ~ 5450 7850
-Text Label 4900 7850 0    50   ~ 0
+Text Label 13650 8650 2    50   ~ 0
 LED_CONTROL
 Wire Wire Line
-	5450 7950 5450 8050
-Wire Wire Line
-	4900 7850 5450 7850
+	13650 8650 13800 8650
 Wire Wire Line
 	1400 8600 1400 10050
 Wire Wire Line
@@ -1470,4 +1461,36 @@ Wire Wire Line
 	800  8700 1900 8700
 Wire Wire Line
 	5300 8700 6400 8700
+Wire Wire Line
+	2050 4950 2950 4950
+$Comp
+L Device:R R2
+U 1 1 638CEE4C
+P 2950 5100
+F 0 "R2" H 3020 5146 50  0000 L CNN
+F 1 "10K" H 3020 5055 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2880 5100 50  0001 C CNN
+F 3 "~" H 2950 5100 50  0001 C CNN
+	1    2950 5100
+	1    0    0    -1  
+$EndComp
+Connection ~ 2950 4950
+Wire Wire Line
+	2950 4950 4050 4950
+Wire Wire Line
+	2950 5250 3350 5250
+Wire Wire Line
+	3350 5250 3350 4850
+Connection ~ 3350 4850
+Wire Wire Line
+	3350 4850 2750 4850
+Connection ~ 13800 8650
+Wire Wire Line
+	13800 8650 14200 8650
+Wire Wire Line
+	13800 8950 14200 8950
+Wire Wire Line
+	14200 8750 14200 8950
+Wire Wire Line
+	14200 8550 14200 8450
 $EndSCHEMATC
