@@ -2273,215 +2273,6 @@ Wire Wire Line
 Wire Wire Line
 	1700 9700 2350 9700
 $Comp
-L Device:LED D65
-U 1 1 5FE73E2F
-P 12900 5400
-F 0 "D65" H 12750 5250 50  0000 C CNN
-F 1 "LED" H 12950 5250 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm" H 12900 5400 50  0001 C CNN
-F 3 "~" H 12900 5400 50  0001 C CNN
-	1    12900 5400
-	-1   0    0    1   
-$EndComp
-Text Label 14400 5700 2    50   ~ 0
-GND
-$Comp
-L Device:R_US R1
-U 1 1 5FF478B7
-P 13300 5400
-F 0 "R1" V 13095 5400 50  0000 C CNN
-F 1 "2K" V 13186 5400 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 13340 5390 50  0001 C CNN
-F 3 "~" H 13300 5400 50  0001 C CNN
-	1    13300 5400
-	0    1    1    0   
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC126 U9
-U 1 1 6055CCE2
-P 11550 5400
-F 0 "U9" H 11550 5717 50  0000 C CNN
-F 1 "74HC126" H 11550 5626 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 11550 5400 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 11550 5400 50  0001 C CNN
-	1    11550 5400
-	1    0    0    -1  
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC126 U9
-U 2 1 6055E2CF
-P 11550 6050
-F 0 "U9" H 11550 6367 50  0000 C CNN
-F 1 "74HC126" H 11550 6276 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 11550 6050 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 11550 6050 50  0001 C CNN
-	2    11550 6050
-	1    0    0    -1  
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC126 U9
-U 3 1 6055F779
-P 11550 6750
-F 0 "U9" H 11550 7067 50  0000 C CNN
-F 1 "74HC126" H 11550 6976 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 11550 6750 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 11550 6750 50  0001 C CNN
-	3    11550 6750
-	1    0    0    -1  
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC126 U9
-U 4 1 60560B96
-P 14900 5450
-F 0 "U9" H 14900 5767 50  0000 C CNN
-F 1 "74HC126" H 14900 5676 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 14900 5450 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 14900 5450 50  0001 C CNN
-	4    14900 5450
-	1    0    0    -1  
-$EndComp
-$Comp
-L sixteen-bit-computer:74HC126 U9
-U 5 1 605621FF
-P 14900 6450
-F 0 "U9" H 15130 6496 50  0000 L CNN
-F 1 "74HC126" H 15130 6405 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 14900 6450 50  0001 C CNN
-F 3 "https://www.ti.com/lit/ds/symlink/cd74hct126.pdf" H 14900 6450 50  0001 C CNN
-	5    14900 6450
-	1    0    0    -1  
-$EndComp
-Text Label 11250 5400 2    50   ~ 0
-DATA_CLK
-Text Label 11250 6050 2    50   ~ 0
-CTL_CLK
-Text Label 11250 6750 2    50   ~ 0
-RESET
-$Comp
-L Device:C C12
-U 1 1 607801C4
-P 14300 6450
-F 0 "C12" H 14415 6496 50  0000 L CNN
-F 1 "0.1uF" H 14415 6405 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 14338 6300 50  0001 C CNN
-F 3 "~" H 14300 6450 50  0001 C CNN
-	1    14300 6450
-	1    0    0    -1  
-$EndComp
-Text Label 14750 6950 2    50   ~ 0
-GND
-Text Label 14800 5950 2    50   ~ 0
-VCC
-Wire Wire Line
-	14900 5950 14300 5950
-Wire Wire Line
-	14300 5950 14300 6300
-Wire Wire Line
-	14300 6600 14300 6950
-Wire Wire Line
-	14300 6950 14900 6950
-$Comp
-L Device:LED D66
-U 1 1 608D7345
-P 12900 6050
-F 0 "D66" H 12750 5900 50  0000 C CNN
-F 1 "LED" H 12950 5900 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm" H 12900 6050 50  0001 C CNN
-F 3 "~" H 12900 6050 50  0001 C CNN
-	1    12900 6050
-	-1   0    0    1   
-$EndComp
-$Comp
-L Device:LED D67
-U 1 1 608D7A80
-P 12900 6750
-F 0 "D67" H 12750 6600 50  0000 C CNN
-F 1 "LED" H 12950 6600 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm" H 12900 6750 50  0001 C CNN
-F 3 "~" H 12900 6750 50  0001 C CNN
-	1    12900 6750
-	-1   0    0    1   
-$EndComp
-$Comp
-L Device:R_US R2
-U 1 1 608D9870
-P 13300 6050
-F 0 "R2" V 13095 6050 50  0000 C CNN
-F 1 "2K" V 13186 6050 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 13340 6040 50  0001 C CNN
-F 3 "~" H 13300 6050 50  0001 C CNN
-	1    13300 6050
-	0    1    1    0   
-$EndComp
-$Comp
-L Device:R_US R3
-U 1 1 608D9DAE
-P 13300 6750
-F 0 "R3" V 13095 6750 50  0000 C CNN
-F 1 "1.3K" V 13186 6750 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 13340 6740 50  0001 C CNN
-F 3 "~" H 13300 6750 50  0001 C CNN
-	1    13300 6750
-	0    1    1    0   
-$EndComp
-NoConn ~ 15200 5450
-Wire Wire Line
-	14600 5450 14400 5450
-Wire Wire Line
-	14400 5450 14400 5700
-Wire Wire Line
-	14900 5700 14400 5700
-Text Label 13700 6750 0    50   ~ 0
-GND
-Wire Wire Line
-	10850 5650 11550 5650
-Wire Wire Line
-	10850 5650 10850 6300
-Wire Wire Line
-	10850 6300 11550 6300
-Connection ~ 10850 5650
-Wire Wire Line
-	10850 6300 10850 7000
-Wire Wire Line
-	10850 7000 11550 7000
-Connection ~ 10850 6300
-Wire Wire Line
-	13700 6750 13450 6750
-Wire Wire Line
-	13450 6750 13450 6050
-Connection ~ 13450 6750
-Connection ~ 13450 6050
-Wire Wire Line
-	13450 6050 13450 5400
-Wire Wire Line
-	13050 5400 13150 5400
-Wire Wire Line
-	13050 6050 13150 6050
-Wire Wire Line
-	13050 6750 13150 6750
-Text Label 12500 5400 2    50   ~ 0
-DATA_CLK_BUF
-Text Label 12500 6050 2    50   ~ 0
-CTL_CLK_BUF
-Text Label 12350 6750 2    50   ~ 0
-RESET_BUF
-Wire Wire Line
-	11850 5400 12750 5400
-Wire Wire Line
-	12750 6050 11850 6050
-Wire Wire Line
-	11850 6750 12750 6750
-Wire Notes Line
-	10000 4900 15650 4900
-Wire Notes Line
-	15650 4900 15650 7250
-Wire Notes Line
-	15650 7250 10000 7250
-Wire Notes Line
-	10000 7250 10000 4900
-Text Notes 14700 5000 0    50   ~ 0
-Clock and reset display
-$Comp
 L Connector:Conn_01x02_Female J6
 U 1 1 63B97B5B
 P 14700 2150
@@ -2512,128 +2303,6 @@ GND
 Text Label 14500 2150 2    50   ~ 0
 VCC
 Text Label 14500 2250 2    50   ~ 0
-GND
-$Comp
-L 74xx:74HC04 U10
-U 1 1 63BE26BD
-P 10550 5650
-F 0 "U10" H 10400 5850 50  0000 C CNN
-F 1 "74HC04" H 10650 5850 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 5650 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 5650 50  0001 C CNN
-	1    10550 5650
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 2 1 63BE45A0
-P 10550 7850
-F 0 "U10" H 10550 8167 50  0000 C CNN
-F 1 "74HC04" H 10550 8076 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 7850 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 7850 50  0001 C CNN
-	2    10550 7850
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 3 1 63BE63FC
-P 10550 8350
-F 0 "U10" H 10550 8667 50  0000 C CNN
-F 1 "74HC04" H 10550 8576 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 8350 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 8350 50  0001 C CNN
-	3    10550 8350
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 4 1 63BE8569
-P 10550 8850
-F 0 "U10" H 10550 9167 50  0000 C CNN
-F 1 "74HC04" H 10550 9076 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 8850 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 8850 50  0001 C CNN
-	4    10550 8850
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 5 1 63BE9611
-P 10550 9350
-F 0 "U10" H 10550 9667 50  0000 C CNN
-F 1 "74HC04" H 10550 9576 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 9350 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 9350 50  0001 C CNN
-	5    10550 9350
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 6 1 63BEC45B
-P 10550 9850
-F 0 "U10" H 10550 10167 50  0000 C CNN
-F 1 "74HC04" H 10550 10076 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 10550 9850 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 10550 9850 50  0001 C CNN
-	6    10550 9850
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74HC04 U10
-U 7 1 63BEF1BC
-P 12100 8450
-F 0 "U10" H 12330 8496 50  0000 L CNN
-F 1 "74HC04" H 12330 8405 50  0000 L CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 12100 8450 50  0001 C CNN
-F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 12100 8450 50  0001 C CNN
-	7    12100 8450
-	1    0    0    -1  
-$EndComp
-Text Label 10250 5250 0    50   ~ 0
-LED_CONTROL
-Wire Wire Line
-	10250 5650 10250 5250
-$Comp
-L Device:C C13
-U 1 1 63DC8749
-P 11500 8450
-F 0 "C13" H 11615 8496 50  0000 L CNN
-F 1 "0.1uF" H 11615 8405 50  0000 L CNN
-F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 11538 8300 50  0001 C CNN
-F 3 "~" H 11500 8450 50  0001 C CNN
-	1    11500 8450
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	12100 7950 11500 7950
-Wire Wire Line
-	11500 7950 11500 8300
-Wire Wire Line
-	11500 8600 11500 8950
-Wire Wire Line
-	11500 8950 12100 8950
-Text Label 12100 7950 2    50   ~ 0
-VCC
-Text Label 11900 8950 2    50   ~ 0
-GND
-NoConn ~ 10850 7850
-NoConn ~ 10850 8350
-NoConn ~ 10850 8850
-NoConn ~ 10850 9350
-NoConn ~ 10850 9850
-Wire Wire Line
-	10250 7850 10250 8350
-Connection ~ 10250 8350
-Wire Wire Line
-	10250 8350 10250 8850
-Connection ~ 10250 8850
-Wire Wire Line
-	10250 8850 10250 9350
-Connection ~ 10250 9350
-Wire Wire Line
-	10250 9350 10250 9850
-Text Label 10250 9850 2    50   ~ 0
 GND
 Text Label 6050 7450 2    50   ~ 0
 LED_CONTROL
@@ -2686,16 +2355,264 @@ Wire Wire Line
 $Comp
 L Device:R_US R4
 U 1 1 644C3818
-P 15400 4300
-F 0 "R4" V 15195 4300 50  0000 C CNN
-F 1 "10K" V 15286 4300 50  0000 C CNN
-F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 15440 4290 50  0001 C CNN
-F 3 "~" H 15400 4300 50  0001 C CNN
-	1    15400 4300
-	0    1    1    0   
+P 14700 7000
+F 0 "R4" V 14650 6850 50  0000 C CNN
+F 1 "10K" V 14650 7150 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 6990 50  0001 C CNN
+F 3 "~" H 14700 7000 50  0001 C CNN
+	1    14700 7000
+	0    1    -1   0   
 $EndComp
 Wire Wire Line
 	14650 4300 15250 4300
 Text Label 15550 4300 0    50   ~ 0
 GND
+$Comp
+L sixteen-bit-computer:74HC245 U11
+U 1 1 64834E19
+P 12600 7100
+F 0 "U11" H 12400 7800 50  0000 C CNN
+F 1 "74HC245" H 12850 7800 50  0000 C CNN
+F 2 "Package_DIP:DIP-20_W7.62mm" H 12250 7100 50  0001 C CNN
+F 3 "" H 12250 7100 50  0001 C CNN
+	1    12600 7100
+	1    0    0    -1  
+$EndComp
+Text Label 11400 6600 2    50   ~ 0
+DATA_CLK
+Text Label 11350 6800 2    50   ~ 0
+CTL_CLK
+Text Label 11300 7000 2    50   ~ 0
+RESET
+$Comp
+L Device:LED D65
+U 1 1 64A71F23
+P 13800 7450
+F 0 "D65" H 13400 7400 50  0000 C CNN
+F 1 "LED" H 13550 7400 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 7450 50  0001 C CNN
+F 3 "~" H 13800 7450 50  0001 C CNN
+	1    13800 7450
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D66
+U 1 1 64A71F2D
+P 13800 7300
+F 0 "D66" H 13400 7250 50  0000 C CNN
+F 1 "LED" H 13550 7250 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 7300 50  0001 C CNN
+F 3 "~" H 13800 7300 50  0001 C CNN
+	1    13800 7300
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D67
+U 1 1 64A71F37
+P 13800 7150
+F 0 "D67" H 13400 7100 50  0000 C CNN
+F 1 "LED" H 13550 7100 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 7150 50  0001 C CNN
+F 3 "~" H 13800 7150 50  0001 C CNN
+	1    13800 7150
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D68
+U 1 1 64A71F41
+P 13800 7000
+F 0 "D68" H 13400 6950 50  0000 C CNN
+F 1 "LED" H 13550 6950 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 7000 50  0001 C CNN
+F 3 "~" H 13800 7000 50  0001 C CNN
+	1    13800 7000
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D69
+U 1 1 64A71F4B
+P 13800 6850
+F 0 "D69" H 13400 6800 50  0000 C CNN
+F 1 "LED" H 13550 6800 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 6850 50  0001 C CNN
+F 3 "~" H 13800 6850 50  0001 C CNN
+	1    13800 6850
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D70
+U 1 1 64A71F55
+P 13800 6700
+F 0 "D70" H 13400 6650 50  0000 C CNN
+F 1 "LED" H 13550 6650 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 6700 50  0001 C CNN
+F 3 "~" H 13800 6700 50  0001 C CNN
+	1    13800 6700
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:LED D71
+U 1 1 64A71F5F
+P 13800 6550
+F 0 "D71" H 13400 6500 50  0000 C CNN
+F 1 "LED" H 13550 6500 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm" H 13800 6550 50  0001 C CNN
+F 3 "~" H 13800 6550 50  0001 C CNN
+	1    13800 6550
+	-1   0    0    1   
+$EndComp
+$Comp
+L Connector:Conn_01x04_Female J7
+U 1 1 64AB9514
+P 11100 7550
+F 0 "J7" H 10992 7125 50  0000 C CNN
+F 1 "Conn_01x04_Female" H 10992 7216 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal" H 11100 7550 50  0001 C CNN
+F 3 "~" H 11100 7550 50  0001 C CNN
+	1    11100 7550
+	-1   0    0    1   
+$EndComp
+$Comp
+L Device:R_US R1
+U 1 1 64B367EB
+P 14700 7450
+F 0 "R1" V 14650 7300 50  0000 C CNN
+F 1 "10K" V 14650 7600 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 7440 50  0001 C CNN
+F 3 "~" H 14700 7450 50  0001 C CNN
+	1    14700 7450
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R2
+U 1 1 64B37332
+P 14700 7300
+F 0 "R2" V 14650 7150 50  0000 C CNN
+F 1 "10K" V 14650 7450 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 7290 50  0001 C CNN
+F 3 "~" H 14700 7300 50  0001 C CNN
+	1    14700 7300
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R3
+U 1 1 64B37771
+P 14700 7150
+F 0 "R3" V 14650 7000 50  0000 C CNN
+F 1 "10K" V 14650 7300 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 7140 50  0001 C CNN
+F 3 "~" H 14700 7150 50  0001 C CNN
+	1    14700 7150
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R5
+U 1 1 64B37E0B
+P 14700 6850
+F 0 "R5" V 14650 6700 50  0000 C CNN
+F 1 "10K" V 14650 7000 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 6840 50  0001 C CNN
+F 3 "~" H 14700 6850 50  0001 C CNN
+	1    14700 6850
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R6
+U 1 1 64B380B9
+P 14700 6700
+F 0 "R6" V 14650 6550 50  0000 C CNN
+F 1 "10K" V 14650 6850 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 6690 50  0001 C CNN
+F 3 "~" H 14700 6700 50  0001 C CNN
+	1    14700 6700
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R7
+U 1 1 64B38370
+P 14700 6550
+F 0 "R7" V 14650 6400 50  0000 C CNN
+F 1 "10K" V 14650 6700 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P2.54mm_Vertical" V 14740 6540 50  0001 C CNN
+F 3 "~" H 14700 6550 50  0001 C CNN
+	1    14700 6550
+	0    1    -1   0   
+$EndComp
+$Comp
+L Device:R_US R8
+U 1 1 64B3857E
+P 15400 4300
+F 0 "R8" V 15350 4150 50  0000 C CNN
+F 1 "10K" V 15350 4450 50  0000 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 15440 4290 50  0001 C CNN
+F 3 "~" H 15400 4300 50  0001 C CNN
+	1    15400 4300
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C12
+U 1 1 64B3B081
+P 11850 6150
+F 0 "C12" H 11965 6196 50  0000 L CNN
+F 1 "0.1uF" H 11965 6105 50  0000 L CNN
+F 2 "Capacitor_THT:C_Disc_D4.7mm_W2.5mm_P5.00mm" H 11888 6000 50  0001 C CNN
+F 3 "~" H 11850 6150 50  0001 C CNN
+	1    11850 6150
+	1    0    0    -1  
+$EndComp
+Text Label 11450 6400 2    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	13950 7450 14550 7450
+Wire Wire Line
+	14550 7300 13950 7300
+Wire Wire Line
+	13950 7150 14550 7150
+Wire Wire Line
+	14550 7000 13950 7000
+Wire Wire Line
+	13950 6850 14550 6850
+Wire Wire Line
+	14550 6700 13950 6700
+Wire Wire Line
+	13950 6550 14550 6550
+Wire Wire Line
+	13150 7450 13650 7450
+Wire Wire Line
+	13150 7350 13600 7350
+Wire Wire Line
+	13600 7350 13600 7300
+Wire Wire Line
+	13600 7300 13650 7300
+Wire Wire Line
+	13150 7250 13550 7250
+Wire Wire Line
+	13550 7250 13550 7150
+Wire Wire Line
+	13550 7150 13650 7150
+Wire Wire Line
+	13150 7150 13500 7150
+Wire Wire Line
+	13500 7150 13500 7000
+Wire Wire Line
+	13500 7000 13650 7000
+Wire Wire Line
+	13150 7050 13450 7050
+Wire Wire Line
+	13450 7050 13450 6850
+Wire Wire Line
+	13450 6850 13650 6850
+Wire Wire Line
+	13150 6950 13400 6950
+Wire Wire Line
+	13400 6950 13400 6700
+Wire Wire Line
+	13400 6700 13650 6700
+Wire Wire Line
+	13150 6850 13350 6850
+Wire Wire Line
+	13350 6850 13350 6550
+Wire Wire Line
+	13350 6550 13650 6550
+NoConn ~ 13150 7550
 $EndSCHEMATC
