@@ -304,7 +304,7 @@ L Device:R_Network08_US RN3
 U 1 1 5FDA3B23
 P 7800 1500
 F 0 "RN3" V 7183 1500 50  0000 C CNN
-F 1 "R_Network08_US" V 7274 1500 50  0000 C CNN
+F 1 "2K" V 7274 1500 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 8275 1500 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 7800 1500 50  0001 C CNN
 	1    7800 1500
@@ -315,7 +315,7 @@ L Device:R_Network08_US RN2
 U 1 1 5FDA7806
 P 6700 3900
 F 0 "RN2" V 6083 3900 50  0000 C CNN
-F 1 "R_Network08_US" V 6174 3900 50  0000 C CNN
+F 1 "10K" V 6174 3900 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP9" V 7175 3900 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6700 3900 50  0001 C CNN
 	1    6700 3900
@@ -326,7 +326,7 @@ L Device:R_Network04_US RN1
 U 1 1 5FDA87EA
 P 6950 6050
 F 0 "RN1" V 6533 6050 50  0000 C CNN
-F 1 "R_Network04_US" V 6624 6050 50  0000 C CNN
+F 1 "10K" V 6624 6050 50  0000 C CNN
 F 2 "Resistor_THT:R_Array_SIP5" V 7225 6050 50  0001 C CNN
 F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6950 6050 50  0001 C CNN
 	1    6950 6050
@@ -421,14 +421,14 @@ F 3 "~" H 12050 2850 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L Connector:Conn_01x04_Female J1
+L Connector:Conn_01x07_Female J1
 U 1 1 5FDB6ECF
-P 1050 5950
-F 0 "J1" H 942 5525 50  0000 C CNN
-F 1 "Conn_01x04_Female" H 942 5616 50  0000 C CNN
-F 2 "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal" H 1050 5950 50  0001 C CNN
-F 3 "~" H 1050 5950 50  0001 C CNN
-	1    1050 5950
+P 800 5850
+F 0 "J1" H 800 5350 50  0000 C CNN
+F 1 "Conn_01x04_Female" H 750 5450 50  0000 C CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x07_P2.54mm_Horizontal" H 800 5850 50  0001 C CNN
+F 3 "~" H 800 5850 50  0001 C CNN
+	1    800  5850
 	-1   0    0    -1  
 $EndComp
 Text Label 1850 8050 2    50   ~ 0
@@ -563,13 +563,13 @@ Text Label 8900 9350 2    50   ~ 0
 MIR_INST_6
 Text Label 8900 9450 2    50   ~ 0
 MIR_INST_7
-Text Label 1250 5850 0    50   ~ 0
+Text Label 1000 5850 0    50   ~ 0
 EQUAL
-Text Label 1250 5950 0    50   ~ 0
+Text Label 1000 5950 0    50   ~ 0
 CARRY
-Text Label 1250 6050 0    50   ~ 0
+Text Label 1000 6050 0    50   ~ 0
 NEGATIVE
-Text Label 1250 6150 0    50   ~ 0
+Text Label 1000 6150 0    50   ~ 0
 ZERO
 Text Label 2900 5850 0    50   ~ 0
 MIR_EQUAL
@@ -612,13 +612,13 @@ MIR_NEGATIVE
 Text Label 8900 8650 2    50   ~ 0
 MIR_ZERO
 Wire Wire Line
-	1250 5850 1900 5850
+	1000 5850 1900 5850
 Wire Wire Line
-	1250 5950 1900 5950
+	1000 5950 1900 5950
 Wire Wire Line
-	1250 6050 1900 6050
+	1000 6050 1900 6050
 Wire Wire Line
-	1250 6150 1900 6150
+	1000 6150 1900 6150
 Text Label 9600 6650 0    50   ~ 0
 STEP_RESET
 Text Label 1050 1600 2    50   ~ 0
@@ -1604,13 +1604,13 @@ Wire Wire Line
 $Comp
 L Device:R_Network08_US RN4
 U 1 1 60897A38
-P 6250 7100
-F 0 "RN4" V 5633 7100 50  0000 C CNN
-F 1 "R_Network08_US" V 5724 7100 50  0000 C CNN
-F 2 "Resistor_THT:R_Array_SIP9" V 6725 7100 50  0001 C CNN
-F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6250 7100 50  0001 C CNN
-	1    6250 7100
-	0    1    1    0   
+P 6250 7000
+F 0 "RN4" V 5633 7000 50  0000 C CNN
+F 1 "10K" V 5724 7000 50  0000 C CNN
+F 2 "Resistor_THT:R_Array_SIP9" V 6725 7000 50  0001 C CNN
+F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 6250 7000 50  0001 C CNN
+	1    6250 7000
+	0    1    -1   0   
 $EndComp
 $Comp
 L sixteen-bit-computer:74HC245 U7
@@ -1650,26 +1650,18 @@ Wire Wire Line
 Wire Wire Line
 	3750 6550 3750 7100
 Wire Wire Line
-	3750 7100 6050 7100
-Wire Wire Line
-	6050 7200 3700 7200
-Wire Wire Line
 	3700 7200 3700 6450
 Wire Wire Line
 	3700 6450 4200 6450
 Wire Wire Line
 	3650 6350 3650 7300
 Wire Wire Line
-	3650 7300 6050 7300
-Wire Wire Line
 	3650 6350 4200 6350
-Wire Wire Line
-	6050 7400 3600 7400
 Wire Wire Line
 	3600 7400 3600 6250
 Wire Wire Line
 	3600 6250 4200 6250
-Text Label 6450 6700 0    50   ~ 0
+Text Label 6450 7400 0    50   ~ 0
 GND
 Text Label 2350 4800 0    50   ~ 0
 GND
@@ -1799,9 +1791,9 @@ L Device:R_US R1
 U 1 1 633FD3D9
 P 5600 3000
 F 0 "R1" H 5668 3046 50  0000 L CNN
-F 1 "R_US" H 5668 2955 50  0000 L CNN
+F 1 "10K" H 5668 2955 50  0000 L CNN
 F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 5640 2990 50  0001 C CNN
-F 3 "~" H 5600 3000 50  0001 C CNN
+F 3 "" H 5600 3000 50  0001 C CNN
 	1    5600 3000
 	1    0    0    -1  
 $EndComp
@@ -1835,4 +1827,42 @@ Wire Wire Line
 	5450 3150 5450 2750
 Wire Wire Line
 	5850 2650 5850 2450
+Text Label 1000 5550 0    50   ~ 0
+BIN_STEP_0
+Text Label 1000 5650 0    50   ~ 0
+BIN_STEP_1
+Text Label 1000 5750 0    50   ~ 0
+BIN_STEP_2
+Wire Wire Line
+	3750 7100 5350 7100
+Wire Wire Line
+	5350 7100 5350 7400
+Wire Wire Line
+	5350 7400 6050 7400
+Wire Wire Line
+	3700 7200 5300 7200
+Wire Wire Line
+	5300 7200 5300 7300
+Wire Wire Line
+	5300 7300 6050 7300
+Wire Wire Line
+	3650 7300 5250 7300
+Wire Wire Line
+	5250 7300 5250 7250
+Wire Wire Line
+	5250 7250 5400 7250
+Wire Wire Line
+	5400 7250 5400 7200
+Wire Wire Line
+	5400 7200 6050 7200
+Wire Wire Line
+	3600 7400 5200 7400
+Wire Wire Line
+	5200 7400 5200 7150
+Wire Wire Line
+	5200 7150 5400 7150
+Wire Wire Line
+	5400 7150 5400 7100
+Wire Wire Line
+	5400 7100 6050 7100
 $EndSCHEMATC
