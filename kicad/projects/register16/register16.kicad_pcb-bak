@@ -4653,7 +4653,7 @@
   (gr_text REGISTER (at 137.16 51.054) (layer F.SilkS)
     (effects (font (size 3.81 3.81) (thickness 0.381)))
   )
-  (gr_text CONTENT (at 71.882 59.944) (layer F.SilkS)
+  (gr_text CONTENTS (at 71.882 59.944) (layer F.SilkS)
     (effects (font (size 2.286 2.286) (thickness 0.254)))
   )
   (gr_line (start 52.705 143.51) (end 252.095 143.51) (layer Edge.Cuts) (width 0.05) (tstamp 5FBAFA55))
