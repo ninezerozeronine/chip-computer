@@ -34,7 +34,7 @@
   )
 
   (setup
-    (last_trace_width 0.762)
+    (last_trace_width 0.254)
     (user_trace_width 0.762)
     (trace_clearance 0.2)
     (zone_clearance 0.508)
@@ -5599,7 +5599,7 @@
   (gr_text "A EQ B" (at 115.57 66.802) (layer F.SilkS) (tstamp 62E00D7D)
     (effects (font (size 1.27 1.27) (thickness 0.2032)))
   )
-  (gr_text "RES OUT" (at 132.588 61.722) (layer F.SilkS) (tstamp 62E00D86)
+  (gr_text "RESULT OUT" (at 131.826 61.722) (layer F.SilkS) (tstamp 62E00D86)
     (effects (font (size 2.54 2.54) (thickness 0.254)))
   )
   (gr_text "ACC IN" (at 84.074 61.976) (layer F.SilkS) (tstamp 62E00D89)
