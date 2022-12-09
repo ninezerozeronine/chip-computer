@@ -5549,7 +5549,7 @@
   (gr_text "A EQ B" (at 112.014 75.438) (layer F.SilkS)
     (effects (font (size 1.27 1.27) (thickness 0.2032)))
   )
-  (gr_text "RES IN" (at 130.048 69.342) (layer F.SilkS)
+  (gr_text "RESULT IN" (at 130.048 69.342) (layer F.SilkS)
     (effects (font (size 2.286 2.286) (thickness 0.254)))
   )
   (gr_text "ALU RES AND FLAGS" (at 210.566 110.236) (layer F.SilkS)
