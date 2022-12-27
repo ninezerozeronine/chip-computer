@@ -124,94 +124,6 @@ F 3 "~" H 9400 5450 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:LED D20
-U 1 1 5FD956D3
-P 6700 2150
-F 0 "D20" H 6450 2100 50  0000 C CNN
-F 1 "LED" H 6300 2100 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2150 50  0001 C CNN
-F 3 "~" H 6700 2150 50  0001 C CNN
-	1    6700 2150
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D19
-U 1 1 5FD96F8F
-P 6700 2000
-F 0 "D19" H 6450 1950 50  0000 C CNN
-F 1 "LED" H 6300 1950 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2000 50  0001 C CNN
-F 3 "~" H 6700 2000 50  0001 C CNN
-	1    6700 2000
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D18
-U 1 1 5FD994D8
-P 6700 1850
-F 0 "D18" H 6450 1800 50  0000 C CNN
-F 1 "LED" H 6300 1800 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1850 50  0001 C CNN
-F 3 "~" H 6700 1850 50  0001 C CNN
-	1    6700 1850
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D17
-U 1 1 5FD994E2
-P 6700 1700
-F 0 "D17" H 6450 1650 50  0000 C CNN
-F 1 "LED" H 6300 1650 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1700 50  0001 C CNN
-F 3 "~" H 6700 1700 50  0001 C CNN
-	1    6700 1700
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D16
-U 1 1 5FD9D16A
-P 6700 1550
-F 0 "D16" H 6450 1500 50  0000 C CNN
-F 1 "LED" H 6300 1500 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1550 50  0001 C CNN
-F 3 "~" H 6700 1550 50  0001 C CNN
-	1    6700 1550
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D15
-U 1 1 5FD9D170
-P 6700 1400
-F 0 "D15" H 6450 1350 50  0000 C CNN
-F 1 "LED" H 6300 1350 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1400 50  0001 C CNN
-F 3 "~" H 6700 1400 50  0001 C CNN
-	1    6700 1400
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D14
-U 1 1 5FD9D176
-P 6700 1250
-F 0 "D14" H 6450 1200 50  0000 C CNN
-F 1 "LED" H 6300 1200 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1250 50  0001 C CNN
-F 3 "~" H 6700 1250 50  0001 C CNN
-	1    6700 1250
-	-1   0    0    -1  
-$EndComp
-$Comp
-L Device:LED D13
-U 1 1 5FD9D17C
-P 6700 1100
-F 0 "D13" H 6450 1050 50  0000 C CNN
-F 1 "LED" H 6300 1050 50  0000 C CNN
-F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1100 50  0001 C CNN
-F 3 "~" H 6700 1100 50  0001 C CNN
-	1    6700 1100
-	-1   0    0    -1  
-$EndComp
-$Comp
 L Device:LED D5
 U 1 1 5FDA12E0
 P 5650 3500
@@ -1865,4 +1777,92 @@ Wire Wire Line
 	5400 7150 5400 7100
 Wire Wire Line
 	5400 7100 6050 7100
+$Comp
+L Device:LED D20
+U 1 1 5FD956D3
+P 6700 2150
+F 0 "D20" H 7000 2100 50  0000 C CNN
+F 1 "LED" H 6850 2100 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2150 50  0001 C CNN
+F 3 "~" H 6700 2150 50  0001 C CNN
+	1    6700 2150
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D19
+U 1 1 5FD96F8F
+P 6700 2000
+F 0 "D19" H 7000 1950 50  0000 C CNN
+F 1 "LED" H 6850 1950 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 2000 50  0001 C CNN
+F 3 "~" H 6700 2000 50  0001 C CNN
+	1    6700 2000
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D18
+U 1 1 5FD994D8
+P 6700 1850
+F 0 "D18" H 7000 1800 50  0000 C CNN
+F 1 "LED" H 6850 1800 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1850 50  0001 C CNN
+F 3 "~" H 6700 1850 50  0001 C CNN
+	1    6700 1850
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D17
+U 1 1 5FD994E2
+P 6700 1700
+F 0 "D17" H 7000 1650 50  0000 C CNN
+F 1 "LED" H 6850 1650 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1700 50  0001 C CNN
+F 3 "~" H 6700 1700 50  0001 C CNN
+	1    6700 1700
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D16
+U 1 1 5FD9D16A
+P 6700 1550
+F 0 "D16" H 7000 1500 50  0000 C CNN
+F 1 "LED" H 6850 1500 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1550 50  0001 C CNN
+F 3 "~" H 6700 1550 50  0001 C CNN
+	1    6700 1550
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D15
+U 1 1 5FD9D170
+P 6700 1400
+F 0 "D15" H 7000 1350 50  0000 C CNN
+F 1 "LED" H 6850 1350 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1400 50  0001 C CNN
+F 3 "~" H 6700 1400 50  0001 C CNN
+	1    6700 1400
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D14
+U 1 1 5FD9D176
+P 6700 1250
+F 0 "D14" H 7000 1200 50  0000 C CNN
+F 1 "LED" H 6850 1200 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1250 50  0001 C CNN
+F 3 "~" H 6700 1250 50  0001 C CNN
+	1    6700 1250
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:LED D13
+U 1 1 5FD9D17C
+P 6700 1100
+F 0 "D13" H 7000 1050 50  0000 C CNN
+F 1 "LED" H 6850 1050 50  0000 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 6700 1100 50  0001 C CNN
+F 3 "~" H 6700 1100 50  0001 C CNN
+	1    6700 1100
+	1    0    0    1   
+$EndComp
 $EndSCHEMATC
