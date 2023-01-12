@@ -61,7 +61,7 @@ def main():
     keypad.set_pressed_callback(3, 3, panel.clear_user_input)
     
     # Control keypad
-    keypad.set_pressed_callback(0, 4, panel.quarter_step)
+    # keypad.set_pressed_callback(0, 4, panel.quarter_step)
     keypad.set_pressed_callback(0, 5, panel.half_step)
     keypad.set_pressed_callback(0, 6, panel.full_step)
     keypad.set_pressed_callback(0, 7, panel.step)
@@ -79,12 +79,8 @@ def main():
     keypad.set_pressed_callback(3, 4, panel.next_program)
     keypad.set_pressed_callback(3, 5, panel.set_current_program)
     keypad.set_pressed_callback(3, 6, panel.set_frequency_from_user_input)
-    keypad.set_pressed_callback(
-        3, 7, partial(panel.set_reset, True)
-    )
-    keypad.set_released_callback(
-        3, 7, partial(panel.set_reset, False)
-    )
+    keypad.set_pressed_callback(3, 7, partial(panel.set_reset, True))
+    keypad.set_released_callback(3, 7, partial(panel.set_reset, False))
 
     while True:
         keypad.update()

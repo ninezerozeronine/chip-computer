@@ -53,17 +53,6 @@ class FrontPanel():
         self._panel_mode = RUN
         self.stop()
 
-    def quarter_step(self):
-        """
-        Advance the CPU by a quarter step.
-        """
-        if self._panel_mode == STEP:
-            self._send_clock_pulses(1)
-
-            # Read and display the address and data
-            self._display.set_address(self._interface.get_address())
-            self._display.set_data(self._interface.get_data())
-
     def half_step(self):
         """
         Advance the CPU by a half step.
@@ -462,12 +451,11 @@ class FrontPanel():
         """
         Test whether the CPU is at the beginning of a clock cycle.
 
-        This happens when both the data and control clocks are low.
+        This happens when the control clock is high (and so the data
+        clock is low).
         """
 
-        data_clock = self._interface.get_data_clock()
-        control_clock = self._interface.get_control_clock()
-        return not (data_clock or control_clock)
+        return self._interface.get_control_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """
@@ -491,12 +479,10 @@ class FrontPanel():
         """
         Create a clock cycle comparable to that genertaed by the CPU.
         """
-        self._interface.set_control_clock(True)
-        time.sleep_us(1)
+        self._interface.set_control_clock(False)
         self._interface.set_data_clock(True)
         time.sleep_us(1)
-        self._interface.set_control_clock(False)
-        time.sleep_us(1)
+        self._interface.set_control_clock(True)
         self._interface.set_data_clock(False)
         time.sleep_us(1)
 
@@ -513,9 +499,9 @@ class FrontPanel():
             self._interface.set_interface_data_assert(True)
 
 
-            time.sleep_us(10)
+            time.sleep_us(5)
             self._send_cpu_like_clock_cycle()
-            time.sleep_us(10)
+            time.sleep_us(5)
 
             self._interface.set_read_from_mem(False)
             self._interface.set_write_to_mem(False)

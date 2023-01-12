@@ -2,8 +2,6 @@
 Programs that can be loaded into the computer
 """
 
-from micropython import const
-
 PROGRAMS = (
     {
         "name":"Dum1",
