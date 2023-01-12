@@ -462,20 +462,18 @@ class Interface():
          - SR5-1: Interface data bus assert
          - SR5-2: CPU address bus assert
          - SR5-3: CPU data bus assert
-         - SR5-4: <blank>
+         - SR5-4: CPU clock input enable
          - SR5-5: <blank>
          - SR5-6: <blank>
          - SR5-7: <blank>
         """
 
-        # Convert the logical values here to the hardware values i.e.,
-        # account for active low inputs on some of the chips.
-
         # Shift Register 5
+        self._shift_bit_out(self._cpu_clock_input_enabled)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
-        self._shift_bit_out(not self._interface_data_assert)
-        self._shift_bit_out(not self._interface_address_assert)
+        self._shift_bit_out(self._interface_data_assert)
+        self._shift_bit_out(self._interface_address_assert)
 
         # Shift Register 4
         if self._read_write_mem_source == FRONT_PANEL:

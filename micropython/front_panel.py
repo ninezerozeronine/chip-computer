@@ -473,7 +473,7 @@ class FrontPanel():
         in the CPU.
         """
 
-        return frequency * 4
+        return frequency * 2
 
     def _send_cpu_like_clock_cycle(self):
         """

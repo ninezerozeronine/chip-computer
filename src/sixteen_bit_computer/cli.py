@@ -54,7 +54,7 @@ def get_assemble_parser():
     parser.add_argument(
         "-f",
         "--output_format",
-        choices=["logisim", "arduino"],
+        choices=["logisim", "arduino", "python"],
         help="Format to write the assembled code in.",
         default="logisim",
     )

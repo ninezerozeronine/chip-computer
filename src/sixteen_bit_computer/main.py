@@ -32,7 +32,7 @@ def assemble(
         output_dir (str) (optional): The directory to write the
             assembled code into.
         output_format (str) (optional): How to format the output.
-            ``logisim`` or ``arduino``.
+            ``logisim`` or ``arduino`` or ``python``.
     """
 
     # Does input file exist
@@ -48,7 +48,7 @@ def assemble(
         return
 
     # Is output format correct
-    output_formats = ["logisim", "arduino"]
+    output_formats = ["logisim", "arduino", "python"]
     if output_format not in output_formats:
         formats_str = " ".join(
             [
@@ -93,9 +93,43 @@ def assemble(
         write_assembly_to_arduino(
             processed_assembly, output_dir, output_filename_base
         )
+    if output_format == "python":
+        write_assembly_to_python(
+            processed_assembly, output_dir, output_filename_base
+        )
 
     print("\n\nAssembly summary:\n")
     print(generate_assembly_summary(processed_assembly))
+
+
+def write_assembly_to_python(
+        processed_assembly, output_dir, output_filename_base):
+    """
+    Write machine code from processed assembly to Python format.
+
+    Args:
+        processed_assembly (list(AssemblyLine)): Processed
+            assembly to generate the Python file from.
+        output_dir (str): The directory to write the assembled code
+            into. E.g. "/path/to/directory"
+        output_filename_base (str): the basename (no extension) for the
+            Python file. E.g. "fibbonaci" or "pong"
+    """
+
+    file_contents = assembly_export.assembly_to_python(processed_assembly)
+    file_name = output_filename_base + ".py"
+    file_path = os.path.join(output_dir, file_name)
+
+    with open(file_path, "w") as file:
+        file.write(file_contents)
+
+    completion_msg = (
+        "Assembly complete. Assembly file written "
+        "to: {output_filepath}."
+    ).format(
+        output_filepath=file_path
+    )
+    print(completion_msg)
 
 
 def write_assembly_to_logisim(
