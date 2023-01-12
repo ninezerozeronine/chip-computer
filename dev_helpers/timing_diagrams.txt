@@ -105,3 +105,85 @@ Step reset
         "every": 0
     }
 }
+
+
+RAM
+
+{
+    "signal" :
+    [
+        {
+            "name": "Data Clock",
+            "wave": "hl...h...l...h...l...h...l...h"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "lh...l...h...l...h...l...h...l"
+        },
+        {
+            "name": "WTM",
+            "wave": "lh.......l....................",
+        },
+        {
+            "name": "RFM",
+            "wave": "l................h.......l....",
+        },
+        {
+            "name": "RAM ~WE",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "RAM ~CE",
+            "wave": "h....l.h.........l.......h....",
+        },
+        {
+            "name": "Buf ~OE",
+            "wave": "h.....lh.........l.......h....",
+        },
+        {
+            "name": "Buf dir",
+            "wave": "h.....lh......................",
+        },
+      {},
+        {
+            "name": "Long Pulse",
+            "wave": "l....h.l......................",
+        },
+        {
+            "name": "~Short Pulse",
+            "wave": "h....lh.......................",
+        },
+        {
+            "name": "~RFM",
+            "wave": "h................l.......h....",
+        },
+        {},
+        {
+            "name": "~Long pulse (RAM ~WE)",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "~Long Pulse AND ~RFM (RAM CE)",
+            "wave": "h....l.h.........l.......h....",
+        }, 
+        {
+            "name": "NOT (Long Pulse AND ~Short Pulse) (Buf dir)",
+            "wave": "h.....lh......................",
+        },
+        {
+            "name": "Buf dir AND ~RFM (Buf ~OE)",
+            "wave": "h.....lh.........l.......h....",
+        },
+
+
+    ],
+    "head": {
+        "tick": 0,
+        "every": 1
+    }
+}
+
+      
+
+
+      
