@@ -58,7 +58,7 @@ class FrontPanel():
         Advance the CPU by a half step.
         """
         if self._panel_mode == STEP:
-            self._send_clock_pulses(2)
+            self._send_clock_pulses(1)
 
             # Read and display the address and data
             self._display.set_address(self._interface.get_address())
@@ -69,7 +69,7 @@ class FrontPanel():
         Advance the CPU by a full step.
         """
         if self._panel_mode == STEP:
-            self._send_clock_pulses(4)
+            self._send_clock_pulses(2)
 
             # Read and display the address and data
             self._display.set_address(self._interface.get_address())
@@ -569,7 +569,7 @@ class FrontPanel():
         except:
             return False
 
-        if not (0.1 <= frequency <= 2000000.0):
+        if not (0.1 <= frequency <= 4000000.0):
             return False
 
         return True

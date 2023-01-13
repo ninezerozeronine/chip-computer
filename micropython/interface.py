@@ -472,8 +472,8 @@ class Interface():
         self._shift_bit_out(self._cpu_clock_input_enabled)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
-        self._shift_bit_out(self._interface_data_assert)
-        self._shift_bit_out(self._interface_address_assert)
+        self._shift_bit_out(not self._interface_data_assert)
+        self._shift_bit_out(not self._interface_address_assert)
 
         # Shift Register 4
         if self._read_write_mem_source == FRONT_PANEL:
