@@ -451,11 +451,15 @@ class FrontPanel():
         """
         Test whether the CPU is at the beginning of a clock cycle.
 
-        This happens when the control clock is high (and so the data
+        This happens when the data clock is high (and so the control
         clock is low).
+
+        Note that after a reset the clock is in the opposite state (i.e.
+        control clock high). This may need accounting for if reset is
+        pressed in stop mode.
         """
 
-        return self._interface.get_control_clock()
+        return self._interface.get_data_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """
@@ -479,11 +483,11 @@ class FrontPanel():
         """
         Create a clock cycle comparable to that genertaed by the CPU.
         """
-        self._interface.set_control_clock(False)
-        self._interface.set_data_clock(True)
-        time.sleep_us(1)
         self._interface.set_control_clock(True)
         self._interface.set_data_clock(False)
+        time.sleep_us(1)
+        self._interface.set_control_clock(False)
+        self._interface.set_data_clock(True)
         time.sleep_us(1)
 
     def _set_word(self, address, word):
