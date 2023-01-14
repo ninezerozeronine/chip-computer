@@ -27,22 +27,19 @@ PROGRAMS = (
     {
         "name":"Fibb",
         "content": (
-            (0, 110),        # Line: 0002     SET A #1
-            (1, 1),          # Line: 0002
-            (2, 111),        # Line: 0003     SET B #1
-            (3, 1),          # Line: 0003
-            (4, 112),        # Line: 0004     SET C #1
-            (5, 1),          # Line: 0004
-            (6, 26),         # Line: 0007     COPY A ACC
-            (7, 1),          # Line: 0008     ADD B
-            (8, 161),        # Line: 0009     JUMP_IF_ACC_GT #1597 &set_initial
-            (9, 1597),       # Line: 0009
-            (10, 0),         # Line: 0009
-            (11, 24),        # Line: 0010     COPY ACC C // To display
-            (12, 31),        # Line: 0011     COPY B A
-            (13, 23),        # Line: 0012     COPY ACC B
-            (14, 125),       # Line: 0013     JUMP &fib_loop
-            (15, 6),         # Line: 0013
+            (0, 113),        # Line: 0016     SET SP #1
+            (1, 1),          # Line: 0016
+            (2, 110),        # Line: 0017     SET A #1
+            (3, 1),          # Line: 0017
+            (4, 43),         # Line: 0020     COPY SP ACC
+            (5, 0),          # Line: 0021     ADD A
+            (6, 161),        # Line: 0022     JUMP_IF_ACC_GT #1597 &set_initial
+            (7, 1597),       # Line: 0022
+            (8, 0),          # Line: 0022
+            (9, 29),         # Line: 0023     COPY A SP
+            (10, 22),        # Line: 0024     COPY ACC A
+            (11, 125),       # Line: 0025     JUMP &fib_loop
+            (12, 4),         # Line: 0025
         )
     }
 )

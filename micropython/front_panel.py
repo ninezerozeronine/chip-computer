@@ -346,6 +346,7 @@ class FrontPanel():
             return
 
         self._set_words(PROGRAMS[self._program_index]["content"])
+        self._display.set_data(self._get_word(self._readwrite_address))
 
     def set_frequency_from_user_input(self):
         """
