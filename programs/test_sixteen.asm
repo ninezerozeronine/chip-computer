@@ -1725,6 +1725,27 @@ $v_jump_5 &jialt_0
     // CALL
     ////////////////////////////////////////////////////////////////
 
+
+
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+&safe_sp
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+    NOOP
+SET SP &safe_sp
+
+
 &increment_acc
     INCR ACC
     RETURN
