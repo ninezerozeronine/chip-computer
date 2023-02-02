@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name eight-bit-computer)(type Legacy)(uri ${KIPRJMOD}/../../symbol_libs/eight-bit-computer.lib)(options "")(descr ""))
-)

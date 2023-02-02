@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "sixteen-bit-computer")(type "KiCad")(uri "${KIPRJMOD}/../../symbol_libs/sixteen-bit-computer.kicad_sym")(options "")(descr ""))
+)

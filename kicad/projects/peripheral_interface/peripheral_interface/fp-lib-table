@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name eight-bit-computer)(type KiCad)(uri ${KIPRJMOD}/../../footprint_libs/eight-bit-computer.pretty)(options "")(descr ""))
-)
