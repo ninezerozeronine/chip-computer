@@ -346,7 +346,6 @@ class FrontPanel():
             return
 
         self._set_words(PROGRAMS[self._program_index]["content"])
-        self._display.set_data(self._get_word(self._readwrite_address))
 
     def set_frequency_from_user_input(self):
         """
@@ -435,8 +434,17 @@ class FrontPanel():
             self._interface.set_write_to_mem(True)
             self._interface.set_interface_address_assert(True)
             self._interface.set_interface_data_assert(True)
-
+            
+            num_words = len(addresses_and_words)
+            word = 1
+            spinners = ["-", "\\", "|", "/"]
+            spinner_index = 0
+            num_spinners = len(spinners)
+            
             for address, word in addresses_and_words:
+                if word % 50 == 0:
+                    self._display.set_user_input(spinners[spinner_index])
+                    spinner_index = (spinner_index + 1) % num_spinners
                 self._interface.set_address(address)
                 self._interface.set_data(word)
                 time.sleep_us(1)
@@ -447,6 +455,8 @@ class FrontPanel():
             self._interface.set_write_to_mem(False)
             self._interface.set_interface_address_assert(False)
             self._interface.set_interface_data_assert(False)
+            
+            self._display.set_user_input(self._user_input_string)
 
     def _at_beginning_of_clock_cycle(self):
         """

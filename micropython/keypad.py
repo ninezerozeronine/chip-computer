@@ -122,32 +122,3 @@ class Keypad():
 
         """
         self._released_callbacks[row_index][column_index] = callback
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

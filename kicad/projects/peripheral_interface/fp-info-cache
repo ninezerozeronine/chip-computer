@@ -1,4 +1,4 @@
-20923529778514826
+20925205391374343
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -87618,6 +87618,13 @@ Through hole angled pin header THT 1x16 2.54mm single row
 0
 16
 16
+sixteen-bit-computer
+pi-pico-standin
+40-lead though-hole mounted DIP package, row spacing 15.24 mm (600 mils), Socket
+THT DIP DIL PDIP 2.54mm 15.24mm 600mil Socket
+0
+40
+40
 sixteen-bit-computer
 voltage-level-converter
 4 channel voltage level converter
