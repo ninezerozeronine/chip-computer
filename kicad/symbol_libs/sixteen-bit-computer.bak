@@ -4883,7 +4883,7 @@
         (name "GP27" (effects (font (size 1.27 1.27))))
         (number "32" (effects (font (size 1.27 1.27))))
       )
-      (pin tri_state line (at 22.86 5.08 180) (length 3.81)
+      (pin power_in line (at 22.86 5.08 180) (length 3.81)
         (name "GND" (effects (font (size 1.27 1.27))))
         (number "33" (effects (font (size 1.27 1.27))))
       )

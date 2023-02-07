@@ -298,7 +298,7 @@ class FrontPanel():
             self._interface.set_cpu_data_assert(False)
             self._interface.set_cpu_address_assert(False)
 
-            # Disable interface from asserting onto the or address bus
+            # Disable interface from asserting onto the data or address bus
             self._interface.set_interface_data_assert(False)
             self._interface.set_interface_address_assert(False)
 
@@ -441,10 +441,20 @@ class FrontPanel():
             spinner_index = 0
             num_spinners = len(spinners)
             
+            current_word = 1
+            last_percentage = 0
             for address, word in addresses_and_words:
                 if word % 50 == 0:
-                    self._display.set_user_input(spinners[spinner_index])
+                    percentage = int((current_word / num_words) * 100)
+                    if percentage > last_percentage + 10:
+                        last_percentage += 10
+                    status_update = "{spinner} - {last_percentage}%".format(
+                        spinner=spinner[spinner_index],
+                        last_percentage=last_percentage
+                    )
+                    self._display.set_user_input(status_update)
                     spinner_index = (spinner_index + 1) % num_spinners
+                current_word += 1
                 self._interface.set_address(address)
                 self._interface.set_data(word)
                 time.sleep_us(1)
@@ -514,9 +524,9 @@ class FrontPanel():
             self._interface.set_interface_data_assert(True)
 
 
-            time.sleep_us(5)
+            time.sleep_us(1)
             self._send_cpu_like_clock_cycle()
-            time.sleep_us(5)
+            time.sleep_us(1)
 
             self._interface.set_read_from_mem(False)
             self._interface.set_write_to_mem(False)
