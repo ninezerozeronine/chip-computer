@@ -453,29 +453,34 @@ class Interface():
          - SR4-1: Data clock
          - SR4-2: Read from memory
          - SR4-3: Write to memory
-         - SR4-4: Reset
-         - SR4-5: CPU Clock source (Panel/crystal)
-         - SR4-6: Control/data clock source
-         - SR4-7: RFM/WTM source
+         - SR4-4: Control/data clock source
+         - SR4-5: RFM/WTM source
+         - SR4-6: Interface address bus assert
+         - SR4-7: Interface data bus assert
 
-         - SR5-0: Interface address bus assert
-         - SR5-1: Interface data bus assert
-         - SR5-2: CPU address bus assert
-         - SR5-3: CPU data bus assert
-         - SR5-4: CPU clock input enable
+         - SR5-0: Reset
+         - SR5-1: CPU clock input enable
+         - SR5-2: CPU clock source (Panel/crystal)
+         - SR5-3: CPU address bus assert
+         - SR5-4: CPU data bus assert
          - SR5-5: <blank>
          - SR5-6: <blank>
          - SR5-7: <blank>
         """
 
         # Shift Register 5
-        self._shift_bit_out(self._cpu_clock_input_enabled)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
+        if self._cpu_clock_source == MICROCONTROLLER:
+            self._shift_bit_out(False)
+        else:
+            self._shift_bit_out(True)
+        self._shift_bit_out(self._cpu_clock_input_enabled)
+        self._shift_bit_out(self._reset)
+        
+        # Shift Register 4
         self._shift_bit_out(not self._interface_data_assert)
         self._shift_bit_out(not self._interface_address_assert)
-
-        # Shift Register 4
         if self._read_write_mem_source == FRONT_PANEL:
             self._shift_bit_out(False)
         else:
@@ -484,11 +489,6 @@ class Interface():
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        if self._cpu_clock_source == MICROCONTROLLER:
-            self._shift_bit_out(False)
-        else:
-            self._shift_bit_out(True)
-        self._shift_bit_out(self._reset)
         self._shift_bit_out(self._write_to_mem)
         self._shift_bit_out(self._read_from_mem)
         self._shift_bit_out(self._data_clock)
