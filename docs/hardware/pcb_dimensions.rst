@@ -5,7 +5,7 @@ Width: 8 inches / 203.20mm
 
 Height: 3.85 inches / 97.97mm
 
-The corders are rounded with a 0.075 inch / 1.91 mm radius
+The corners are rounded with a 0.075 inch / 1.91 mm radius
 
 The centre of the leftmost pin of the top left connector is 0.1 inches / 2.54 mm
 from the left edge.
