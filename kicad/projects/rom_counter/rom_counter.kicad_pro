@@ -111,7 +111,7 @@
       },
       "rules": {
         "max_error": 0.005,
-        "min_clearance": 0.0,
+        "min_clearance": 0.127,
         "min_connection": 0.0,
         "min_copper_edge_clearance": 0.508,
         "min_hole_clearance": 0.254,
@@ -407,7 +407,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "peripheral_board.kicad_pro",
+    "filename": "rom_counter.kicad_pro",
     "version": 1
   },
   "net_settings": {
