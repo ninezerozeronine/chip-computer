@@ -3,7 +3,7 @@
     "3dviewports": [],
     "design_settings": {
       "defaults": {
-        "board_outline_line_width": 0.049999999999999996,
+        "board_outline_line_width": 0.09999999999999999,
         "copper_line_width": 0.19999999999999998,
         "copper_text_italic": false,
         "copper_text_size_h": 1.5,
@@ -27,7 +27,7 @@
         "fab_text_size_v": 1.0,
         "fab_text_thickness": 0.15,
         "fab_text_upright": false,
-        "other_line_width": 0.09999999999999999,
+        "other_line_width": 0.15,
         "other_text_italic": false,
         "other_text_size_h": 1.0,
         "other_text_size_v": 1.0,
@@ -38,11 +38,11 @@
           "height": 1.524,
           "width": 1.524
         },
-        "silk_line_width": 0.254,
+        "silk_line_width": 0.15,
         "silk_text_italic": false,
-        "silk_text_size_h": 2.54,
-        "silk_text_size_v": 2.54,
-        "silk_text_thickness": 0.254,
+        "silk_text_size_h": 1.0,
+        "silk_text_size_v": 1.0,
+        "silk_text_thickness": 0.15,
         "silk_text_upright": false,
         "zones": {
           "min_clearance": 0.508
@@ -57,7 +57,6 @@
       ],
       "drc_exclusions": [],
       "meta": {
-        "filename": "board_design_settings.json",
         "version": 2
       },
       "rule_severities": {
@@ -110,8 +109,6 @@
         "via_dangling": "warning",
         "zones_intersect": "error"
       },
-      "rule_severitieslegacy_courtyards_overlap": true,
-      "rule_severitieslegacy_no_courtyard_defined": false,
       "rules": {
         "max_error": 0.005,
         "min_clearance": 0.127,
@@ -129,6 +126,8 @@
         "min_track_width": 0.254,
         "min_via_annular_width": 0.0508,
         "min_via_diameter": 0.381,
+        "solder_mask_clearance": 0.0,
+        "solder_mask_min_width": 0.0,
         "solder_mask_to_copper_clearance": 0.0,
         "use_height_for_length_calcs": true
       },
@@ -393,7 +392,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "simulation_model_issue": "error",
@@ -408,7 +407,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "cpu_board.kicad_pro",
+    "filename": "peripheral_board.kicad_pro",
     "version": 1
   },
   "net_settings": {
@@ -463,9 +462,9 @@
       "intersheets_ref_show": false,
       "intersheets_ref_suffix": "",
       "junction_size_choice": 3,
-      "label_size_ratio": 0.25,
-      "pin_symbol_size": 0.0,
-      "text_offset_ratio": 0.08
+      "label_size_ratio": 0.375,
+      "pin_symbol_size": 25.0,
+      "text_offset_ratio": 0.15
     },
     "legacy_lib_dir": "",
     "legacy_lib_list": [],
@@ -485,7 +484,7 @@
   },
   "sheets": [
     [
-      "050ef0ab-3666-4091-92a5-a4e4d75ecc83",
+      "0c25b387-1696-4e3f-ab8e-df646088b074",
       ""
     ]
   ],
