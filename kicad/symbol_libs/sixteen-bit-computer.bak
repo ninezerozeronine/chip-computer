@@ -4945,7 +4945,7 @@
     (property "Reference" "J" (at 0 40.64 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Value" "Conn_01x32_Pin" (at 0 -43.18 0)
+    (property "Value" "peripheral_addr_bus_connector" (at 0 -43.18 0)
       (effects (font (size 1.27 1.27)))
     )
     (property "Footprint" "" (at 0 0 0)
