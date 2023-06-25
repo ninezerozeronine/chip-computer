@@ -402,3 +402,116 @@ def get_machinecode_function(signature):
         _FUNC_MAPPING = _generate_signature_to_machinecode_function_map()
 
     return _FUNC_MAPPING[signature]
+
+
+
+
+
+#     (ADD, C),
+#     (SUB, C),
+#     (LSHIFT, C),
+#     (INCR, C),
+#     (DECR, C),
+#     (COPY, ACC, C),
+#     (COPY, A, C),
+#     (COPY, B, C),
+#     (COPY, C, ACC),
+#     (COPY, C, A),
+#     (COPY, C, B),
+#     (COPY, C, SP),
+#     (COPY, PC, C),
+#     (COPY, SP, C),
+#     (LOAD, M_ACC, C),
+#     (LOAD, M_A, C),
+#     (LOAD, M_B, C),
+#     (LOAD, M_C, ACC),
+#     (LOAD, M_C, A),
+#     (LOAD, M_C, B),
+#     (LOAD, M_C, C),
+#     (LOAD, M_SP, C),
+#     (LOAD, M_CONST, C),
+#     (STORE, ACC, M_C),
+#     (STORE, A, M_C),
+#     (STORE, B, M_C),
+#     (STORE, C, M_ACC),
+#     (STORE, C, M_A),
+#     (STORE, C, M_B),
+#     (STORE, C, M_C),
+#     (STORE, C, M_SP),
+#     (STORE, C, M_CONST),
+#     (STORE, SP, M_C),
+#     (PUSH, C),
+#     (POP, C),
+#     (SET, C, CONST),
+#     (SET_ZERO, C),
+#     (JUMP, C),
+#     (JUMP, M_C),
+#     (JUMP_IF_ACC_LT, C, CONST),
+#     (JUMP_IF_ACC_LTE, C, CONST),
+#     (JUMP_IF_ACC_EQ, C, CONST),
+#     (JUMP_IF_ACC_NEQ, C, CONST),
+#     (JUMP_IF_ACC_GTE, C, CONST),
+#     (JUMP_IF_ACC_GT, C, CONST),
+#     (JUMP_IF_EQ_ZERO, C, CONST),
+#     (JUMP_IF_NEQ_ZERO, C, CONST),
+#     (CALL, C),
+#     (NOT, C),
+#     (AND, C),
+#     (NAND, C),
+#     (OR, C),
+#     (NOR, C),
+#     (XOR, C),
+#     (NXOR, C),
+#     (ROT_LEFT, C),
+
+# X -> A
+# X -> B
+# X -> C
+# X -> D
+# X -> E
+# A -> X
+# B -> X
+# C -> X
+# D -> X
+# E -> X
+# Y -> A
+# Y -> B
+# Y -> C
+# Y -> D
+# Y -> E
+# A -> Y
+# B -> Y
+# C -> Y
+# D -> Y
+# E -> Y
+# PUSH A
+# PUSH B
+# PUSH C
+# PUSH D
+# PUSH E
+# POP A
+# POP B
+# POP C
+# POP D
+# POP E
+# INCR A
+# INCR B
+# INCR C
+# INCR D
+# INCR E
+# DECR A
+# DECR B
+# DECR C
+# DECR D
+# DECR E
+# ADD A
+# ADD B
+# ADD C
+# ADD D
+# ADD E
+# SUB A
+# SUB B
+# SUB C
+# SUB D
+# SUB E
+# SUB F
