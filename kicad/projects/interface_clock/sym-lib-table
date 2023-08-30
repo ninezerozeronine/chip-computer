@@ -1,5 +1,5 @@
 (sym_lib_table
   (version 7)
-  (lib (name "sixteen-bit-computer")(type "Legacy")(uri "${KIPRJMOD}/../../symbol_libs/sixteen-bit-computer.lib")(options "")(descr ""))
+  (lib (name "sixteen-bit-computer")(type "KiCad")(uri "${KIPRJMOD}/../../symbol_libs/sixteen-bit-computer.kicad_sym")(options "")(descr ""))
   (lib (name "interface_clock-rescue")(type "KiCad")(uri "${KIPRJMOD}/interface_clock-rescue.kicad_sym")(options "")(descr ""))
 )
