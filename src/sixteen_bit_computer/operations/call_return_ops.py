@@ -90,7 +90,7 @@ def generate_microcode_templates():
             ]
 
             ram_into_pc = [
-                MODULE_CONTROL["RAM"]["OUT"],
+                MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["PC"]["IN"],
             ]
 
@@ -128,7 +128,7 @@ def generate_microcode_templates():
                 MODULE_CONTROL["MAR"]["IN"],
             ]
 
-            pc_into_data_ram_at_sp = [
+            pc_into_mem_at_sp = [
                 MODULE_CONTROL["PC"]["OUT"],
                 MODULE_CONTROL["MEM"]["WRITE_TO"],
             ]
@@ -145,7 +145,7 @@ def generate_microcode_templates():
                 MODULE_CONTROL["MAR"]["IN"],
             ]
 
-            constant_from_prog_to_pc = [
+            constant_from_mem_to_pc = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["PC"]["IN"],
             ]
@@ -153,10 +153,10 @@ def generate_microcode_templates():
             control_steps = [
                 sp_minus1_into_alu_incr_pc,
                 alu_into_mar_and_sp,
-                pc_into_data_ram_at_sp,
+                pc_into_mem_at_sp,
                 pc_minus1_into_alu,
                 alu_into_mar,
-                constant_from_prog_to_pc,
+                constant_from_mem_to_pc,
             ]
 
         else:
