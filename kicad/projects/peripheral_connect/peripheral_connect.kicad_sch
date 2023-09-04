@@ -7030,7 +7030,7 @@
     (property "Value" "Conn_02x16_Odd_Even" (at 113.665 48.895 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x16_P2.54mm_Vertical" (at 112.395 69.215 0)
+    (property "Footprint" "Connector_PinSocket_2.54mm:PinSocket_2x16_P2.54mm_Horizontal" (at 112.395 69.215 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 112.395 69.215 0)
