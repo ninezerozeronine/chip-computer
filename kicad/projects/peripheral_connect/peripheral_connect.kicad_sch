@@ -2671,9 +2671,9 @@
     )
   )
 
-  (bus_alias "BANK_BUS" (members "BANK_BUS_00" "BANK_BUS_01" "BANK_BUS_02" "BANK_BUS_03" "BANK_BUS_04" "BANK_BUS_05" "BANK_BUS_06" "BANK_BUS_07" "BANK_BUS_08" "BANK_BUS_09" "BANK_BUS_10" "BANK_BUS_11" "BANK_BUS_12" "BANK_BUS_13" "BANK_BUS_14" "BANK_BUS_15"))
   (bus_alias "DATA_BUS" (members "DATA_BUS_00" "DATA_BUS_01" "DATA_BUS_02" "DATA_BUS_03" "DATA_BUS_04" "DATA_BUS_05" "DATA_BUS_06" "DATA_BUS_07" "DATA_BUS_08" "DATA_BUS_09" "DATA_BUS_10" "DATA_BUS_11" "DATA_BUS_12" "DATA_BUS_13" "DATA_BUS_14" "DATA_BUS_15"))
   (bus_alias "ADDR_BUS" (members "ADDR_BUS_00" "ADDR_BUS_01" "ADDR_BUS_02" "ADDR_BUS_03" "ADDR_BUS_04" "ADDR_BUS_05" "ADDR_BUS_06" "ADDR_BUS_07" "ADDR_BUS_08" "ADDR_BUS_09" "ADDR_BUS_10" "ADDR_BUS_11" "ADDR_BUS_12" "ADDR_BUS_13" "ADDR_BUS_14" "ADDR_BUS_15"))
+  (bus_alias "BANK_BUS" (members "BANK_BUS_00" "BANK_BUS_01" "BANK_BUS_02" "BANK_BUS_03" "BANK_BUS_04" "BANK_BUS_05" "BANK_BUS_06" "BANK_BUS_07" "BANK_BUS_08" "BANK_BUS_09" "BANK_BUS_10" "BANK_BUS_11" "BANK_BUS_12" "BANK_BUS_13" "BANK_BUS_14" "BANK_BUS_15"))
   (junction (at 106.045 193.675) (diameter 0) (color 0 0 0 0)
     (uuid 086d2eed-cf19-4589-9cfb-968e4d246c50)
   )
@@ -4298,6 +4298,10 @@
   (text "LED enable" (at 285.115 111.125 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid a98fc9be-2ad6-4d03-8f57-b8f646953748)
+  )
+  (text "Bank Bus is active low" (at 289.56 68.58 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid eea39a07-a70c-4771-8c49-98ea45ebedea)
   )
 
   (label "BANK_BUS_03" (at 75.565 165.735 0) (fields_autoplaced)
