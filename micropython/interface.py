@@ -30,10 +30,10 @@ _DATA = 300
 _ADDRESS = 301
 _CONTROL_CLOCK = 302
 _DATA_CLOCK = 303
-_WTM = 304
-_RFM = 305
+_MEM_ACTIVE = 304
+_RFM_WTM = 305
 
-# Sources for the data and control clocks, and read from/write to memory
+# Sources for the data and control clocks, and memory control
 # signals fed to the peripherals 
 FRONT_PANEL = 400
 CPU = 401
@@ -56,9 +56,9 @@ class Interface():
         self._interface_address_assert = False
         self._cpu_address_assert = False
 
-        self._read_from_mem = False
-        self._write_to_mem = False
-        self._read_write_mem_source = FRONT_PANEL
+        self._memory_active = False
+        self._rfm_wtm = False
+        self._mem_ctl_source = FRONT_PANEL
 
         self._data_clock = False
         self._control_clock = False
@@ -111,7 +111,8 @@ class Interface():
 
         self._cpu_clock_source = MICROCONTROLLER
 
-        self._reset = False
+        self.reset_to_cpu = False
+        self.reset_to_peripherals = False
 
         self._shift_out()
 
@@ -143,7 +144,7 @@ class Interface():
 
         # Protect from CPU and interface  asserting onto the bus
         if not (self._cpu_data_assert and state):
-            self._interface_data_assert = state
+            self._interface_data_assert = bool(state)
             self._shift_out()
 
     def set_cpu_data_assert(self, state):
@@ -153,7 +154,7 @@ class Interface():
 
         # Protect from CPU and interface  asserting onto the bus
         if not (self._interface_data_assert and state):
-            self._cpu_data_assert = state
+            self._cpu_data_assert = bool(state)
             self._shift_out()
 
     def set_address(self, address):
@@ -182,9 +183,9 @@ class Interface():
         Set whether the interface should assert onto the address bus.
         """
 
-        # Protect from CPU and interface  asserting onto the bus
+        # Protect from CPU and interface asserting onto the bus
         if not (self._cpu_address_assert and state):
-            self._interface_address_assert = state
+            self._interface_address_assert = bool(state)
             self._shift_out()
 
     def set_cpu_address_assert(self, state):
@@ -194,76 +195,98 @@ class Interface():
 
         # Protect from CPU and interface  asserting onto the bus
         if not (self._interface_address_assert and state):
-            self._cpu_address_assert = state
+            self._cpu_address_assert = bool(state)
             self._shift_out()
 
-    def set_read_from_mem(self, state):
+    def get_memory_active(self):
         """
-        Set the state of the read from memory line.
-        """
-        # Prevent reading and writing to mem at the same time.
-        if not (self._write_to_mem and state):
-            self._read_from_mem = state
-            self._shift_out()
+        Get the state of the memory active line.
 
-    def set_write_to_mem(self, state):
-        """
-        Set the state of the write to memory line.
-        """
-        # Prevent reading and writing to mem at the same time.
-        if not (self._read_from_mem and state):
-            self._write_to_mem = state
-            self._shift_out()
-
-    def get_read_from_mem(self):
-        """
-        Get the state of the read from memory bus.
+        Returns:
+            bool: The state of the memory active line.
         """
         bus_states = self._shift_in()
-        return bus_states[_RFM]
+        return bus_states[_MEM_ACTIVE]
 
-    def get_write_to_mem(self):
+    def set_memory_active(self, state):
         """
-        Get the state of the write to memory bus.
+        Set the state of the memory active line.
+
+        Args:
+            state (bool): The logic value to set the line to.
+        """
+
+        self._memory_active = bool(state)
+        self._shift_out()
+
+    def get_rfm_wtm(self):
+        """
+        Get the state of the RFM/WTM line.
+
+        A low level on the line is reading from memory, a high is
+        writing to it.
+
+        Returns:
+            bool: The state of the RFM/WTM line.
         """
         bus_states = self._shift_in()
-        return bus_states[_WTM]
+        return bus_states[_RFM_WTM]
 
-    def set_read_write_mem_source(self, source):
+    def set_rfm_wtm(self, state):
+        """
+        Set the state of the RFM/WTM line.
+
+        A low level on the line is reading from memory, a high is
+        writing to it.
+
+        Args:
+            state (bool): The logic value to set the line to.
+        """
+
+        self._rfm_wtm = bool(state)
+        self._shift_out()
+
+    def set_mem_ctl_source(self, source):
         """
         Set the source of the read and write memory lines fed to the
         peripherals.
         """
         if source in (FRONT_PANEL, CPU):
-            self._read_write_mem_source = source
+            self._mem_ctl_source = source
             self._shift_out()
 
     def get_data_clock(self):
         """
-        Get the state of the data clock bus.
+        Get the state of the data clock from the CPU.
         """
         bus_states = self._shift_in()
         return bus_states[_DATA_CLOCK]
 
     def set_data_clock(self, state):
         """
-        Set the state to assert onto the data clock bus.
+        Set the state of the data clock to send to the peripherals.
+
+        This will only reach the peripherals if the clock source is set
+        to the front panel.
         """
-        self._data_clock = state
+        self._data_clock = bool(state)
         self._shift_out()
 
     def get_control_clock(self):
         """
-        Get the state of the control clock bus.
+        Get the state of the control clock from the CPU.
         """
         bus_states = self._shift_in()
         return bus_states[_CONTROL_CLOCK]
 
     def set_control_clock(self, state):
         """
-        Set the state to assert onto the control clock bus.
+        Set the state of the control clock to send to the peripherals.
+
+        This will only reach the peripherals if the clock source is set
+        to the front panel.
         """
-        self._control_clock = state
+        self._control_clock = bool(state)
         self._shift_out()
 
     def set_control_data_clock_source(self, source):
@@ -278,7 +301,7 @@ class Interface():
         """
         Set whether the CPU clock input is enabled or not.
         """
-        self._cpu_clock_input_enabled = state
+        self._cpu_clock_input_enabled = bool(state)
         self._shift_out()
 
     def set_cpu_clock_source(self, source):
@@ -289,11 +312,18 @@ class Interface():
             self._cpu_clock_source = source
             self._shift_out()
 
-    def set_reset(self, state):
+    def set_reset_to_cpu(self, state):
         """
-        Set the state of the reset line.
+        Set the state of the reset line going to the CPU.
         """
-        self._reset = state
+        self._reset_to_cpu = bool(state)
+        self._shift_out()
+
+    def set_reset_to_peripherals(self, state):
+        """
+        Set the state of the reset line going to the peripherals.
+        """
+        self._reset_to_peripherals = bool(state)
         self._shift_out()
 
     def set_clock_pin_static_state(self, state):
@@ -402,8 +432,8 @@ class Interface():
         self._shift_in_bit()
 
         # Get the first 4 bits of SR4
-        ret[_WTM] = self._shift_in_bit()
-        ret[_RFM] = self._shift_in_bit()
+        ret[_RFM_WTM] = self._shift_in_bit()
+        ret[_MEM_ACTIVE] = self._shift_in_bit()
         ret[_DATA_CLOCK] = self._shift_in_bit()
         ret[_CONTROL_CLOCK] = self._shift_in_bit()
 
@@ -451,24 +481,25 @@ class Interface():
 
          - SR4-0: Control clock
          - SR4-1: Data clock
-         - SR4-2: Read from memory
-         - SR4-3: Write to memory
+         - SR4-2: Memory active
+         - SR4-3: RFM/WTM
          - SR4-4: Control/data clock source
-         - SR4-5: RFM/WTM source
+         - SR4-5: Memory control source
          - SR4-6: Interface address bus assert
          - SR4-7: Interface data bus assert
 
-         - SR5-0: Reset
+         - SR5-0: Reset to CPU
          - SR5-1: CPU clock input enable
          - SR5-2: CPU clock source (Panel/crystal)
          - SR5-3: CPU address bus assert
          - SR5-4: CPU data bus assert
-         - SR5-5: <blank>
+         - SR5-5: Reset to peripherals
          - SR5-6: <blank>
          - SR5-7: <blank>
         """
 
         # Shift Register 5
+        self._shift_bit_out(self._reset_to_peripherals)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
         if self._cpu_clock_source == MICROCONTROLLER:
@@ -476,12 +507,12 @@ class Interface():
         else:
             self._shift_bit_out(True)
         self._shift_bit_out(self._cpu_clock_input_enabled)
-        self._shift_bit_out(self._reset)
+        self._shift_bit_out(self._reset_to_cpu)
         
         # Shift Register 4
         self._shift_bit_out(not self._interface_data_assert)
         self._shift_bit_out(not self._interface_address_assert)
-        if self._read_write_mem_source == FRONT_PANEL:
+        if self._mem_ctl_source == FRONT_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
@@ -489,8 +520,8 @@ class Interface():
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        self._shift_bit_out(self._write_to_mem)
-        self._shift_bit_out(self._read_from_mem)
+        self._shift_bit_out(self._rfm_wtm)
+        self._shift_bit_out(self._mem_active)
         self._shift_bit_out(self._data_clock)
         self._shift_bit_out(self._control_clock)
 
