@@ -17,8 +17,8 @@ from gpiodefs import (
 )
 
 # CPU_Clock sources
-MICROCONTROLLER = 100
-CRYSTAL = 101
+CPU_CLK_SRC_PANEL = 100
+CPU_CLK_SRC_CRYSTAL = 101
 
 # Clock pin modes
 _STATIC = 200
@@ -35,8 +35,10 @@ _RFM_WTM = 305
 
 # Sources for the data and control clocks, and memory control
 # signals fed to the peripherals 
-FRONT_PANEL = 400
-CPU = 401
+PERIPH_CLK_SRC_PANEL = 400
+PERIPH_CLK_SRC_CPU = 401
+PERIPH_MEM_CTL_SRC_PANEL = 402
+PERIPH_MEM_CTL_SRC_CPU = 403
 
 
 class Interface():
@@ -58,11 +60,11 @@ class Interface():
 
         self._memory_active = False
         self._rfm_wtm = False
-        self._mem_ctl_source = FRONT_PANEL
+        self._mem_ctl_source = PERIPH_MEM_CTL_SRC_PANEL
 
         self._data_clock = False
         self._control_clock = False
-        self._control_data_clock_source = FRONT_PANEL
+        self._control_data_clock_source = PERIPH_CLK_SRC_PANEL
 
         self._cpu_clock_input_enabled = False
 
@@ -109,7 +111,7 @@ class Interface():
             OUTPUT_OUTPUT_CLOCK_GPIO_NO, mode=Pin.OUT, value=False
         )
 
-        self._cpu_clock_source = MICROCONTROLLER
+        self._cpu_clock_source = CPU_CLK_SRC_PANEL
 
         self.reset_to_cpu = False
         self.reset_to_peripherals = False
@@ -251,7 +253,7 @@ class Interface():
         Set the source of the read and write memory lines fed to the
         peripherals.
         """
-        if source in (FRONT_PANEL, CPU):
+        if source in (PERIPH_MEM_CTL_SRC_PANEL, PERIPH_MEM_CTL_SRC_CPU):
             self._mem_ctl_source = source
             self._shift_out()
 
@@ -289,11 +291,25 @@ class Interface():
         self._control_clock = bool(state)
         self._shift_out()
 
-    def set_control_data_clock_source(self, source):
+    def set_data_and_control_clocks(self, data_state, control_state):
         """
-        Set the source of the control and data clocks.
+        Set the state of the control and data clocks to send to the
+        peripherals.
+
+        This will only reach the peripherals if the clock source is set
+        to the front panel.
         """
-        if source in (FRONT_PANEL, CPU):
+        self._data_clock = bool(data_state)
+        self._control_clock = bool(control_state)
+        self._shift_out()
+
+    def set_peripheral_clock_source(self, source):
+        """
+        Set the source of the control and data clocks for the
+        peripherals.
+        """
+        PERIPH_CLK_SRC_PANEL
+        if source in (PERIPH_CLK_SRC_PANEL, PERIPH_CLK_SRC_CPU):
             self._control_data_clock_source = source
             self._shift_out()
 
@@ -308,7 +324,7 @@ class Interface():
         """
         Set the source for the clock.
         """
-        if source in (MICROCONTROLLER, CRYSTAL):
+        if source in (CPU_CLK_SRC_PANEL, CPU_CLK_SRC_CRYSTAL):
             self._cpu_clock_source = source
             self._shift_out()
 
@@ -502,7 +518,7 @@ class Interface():
         self._shift_bit_out(self._reset_to_peripherals)
         self._shift_bit_out(self._cpu_data_assert)
         self._shift_bit_out(self._cpu_address_assert)
-        if self._cpu_clock_source == MICROCONTROLLER:
+        if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
@@ -512,11 +528,11 @@ class Interface():
         # Shift Register 4
         self._shift_bit_out(not self._interface_data_assert)
         self._shift_bit_out(not self._interface_address_assert)
-        if self._mem_ctl_source == FRONT_PANEL:
+        if self._mem_ctl_source == PERIPH_MEM_CTL_SRC_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)
-        if self._control_data_clock_source == FRONT_PANEL:
+        if self._control_data_clock_source == PERIPH_CLK_SRC_PANEL:
             self._shift_bit_out(False)
         else:
             self._shift_bit_out(True)

@@ -20,8 +20,8 @@ RUN = 101
 STOP = 102
 
 # The clock source for the CPU 
-FRONT_PANEL = 200
-CRYSTAL = 201
+CPU_CLK_SRC_PANEL = 200
+CPU_CLK_SRC_CRYSTAL = 201
 
 # Maximum 16 bit value
 _MAX_VALUE = 2**16 - 1
@@ -37,8 +37,8 @@ class FrontPanel():
         """
 
         self._cpu_clock_sources = [
-            FRONT_PANEL,
-            CRYSTAL,
+            CPU_CLK_SRC_PANEL,
+            CPU_CLK_SRC_CRYSTAL,
         ]
         self._cpu_clock_source_index = 0
         self._cpu_clock_source = self._cpu_clock_sources[self._cpu_clock_source_index]
@@ -52,6 +52,9 @@ class FrontPanel():
         self._update_frequency_display()
         self._panel_mode = RUN
         self.stop()
+        self.set_reset(True)
+        time.sleep_us(1)
+        self.set_reset(False)
 
     def half_step(self):
         """
@@ -87,9 +90,9 @@ class FrontPanel():
             self._interface.set_interface_address_assert(False)
 
             # Set the source of the control and data clocks, and the
-            # rfm/wtm lines to the CPU
-            self._interface.set_control_data_clock_source(interface.CPU)
-            self._interface.set_read_write_mem_source(interface.CPU)
+            # memory control lines for the peripherals to the CPU
+            self._interface.set_control_data_clock_source(interface.PERIPH_CLK_SRC_CPU)
+            self._interface.set_mem_ctl_source(interface.PERIPH_MEM_CTL_SRC_CPU)
 
             # Allow CPU to assert onto the buses.
             self._interface.set_cpu_data_assert(True)
@@ -100,7 +103,7 @@ class FrontPanel():
 
             # Make sure the CPU gets clock pulses from the
             # microcontroller
-            self._interface.set_cpu_clock_source(interface.MICROCONTROLLER)
+            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
 
             # Set the interface clock pin to a static state, ready for
             # stepping.
@@ -185,9 +188,13 @@ class FrontPanel():
             self._interface.set_interface_address_assert(False)
 
             # Set the source of the control and data clocks, and the
-            # rfm/wtm lines to the CPU
-            self._interface.set_control_data_clock_source(interface.CPU)
-            self._interface.set_read_write_mem_source(interface.CPU)
+            # memory control lines for the peripherals to the CPU
+            self._interface.set_control_data_clock_source(
+                interface.PERIPH_CLK_SRC_CPU
+            )
+            self._interface.set_mem_ctl_source(
+                interface.PERIPH_MEM_CTL_SRC_CPU
+            )
 
             # Allow CPU to assert onto the buses.
             self._interface.set_cpu_data_assert(True)
@@ -198,6 +205,9 @@ class FrontPanel():
 
             # Set the clock source for the CPU
             self._set_clock_source()
+
+            # Enable the clock on the CPU
+            self._interface.set_cpu_clock_input_enabled(True)
 
             # Set Mode on dipslay
             self._display.set_mode("RUN")
@@ -253,7 +263,7 @@ class FrontPanel():
 
     def next_clock_source(self):
         """
-        Cycle the clock source
+        Cycle to the next clock source
         """
 
         # Cycle the clock source
@@ -265,8 +275,10 @@ class FrontPanel():
         self._update_frequency_display()
 
         # If running, do the switch
-        if self._panel_mode == RUN:
+        if self._panel_mode in RUN:
+            self._interface.set_cpu_clock_input_enabled(False)
             self._set_clock_source()
+            self._interface.set_cpu_clock_input_enabled(True)
 
     def stop(self):
         """
@@ -276,8 +288,7 @@ class FrontPanel():
             # Disable the clock on the CPU
             self._interface.set_cpu_clock_input_enabled(False)
 
-            # Make sure the CPU gets clock pulses from the
-            # microcontroller
+            # Set the CPU to get clock pulses from the microcontroller
             self._interface.set_cpu_clock_source(interface.MICROCONTROLLER)
 
             # Set the interface clock pin to a static state, ready for
@@ -287,7 +298,7 @@ class FrontPanel():
             # Enable the clock on the CPU
             self._interface.set_cpu_clock_input_enabled(True)
 
-            # Advance the clock so both clocks are low.
+            # Advance the clock so control clock is high
             while not self._at_beginning_of_clock_cycle():
                 self._send_clock_pulses(1)
 
@@ -304,15 +315,19 @@ class FrontPanel():
 
             # Set the control and data clocks as well as the read from
             # and write to memory lines low.
-            self._interface.set_control_clock(False)
+            self._interface.set_control_clock(True)
             self._interface.set_data_clock(False)
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(False)
+            self._interface.set_memory_active(False)
+            self._interface.set_rfm_wtm(False)
 
             # Set the source of the control and data clocks, and the
-            # rfm/wtm lines to the Panel
-            self._interface.set_control_data_clock_source(interface.FRONT_PANEL)
-            self._interface.set_read_write_mem_source(interface.FRONT_PANEL)
+            # memory control lines to the Panel
+            self._interface.set_mem_ctl_source(
+                interface.PERIPH_MEM_CTL_SRC_PANEL
+            )
+            self._interface.set_control_data_clock_source(
+                interface.PERIPH_CLK_SRC_PANEL
+            )
 
             # Set display to show current readwrite address
             self._display.set_address(self._readwrite_address)
@@ -361,7 +376,7 @@ class FrontPanel():
 
         self._update_frequency_display()
 
-        if (self._panel_mode == RUN and self._cpu_clock_source == FRONT_PANEL):
+        if (self._panel_mode == RUN and self._cpu_clock_source == CPU_CLK_SRC_PANEL):
             self._interface.set_cpu_clock_input_enabled(False)
             self._interface.set_clock_pin_frequency(
                 self._compensate_clock_frequency(self._frequency)
@@ -370,16 +385,14 @@ class FrontPanel():
 
     def set_reset(self, state):
         """
-        Set state of the reset line for the CPU
+        Set state of the reset lines for the CPU and peripherals.
         """
-        if state:
-            self._interface.set_reset(True)
-        else:
-            self._interface.set_reset(False)
+        self._interface.set_reset_to_cpu(bool(state))
+        self._interface.set_reset_top_peripherals(bool(state))
 
     def propose_user_input_character(self, character):
         """
-
+        Propose a character to add to the user input.
         """
         if character not in ".0123456789":
             return
@@ -392,7 +405,7 @@ class FrontPanel():
 
     def clear_user_input(self):
         """
-
+        Clear the user input.
         """
         self._user_input_string = ""
         self._display.set_user_input(self._user_input_string)
@@ -412,26 +425,26 @@ class FrontPanel():
         No safe guards.
         """
 
-        self._interface.set_cpu_clock_input_enabled(False)
-
-        if self._cpu_clock_source == FRONT_PANEL:
-            self._interface.set_cpu_clock_source(interface.MICROCONTROLLER)
+        if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
+            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
             self._interface.set_clock_pin_frequency(
                 self._compensate_clock_frequency(self._frequency)
             )
-        if self._cpu_clock_source == CRYSTAL:
-            self._interface.set_cpu_clock_source(interface.CRYSTAL)
-
-        self._interface.set_cpu_clock_input_enabled(True)
+        if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
+            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_CRYSTAL)
 
     def _set_words(self, addresses_and_words):
         """
         Set a number of addresses and words at once.
+
+        Args:
+            addresses_and_words (tuple(tuple(int, int))): List of pairs
+                of addresses and words.
         """
         if self._panel_mode == STOP:
 
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(True)
+            self._interface.set_memory_active(True)
+            self._interface.set_rfm_wtm(True)
             self._interface.set_interface_address_assert(True)
             self._interface.set_interface_data_assert(True)
             
@@ -461,8 +474,7 @@ class FrontPanel():
                 self._send_cpu_like_clock_cycle()
                 time.sleep_us(1)
 
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(False)
+            self._interface.set_memory_active(False)
             self._interface.set_interface_address_assert(False)
             self._interface.set_interface_data_assert(False)
             
@@ -472,19 +484,15 @@ class FrontPanel():
         """
         Test whether the CPU is at the beginning of a clock cycle.
 
-        This happens when the data clock is high (and so the control
-        clock is low).
-
-        Note that after a reset the clock is in the opposite state (i.e.
-        control clock high). This may need accounting for if reset is
-        pressed in stop mode.
+        This happens when the data clock is low and the control
+        clock is high.
         """
 
-        return self._interface.get_data_clock()
+        return self._interface.get_control_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """
-        Send the specified number of clock pulses.
+        Send the specified number of clock pulses to the CPU.
         """
         for _ in range(num_pulses):
             self._interface.set_clock_pin_static_state(True)
@@ -502,13 +510,12 @@ class FrontPanel():
 
     def _send_cpu_like_clock_cycle(self):
         """
-        Create a clock cycle comparable to that genertaed by the CPU.
+        Create a clock cycle comparable to that generated by the CPU.
         """
-        self._interface.set_control_clock(True)
-        self._interface.set_data_clock(False)
+        
+        self._interface.set_data_and_control_clocks(True, False)
         time.sleep_us(1)
-        self._interface.set_control_clock(False)
-        self._interface.set_data_clock(True)
+        self._interface.set_data_and_control_clocks(False, True)
         time.sleep_us(1)
 
     def _set_word(self, address, word):
@@ -518,18 +525,16 @@ class FrontPanel():
         if self._panel_mode == STOP:
             self._interface.set_address(address)
             self._interface.set_data(word)
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(True)
+            self._interface.set_memory_active(True)
+            self._interface.set_rfm_wtm(True)
             self._interface.set_interface_address_assert(True)
             self._interface.set_interface_data_assert(True)
-
 
             time.sleep_us(1)
             self._send_cpu_like_clock_cycle()
             time.sleep_us(1)
 
-            self._interface.set_read_from_mem(False)
-            self._interface.set_write_to_mem(False)
+            self._interface.set_memory_active(False)
             self._interface.set_interface_address_assert(False)
             self._interface.set_interface_data_assert(False)
 
@@ -542,13 +547,14 @@ class FrontPanel():
 
         if self._panel_mode == STOP:
             self._interface.set_address(address)
-            self._interface.set_read_from_mem(True)
+            self._interface.set_memory_active(True)
+            self._interface.set_rfm_wtm(False)
             self._interface.set_interface_address_assert(True)
 
-            time.sleep_us(10)
+            time.sleep_us(1)
             word = self._interface.get_data()
 
-            self._interface.set_read_from_mem(False)
+            self._interface.set_memory_active(False)
             self._interface.set_interface_address_assert(False)
 
         return word
@@ -596,8 +602,8 @@ class FrontPanel():
         return True
 
     def _update_frequency_display(self):
-        if self._cpu_clock_source == FRONT_PANEL:
+        if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
             self._display.set_frequency_to_value(self._frequency)
 
-        if self._cpu_clock_source == CRYSTAL:
+        if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
             self._display.set_frequency_to_crystal()
