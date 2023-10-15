@@ -91,8 +91,8 @@ class FrontPanel():
 
             # Set the source of the control and data clocks, and the
             # memory control lines for the peripherals to the CPU
-            self._interface.set_control_data_clock_source(interface.PERIPH_CLK_SRC_CPU)
-            self._interface.set_mem_ctl_source(interface.PERIPH_MEM_CTL_SRC_CPU)
+            self._interface.set_peripheral_clock_source(interface.PERIPH_CLK_SRC_CPU)
+            self._interface.set_peripheral_mem_ctl_source(interface.PERIPH_MEM_CTL_SRC_CPU)
 
             # Allow CPU to assert onto the buses.
             self._interface.set_cpu_data_assert(True)
@@ -189,10 +189,10 @@ class FrontPanel():
 
             # Set the source of the control and data clocks, and the
             # memory control lines for the peripherals to the CPU
-            self._interface.set_control_data_clock_source(
+            self._interface.set_peripheral_clock_source(
                 interface.PERIPH_CLK_SRC_CPU
             )
-            self._interface.set_mem_ctl_source(
+            self._interface.set_peripheral_mem_ctl_source(
                 interface.PERIPH_MEM_CTL_SRC_CPU
             )
 
@@ -275,7 +275,7 @@ class FrontPanel():
         self._update_frequency_display()
 
         # If running, do the switch
-        if self._panel_mode in RUN:
+        if self._panel_mode == RUN:
             self._interface.set_cpu_clock_input_enabled(False)
             self._set_clock_source()
             self._interface.set_cpu_clock_input_enabled(True)
@@ -289,7 +289,7 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(False)
 
             # Set the CPU to get clock pulses from the microcontroller
-            self._interface.set_cpu_clock_source(interface.MICROCONTROLLER)
+            self._interface.set_cpu_clock_source(interface.PERIPH_CLK_SRC_PANEL)
 
             # Set the interface clock pin to a static state, ready for
             # stepping.
@@ -322,10 +322,10 @@ class FrontPanel():
 
             # Set the source of the control and data clocks, and the
             # memory control lines to the Panel
-            self._interface.set_mem_ctl_source(
+            self._interface.set_peripheral_mem_ctl_source(
                 interface.PERIPH_MEM_CTL_SRC_PANEL
             )
-            self._interface.set_control_data_clock_source(
+            self._interface.set_peripheral_clock_source(
                 interface.PERIPH_CLK_SRC_PANEL
             )
 
@@ -387,8 +387,8 @@ class FrontPanel():
         """
         Set state of the reset lines for the CPU and peripherals.
         """
-        self._interface.set_reset_to_cpu(bool(state))
-        self._interface.set_reset_top_peripherals(bool(state))
+        self._interface.set_reset_to_cpu(state)
+        self._interface.set_reset_to_peripherals(state)
 
     def propose_user_input_character(self, character):
         """
@@ -414,7 +414,7 @@ class FrontPanel():
         """
 
         """
-        if len(self._user_input_string) > 1:
+        if len(self._user_input_string) >= 1:
             self._user_input_string = self._user_input_string[:-1]
             self._display.set_user_input(self._user_input_string)
 
@@ -462,7 +462,7 @@ class FrontPanel():
                     if percentage > last_percentage + 10:
                         last_percentage += 10
                     status_update = "{spinner} - {last_percentage}%".format(
-                        spinner=spinner[spinner_index],
+                        spinner=spinners[spinner_index],
                         last_percentage=last_percentage
                     )
                     self._display.set_user_input(status_update)

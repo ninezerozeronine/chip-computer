@@ -113,8 +113,8 @@ class Interface():
 
         self._cpu_clock_source = CPU_CLK_SRC_PANEL
 
-        self.reset_to_cpu = False
-        self.reset_to_peripherals = False
+        self._reset_to_cpu = False
+        self._reset_to_peripherals = False
 
         self._shift_out()
 
@@ -248,7 +248,7 @@ class Interface():
         self._rfm_wtm = bool(state)
         self._shift_out()
 
-    def set_mem_ctl_source(self, source):
+    def set_peripheral_mem_ctl_source(self, source):
         """
         Set the source of the read and write memory lines fed to the
         peripherals.
@@ -308,7 +308,6 @@ class Interface():
         Set the source of the control and data clocks for the
         peripherals.
         """
-        PERIPH_CLK_SRC_PANEL
         if source in (PERIPH_CLK_SRC_PANEL, PERIPH_CLK_SRC_CPU):
             self._control_data_clock_source = source
             self._shift_out()
@@ -537,7 +536,7 @@ class Interface():
         else:
             self._shift_bit_out(True)
         self._shift_bit_out(self._rfm_wtm)
-        self._shift_bit_out(self._mem_active)
+        self._shift_bit_out(self._memory_active)
         self._shift_bit_out(self._data_clock)
         self._shift_bit_out(self._control_clock)
 
