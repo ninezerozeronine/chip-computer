@@ -1730,7 +1730,7 @@
         (1756, 179),     # Line: 1718     JUMP_IF_NOT_ZERO_FLAG &jinzf_halt_0
         (1757, 1760),    # Line: 1718
         (1758, 125),     # Line: 1719     JUMP &call_0
-        (1759, 1784),    # Line: 1719
+        (1759, 1782),    # Line: 1719
         (1760, 186),     # Line: 1722     HALT
         (1761, 119),     # Line: 1730     NOOP
         (1762, 119),     # Line: 1731     NOOP
@@ -1747,18 +1747,18 @@
         (1773, 119),     # Line: 1743     NOOP
         (1774, 119),     # Line: 1744     NOOP
         (1775, 119),     # Line: 1745     NOOP
-        (1776, 113),     # Line: 1746 SET SP &safe_sp
-        (1777, 1769),    # Line: 1746
-        (1778, 14),      # Line: 1750     INCR ACC
-        (1779, 185),     # Line: 1751     RETURN
-        (1780, 186),     # Line: 1752     HALT
-        (1781, 15),      # Line: 1755     INCR A
-        (1782, 185),     # Line: 1756     RETURN
-        (1783, 186),     # Line: 1757     HALT
+        (1776, 14),      # Line: 1749     INCR ACC
+        (1777, 185),     # Line: 1750     RETURN
+        (1778, 186),     # Line: 1751     HALT
+        (1779, 15),      # Line: 1754     INCR A
+        (1780, 185),     # Line: 1755     RETURN
+        (1781, 186),     # Line: 1756     HALT
+        (1782, 113),     # Line: 1759     SET SP &safe_sp
+        (1783, 1769),    # Line: 1759
         (1784, 110),     # Line: 1760     SET A #0
         (1785, 0),       # Line: 1760
         (1786, 109),     # Line: 1761     SET ACC &increment_a
-        (1787, 1781),    # Line: 1761
+        (1787, 1779),    # Line: 1761
         (1788, 180),     # Line: 1762     CALL ACC
         (1789, 109),     # Line: 1763     SET ACC #1
         (1790, 1),       # Line: 1763
@@ -1768,7 +1768,7 @@
         (1794, 109),     # Line: 1768     SET ACC #0
         (1795, 0),       # Line: 1768
         (1796, 110),     # Line: 1769     SET A &increment_acc
-        (1797, 1778),    # Line: 1769
+        (1797, 1776),    # Line: 1769
         (1798, 181),     # Line: 1770     CALL A
         (1799, 146),     # Line: 1771     JUMP_IF_ACC_EQ #1 &call_2
         (1800, 1),       # Line: 1771
@@ -1777,7 +1777,7 @@
         (1803, 109),     # Line: 1775     SET ACC #0
         (1804, 0),       # Line: 1775
         (1805, 111),     # Line: 1776     SET B &increment_acc
-        (1806, 1778),    # Line: 1776
+        (1806, 1776),    # Line: 1776
         (1807, 182),     # Line: 1777     CALL B
         (1808, 146),     # Line: 1778     JUMP_IF_ACC_EQ #1 &call_3
         (1809, 1),       # Line: 1778
@@ -1786,7 +1786,7 @@
         (1812, 109),     # Line: 1782     SET ACC #0
         (1813, 0),       # Line: 1782
         (1814, 112),     # Line: 1783     SET C &increment_acc
-        (1815, 1778),    # Line: 1783
+        (1815, 1776),    # Line: 1783
         (1816, 183),     # Line: 1784     CALL C
         (1817, 146),     # Line: 1785     JUMP_IF_ACC_EQ #1 &call_4
         (1818, 1),       # Line: 1785
@@ -1795,7 +1795,7 @@
         (1821, 109),     # Line: 1789     SET ACC #0
         (1822, 0),       # Line: 1789
         (1823, 184),     # Line: 1790     CALL &increment_acc
-        (1824, 1778),    # Line: 1790
+        (1824, 1776),    # Line: 1790
         (1825, 146),     # Line: 1791     JUMP_IF_ACC_EQ #1 &not_0
         (1826, 1),       # Line: 1791
         (1827, 1829),    # Line: 1791

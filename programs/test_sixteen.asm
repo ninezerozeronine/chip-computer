@@ -1743,7 +1743,6 @@ $v_jump_5 &jialt_0
     NOOP
     NOOP
     NOOP
-SET SP &safe_sp
 
 
 &increment_acc
@@ -1757,6 +1756,7 @@ SET SP &safe_sp
     HALT
 
 &call_0
+    SET SP &safe_sp
     SET A #0
     SET ACC &increment_a
     CALL ACC
