@@ -55,6 +55,11 @@ async def queue_processor(queue):
         elif source == "remote":
             if job.get("function") == "print_msg":
                 print("Will send message that execution has begun")
+                await send_update(
+                    job["return_ip"],
+                    8888,
+                    f"Job {job["id"]} has begun."
+                )
                 msg = job["args"][0]
                 print(msg)
                 if msg == "A":
@@ -66,13 +71,37 @@ async def queue_processor(queue):
                     pass
                     # await uasyncio.sleep(1)
                 print("Will send message that execution has completed")
+                await send_update(
+                    job["return_ip"],
+                    8888,
+                    f"Job {job["id"]} has completed."
+                )
         else:
             print("Unknown job source: {source}")
 
 
-# class SocketConnToQueue():
-#     def __init__(self, queue):
-#         self.queue = queue
+async def send_update(ip_addr, port, message):
+    # try:
+    #     reader, writer = await uasyncio.wait_for(
+    #         uasyncio.open_connection(ip_addr, port),
+    #         timeout=5.0
+    #     )
+    # # except ConnectionRefusedError:
+    # #     print("Connection was refused. (How rude.)")
+    # #     return
+    # except uasyncio.TimeoutError:
+    #     print("Connection Timeout!")
+    #     return
+
+    reader, writer = await uasyncio.open_connection(ip_addr, port)
+
+    print(f"Sending message: {message} to ip {ip_addr} on port {port}")
+    writer.write(message.encode("ascii"))
+    await writer.drain()
+
+    print('Close the connection in send update')
+    writer.close()
+    await writer.wait_closed()
 
 
 async def handle_socket_conn(queue, reader, writer):
@@ -85,24 +114,49 @@ async def handle_socket_conn(queue, reader, writer):
 
     recd_bytes = await reader.read(-1)
     # print(f"Got {recd_bytes.decode("ascii")} as data.")
-    data = ujson.loads(recd_bytes.decode("ascii"))
-    # data = recd_bytes.decode()
+    # data = recd_bytes.decode("ascii")
+    try:
+        data = ujson.loads(recd_bytes.decode("ascii"))
+    except ValueError:
+        writer.write("Unable to decode data as json".encode("ascii"))
+        await writer.drain()
 
-    
+        print("Close the connection")
+        writer.close()
+        await writer.wait_closed()
+        return
+
+    if "id" not in data:
+        writer.write("Job missing id key".encode("ascii"))
+        await writer.drain()
+
+        print("Close the connection")
+        writer.close()
+        await writer.wait_closed()
+        return
+
+    if "function" not in data:
+        writer.write("Job missing function key".encode("ascii"))
+        await writer.drain()
+
+        print("Close the connection")
+        writer.close()
+        await writer.wait_closed()
+        return
+
     print(f"Received {data!r} from {addr!r}")
 
     data["source"] = "remote"
     data["return_ip"] = addr[0]
+    # data["return_ip"] = "123.123.123.123"
 
     queue.put_nowait(data)
 
-    # data["extra"] = "oh hai!"
-
     # print("Sending some data")
-    # writer.write("fanks".encode("ascii"))
-    # await writer.drain()
+    writer.write(f"Job: {data["id"]} recieved.".encode("ascii"))
+    await writer.drain()
 
-    print("Close the connection")
+    print("Close the connection in handle socket conn")
     writer.close()
     await writer.wait_closed()
 
@@ -168,11 +222,14 @@ def main():
 
     pulse_task = uasyncio.create_task(pulse())
 
+
+
     socket_handler = partial(handle_socket_conn, job_queue)
+
     server = await uasyncio.start_server(
         socket_handler,
-        '0.0.0.0',
-        8888,
+        host='0.0.0.0',
+        port=8888
     )
 
     await uasyncio.gather(
