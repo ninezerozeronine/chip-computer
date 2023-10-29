@@ -2,6 +2,7 @@ import argparse
 import json
 from pprint import pprint
 import asyncio
+import datetime
 
 def get_parser():
     """
@@ -66,7 +67,7 @@ async def send_job(ip_addr, port, message, job=None):
 
     if job is None:
         job = {
-            "id":"1A2B3C",
+            "id":str(datetime.datetime.now()),
             "function": "print_msg",
             "args": [message]
         }
@@ -85,6 +86,7 @@ async def send_job(ip_addr, port, message, job=None):
 
     print('Close the connection')
     writer.close()
+    await writer.wait_closed()
 
 if __name__ == "__main__":
     asyncio.run(main())

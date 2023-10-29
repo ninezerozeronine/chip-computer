@@ -3,7 +3,7 @@ from queue import Queue
 import secrets
 
 from machine import Pin
-import uasyncio
+import asyncio
 import network
 import ujson
 
@@ -33,7 +33,7 @@ def partial(func, *args, **kwargs):
 async def keypad_update(keypad):
     while True:
         keypad.update()
-        await uasyncio.sleep(0.1)
+        await asyncio.sleep(0.1)
 
 
 async def queue_processor(queue):
@@ -48,16 +48,16 @@ async def queue_processor(queue):
                     num_secs = 6
                     for i in range(num_secs):
                         print(f"Sleeping for second {i + 1} of {num_secs}")
-                        await uasyncio.sleep(1)
+                        await asyncio.sleep(1)
                 else:
                     pass
-                    # await uasyncio.sleep(1)
+                    # await asyncio.sleep(1)
         elif source == "remote":
             if job.get("function") == "print_msg":
-                print("Will send message that execution has begun")
+                # print(f"Will send message to {job["return_ip"]}:8889 that execution of job {job["id"]} has begun")
                 await send_update(
                     job["return_ip"],
-                    8888,
+                    8889,
                     f"Job {job["id"]} has begun."
                 )
                 msg = job["args"][0]
@@ -66,14 +66,14 @@ async def queue_processor(queue):
                     num_secs = 6
                     for i in range(num_secs):
                         print(f"Sleeping for second {i + 1} of {num_secs}")
-                        await uasyncio.sleep(1)
+                        await asyncio.sleep(1)
                 else:
                     pass
-                    # await uasyncio.sleep(1)
-                print("Will send message that execution has completed")
+                    # await asyncio.sleep(1)
+                # print(f"Will send message to {job["return_ip"]}:8889 that execution of job {job["id"]} has completed")
                 await send_update(
                     job["return_ip"],
-                    8888,
+                    8889,
                     f"Job {job["id"]} has completed."
                 )
         else:
@@ -82,18 +82,18 @@ async def queue_processor(queue):
 
 async def send_update(ip_addr, port, message):
     # try:
-    #     reader, writer = await uasyncio.wait_for(
-    #         uasyncio.open_connection(ip_addr, port),
+    #     reader, writer = await asyncio.wait_for(
+    #         asyncio.open_connection(ip_addr, port),
     #         timeout=5.0
     #     )
     # # except ConnectionRefusedError:
     # #     print("Connection was refused. (How rude.)")
     # #     return
-    # except uasyncio.TimeoutError:
+    # except asyncio.TimeoutError:
     #     print("Connection Timeout!")
     #     return
 
-    reader, writer = await uasyncio.open_connection(ip_addr, port)
+    reader, writer = await asyncio.open_connection(ip_addr, port)
 
     print(f"Sending message: {message} to ip {ip_addr} on port {port}")
     writer.write(message.encode("ascii"))
@@ -103,6 +103,9 @@ async def send_update(ip_addr, port, message):
     writer.close()
     await writer.wait_closed()
 
+    reader.close()
+    await reader.wait_closed()
+
 
 async def handle_socket_conn(queue, reader, writer):
 
@@ -110,7 +113,7 @@ async def handle_socket_conn(queue, reader, writer):
     print(f"Got connection from {addr!r}")
 
     # print("Sleeping for 1 second")
-    # await uasyncio.sleep(1)
+    # await asyncio.sleep(1)
 
     recd_bytes = await reader.read(-1)
     # print(f"Got {recd_bytes.decode("ascii")} as data.")
@@ -164,7 +167,7 @@ async def handle_socket_conn(queue, reader, writer):
 async def pulse():
     while True:
         print("pulse")
-        await uasyncio.sleep(5)
+        await asyncio.sleep(5)
 
 
 
@@ -216,32 +219,32 @@ def main():
     keypad.set_pressed_callback(3, 2, partial(job_queue.put_nowait, make_keypad_job("#")))
     keypad.set_pressed_callback(3, 3, partial(job_queue.put_nowait, make_keypad_job("D")))
 
-    keypad_task = uasyncio.create_task(keypad_update(keypad))
+    keypad_task = asyncio.create_task(keypad_update(keypad))
 
-    queue_processor_task = uasyncio.create_task(queue_processor(job_queue))
+    queue_processor_task = asyncio.create_task(queue_processor(job_queue))
 
-    pulse_task = uasyncio.create_task(pulse())
+    pulse_task = asyncio.create_task(pulse())
 
 
 
     socket_handler = partial(handle_socket_conn, job_queue)
 
-    server = await uasyncio.start_server(
+    server = await asyncio.start_server(
         socket_handler,
         host='0.0.0.0',
         port=8888
     )
 
-    await uasyncio.gather(
+    await asyncio.gather(
         keypad_task,
         queue_processor_task,
         pulse_task,
     )
 
-    print("uasyncio done!")
+    print("asyncio done!")
 
 if __name__ == "__main__":
-    uasyncio.run(main())
+    asyncio.run(main())
 
 def dev_main():
-    uasyncio.run(main())
+    asyncio.run(main())

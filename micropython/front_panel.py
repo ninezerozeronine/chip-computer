@@ -56,6 +56,18 @@ class FrontPanel():
         time.sleep_us(1)
         self.set_reset(False)
 
+    def set_ip(self, ip):
+        """
+
+        """
+        self._display.set_ip(ip)
+
+    def set_port(self, port):
+        """
+
+        """
+        self._display.set_port(port)
+
     def half_step(self):
         """
         Advance the CPU by a half step.
@@ -360,7 +372,7 @@ class FrontPanel():
         if self._panel_mode != STOP:
             return
 
-        self._set_words(PROGRAMS[self._program_index]["content"])
+        self.set_words(PROGRAMS[self._program_index]["content"])
 
     def set_frequency_from_user_input(self):
         """
@@ -418,6 +430,55 @@ class FrontPanel():
             self._user_input_string = self._user_input_string[:-1]
             self._display.set_user_input(self._user_input_string)
 
+    def set_words(self, addresses_and_words):
+        """
+        Set a number of addresses and words at once.
+
+        Args:
+            addresses_and_words (tuple(tuple(int, int))): List of pairs
+                of addresses and words.
+        """
+        if self._panel_mode != STOP:
+            return
+
+        self._interface.set_memory_active(True)
+        self._interface.set_rfm_wtm(True)
+        self._interface.set_interface_address_assert(True)
+        self._interface.set_interface_data_assert(True)
+        
+        num_words = len(addresses_and_words)
+        word = 1
+        spinners = ["-", "\\", "|", "/"]
+        spinner_index = 0
+        num_spinners = len(spinners)
+        
+        current_word = 1
+        last_percentage = 0
+        for address, word in addresses_and_words:
+            if word % 50 == 0:
+                percentage = int((current_word / num_words) * 100)
+                if percentage > last_percentage + 10:
+                    last_percentage += 10
+                status_update = "{spinner} - {last_percentage}%".format(
+                    spinner=spinners[spinner_index],
+                    last_percentage=last_percentage
+                )
+                self._display.set_user_input(status_update)
+                spinner_index = (spinner_index + 1) % num_spinners
+            current_word += 1
+            self._interface.set_address(address)
+            self._interface.set_data(word)
+            time.sleep_us(1)
+            self._send_cpu_like_clock_cycle()
+            time.sleep_us(1)
+
+        self._interface.set_memory_active(False)
+        self._interface.set_interface_address_assert(False)
+        self._interface.set_interface_data_assert(False)
+        
+        self._display.set_user_input(self._user_input_string)
+        self._display.set_data(self._get_word(self._readwrite_address))
+
     def _set_clock_source(self):
         """
         Set the clock source for the CPU.
@@ -432,53 +493,6 @@ class FrontPanel():
             )
         if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
             self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_CRYSTAL)
-
-    def _set_words(self, addresses_and_words):
-        """
-        Set a number of addresses and words at once.
-
-        Args:
-            addresses_and_words (tuple(tuple(int, int))): List of pairs
-                of addresses and words.
-        """
-        if self._panel_mode == STOP:
-
-            self._interface.set_memory_active(True)
-            self._interface.set_rfm_wtm(True)
-            self._interface.set_interface_address_assert(True)
-            self._interface.set_interface_data_assert(True)
-            
-            num_words = len(addresses_and_words)
-            word = 1
-            spinners = ["-", "\\", "|", "/"]
-            spinner_index = 0
-            num_spinners = len(spinners)
-            
-            current_word = 1
-            last_percentage = 0
-            for address, word in addresses_and_words:
-                if word % 50 == 0:
-                    percentage = int((current_word / num_words) * 100)
-                    if percentage > last_percentage + 10:
-                        last_percentage += 10
-                    status_update = "{spinner} - {last_percentage}%".format(
-                        spinner=spinners[spinner_index],
-                        last_percentage=last_percentage
-                    )
-                    self._display.set_user_input(status_update)
-                    spinner_index = (spinner_index + 1) % num_spinners
-                current_word += 1
-                self._interface.set_address(address)
-                self._interface.set_data(word)
-                time.sleep_us(1)
-                self._send_cpu_like_clock_cycle()
-                time.sleep_us(1)
-
-            self._interface.set_memory_active(False)
-            self._interface.set_interface_address_assert(False)
-            self._interface.set_interface_data_assert(False)
-            
-            self._display.set_user_input(self._user_input_string)
 
     def _at_beginning_of_clock_cycle(self):
         """

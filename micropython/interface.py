@@ -569,11 +569,11 @@ class Interface():
         This doesn't latch it into the output register though.
         """
         self._output_serial_out_pin.value(bit)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._output_shift_clock_pin.value(True)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._output_shift_clock_pin.value(False)
-        time.sleep_us(1)
+        # time.sleep_us(1)
 
     def _timer_callback(self, timer):
         """

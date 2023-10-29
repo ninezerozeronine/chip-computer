@@ -10,7 +10,7 @@ class Display():
     def __init__(self):
         self._display = ssd1306.SSD1306_I2C(
             128,
-            32,
+            64,
             I2C(0, sda=Pin(OLED_SDA_GPIO_NO), scl=Pin(OLED_SCL_GPIO_NO))
         )
         self._display.rotate(2)
@@ -20,6 +20,8 @@ class Display():
         self._mode_str = ""
         self._program_name_str = ""
         self._frequency_str = ""
+        self._ip_str = ""
+        self._port_str = ""
         self._redraw()
 
     def set_address(self, address):
@@ -86,6 +88,14 @@ class Display():
         self._frequency_str = "XTAL"
         self._redraw()
 
+    def set_ip(self, ip):
+        self._ip_str = ip
+        self._redraw()
+
+    def set_port(self, port):
+        self._port_str = port
+        self._redraw()
+
     def _redraw(self):
         """
         Redraw the display
@@ -95,6 +105,9 @@ class Display():
         |A:xxxxx D:xxxxx |
         |>xxxxxxxM:xxxx  |
         |P:xxxxx F:xxxxxx|
+        |255.255.255.255 | <- IP
+        |65535           | <- Port
+
         """
 
         # Clear display
@@ -123,5 +136,9 @@ class Display():
         # Frequency
         self._display.text("F:", 64, 16, 1)
         self._display.text(self._frequency_str, 80, 16, 1)
+
+        #IP and port
+        self._display.text(self._ip_str, 0, 24, 1)
+        self._display.text(self._port_str, 0, 32, 1)
 
         self._display.show()

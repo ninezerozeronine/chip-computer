@@ -18,8 +18,8 @@ async def handle_connection(reader, writer):
 async def main():
     server = await asyncio.start_server(
         handle_connection,
-        host='192.168.1.74',
-        port=8888
+        host='0.0.0.0',
+        port=8889
     )
 
     addrs = ', '.join(str(sock.getsockname()) for sock in server.sockets)
