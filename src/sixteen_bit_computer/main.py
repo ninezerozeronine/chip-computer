@@ -3,6 +3,9 @@ Top level interface for the module
 """
 
 import os
+import datetime
+import asyncio
+import json
 
 from . import assembler
 from .assembly_summary import generate_assembly_summary
@@ -12,6 +15,7 @@ from . import assembly_export
 from . import rom_export
 from . import microcode_rom
 from . import decimal_rom
+from . import utils
 
 
 def assemble(
@@ -100,6 +104,102 @@ def assemble(
 
     print("\n\nAssembly summary:\n")
     print(generate_assembly_summary(processed_assembly))
+
+
+async def assemble_and_send(
+        input_filepath,
+        ip_address,
+        port
+    ):
+    """
+    Read and assemble an assembly file and send it over WiFi to the computer.
+
+    Args:
+        input_filepath (str): The location of the assembly file.
+        ip_address (str) (optional): The location to write
+            out the machine code (without extension). If nothing is
+            passed, the output path will be the input filename with the
+            extension changed to mc.
+        port (str): The port on ther server to connect to.
+
+    """
+
+    # Do assembly
+    lines = filepath_to_lines(input_filepath)
+    try:
+        processed_assembly = assembler.assemble(lines)
+    except AssemblyError as inst:
+        print(inst.args[0])
+        return
+
+    # Print Summary
+    print("\n\nAssembly summary:\n")
+    print(generate_assembly_summary(processed_assembly))
+
+    machinecode = assembly_export.assembly_lines_to_list(processed_assembly)
+    machinecode_chunks = list(utils.chunker(machinecode, 200))
+    num_chunks = len(machinecode_chunks)
+    aborted = False
+    for counter, chunk in enumerate(machinecode_chunks, start=1):
+        print(f"Chunk {counter} of {num_chunks}")
+        job = {
+            "function":"set_words",
+            "args":[chunk]
+        }
+        success = await send_job(ip_address, int(port), job)
+        if not success:
+            aborted = True
+            break
+        await asyncio.sleep(3)
+
+    if aborted:
+        print("Assembly send was unsuccessful.")
+
+async def send_job(ip_addr, port, job):
+    """
+    Send a job to the computer.
+
+    Args:
+        ip_addr (str): The location of the assembly file.
+        port (int): The port on ther server to connect to.
+        job (dict): Dictionary describing the job
+            Requires a "function" key with a value which is the name
+            of a function to run on the micropython FrontPanel object
+    Returns
+    """
+    # This will raise a OSError: [WinError 121] The semaphore timeout period has expired
+    # But putting it in the wait_for seems to prevent that from happening...
+    # reader, writer = await asyncio.open_connection(
+    #     ip_addr, port)
+
+    try:
+        reader, writer = await asyncio.wait_for(
+            asyncio.open_connection(ip_addr, port),
+            timeout=5.0
+        )
+    except ConnectionRefusedError:
+        print("Connection was refused. (How rude.)")
+        return False
+    except asyncio.TimeoutError:
+        print("Connection Timeout!")
+        return False
+
+    if "id" not in job:
+        job["id"] = str(datetime.datetime.now())
+
+    print(f"Sending job ID: {job['id']}")
+
+    writer.write(json.dumps(job).encode("ascii"))
+    writer.write_eof()
+    await writer.drain()
+
+    data = await reader.read()
+    print(f'Received: {data.decode("ascii")}')
+
+    writer.close()
+    await writer.wait_closed()
+
+    return True
 
 
 def write_assembly_to_python(

@@ -15,6 +15,11 @@ import secrets
 from queue import Queue
 
 PORT = 8888
+DEBUG = False
+
+def log(msg):
+    if DEBUG:
+        print(msg)
 
 # https://github.com/micropython/micropython-lib/blob/master/python-stdlib/functools/functools.py
 def partial(func, *args, **kwargs):
@@ -29,6 +34,11 @@ def partial(func, *args, **kwargs):
 def connect(panel):
     """
     Connect to WiFi
+
+    Args:
+        panel (FrontPanel): Front panel object for the Computer.
+    Returns:
+        bool: True if connection was successful, false if not.
     """
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -41,7 +51,7 @@ def connect(panel):
             if wlan.isconnected():
                 break
             else:
-                time.sleep(1.5)
+                time.sleep(10)
 
     if wlan.isconnected():
         panel.set_ip(wlan.ifconfig()[0])
@@ -54,15 +64,30 @@ def connect(panel):
 async def run_keypad(keypad):
     """
     Run the keypad
+
+    Args:
+        keypad (Keypad): Keypad object.
     """
     while True:
         keypad.update()
         await asyncio.sleep(0.1)
 
 async def handle_socket_conn(queue, panel, reader, writer):
+    """
+    Handle something connecting to the server
 
+    Expects to be wrapped in a partial, hence reader and writer not
+    being the first two args.
+
+    Args:
+        queue (Queue): asyncio queue object to put functions to call on.
+        panel (FrontPanel): Front pnale object for the Computer.
+        reader (Stream): asyncio Stream object for reading.
+        writer (Stream):asyncio Stream object for reading.
+
+    """
     addr = writer.get_extra_info('peername')
-    print(f"Got connection from {addr!r}")
+    log(f"Got connection from {addr!r}")
 
     recd_bytes = await reader.read(-1)
     try:
@@ -117,12 +142,21 @@ async def handle_socket_conn(queue, panel, reader, writer):
     await writer.wait_closed()
 
 async def pulse():
+    """
+    Blink the onboard LED forever
+    """
     led_pin = Pin("LED", Pin.OUT)
     while True:
         led_pin.toggle()
         await asyncio.sleep(1)
 
 async def queue_processor(queue):
+    """
+    Process items on the queue forevever.
+
+    Args:
+        queue (Queue): asyncio queue object to put functions to call on.
+    """
     while True:
         job = await queue.get()
         job()
@@ -130,7 +164,7 @@ async def queue_processor(queue):
 
 def main():
     """
-
+    Main async runner for the computer
     """
 
     row_pins = [
@@ -194,12 +228,13 @@ def main():
     keypad.set_pressed_callback(0, 4, partial(job_queue.put_nowait, partial(panel.set_reset, True)))
     keypad.set_released_callback(0, 4, partial(job_queue.put_nowait, partial(panel.set_reset, False)))
 
+    # Setup asyncio tasks ready to run the Computer
     tasks = []
-
     tasks.append(asyncio.create_task(run_keypad(keypad)))
     tasks.append(asyncio.create_task(queue_processor(job_queue)))
     tasks.append(asyncio.create_task(pulse()))
 
+    # If connected to WiFi, set up a server and a connection handler
     if connected:
         socket_handler = partial(handle_socket_conn, job_queue, panel)
         server = await asyncio.start_server(
@@ -208,6 +243,7 @@ def main():
             port=8888
         )
 
+    # Run all tasks concurrently
     await asyncio.gather(*tasks)
 
 asyncio.run(main())

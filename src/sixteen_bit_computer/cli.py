@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 
 from . import main
 
@@ -7,6 +8,7 @@ def assemble():
     """
     Entry point for the command line assemble script.
     """
+
     parser = get_assemble_parser()
     args = parser.parse_args()
     main.assemble(
@@ -66,6 +68,7 @@ def gen_roms():
     """
     Entry point for the command line rom generation script.
     """
+
     parser = get_gen_roms_parser()
     args = parser.parse_args()
     if args.file_prefix:
@@ -88,6 +91,7 @@ def get_gen_roms_parser():
     Returns:
         argparse.ArgumentParser: The argument parser.
     """
+
     parser = argparse.ArgumentParser(
         description="Generate ROMs that contain the microcode."
     )
@@ -108,6 +112,45 @@ def get_gen_roms_parser():
         choices=["logisim", "arduino"],
         help="Format to write the ROMs in.",
         default="logisim",
+    )
+
+    return parser
+
+def assemble_and_send():
+    """
+    Entry point for the command line assemble and send script.
+    """
+
+    parser = get_assemble_and_send_parser()
+    args = parser.parse_args()
+    asyncio.run(
+        main.assemble_and_send(
+            args.asm_filepath,
+            args.ip_address,
+            args.port
+        )
+    )
+
+
+def get_assemble_and_send_parser():
+    """
+    Generate arg parser for the assemble and send command line script.
+
+    Returns:
+        argparse.ArgumentParser: The argument parser.
+    """
+    
+    parser = argparse.ArgumentParser(
+        description="Assemble and send some assembly to the Computer."
+    )
+    parser.add_argument(
+        "asm_filepath", help="Path to the assembly file to assemble."
+    )
+    parser.add_argument(
+        "ip_address", help="IP address to send to."
+    )
+    parser.add_argument(
+        "port", help="The port to connect to."
     )
 
     return parser

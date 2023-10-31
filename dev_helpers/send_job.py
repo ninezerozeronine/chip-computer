@@ -3,6 +3,8 @@ import json
 from pprint import pprint
 import asyncio
 import datetime
+import socket
+import time
 
 TEST_DATA = (
     (0, 119),        # Line: 0008     NOOP
@@ -2246,8 +2248,51 @@ async def send_job(ip_addr, port, job):
     writer.close()
     await writer.wait_closed()
 
+def non_async_main():
+    parser = get_parser()
+    args = parser.parse_args()
+    if args.test:
+        data_chunks = chunker(TEST_DATA, 100)
+        num_chunks = len(data_chunks)
+        for counter, chunk in enumerate(data_chunks, start=1):
+            print(f"Chunk {counter} of {num_chunks}")
+            job = {
+                "function":"set_words",
+                "args":[chunk]
+            }
+            str_job=json.dumps(job)
+            non_async_send_job(args.ip_address, int(args.port), str_job)
+            time.sleep(2)
+    else:        
+        non_async_send_job(args.ip_address, int(args.port), args.job)
+
+def non_async_send_job(ip_address, port, job):
+    try:
+        job=json.loads(job)
+    except json.decoder.JSONDecodeError:
+        print(f"Unable to convert {job} to json.")
+        return
+
+    if "id" not in job:
+        job["id"] = str(datetime.datetime.now())
+
+    print(f"Sending job")
+    # pprint(job)
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        print("Connecting")
+        s.connect((ip_address, port))
+        print("Sending")
+        s.send(json.dumps(job).encode("ascii"))
+        print("Recieving")
+        data = s.recv(1024)
+    print(f"Received {data.decode('ascii')}")
+
+
+
 if __name__ == "__main__":
     asyncio.run(main())
+    # non_async_main()
 
 # "{\"function"\:\"foo\"}"
 # "{\"function\":\"incr_readwrite_address\"}"

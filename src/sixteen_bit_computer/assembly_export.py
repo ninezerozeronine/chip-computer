@@ -382,4 +382,31 @@ def assembly_lines_to_dictionary(assembly_lines):
             )
     return assembly
 
+def assembly_lines_to_list(assembly_lines):
+    """
+    Convert the assembly lines to a list of indexes and values.
+
+    The list is a list of lists, in each sub list, the first item is
+    the index, and the second is the value of each machinecode word.
+
+    The values are converted to the unsigned equivalent if the number is
+    negative.
+
+    Args:
+        assembly_lines (List(AssemblyLine)): Fully processed assembly
+            lines to convert to a raw dictionary.
+
+    Returns:
+        List(List(int,int))
+    """
+
+    assembly = []
+    for line in assembly_lines:
+        for word in line.pattern.machinecode:
+            assembly.append([
+                word.index,
+                number_utils.get_positive_equivalent(word.value, bitwidth=16)
+            ])
+    return assembly
+
 
