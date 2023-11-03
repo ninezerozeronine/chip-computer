@@ -5,10 +5,15 @@
     STORE ACC [$last_button_state]
     STORE ACC [$button_state]
     STORE ACC [$loop_count]
+    STORE ACC [$player_height]
+    SET ACC !ps_on_floor
+    STORE ACC [$player_state]
+    SET ACC #1
+    STORE ACC [$obstacle_position]
 
 
 // Constants for main loop
-!loop_count_max #4000
+!loop_count_max #5000
 $loop_count
 
 /////////////////////////////////////////////
@@ -27,14 +32,13 @@ $loop_count
     STORE ACC [$loop_count]
     
     // Run the tick
-    INCR C
     CALL &tick
 
     // Start loop again
     JUMP &main_loop
 
 
-
+$tick_indicator
 
 /////////////////////////////////////////////
 &tick
@@ -42,6 +46,8 @@ $loop_count
     CALL &update_button_state
 
     CALL &update_player_state
+
+    CALL &update_obstacle
 
     CALL &draw
 
@@ -96,7 +102,6 @@ $last_button_state
 
 &ubs_update_last_state
     STORE A [$last_button_state]
-    LOAD [$button_state] B
     
     RETURN
 
@@ -118,6 +123,11 @@ $player_height
 /////////////////////////////////////////////
 &update_player_state
 /////////////////////////////////////////////
+    // SET ACC !ps_big_jump_2
+    // STORE ACC [$player_state]
+    // RETURN
+
+
     // If the player is on the floor continue, otherwise jump to test if jump begin
     LOAD [$player_state] ACC
     JUMP_IF_ACC_NEQ !ps_on_floor &ups_t_jb
@@ -134,7 +144,7 @@ $player_height
     RETURN
 
 &ups_t_jb
-    // If the player is beginning a jump, continue, otherwise jump to test if big jump hang 1
+    // If the player is beginning a jump, continue, otherwise jump to test if big jump  1
     LOAD [$player_state] ACC
     JUMP_IF_ACC_NEQ !ps_jump_begin &ups_t_bj1
 
@@ -150,13 +160,15 @@ $player_height
     RETURN
 
 &ups_t_bj1
-    // If the player is at big jump 1 continue, otherwise jump to test if at hang 2
+    // If the player is at big jump 1 continue, otherwise jump to test if at big jump 2
     LOAD [$player_state] ACC
     JUMP_IF_ACC_NEQ !ps_big_jump_1 &ups_t_bj2
 
-    // Set player state to big jump 2, no need to set height, already set at 2. Return
+    // Set player state to big jump 2, set height to 2. Return
     SET ACC !ps_big_jump_2
     STORE ACC [$player_state]
+    SET ACC #2
+    STORE ACC [$player_height]
     RETURN
 
 &ups_t_bj2
@@ -168,9 +180,9 @@ $player_height
     JUMP &ups_jump_end
 
 &ups_t_end
-    // If the player is at jump end continue, otherwise jump to return
+    // If the player is at jump end continue, otherwise jump to unknown condition
     LOAD [$player_state] ACC
-    JUMP_IF_ACC_NEQ !ps_jump_end &ups_ret
+    JUMP_IF_ACC_NEQ !ps_jump_end &ups_unknown
 
     // Set player state to on floor, height to 0. Return
     SET ACC !ps_on_floor
@@ -190,43 +202,70 @@ $player_height
 &ups_ret
     RETURN
 
-
+&ups_unknown
+    // Set player state to on floor, height to 0. Return
+    SET ACC !ps_on_floor
+    STORE ACC [$player_state]
+    SET_ZERO ACC
+    STORE ACC [$player_height]
+    RETURN
 
 
 /////////////////////////////////////////////
 &draw
 /////////////////////////////////////////////
+    LOAD [$player_height] ACC
+
     // If the player height is zero continue, otherwise jump to test if player height is 1
-    LOAD [$player_state] ACC
     JUMP_IF_NEQ_ZERO ACC &draw_t1
 
     // Set C and B to 0, and A to 1
     SET_ZERO C
     SET_ZERO B
-    SET A #1
+    SET ACC #0b0010_0000_0000_0000
+    OR [$obstacle_position]
+    COPY ACC A
     RETURN
 
 &draw_t1
     // If the player height is 1 continue, otherwise jump to test if player height is 2
-    LOAD [$player_state] ACC
     JUMP_IF_ACC_NEQ #1 &draw_t2
 
     // Set C to zero, B to 1, and A to 0
     SET_ZERO C
-    SET B #1
-    SET_ZERO A
+    SET B #0b0010_0000_0000_0000
+    LOAD [$obstacle_position] A
     RETURN
 
 &draw_t2
     // If the player height is 2 continue, otherwise jump to return
-    LOAD [$player_state] ACC
     JUMP_IF_ACC_NEQ #2 &draw_ret
 
     // Set C to 1, B to 0, and A to 0
-    SET B #1
+    SET C #0b0010_0000_0000_0000
     SET_ZERO B
-    SET_ZERO A
+    LOAD [$obstacle_position] A
     RETURN
 
 &draw_ret
     RETURN
+
+
+
+
+$obstacle_position
+
+/////////////////////////////////////////////
+&update_obstacle
+/////////////////////////////////////////////
+    LOAD [$obstacle_position] ACC
+    ROT_LEFT ACC
+    STORE ACC [$obstacle_position]
+    RETURN
+
+
+
+
+
+
+
