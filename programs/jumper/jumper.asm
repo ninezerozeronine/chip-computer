@@ -5,11 +5,25 @@
     STORE ACC [$last_button_state]
     STORE ACC [$button_state]
     STORE ACC [$loop_count]
+
+    // Player variables
     STORE ACC [$player_height]
     SET ACC !ps_on_floor
     STORE ACC [$player_state]
+
+    // Obstacle variables
     SET ACC #1
     STORE ACC [$obstacle_position]
+    SET ACC !ot_short
+    STORE ACC [$obstacle_type]
+
+// Position of the player
+!player_position #0b0010_0000_0000_0000
+
+// Game state
+$game_state
+!gs_playing #0
+!gs_game_over #1
 
 
 // Constants for main loop
@@ -50,6 +64,8 @@ $tick_indicator
     CALL &update_obstacle
 
     CALL &draw
+
+    CALL &collision_check
 
     RETURN
 
@@ -219,41 +235,47 @@ $player_height
     // If the player height is zero continue, otherwise jump to test if player height is 1
     JUMP_IF_NEQ_ZERO ACC &draw_t1
 
-    // Set C and B to 0, and A to 1
+    // Set C and B to 0, and A to player pos
     SET_ZERO C
     SET_ZERO B
-    SET ACC #0b0010_0000_0000_0000
+    SET ACC !player_position
     OR [$obstacle_position]
     COPY ACC A
-    RETURN
+    JUMP &draw_ret
 
 &draw_t1
     // If the player height is 1 continue, otherwise jump to test if player height is 2
     JUMP_IF_ACC_NEQ #1 &draw_t2
 
-    // Set C to zero, B to 1, and A to 0
+    // Set C to zero, B to player pos, and A to 0
     SET_ZERO C
-    SET B #0b0010_0000_0000_0000
+    SET B !player_position
     LOAD [$obstacle_position] A
-    RETURN
+    JUMP &draw_ret
 
 &draw_t2
     // If the player height is 2 continue, otherwise jump to return
     JUMP_IF_ACC_NEQ #2 &draw_ret
 
-    // Set C to 1, B to 0, and A to 0
-    SET C #0b0010_0000_0000_0000
+    // Set C to player pos, B to 0, and A to 0
+    SET C !player_position
     SET_ZERO B
     LOAD [$obstacle_position] A
-    RETURN
 
 &draw_ret
+    COPY C ACC
+    OR [$game_state]
+    COPY ACC C
     RETURN
 
 
 
 
 $obstacle_position
+$obstacle_type
+!ot_short #0
+!ot_tall #1
+!ot_gap #2
 
 /////////////////////////////////////////////
 &update_obstacle
@@ -262,6 +284,56 @@ $obstacle_position
     ROT_LEFT ACC
     STORE ACC [$obstacle_position]
     RETURN
+
+
+
+
+/////////////////////////////////////////////
+&collision_check
+/////////////////////////////////////////////
+
+    // If the obstacle and player are in the same position
+    // continue, otherwise return
+    LOAD [$obstacle_position] ACC
+    JUMP_IF_ACC_NEQ !player_position &cc_ret
+
+    // If it's a short obstacle, continue, otherwise return
+    LOAD [$obstacle_type] ACC
+    JUMP_IF_ACC_NEQ !ot_short &cc_ret
+
+    // If the player height is 0, continue, otherwise return
+    LOAD [$player_height] ACC
+    JUMP_IF_NEQ_ZERO ACC &cc_ret
+
+    // Game over
+    SET ACC !gs_game_over
+    STORE ACC [$game_state]
+    RETURN
+
+&cc_ret
+    SET ACC !gs_playing
+    STORE ACC [$game_state]
+    RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
