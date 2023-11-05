@@ -17,13 +17,14 @@
     SET ACC !ot_short
     STORE ACC [$obstacle_type]
 
-// Position of the player
-!player_position #0b0010_0000_0000_0000
+    // Game state
+    SET ACC !gs_playing
+    STORE ACC [$game_state]
 
-// Game state
-$game_state
-!gs_playing #0
-!gs_game_over #1
+    // Position of the player
+    !player_position #0b0010_0000_0000_0000
+
+
 
 
 // Constants for main loop
@@ -57,6 +58,13 @@ $tick_indicator
 /////////////////////////////////////////////
 &tick
 /////////////////////////////////////////////
+
+    CALL &update_game_state
+
+    // If game state is playing, continue, otherwise return
+    LOAD [$game_state] ACC
+    JUMP_IF_ACC_NEQ !gs_playing &tick_return
+
     CALL &update_button_state
 
     CALL &update_player_state
@@ -69,8 +77,41 @@ $tick_indicator
 
     RETURN
 
+&tick_return
+    CALL &draw
+    RETURN
 
 
+// Game state
+$game_state
+!gs_playing #0
+!gs_game_over #1
+
+$remaining_game_over_ticks
+!max_game_over_ticks #20
+
+/////////////////////////////////////////////
+&update_game_state
+/////////////////////////////////////////////
+
+    // If game state is game over, continue, otherwise return
+    LOAD [$game_state] ACC
+    JUMP_IF_ACC_NEQ !gs_game_over &ugs_return
+
+    // Decrement remaining ticks by one
+    LOAD [$remaining_game_over_ticks] ACC
+    DECR ACC
+
+    // If ticks is not zero, return, otherwise continue
+    JUMP_IF_NOT_ZERO_FLAG &ugs_return
+
+    // Set the game state back to playing, return
+    SET ACC !gs_playing
+    STORE ACC [$game_state]
+    RETURN
+
+&ugs_return
+    RETURN
 
 // Constants for controller
 !controller_address #0xFFFF
@@ -263,11 +304,19 @@ $player_height
     LOAD [$obstacle_position] A
 
 &draw_ret
-    COPY C ACC
-    OR [$game_state]
-    COPY ACC C
+    // If the game state is game over, continue, otherwise return
+    LOAD [$game_state] ACC
+    JUMP_IF_ACC_NEQ !gs_game_over &draw_ret_2
+
+    // Invert the display
+    NOT A
+    NOT B
+    NOT C
+
     RETURN
 
+&draw_ret_2
+    RETURN
 
 
 
@@ -308,6 +357,8 @@ $obstacle_type
     // Game over
     SET ACC !gs_game_over
     STORE ACC [$game_state]
+    SET ACC !max_game_over_ticks
+    STORE ACC [$remaining_game_over_ticks]
     RETURN
 
 &cc_ret

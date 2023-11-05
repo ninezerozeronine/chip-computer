@@ -13,7 +13,6 @@ class Display():
             64,
             I2C(0, sda=Pin(OLED_SDA_GPIO_NO), scl=Pin(OLED_SCL_GPIO_NO))
         )
-        self._display.rotate(2)
         self._address_str = ""
         self._data_str = ""
         self._user_input_str = ""
