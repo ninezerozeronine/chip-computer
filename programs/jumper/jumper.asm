@@ -343,15 +343,26 @@ $player_height
     COPY ACC B
     JUMP &draw_game_over
 
-    // If obstacle_type is gap, continue otherwise jump to draw game over
+    // If obstacle_type is gap, continue otherwise jump to test if overhang
 &draw_obstacle_t_gap
-    JUMP_IF_ACC_NEQ !ot_gap &draw_game_over
+    JUMP_IF_ACC_NEQ !ot_gap &draw_obstacle_t_overhang
     COPY A ACC
     OR [$obstacle_position]
     COPY ACC A
     COPY C ACC
     OR [$obstacle_position]
     COPY ACC C
+
+    // If obstacle_type is overhang, continue otherwise jump to draw game over
+&draw_obstacle_t_overhang
+    JUMP_IF_ACC_NEQ !ot_overhang &draw_game_over
+    COPY B ACC
+    OR [$obstacle_position]
+    COPY ACC B
+    COPY C ACC
+    OR [$obstacle_position]
+    COPY ACC C
+
 
 &draw_game_over
     // If the game state is game over, continue, otherwise return
@@ -375,6 +386,7 @@ $obstacle_type
 !ot_short #0
 !ot_tall #1
 !ot_gap #2
+!ot_overhang #3
 
 /////////////////////////////////////////////
 &update_obstacle
@@ -397,7 +409,7 @@ $obstacle_type
     JUMP_IF_CARRYBORROW_FLAG &uo_ret
 
     // Set the type to the highest number
-    SET ACC #2
+    SET ACC #3
     STORE ACC [$obstacle_type]
 
 &uo_ret
@@ -438,14 +450,25 @@ $obstacle_type
     JUMP &cc_game_over
 
 &cc_test_gap
-    // If it's a gap obstacle, continue, otherwise return
-    JUMP_IF_ACC_NEQ !ot_gap &cc_ret
+    // If it's a gap obstacle, continue, otherwise test if overhang
+    JUMP_IF_ACC_NEQ !ot_gap &cc_test_overhang
 
     // If the player height is 1, jump to return, otherwise continue
     LOAD [$player_height] ACC
     JUMP_IF_ACC_EQ #1 &cc_ret
 
     // Hit gap obstacle - game over!
+    JUMP &cc_game_over
+
+&cc_test_overhang
+    // If it's an overhang obstacle, continue, otherwise return
+    JUMP_IF_ACC_NEQ !ot_overhang &cc_ret
+
+    // If the player height is 0, jump to return, otherwise continue
+    LOAD [$player_height] ACC
+    JUMP_IF_EQ_ZERO ACC &cc_ret
+
+    // Hit overhang obstacle - game over!
     // Continue execution
 
 &cc_game_over
