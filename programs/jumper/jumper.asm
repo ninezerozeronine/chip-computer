@@ -25,8 +25,6 @@
     !player_position #0b0010_0000_0000_0000
 
 
-
-
 // Constants for main loop
 !loop_count_max #5000
 $loop_count
@@ -106,13 +104,38 @@ $remaining_game_over_ticks
     // If ticks is not zero, return, otherwise continue
     JUMP_IF_NOT_ZERO_FLAG &ugs_return
 
-    // Set the game state back to playing, return
-    SET ACC !gs_playing
-    STORE ACC [$game_state]
+    // Restart the game
+    CALL &start_game
     RETURN
 
 &ugs_return
     RETURN
+
+
+
+
+/////////////////////////////////////////////
+&start_game
+/////////////////////////////////////////////
+    // Set the game state to playing
+    SET ACC !gs_playing
+    STORE ACC [$game_state]
+
+    // Set obstacle pos to 1
+    SET ACC #1
+    STORE ACC [$obstacle_position]
+
+    // Set player state to on ground
+    SET ACC !ps_on_floor
+    STORE ACC [$player_state]
+
+    // Set player height to 0
+    SET_ZERO ACC
+    STORE ACC [$player_height]
+
+    RETURN
+
+
 
 // Constants for controller
 !controller_address #0xFFFF
@@ -280,10 +303,8 @@ $player_height
     // Set C and B to 0, and A to player pos
     SET_ZERO C
     SET_ZERO B
-    SET ACC !player_position
-    OR [$obstacle_position]
-    COPY ACC A
-    JUMP &draw_ret
+    SET A !player_position
+    JUMP &draw_obstacle
 
 &draw_t1
     // If the player height is 1 continue, otherwise jump to test if player height is 2
@@ -292,22 +313,31 @@ $player_height
     // Set C to zero, B to player pos, and A to 0
     SET_ZERO C
     SET B !player_position
-    LOAD [$obstacle_position] A
-    JUMP &draw_ret
+    SET_ZERO A
+    JUMP &draw_obstacle
 
 &draw_t2
     // If the player height is 2 continue, otherwise jump to return
-    JUMP_IF_ACC_NEQ #2 &draw_ret
+    JUMP_IF_ACC_NEQ #2 &draw_obstacle
 
     // Set C to player pos, B to 0, and A to 0
     SET C !player_position
     SET_ZERO B
-    LOAD [$obstacle_position] A
+    SET_ZERO A
 
-&draw_ret
+&draw_obstacle
+    COPY A ACC
+    OR [$obstacle_position]
+    COPY ACC A
+
+    COPY C ACC
+    OR [$obstacle_type]
+    COPY ACC C
+
+
     // If the game state is game over, continue, otherwise return
     LOAD [$game_state] ACC
-    JUMP_IF_ACC_NEQ !gs_game_over &draw_ret_2
+    JUMP_IF_ACC_NEQ !gs_game_over &draw_ret
 
     // Invert the display
     NOT A
@@ -316,7 +346,7 @@ $player_height
 
     RETURN
 
-&draw_ret_2
+&draw_ret
     RETURN
 
 
@@ -330,9 +360,28 @@ $obstacle_type
 /////////////////////////////////////////////
 &update_obstacle
 /////////////////////////////////////////////
+
+    // Move the obstacle one place to the left, wrapping at the end
     LOAD [$obstacle_position] ACC
     ROT_LEFT ACC
     STORE ACC [$obstacle_position]
+
+    // If we didn't wrap, continue, otherwise return
+    JUMP_IF_NOT_CARRYBORROW_FLAG &uo_ret
+
+    // Update obstacle_type
+    LOAD [$obstacle_type] ACC
+    DECR ACC
+    STORE ACC [$obstacle_type]
+
+    // If the type wrapped, continue, otherwise return
+    JUMP_IF_CARRYBORROW_FLAG &uo_ret
+
+    // Set the type to the highest number
+    SET ACC #2
+    STORE ACC [$obstacle_type]
+
+&uo_ret
     RETURN
 
 
