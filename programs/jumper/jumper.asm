@@ -101,6 +101,7 @@ $remaining_game_over_ticks
     // Decrement remaining ticks by one
     LOAD [$remaining_game_over_ticks] ACC
     DECR ACC
+    STORE ACC [$remaining_game_over_ticks]
 
     // If ticks is not zero, return, otherwise continue
     JUMP_IF_NOT_ZERO_FLAG &ugs_return
