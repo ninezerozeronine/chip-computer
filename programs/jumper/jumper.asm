@@ -204,10 +204,6 @@ $player_height
 /////////////////////////////////////////////
 &update_player_state
 /////////////////////////////////////////////
-    // SET ACC !ps_big_jump_2
-    // STORE ACC [$player_state]
-    // RETURN
-
 
     // If the player is on the floor continue, otherwise jump to test if jump begin
     LOAD [$player_state] ACC
@@ -298,7 +294,7 @@ $player_height
     LOAD [$player_height] ACC
 
     // If the player height is zero continue, otherwise jump to test if player height is 1
-    JUMP_IF_NEQ_ZERO ACC &draw_t1
+    JUMP_IF_NEQ_ZERO ACC &draw_player_t1
 
     // Set C and B to 0, and A to player pos
     SET_ZERO C
@@ -306,9 +302,9 @@ $player_height
     SET A !player_position
     JUMP &draw_obstacle
 
-&draw_t1
+&draw_player_t1
     // If the player height is 1 continue, otherwise jump to test if player height is 2
-    JUMP_IF_ACC_NEQ #1 &draw_t2
+    JUMP_IF_ACC_NEQ #1 &draw_player_t2
 
     // Set C to zero, B to player pos, and A to 0
     SET_ZERO C
@@ -316,7 +312,7 @@ $player_height
     SET_ZERO A
     JUMP &draw_obstacle
 
-&draw_t2
+&draw_player_t2
     // If the player height is 2 continue, otherwise jump to return
     JUMP_IF_ACC_NEQ #2 &draw_obstacle
 
@@ -326,15 +322,38 @@ $player_height
     SET_ZERO A
 
 &draw_obstacle
+    LOAD [$obstacle_type] ACC
+    // If obstacle_type is short, continue otherwise jump to test if tall
+    JUMP_IF_ACC_NEQ !ot_short &draw_obstacle_t_tall
+
     COPY A ACC
     OR [$obstacle_position]
     COPY ACC A
+    JUMP &draw_game_over
 
+    // If obstacle_type is tall, continue otherwise jump to test if gap
+&draw_obstacle_t_tall
+    JUMP_IF_ACC_NEQ !ot_tall &draw_obstacle_t_gap
+
+    COPY A ACC
+    OR [$obstacle_position]
+    COPY ACC A
+    COPY B ACC
+    OR [$obstacle_position]
+    COPY ACC B
+    JUMP &draw_game_over
+
+    // If obstacle_type is gap, continue otherwise jump to draw game over
+&draw_obstacle_t_gap
+    JUMP_IF_ACC_NEQ !ot_gap &draw_game_over
+    COPY A ACC
+    OR [$obstacle_position]
+    COPY ACC A
     COPY C ACC
-    OR [$obstacle_type]
+    OR [$obstacle_position]
     COPY ACC C
 
-
+&draw_game_over
     // If the game state is game over, continue, otherwise return
     LOAD [$game_state] ACC
     JUMP_IF_ACC_NEQ !gs_game_over &draw_ret
