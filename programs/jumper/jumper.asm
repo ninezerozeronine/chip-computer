@@ -415,14 +415,40 @@ $obstacle_type
     LOAD [$obstacle_position] ACC
     JUMP_IF_ACC_NEQ !player_position &cc_ret
 
-    // If it's a short obstacle, continue, otherwise return
+    // If it's a short obstacle, continue, otherwise test if tall
     LOAD [$obstacle_type] ACC
-    JUMP_IF_ACC_NEQ !ot_short &cc_ret
+    JUMP_IF_ACC_NEQ !ot_short &cc_test_tall
 
     // If the player height is 0, continue, otherwise return
     LOAD [$player_height] ACC
     JUMP_IF_NEQ_ZERO ACC &cc_ret
 
+    // Hit short obstacle - game over!
+    JUMP &cc_game_over
+
+&cc_test_tall
+    // If it's a tall obstacle, continue, otherwise test if gap
+    JUMP_IF_ACC_NEQ !ot_tall &cc_test_gap
+
+    // If the player height is 2, jump to return, otherwise continue
+    LOAD [$player_height] ACC
+    JUMP_IF_ACC_EQ #2 &cc_ret
+
+    // Hit tall obstacle - game over!
+    JUMP &cc_game_over
+
+&cc_test_gap
+    // If it's a gap obstacle, continue, otherwise return
+    JUMP_IF_ACC_NEQ !ot_gap &cc_ret
+
+    // If the player height is 1, jump to return, otherwise continue
+    LOAD [$player_height] ACC
+    JUMP_IF_ACC_EQ #1 &cc_ret
+
+    // Hit gap obstacle - game over!
+    // Continue execution
+
+&cc_game_over
     // Game over
     SET ACC !gs_game_over
     STORE ACC [$game_state]
@@ -431,8 +457,6 @@ $obstacle_type
     RETURN
 
 &cc_ret
-    SET ACC !gs_playing
-    STORE ACC [$game_state]
     RETURN
 
 
