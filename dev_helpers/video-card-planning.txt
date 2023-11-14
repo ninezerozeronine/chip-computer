@@ -1,0 +1,217 @@
+PCB/Module plan
+===============
+
+Timing
+    Input
+    Output
+        scan column (8 bits)
+            Number from 0 - 159 giving the index of the current column.
+        scan row (8 bits)
+            Number from 0 - 119 giving the index of the current row.
+        hsync (1 bit)
+            The horizontal sync pulse. This is a low going pulse.
+        vsync (1 bit)
+            The vertical sync pulse. This is a low going pulse.
+        hblank (1 bit)
+            The horizontal blanking period. When high - this is the blank portion of each row.
+        vblank (1 bit)
+            The vertical blanking period. When high - this is the blank portion of each frame - a good time to swap buffers!
+        anyblank (1 bit)
+            Any period of time where no image is being displayed.
+Cursor
+    Input
+        data (8 bits)
+            Data to set for the row or column.
+        column device active (1 bit)
+            Whether the column cursor is active (addressed).
+        row device active (1 bit)
+            Whether the column cursor is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or wrtie (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+    Output
+        cursor column (8 bits)
+            Number from 0 - 159 giving the index of the current column for the cursor.
+        cursor row (8 bits)
+            Number from 0 - 119 giving the index of the current row for the cursor.
+
+Shifter
+    Input
+        column (8 bits)
+            Column input to shift left (towards LSB).
+        row (8 bits)
+            Row input to shift left (towards LSB).
+        shift amount (2 bits)
+            How many places to shift the inputs to the left (toward the LSB).
+            Can shift 0, 1, or 2 places (3 may be possible depending on board space, if not, 3 is the same as 0).
+    Output
+        shifted column (8 bits)
+            Column shifted left.
+        shifted row (8 bits)
+            Row shifted left.
+
+Status
+    Input
+        data (8 bits)
+            The data that controls the video card:
+                bit 0: Bank select (read and write).
+                bit 1 + 2: Shift amount (read and write).
+                bit 3: hblank (read only).
+                bit 4: vblank (read only).
+        status device active (1 bit)
+            Whether the status register is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or wrtie (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+        control clock (1 bit)
+            When to sample the hblank and vblank states.
+
+
+Switcher
+    Input
+        cursor column (8 bits)
+            The current column index of the cursor.
+        cursor row (8 bits)
+            The current row index of the cursor.
+        live column (8 bits)
+            The index of the column being drawn (this comes from the timing board).
+        live row (8 bits)
+            The index of the row being drawn (this comes from the timing board).
+        switch (1 bit)
+            Whether to pass the inputs straight through or switch them.
+    Output
+        X column (8 bits)
+        X row (8 bits)
+        Y column (8 bits)
+        Y row (8 bits)
+
+Output
+    Input
+        bank 0 column (8 bits)
+            The column for bank 0.
+        bank 0 row (8 bits)
+            The row for bank 0.
+        bank 1 column (8 bits)
+            The column for bank 1.
+        bank 1 row (8 bits)
+            The row for bank 1.
+        bank select (1 bit)
+            Select which bank is drawing pixels, and which is interacting with the CPU:
+                0 = bank 0 interacting with CPU, bank 1 drawing pixels.
+                1 = bank 1 interacting with CPU, bank 0 drawing pixels.
+        hsync (1 bit)
+            The hsync signal coming from the timer.
+        vsync (1 bit)
+            The vsync signal coming from the timer.
+        anyblank (1 bit)
+            Any period of time where no image is being displayed.
+        pixel clock (1 bit)
+            The pixel clock (likely divided) coming from the timer.
+            This is used to delay the hsync, vsync and outgoing RGB signals by half a clock
+                cycle so that the (relitively) slow speed of the RAM won't lead to visual
+                artefacts.
+        video data active (1 bit)
+            Whether the video data device is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or wrtie (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+    Output
+        VGA red
+        VGA green
+        VGA blue
+        VGA hsync
+        VGA vsync
+        video data (8 bits)
+
+
+Timing Notes
+============
+
+Using 640x480 @ 60Hz timing
+25.175MHz Pixel freq / 39.72ns per pixel
+
+640x480
+320x240
+160x120
+80x60
+40x30
+20x15
+
+Horizontal:
+                    Pixels                      Time (us)
+    Visible area    640     320     160         25.42204
+    Front porch     16      8       4           0.63555
+    Sync Pulse      96      48      24          3.813306
+    Back Porch      48      24      12          1.906653
+    Whole line      800     400     200         31.777557
+
+    The sync pulse is low going
+
+Vertical
+                    Lines   Time (us)
+    Visible area    480     15253.227
+    Front porch     10      317.775
+    Sync pulse      2       63.555
+    Back porch      33      1048.659
+    Whole frame     525     16683.217
+
+    The sync pulse is low going
+
+The order of porches and pulses seems to be:
+    Sync
+    Back porch
+    Display
+    Front porch
+
+    Per the DSView traces, the falling edge of the hsync pulse
+    coincides with the faling edge of the vsync pulse. This would
+    indicate that a line starts and ends with the falling edge of
+    the hsync pulse.
+
+
+Take the 25.175MHz crystal and divide by 4 to get 6.29375 MHz / 158.887ns per pixel.
+
+Counting to 200 needs 8 bits (200 = 11001000) = 2 x 74HC161
+Counting to 525 needs 10 bits (525 = 1000001101) = 3 x 74HC161
+
+For horizontal counts:
+    24 =    0001 1000 Set sync high
+    36 =    0010 0100 Set blanking low
+    196 =   1100 0100 Set blanking high
+    200 =   1100 1000 Set sync low / clock v count (reset count)
+
+    ... or ...
+
+    160 =   1010 0000   Set blanking high
+    164 =   1010 0100   Set sync low (clock v count)
+    188 =   1011 1100   Set sync high
+    200 =   1100 1000   Set blanking low (reset count)
+
+For vertical counts:
+    2 =     00 0000 0010    Set sync high
+    35 =    00 0010 0011    Set blanking low
+    515 =   10 0000 0011    Set blanking high
+    525 =   10 0000 1101    Set sync low (reset count)
+
+    ... or ...
+
+    480 =   01 1110 0000    Set blanking high
+    490 =   01 1110 1010    Set sync low
+    492 =   01 1110 1100    Set sync high
+    525 =   10 0000 1101    Set blanking low (reset count)
+
+Chip totals
+    6 x 74HC161 (4 bit counter)
+    8 x 74HC30  (8 input NAND)
+    2 x 74HC27  (3 x 3 input NOR - to check bits in positions 4, 6, and 7 are zero on vertical)
+    3 x 74HC04  (6 x inverters - need 15 in total)
+    2 x 74HC00  (4 x NAND - For SR latches)
