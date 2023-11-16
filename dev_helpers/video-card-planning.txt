@@ -2,6 +2,7 @@ PCB/Module plan
 ===============
 
 Timing
+------
     Input
     Output
         scan column (8 bits)
@@ -18,7 +19,93 @@ Timing
             The vertical blanking period. When high - this is the blank portion of each frame - a good time to swap buffers!
         anyblank (1 bit)
             Any period of time where no image is being displayed.
+
+    Notes
+        Using 640x480 @ 60Hz timing
+        25.175MHz Pixel freq / 39.72ns per pixel
+
+        640x480
+        320x240
+        160x120
+        80x60
+        40x30
+        20x15
+
+        Horizontal:
+                            Pixels                      Time (us)
+            Visible area    640     320     160         25.42204
+            Front porch     16      8       4           0.63555
+            Sync Pulse      96      48      24          3.813306
+            Back Porch      48      24      12          1.906653
+            Whole line      800     400     200         31.777557
+
+            The sync pulse is low going
+
+        Vertical
+                            Lines   Time (us)
+            Visible area    480     15253.227
+            Front porch     10      317.775
+            Sync pulse      2       63.555
+            Back porch      33      1048.659
+            Whole frame     525     16683.217
+
+            The sync pulse is low going
+
+        The order of porches and pulses seems to be:
+            Sync
+            Back porch
+            Display
+            Front porch
+
+            Per the DSView traces, the falling edge of the hsync pulse
+            coincides with the faling edge of the vsync pulse. This would
+            indicate that a line starts and ends with the falling edge of
+            the hsync pulse.
+
+
+        Take the 25.175MHz crystal and divide by 4 to get 6.29375 MHz / 158.887ns per pixel.
+
+        Counting to 200 needs 8 bits (200 = 11001000) = 2 x 74HC161
+        Counting to 525 needs 10 bits (525 = 1000001101) = 3 x 74HC161
+
+        For horizontal counts:
+            24 =    0001 1000 Set sync high
+            36 =    0010 0100 Set blanking low
+            196 =   1100 0100 Set blanking high
+            200 =   1100 1000 Set sync low / clock v count (reset count)
+
+            ... or ...
+
+            160 =   1010 0000   Set blanking high
+            164 =   1010 0100   Set sync low (clock v count)
+            188 =   1011 1100   Set sync high
+            200 =   1100 1000   Set blanking low (reset count)
+
+        For vertical counts:
+            2 =     00 0000 0010    Set sync high
+            35 =    00 0010 0011    Set blanking low
+            515 =   10 0000 0011    Set blanking high
+            525 =   10 0000 1101    Set sync low (reset count)
+
+            ... or ...
+
+            480 =   01 1110 0000    Set blanking high
+            490 =   01 1110 1010    Set sync low
+            492 =   01 1110 1100    Set sync high
+            525 =   10 0000 1101    Set blanking low (reset count)
+
+    Chip totals
+        6 x 74HC161 (4 bit counter) - 2 for the horizontal count, 3 for the vertical, 1 for the crytal divider
+        8 x 74HC30  (8 input NAND) - To check when numbers have been reached
+        2 x 74HC27  (3 x 3 input NOR) - to check bits in positions 4, 6, and 7 are zero on vertical. Should be some left over to calculate anyblank too
+        3 x 74HC04  (6 x inverters) - need 14 in total
+        2 x 74HC00  (4 x NAND)- For SR latches
+
+
+
+
 Cursor
+------
     Input
         data (8 bits)
             Data to set for the row or column.
@@ -29,7 +116,7 @@ Cursor
         mem active (1 bit)
             Whether the CPU wants to interact with memory.
         mem ~r/w (1 bit)
-            Whether the CPU wants to read (0) or wrtie (1) to memory.
+            Whether the CPU wants to read (0) or write (1) to memory.
         data clock (1 bit)
             Write data into the device on a rising clock edge.
     Output
@@ -38,7 +125,17 @@ Cursor
         cursor row (8 bits)
             Number from 0 - 119 giving the index of the current row for the cursor.
 
+    Notes
+    Chip Totals
+        1 x 74HC04 (6 x inverter) - To invert the ~R/W and the oupit of the glue logic for the 
+        1 x 74HC08 (4 x AND) - Glue logic to determine when input enable and ouput enable should be active
+        1 x 74HC00 (4 x NAND) - Glue logic to determine when input enable and ouput enable should be active
+        2 x 74HC377 (8 bit register) - to store row and column cursor values
+        2 x 74HC245 (8 bit buffer) - to control output to the bus
+
+
 Shifter
+-------
     Input
         column (8 bits)
             Column input to shift left (towards LSB).
@@ -52,8 +149,14 @@ Shifter
             Column shifted left.
         shifted row (8 bits)
             Row shifted left.
+    Notes
+        The buffers can be stacked very tightly on on top of the other.
+    Chip totals
+        6/8 x 74HC245 (8 bit buffer) - To output the shifted versions to a bus.
+        1 x 74HC138 (3 to 8 decoder) - To choose which shifted version is output.
 
 Status
+------
     Input
         data (8 bits)
             The data that controls the video card:
@@ -71,9 +174,15 @@ Status
             Write data into the device on a rising clock edge.
         control clock (1 bit)
             When to sample the hblank and vblank states.
+    Chip Totals
+        2 x 74HC174 (4 bit register) - One for hblank and vblank, one for bank and shift amount
+        1 x 74HC245 (8 bit buffer) - To control output onto the bus
+        1 x 74HC08 (4 x AND) - Logic to see when to read or write
+        1 x 74HC04 (6 x NOT) - Logic to see when to read or write
 
 
 Switcher
+--------
     Input
         cursor column (8 bits)
             The current column index of the cursor.
@@ -90,8 +199,12 @@ Switcher
         X row (8 bits)
         Y column (8 bits)
         Y row (8 bits)
+    Chip Totals
+        8 x 74HC245 (8 bit buffer) to control whether certain inputs reach certain outputs.
+        1 x 74HC04 (6 x NOT) to invert the switcher signal to coordinate the buffers.
 
 Output
+------
     Input
         bank 0 column (8 bits)
             The column for bank 0.
@@ -131,87 +244,15 @@ Output
         VGA hsync
         VGA vsync
         video data (8 bits)
+    Chip totals
+        2 X RAM - For video memory
+        5 x 74HC245 (8 bit buffer) - 4 for RAM input and output management, 1 for an output buffer, 1 for a blanker
+        2 x 74HC574 (8 bit register) - To make pixel transitions cleaner by not reading directly from RAM - the pixel data and h/vsync are both delyed by half a clock cycle.
+        1 x 74HC157 (4 x 2 line to 1 line data selectors) - To switch control signals for the RAM/buffers depending on which bank is active.
+        1 x 74HC123 (dual monostable) - To generate RAM timing signals
+        1 x 74HC08 (Quad AND)
+        1 x 74HC02 (Quad NOR)
+        1 x 74HC32 (Quad OR)
+        1 x 74HC04 (Hex NOT)
 
 
-Timing Notes
-============
-
-Using 640x480 @ 60Hz timing
-25.175MHz Pixel freq / 39.72ns per pixel
-
-640x480
-320x240
-160x120
-80x60
-40x30
-20x15
-
-Horizontal:
-                    Pixels                      Time (us)
-    Visible area    640     320     160         25.42204
-    Front porch     16      8       4           0.63555
-    Sync Pulse      96      48      24          3.813306
-    Back Porch      48      24      12          1.906653
-    Whole line      800     400     200         31.777557
-
-    The sync pulse is low going
-
-Vertical
-                    Lines   Time (us)
-    Visible area    480     15253.227
-    Front porch     10      317.775
-    Sync pulse      2       63.555
-    Back porch      33      1048.659
-    Whole frame     525     16683.217
-
-    The sync pulse is low going
-
-The order of porches and pulses seems to be:
-    Sync
-    Back porch
-    Display
-    Front porch
-
-    Per the DSView traces, the falling edge of the hsync pulse
-    coincides with the faling edge of the vsync pulse. This would
-    indicate that a line starts and ends with the falling edge of
-    the hsync pulse.
-
-
-Take the 25.175MHz crystal and divide by 4 to get 6.29375 MHz / 158.887ns per pixel.
-
-Counting to 200 needs 8 bits (200 = 11001000) = 2 x 74HC161
-Counting to 525 needs 10 bits (525 = 1000001101) = 3 x 74HC161
-
-For horizontal counts:
-    24 =    0001 1000 Set sync high
-    36 =    0010 0100 Set blanking low
-    196 =   1100 0100 Set blanking high
-    200 =   1100 1000 Set sync low / clock v count (reset count)
-
-    ... or ...
-
-    160 =   1010 0000   Set blanking high
-    164 =   1010 0100   Set sync low (clock v count)
-    188 =   1011 1100   Set sync high
-    200 =   1100 1000   Set blanking low (reset count)
-
-For vertical counts:
-    2 =     00 0000 0010    Set sync high
-    35 =    00 0010 0011    Set blanking low
-    515 =   10 0000 0011    Set blanking high
-    525 =   10 0000 1101    Set sync low (reset count)
-
-    ... or ...
-
-    480 =   01 1110 0000    Set blanking high
-    490 =   01 1110 1010    Set sync low
-    492 =   01 1110 1100    Set sync high
-    525 =   10 0000 1101    Set blanking low (reset count)
-
-Chip totals
-    6 x 74HC161 (4 bit counter)
-    8 x 74HC30  (8 input NAND)
-    2 x 74HC27  (3 x 3 input NOR - to check bits in positions 4, 6, and 7 are zero on vertical)
-    3 x 74HC04  (6 x inverters - need 15 in total)
-    2 x 74HC00  (4 x NAND - For SR latches)
