@@ -79,7 +79,7 @@ Timing
             160 =   1010 0000   Set blanking high
             164 =   1010 0100   Set sync low (clock v count)
             188 =   1011 1100   Set sync high
-            200 =   1100 1000   Set blanking low (reset count)
+            200 =   1100 1000   Set blanking low (reset count) 
 
         For vertical counts:
             2 =     00 0000 0010    Set sync high
@@ -246,8 +246,8 @@ Output
         video data (8 bits)
     Chip totals
         2 X RAM - For video memory
-        5 x 74HC245 (8 bit buffer) - 4 for RAM input and output management, 1 for an output buffer, 1 for a blanker
-        2 x 74HC574 (8 bit register) - To make pixel transitions cleaner by not reading directly from RAM - the pixel data and h/vsync are both delyed by half a clock cycle.
+        5 x 74HC245 (8 bit buffer) - 4 for RAM input and output management, 1 for an output buffer
+        2 x 74HC574 (8 bit register) - To make pixel transitions cleaner by not reading directly from RAM - the pixel data and h/vsync and h/v blank are all delayed by half a clock cycle.
         1 x 74HC157 (4 x 2 line to 1 line data selectors) - To switch control signals for the RAM/buffers depending on which bank is active.
         1 x 74HC123 (dual monostable) - To generate RAM timing signals
         1 x 74HC08 (Quad AND)
