@@ -19,6 +19,9 @@ RUN = 101
 # The CPU is stopped. Control of peripherals is given to the panel.
 STOP = 102
 
+# The memory can be read manually
+READ_MEMORY = 103
+
 # The clock source for the CPU 
 CPU_CLK_SRC_PANEL = 200
 CPU_CLK_SRC_CRYSTAL = 201
@@ -325,8 +328,8 @@ class FrontPanel():
             self._interface.set_interface_data_assert(False)
             self._interface.set_interface_address_assert(False)
 
-            # Set the control and data clocks as well as the read from
-            # and write to memory lines low.
+            # Set the control clock high, data clock low, memory active low,
+            # and memory direction to read.
             self._interface.set_control_clock(True)
             self._interface.set_data_clock(False)
             self._interface.set_memory_active(False)
@@ -478,6 +481,26 @@ class FrontPanel():
         
         self._display.set_user_input(self._user_input_string)
         self._display.set_data(self._get_word(self._readwrite_address))
+
+    def read_memory(self):
+        """
+        Put the computer into a state where memory can be read manually.
+        """
+
+        if self._panel_mode != READ_MEMORY:
+            # Stop computer first
+            self.stop()
+
+            # Set memory control lines so mem is active and we're reading
+            self._interface.set_memory_active(True)
+            self._interface.set_rfm_wtm(False)
+
+            # Set Mode on dipslay
+            self._display.set_mode("RDMEM")
+
+            # Set the panel mode
+            self._panel_mode = READ_MEMORY 
+
 
     def _set_clock_source(self):
         """

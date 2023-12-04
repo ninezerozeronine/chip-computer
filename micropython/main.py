@@ -51,7 +51,7 @@ def connect(panel):
             if wlan.isconnected():
                 break
             else:
-                time.sleep(10)
+                time.sleep(5)
 
     if wlan.isconnected():
         panel.set_ip(wlan.ifconfig()[0])
@@ -207,7 +207,7 @@ def main():
     keypad.set_pressed_callback(0, 0, partial(job_queue.put_nowait, panel.clear_user_input))
     
     # Control keypad
-    # keypad.set_pressed_callback(0, 4, panel.quarter_step)
+    keypad.set_pressed_callback(3, 7, partial(job_queue.put_nowait, panel.read_memory))
     keypad.set_pressed_callback(3, 6, partial(job_queue.put_nowait, panel.half_step))
     keypad.set_pressed_callback(3, 5, partial(job_queue.put_nowait, panel.full_step))
     keypad.set_pressed_callback(3, 4, partial(job_queue.put_nowait, panel.step))

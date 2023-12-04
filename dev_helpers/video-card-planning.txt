@@ -24,20 +24,20 @@ Timing
         Using 640x480 @ 60Hz timing
         25.175MHz Pixel freq / 39.72ns per pixel
 
-        640x480
-        320x240
-        160x120
-        80x60
-        40x30
-        20x15
+        640x480     10 1000 0000    x   1 1110 0000     =   307,200
+        320x240      1 0100 0000    x     1111 0000     =    76,800
+        160x120        1010 0000    x      111 1000     =    19,200
+        80x60           101 0000    x       11 1100     =     4,800
+        40x30            10 1000    x        1 1110     =     1,200
+        20x15             1 0100    x          1111     =       300
 
         Horizontal:
-                            Pixels                      Time (us)
-            Visible area    640     320     160         25.42204
-            Front porch     16      8       4           0.63555
-            Sync Pulse      96      48      24          3.813306
-            Back Porch      48      24      12          1.906653
-            Whole line      800     400     200         31.777557
+                            Pixels                          Time (us)
+            Visible area    640     320     160     80      25.42204
+            Front porch     16      8       4       2       0.63555
+            Sync Pulse      96      48      24      12      3.813306
+            Back Porch      48      24      12      6       1.906653
+            Whole line      800     400     200     100     31.777557
 
             The sync pulse is low going
 
@@ -254,5 +254,10 @@ Output
         1 x 74HC02 (Quad NOR)
         1 x 74HC32 (Quad OR)
         1 x 74HC04 (Hex NOT)
+    Notes
+        It takes a while (~100ns) for the signals to propogate from the divided clock, through the column count and the row count to arrive at a stable pixel address and sync times.
+        On the breadboards, the inverted divided clock was being used to capture the value from the RAM, and delay the syc and blanking pulses. It turned out that the delay was too great and the first half of the first "smallest pixel" on each row as reading a delayed/garbage value.
+        On the breadboard the solution was to feed in the original divided clock (not the inverted one). It seems like the first clock re-caputured the prior state, but the next one was far enough along that things had settled and the next state was captured.
+        On the final PCBs there will need to be a jumper (or multiple) to choose what degree of delay is applied to the clock fed to the capture mechanism.
 
 
