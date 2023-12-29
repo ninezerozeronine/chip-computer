@@ -41,7 +41,7 @@ Timing
 
             The sync pulse is low going
 
-        Vertical
+        Vertical:
                             Lines   Time (us)
             Visible area    480     15253.227
             Front porch     10      317.775
@@ -259,5 +259,24 @@ Output
         On the breadboards, the inverted divided clock was being used to capture the value from the RAM, and delay the syc and blanking pulses. It turned out that the delay was too great and the first half of the first "smallest pixel" on each row as reading a delayed/garbage value.
         On the breadboard the solution was to feed in the original divided clock (not the inverted one). It seems like the first clock re-caputured the prior state, but the next one was far enough along that things had settled and the next state was captured.
         On the final PCBs there will need to be a jumper (or multiple) to choose what degree of delay is applied to the clock fed to the capture mechanism.
+        The resistor values to derive the voltages for thr R, G and B signals are:
+         - 0/low bit - 1.5k ohm
+         - 1/high bit - 680 ohm
+        As an example of the bank select, when bank sel is 0:
+         - Bank 0 is interacting with the CPU, 1 is drawing pixels
+         - RAM 0 should be getting changing R/W control signals, RAM 1 should be getting a constant read signal
+         - Draw buffer 0 should be disabled, draw buffer 1 should be enabled (getting values from RAM 1)
+         - R/W buffer 0 should be getting changing dir and OE signals, R/W buffer 1 should be disabled.
 
 
+
+Shared Signals
+--------------
+
+The following need to be passed between boards:
+ - hsync (from timing to output)
+ - vsync (from timing to output)
+ - pixel clock (the clock that drives the column counter) (from timing to output)
+ - bank sel (from shift/status to output)
+ - hblank (from timing to output)
+ - vblank (from timing to output)
