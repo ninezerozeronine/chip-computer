@@ -263,10 +263,11 @@ Output
          - 0/low bit - 1.5k ohm
          - 1/high bit - 680 ohm
         As an example of the bank select, when bank sel is 0:
-         - Bank 0 is interacting with the CPU, 1 is drawing pixels
+         - RAM 0 is interacting with the CPU, 1 is drawing pixels
          - RAM 0 should be getting changing R/W control signals, RAM 1 should be getting a constant read signal
          - Draw buffer 0 should be disabled, draw buffer 1 should be enabled (getting values from RAM 1)
          - R/W buffer 0 should be getting changing dir and OE signals, R/W buffer 1 should be disabled.
+         - RAM 0 should be being addressed by the cursor, RAM 1 should be getting addressed by the scan column/row
 
 
 
@@ -278,5 +279,5 @@ The following need to be passed between boards:
  - vsync (from timing to output)
  - pixel clock (the clock that drives the column counter) (from timing to output)
  - bank sel (from shift/status to output)
- - hblank (from timing to output)
- - vblank (from timing to output)
+ - hblank (from timing to output and status)
+ - vblank (from timing to output and status)
