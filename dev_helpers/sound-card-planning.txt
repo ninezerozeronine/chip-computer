@@ -14,4 +14,14 @@ bit index
 14          32767
 15          65535
 
+A piano note range is from A0 to C8
+C2 to C6 is 2 octave either side of middle C (C4) and spans most of the human note range
+
 Op amp: https://www.mouser.ca/ProductDetail/Nisshinbo/NJM4580DD?qs=7jPOr0kCrUAW4ecLiGVihQ%3D%3D
+Common op amps:
+    LM741
+    LM1458
+Resettable Register: 74HC273
+
+Part in James Sharman's video where he talks about note error
+https://youtu.be/G4AxdkR7dZA?list=PLFhc0MFC8MiAfS8UTTFlGkoqgCuEqusmg&t=1108

@@ -277,7 +277,8 @@ Shared Signals
 The following need to be passed between boards:
  - hsync (from timing to output)
  - vsync (from timing to output)
- - pixel clock (the clock that drives the column counter) (from timing to output)
+ - pixel clock (the clock that drives the column counter) (from timing to shift status delay)
+ - pixel clock delay (delayed version of the pixel clock) (from shift status delay to output)
  - bank sel (from shift/status to output)
  - hblank (from timing to output and status)
  - vblank (from timing to output and status)
