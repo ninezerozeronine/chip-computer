@@ -263,11 +263,12 @@ Output
          - 0/low bit - 1.5k ohm
          - 1/high bit - 680 ohm
         As an example of the bank select, when bank sel is 0:
-         - RAM 0 is interacting with the CPU, 1 is drawing pixels
-         - RAM 0 should be getting changing R/W control signals, RAM 1 should be getting a constant read signal
-         - Draw buffer 0 should be disabled, draw buffer 1 should be enabled (getting values from RAM 1)
-         - R/W buffer 0 should be getting changing dir and OE signals, R/W buffer 1 should be disabled.
-         - RAM 0 should be being addressed by the cursor, RAM 1 should be getting addressed by the scan column/row
+         - RAM A is on the right, RAM B is on the left
+         - RAM A is interacting with the CPU, B is drawing pixels
+         - RAM A should be getting changing R/W control signals, RAM B should be getting a constant read signal
+         - Draw buffer A should be disabled, draw buffer B should be enabled (getting values from RAM B)
+         - R/W buffer A should be getting changing dir and OE signals, R/W buffer B should be disabled.
+         - RAM A should be being addressed by the cursor, RAM B should be getting addressed by the scan column/row
 
 
 
