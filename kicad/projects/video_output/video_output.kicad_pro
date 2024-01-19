@@ -38,11 +38,11 @@
           "height": 1.524,
           "width": 1.524
         },
-        "silk_line_width": 0.15,
+        "silk_line_width": 0.254,
         "silk_text_italic": false,
-        "silk_text_size_h": 1.0,
-        "silk_text_size_v": 1.0,
-        "silk_text_thickness": 0.15,
+        "silk_text_size_h": 1.27,
+        "silk_text_size_v": 1.27,
+        "silk_text_thickness": 0.2032,
         "silk_text_upright": false,
         "zones": {
           "min_clearance": 0.508
@@ -407,7 +407,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "peripheral_board.kicad_pro",
+    "filename": "video_output.kicad_pro",
     "version": 1
   },
   "net_settings": {
