@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "sixteen-bit-computer")(type "KiCad")(uri "${KIPRJMOD}/../../footprint_libs/sixteen-bit-computer.pretty")(options "")(descr ""))
+)

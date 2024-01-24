@@ -262,7 +262,7 @@ Output
         The resistor values to derive the voltages for thr R, G and B signals are:
          - 0/low bit - 1.5k ohm
          - 1/high bit - 680 ohm
-        RAM/bank A is on the right, B is on the left
+        RAM/bank A is on the left, B is on the right
         As an example of the bank select, when bank sel is 0:
          - RAM A is interacting with the CPU, B is drawing pixels
          - RAM A should be getting changing R/W control signals, RAM B should be getting a constant read signal
