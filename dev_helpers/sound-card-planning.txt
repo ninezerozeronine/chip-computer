@@ -29,20 +29,23 @@ https://youtu.be/G4AxdkR7dZA?list=PLFhc0MFC8MiAfS8UTTFlGkoqgCuEqusmg&t=1108
 
 Volume equivalents
 
-00000   11111   0   31  
-00001   11110   1   30
-00010   11101   2   29
-00011   11100   3   28
-00100   11011   4   27
-00101   11010   5   26
-00110   11001   6   25
-00111   11000   7   24
-01000   10111   8   23
-01001   10110   9   22
-01010   10101   10  21
-01011   10100   11  20
-01100   10011   12  19
-01101   10010   13  18
-01110   10001   14  17
-01111   10000   15  16
+00000   11111   0   31      
+00001   11110   1   30      
+00010   11101   2   29      
+00011   11100   3   28      
+00100   11011   4   27      
+00101   11010   5   26      
+00110   11001   6   25      
+00111   11000   7   24      
+01000   10111   8   23      
+01001   10110   9   22      
+01010   10101   10  21      
+01011   10100   11  20      
+01100   10011   12  19      
+01101   10010   13  18      
+01110   10001   14  17      
+01111   10000   15  16      2.344   2.500
 
+With a 5 bit R2R Ladder, the max volatge is 4.844V
+
+Merging all the 0-5V audio signals through 100K resistors into the input of a 358 op amp configured as a voltage follower, then through a 100nf de-biasing cap seemed to work fine!
