@@ -49,3 +49,5 @@ Volume equivalents
 With a 5 bit R2R Ladder, the max volatge is 4.844V
 
 Merging all the 0-5V audio signals through 100K resistors into the input of a 358 op amp configured as a voltage follower, then through a 100nf de-biasing cap seemed to work fine!
+
+The 358 can voltage follow all the way up to 5V, which means we can't use one prior to the 100K mix. It's fine afterwards as after all the mixing the voltage drops.
