@@ -7467,7 +7467,7 @@
   (gr_text "R06" (at 211.582 65.532 90) (layer "F.SilkS") (tstamp 866547df-7655-4403-adc0-c1826109c661)
     (effects (font (size 1 1) (thickness 0.15)) (justify left bottom))
   )
-  (gr_text "SCAN COLUMN/ROW" (at 210.058 69.596) (layer "F.SilkS") (tstamp 8f226d9c-12a8-4911-a6d7-cd3faaf575eb)
+  (gr_text "SCAN ROW/COLUMN" (at 210.058 69.596) (layer "F.SilkS") (tstamp 8f226d9c-12a8-4911-a6d7-cd3faaf575eb)
     (effects (font (size 2.286 2.286) (thickness 0.254)) (justify left bottom))
   )
   (gr_text "C02" (at 242.062 65.532 90) (layer "F.SilkS") (tstamp 900da6cf-f200-4e9f-887b-5639dd8cce50)
