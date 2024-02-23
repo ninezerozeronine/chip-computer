@@ -64,11 +64,11 @@
       39,
       40
     ],
-    "visible_layers": "fff7fff_ffffffff",
+    "visible_layers": "ffd7fff_ffffffff",
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "peripheral_board.kicad_prl",
+    "filename": "sound_square.kicad_prl",
     "version": 3
   },
   "project": {
