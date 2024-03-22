@@ -8083,7 +8083,7 @@
   (gr_text "V_SYNC" (at 70.104 65.024 315) (layer "F.SilkS") (tstamp 5a89e274-28f1-4a04-af2a-d8b822b76713)
     (effects (font (size 1.27 1.27) (thickness 0.2032)) (justify left bottom))
   )
-  (gr_text "Video Shift, Status, and Delay" (at 161.798 134.62) (layer "F.SilkS") (tstamp 5be280e7-19fd-4d7e-b91a-79e9e7865325)
+  (gr_text "VIDEO SHIFT, STATUS, DELAY" (at 166.878 134.62) (layer "F.SilkS") (tstamp 5be280e7-19fd-4d7e-b91a-79e9e7865325)
     (effects (font (size 3.81 3.81) (thickness 0.381)) (justify left bottom))
   )
   (gr_text "3" (at 121.412 107.696) (layer "F.SilkS") (tstamp 5fe7b930-2335-4aa8-899a-d192fe02d392)
