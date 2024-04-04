@@ -2,6 +2,7 @@ from machine import Pin, I2C
 import asyncio
 import network
 import time
+import json
 
 from keypad import Keypad
 from gpiodefs import KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS, OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
@@ -72,6 +73,16 @@ async def handle_connection(reader, writer):
     # await asyncio.sleep(1)
 
     print("Reading 2 bytes")
+    # This can raise an OSError:
+    #
+    # Reading 2 bytes
+    # Task exception wasn't retrieved
+    # future: <Task> coro= <generator object 'handle_connection' at 200362d0>
+    # Traceback (most recent call last):
+    #   File "asyncio/core.py", line 1, in run_until_complete
+    #   File "main.py", line 75, in handle_connection
+    #   File "asyncio/stream.py", line 1, in read
+    # OSError: [Errno 104] ECONNRESET
     data = await reader.read(2)
     message_length = int.from_bytes(data, "big")
     remaining_bytes = message_length 
@@ -88,6 +99,7 @@ async def handle_connection(reader, writer):
         await reader.wait_closed()
         writer.close()
         await writer.wait_closed()
+        return
     else:
         print(f"Reading remaining {message_length} bytes")
         data = await reader.read(message_length)
@@ -100,11 +112,33 @@ async def handle_connection(reader, writer):
         # print("Waiting 1 second")
         # await asyncio.sleep(1)
 
-        print("Meaasge recieved, closing")
+        print("Message recieved, closing")
         reader.close()
         await reader.wait_closed()
         writer.close()
         await writer.wait_closed()
+
+    data_dict = json.loads(message)
+    port = data_dict["ret_prt"]
+    print(f"Connecting to sender IP: {addr[0]}, port: {port}")
+    reader, writer = await asyncio.open_connection(
+        addr[0],
+        port
+    )
+
+    # await asyncio.sleep(5)
+    to_send = bytearray(2)
+    msg_bytes = bytes("foo", "ascii")
+    to_send.extend(msg_bytes)
+    uint16_len_bytes = len(msg_bytes).to_bytes(2, "big")
+    to_send[0] = uint16_len_bytes[0]
+    to_send[1] = uint16_len_bytes[1]
+    print("sending data")
+    writer.write(to_send)
+    await writer.drain()
+    writer.close()
+    await writer.wait_closed()
+    print("closing writer")
 
 
 

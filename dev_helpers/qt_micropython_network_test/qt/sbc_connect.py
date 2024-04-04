@@ -1,13 +1,14 @@
 from PyQt5 import QtGui, QtCore, QtWidgets, QtNetwork
 from functools import partial
+import json
  
 class SBCConnect(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(SBCConnect, self).__init__(parent)
  
-        self.blockSize = 0
-        self.currentFortune = ''
-        self.data_to_send = ""
+        self.header_read = False
+        self.num_message_bytes = 0
+        self.in_socket = None
  
         # Connection details
         host_label = QtWidgets.QLabel("Pico IP:")
@@ -55,7 +56,60 @@ class SBCConnect(QtWidgets.QDialog):
  
         self.setWindowTitle("SBC Connect")
         self.port_line_edit.setFocus()
+
+        self.tcpServer = QtNetwork.QTcpServer(self)
+        if not self.tcpServer.listen():
+            QtWidgets.QMessageBox.critical(self, "SBC Connect",
+                    "Unable to start the server: %s." % self.tcpServer.errorString())
+            self.close()
+            return
  
+        print(f"The server is running on port {self.tcpServer.serverPort()}")
+        self.tcpServer.newConnection.connect(self.handle_connection)
+ 
+
+    def handle_connection(self):
+        """
+
+        """
+        self.header_read = False
+        self.num_message_bytes = 0
+        self.in_socket = self.tcpServer.nextPendingConnection()
+        if self.in_socket is None:
+            print("NextPendingConnection was None.")
+            return
+        self.in_socket.readyRead.connect(self.handle_data)
+        self.in_socket.disconnected.connect(self.in_socket.deleteLater)
+ 
+    def handle_data(self):
+        """
+
+        """
+        print("Handling data")
+        if not self.header_read:
+            if self.in_socket.bytesAvailable() < 2:
+                print("< 2 bytes available")
+                return
+
+        self.num_message_bytes = int.from_bytes(
+            self.in_socket.read(2),
+            byteorder="big"
+        )
+        self.header_read = True
+
+        if self.num_message_bytes == 0:
+            print("Empty message, closing socket")
+            self.in_socket.disconnectFromHost()
+ 
+        num_available = self.in_socket.bytesAvailable()
+        if num_available < self.num_message_bytes:
+            print(f"< {self.num_message_bytes} bytes available. {num_available} are available")
+            return
+ 
+        message = self.in_socket.read(self.num_message_bytes).decode("ascii")
+        print(f"Recieved {message}")
+        self.in_socket.disconnectFromHost()
+
     def send(self):
         """
 
@@ -74,14 +128,24 @@ class SBCConnect(QtWidgets.QDialog):
 
     def send_data(self):
         message = self.message_line_edit.text()
-        print(f"Sending {message}")
+
+        data = {
+            "ret_prt": self.tcpServer.serverPort(),
+            "msg": message
+        }
+        data_str=json.dumps(data)
+
+
+
+
+        print(f"Sending {data_str}")
         # block = QtCore.QByteArray()
         # out = QtCore.QDataStream(block, QtCore.QIODevice.WriteOnly)
         # out.setVersion(QtCore.QDataStream.Qt_4_0)
         # bytes_to_send = bytes(data, encoding='ascii')
         # out.writeString(bytes_to_send)
         to_send = bytearray(2)
-        msg_bytes = bytes(message, encoding="ascii")
+        msg_bytes = bytes(data_str, encoding="ascii")
         to_send.extend(msg_bytes)
         uint16_len_bytes = len(msg_bytes).to_bytes(2, byteorder="big", signed=False)
         to_send[0] = uint16_len_bytes[0]
@@ -89,55 +153,49 @@ class SBCConnect(QtWidgets.QDialog):
 
         self.tcpSocket.write(to_send)
         self.tcpSocket.disconnectFromHost()
-        
+
         try:
             self.tcpSocket.connected.disconnect()
         except TypeError:
             print("Nothing was connected in send_data")
 
 
-    def send_B(self):
-        """
-
-        """
-        print("Send B")
-
-    def requestNewFortune(self):
-        self.getFortuneButton.setEnabled(False)
-        self.blockSize = 0
-        self.tcpSocket.abort()
-        self.tcpSocket.connectToHost(self.hostLineEdit.text(),
-                int(self.portLineEdit.text()))
+    # def requestNewFortune(self):
+    #     self.getFortuneButton.setEnabled(False)
+    #     self.blockSize = 0
+    #     self.tcpSocket.abort()
+    #     self.tcpSocket.connectToHost(self.hostLineEdit.text(),
+    #             int(self.portLineEdit.text()))
  
-    def readFortune(self):
-        instr = QtCore.QDataStream(self.tcpSocket)
-        instr.setVersion(QtCore.QDataStream.Qt_4_0)
+    # def readFortune(self):
+    #     instr = QtCore.QDataStream(self.tcpSocket)
+    #     instr.setVersion(QtCore.QDataStream.Qt_4_0)
  
-        if self.blockSize == 0:
-            if self.tcpSocket.bytesAvailable() < 2:
-                return
+    #     if self.blockSize == 0:
+    #         if self.tcpSocket.bytesAvailable() < 2:
+    #             return
  
-        self.blockSize = instr.readUInt16()
+    #     self.blockSize = instr.readUInt16()
  
-        if self.tcpSocket.bytesAvailable() < self.blockSize:
-            return
+    #     if self.tcpSocket.bytesAvailable() < self.blockSize:
+    #         return
  
-        nextFortune = instr.readString()
+    #     nextFortune = instr.readString()
  
-        try:
-            # Python v3.
-            nextFortune = str(nextFortune, encoding='ascii')
-        except TypeError:
-            # Python v2.
-            pass
+    #     try:
+    #         # Python v3.
+    #         nextFortune = str(nextFortune, encoding='ascii')
+    #     except TypeError:
+    #         # Python v2.
+    #         pass
  
-        if nextFortune == self.currentFortune:
-            QtCore.QTimer.singleShot(0, self.requestNewFortune)
-            return
+    #     if nextFortune == self.currentFortune:
+    #         QtCore.QTimer.singleShot(0, self.requestNewFortune)
+    #         return
  
-        self.currentFortune = nextFortune
-        self.statusLabel.setText(self.currentFortune)
-        self.getFortuneButton.setEnabled(True)
+    #     self.currentFortune = nextFortune
+    #     self.statusLabel.setText(self.currentFortune)
+    #     self.getFortuneButton.setEnabled(True)
  
     def display_error(self, socketError):
         if socketError == QtNetwork.QAbstractSocket.RemoteHostClosedError:
