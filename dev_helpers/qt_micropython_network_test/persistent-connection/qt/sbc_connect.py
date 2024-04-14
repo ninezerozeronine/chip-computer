@@ -1,7 +1,11 @@
 from PyQt5 import QtGui, QtCore, QtWidgets, QtNetwork
 from functools import partial
 import json
- 
+
+from . import job_mod
+from . import sequential_job_manager
+
+
 class SBCConnect(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(SBCConnect, self).__init__(parent)
@@ -9,7 +13,6 @@ class SBCConnect(QtWidgets.QDialog):
         self.header_read = False
         self.num_message_bytes = 0
         self.in_socket = None
-        self.header_read = False
         self.socket = QtNetwork.QTcpSocket(self)
         self.socket.readyRead.connect(self.read_from_socket)
         self.socket.error.connect(self.display_error)
@@ -60,17 +63,55 @@ class SBCConnect(QtWidgets.QDialog):
         quit_layout.addStretch(1)
         quit_layout.addWidget(quit_button)
  
+        # Add job
+        add_job_button = QtWidgets.QPushButton("add_job")
+        add_job_button.clicked.connect(self.make_job)
+
+        # Cancel selected job
+        cancel_job_button = QtWidgets.QPushButton("cancel_job")
+        cancel_job_button.clicked.connect(self.cancel_selected_jobs)
+
+        # Table
+        self.job_manager_model = SequentialJobManagerModel()
+        self.job_table = QtWidgets.QTableView()
+        self.job_table.setModel(self.job_manager_model)
+        self.job_table.verticalHeader().hide()
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.work_on_top_job)
+        self.timer.start()
+
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addLayout(connect_layout)
         main_layout.addWidget(self.connect_button)
         main_layout.addWidget(self.disconnect_button)
         main_layout.addWidget(self.send_button)
+        main_layout.addWidget(add_job_button)
+        main_layout.addWidget(cancel_job_button)
+        main_layout.addWidget(self.job_table)
         main_layout.addLayout(quit_layout)
+
 
         self.setLayout(main_layout)
 
         self.setWindowTitle("SBC Connect")
         self.port_line_edit.setFocus()
+
+    def work_on_top_job(self):
+        # if self.socket.state() == QtNetwork.QAbstractSocket.ConnectedState
+        self.job_manager_model.work_on_top_job(self.socket)
+
+    def make_job(self):
+        job = job_mod.Job(self.message_line_edit.text())
+        self.job_manager_model.sumbit_job(job)
+
+    def cancel_selected_jobs(self):
+        row_indexes_to_cancel = [
+            index.row()
+            for index in self.job_table.selectedIndexes()
+        ]
+        self.job_manager_model.cancel_jobs_in_rows(row_indexes_to_cancel)
 
  
     def connect(self):
@@ -127,8 +168,34 @@ class SBCConnect(QtWidgets.QDialog):
 
         data_str = self.socket.read(self.num_message_bytes).decode("ascii")
         data = json.loads(data_str)
-        print(f"recieved {data}")
+        print(f"Recieved {data}")
         self.header_read = False
+
+        if not isinstance(data, dict):
+            print(f"Recieved invalid datatype - needs to be a dict. Got: {data}")
+            return
+
+        if "purpose" not in data:
+            print(f"'purpose' key not in data. Got: {data}")
+            return
+
+        if data["purpose"] != "job_comms":
+            print(f"'purpose' was not 'job_comms'. Got: {data}")
+            return
+
+        if "id" not in data:
+            print(f"'id' key not in data. Got: {data}")
+            return
+
+        if not isinstance(data["id"], int):
+            print(f"Value for 'id' key is not an int. Got: {data}")
+            return
+
+        if not self.job_manager_model.id_exists(data["id"]):
+            print(f"Job with id {data['id']} does not exist. Got: {data}")
+            return
+
+        self.job_manager_model.relay_comms(data["id"], data["body"])
 
     def send(self):
         """
@@ -169,7 +236,149 @@ class SBCConnect(QtWidgets.QDialog):
         else:
             QtWidgets.QMessageBox.information(self, "Fortune Client",
                     "The following error occurred: %s." % self.socket.errorString())
- 
+
+
+class SequentialJobManagerModel(QtCore.QAbstractTableModel):
+    def __init__(self):
+        super().__init__()
+        self.manager = sequential_job_manager.SequentialJobManager()
+
+    def rowCount(self, index):
+        return self.manager.num_jobs()
+
+    def columnCount(self, index):
+        return job_mod.Job.get_num_columns()
+
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.manager.get_table_data(index.row(), index.column())
+
+    def headerData(self, index, orientation, role):
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
+                return job_mod.Job.get_header_data(index)
+
+    def sumbit_job(self, job):
+        num_jobs = self.manager.num_jobs()
+        self.beginInsertRows(QtCore.QModelIndex(), num_jobs+1, num_jobs+1)
+        job_id = self.manager.sumbit_job(job)
+        self.endInsertRows()
+        return job_id
+
+    def cancel_job(self, job_id):
+        self.manager.cancel_job(job_id)
+        row = self.manager.job_id_to_row_index(job_id)
+        self.dataChanged.emit(
+            self.createIndex(row, 0),
+            self.createIndex(row, job_mod.Job.get_num_columns())
+        )
+
+    def relay_comms(self, job_id, data):
+        self.manager.relay_comms(job_id, data)
+        row = self.manager.job_id_to_row_index(job_id)
+        self.dataChanged.emit(
+            self.createIndex(row, 0),
+            self.createIndex(row, job_mod.Job.get_num_columns())
+        )
+
+    def work_on_top_job(self, socket):
+        top_job_row_index = self.manager.top_job_row_index()
+        made_change = self.manager.work_on_top_job(socket)
+        if made_change:
+            self.dataChanged.emit(
+                self.createIndex(top_job_row_index, 0),
+                self.createIndex(top_job_row_index, job_mod.Job.get_num_columns())
+            )
+
+    def cancel_jobs_in_rows(self, rows):
+        for row in rows:
+            self.cancel_job(self.manager.job_id_from_model_row(row))
+
+    def id_exists(self, job_id):
+        return self.manager.job_id_exists(job_id)
+
+
+
+class TableModelTest(QtCore.QAbstractTableModel):
+    def __init__(self):
+        super().__init__()
+        self.jobs = [
+            {
+                "id":"abc123",
+                "msg": "foo",
+                "state": "COMPLETE",
+            },
+            {
+                "id":"def456",
+                "msg": "bar",
+                "state": "SENT",
+            },
+            {
+                "id":"ghi789",
+                "msg": "zip",
+                "state": "NEW",
+            },
+            {
+                "id":"jkl123",
+                "msg": "mon",
+                "state": "COMPLETE",
+            },
+            {
+                "id":"mno456",
+                "msg": "wip",
+                "state": "NEW",
+            },
+        ]
+        self.column_index_to_key = {
+            0:"id",
+            1:"msg",
+            2:"state",
+        }
+        self.column_index_to_displayname = {
+            0:"ID",
+            1:"Message",
+            2:"State",
+        }
+
+    def data(self, index, role):
+        if role == QtCore.Qt.DisplayRole:
+            return self.jobs[index.row()][self.column_index_to_key[index.column()]]
+
+    def rowCount(self, index):
+        return len(self.jobs)
+
+    def columnCount(self, index):
+        return len(self.column_index_to_key)
+
+    def headerData(self, section, orientation, role):
+        if role == QtCore.Qt.DisplayRole:
+            if orientation == QtCore.Qt.Horizontal:
+                return self.column_index_to_displayname[section]
+
+    def removeRows(self, start_row_index, num_rows, parent=QtCore.QModelIndex()):
+        self.beginRemoveRows(
+            parent,
+            start_row_index,
+            start_row_index + num_rows - 1
+        )
+        for offset in reversed(range(num_rows)):
+            del self.jobs[start_row_index + offset]
+        self.endRemoveRows()
+        return True
+
+    def remove_first(self):
+        if self.jobs:
+            self.removeRows(0,1)
+
+    def remove_first_hack(self):
+        # If you do this - the selection doesn't move as
+        # expected when removing a row.
+        # Better to implement the removeRows method which
+        # properly notifies the view to keep things in sync.
+        if self.jobs:
+            del self.jobs[0]
+            self.layoutChanged.emit()
+
 def decode_state(state):
     if state == QtNetwork.QAbstractSocket.UnconnectedState:
         return "The socket is not connected."

@@ -71,7 +71,7 @@ class Manager():
         tasks.append(asyncio.create_task(self.forever_toggle()))
         tasks.append(asyncio.create_task(self.run_reader()))
         tasks.append(asyncio.create_task(self.connect_to_wifi()))
-        tasks.append(asyncio.create_task(self.check_connection_health()))
+        # tasks.append(asyncio.create_task(self.check_connection_health()))
 
         server = await asyncio.start_server(
             self.handle_connection,
@@ -143,7 +143,44 @@ class Manager():
                 print(f"Recieved: {data}")
                 self.display_message(data["msg"])
 
-                await self.write({"msg":data["msg"]})
+
+                if not isinstance(data, dict):
+                    print(f"Recieved invalid datatype - needs to be a dict. Got: {data}")
+                    continue
+
+                if "purpose" not in data:
+                    print(f"'purpose' key not in data. Got: {data}")
+                    continue
+
+                if data["purpose"] != "test":
+                    print(f"'purpose' was not 'test'. Got: {data}")
+                    continue
+
+                if "job_id" not in data:
+                    print(f"'id' key not in data. Got: {data}")
+                    continue
+
+                if not isinstance(data["job_id"], int):
+                    print(f"Value for 'id' key is not an int. Got: {data}")
+                    continue
+
+                if "msg" not in data:
+                    print(f"'msg' key not in data. Got: {data}")
+                    continue
+
+                await asyncio.sleep(0.1)
+
+                ret = {
+                    "purpose": "job_comms",
+                    "id": data["job_id"],
+                    "body": {
+                        "type": "completion",
+                        "success": True,
+                        "message": f"Pico got the {data['msg']} message."
+                    }
+                }
+
+                await self.write(ret)
 
 
             else:
