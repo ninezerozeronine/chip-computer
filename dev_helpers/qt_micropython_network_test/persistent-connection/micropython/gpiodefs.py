@@ -25,3 +25,5 @@ KEYPAD_COL_GPIOS = [
 # Pins for the OLED display I2C interface
 OLED_SDA_GPIO_NO = 26
 OLED_SCL_GPIO_NO = 27
+
+READ_PIN = 16

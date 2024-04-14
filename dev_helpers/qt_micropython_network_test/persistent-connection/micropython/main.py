@@ -8,6 +8,8 @@ from keypad import Keypad
 from gpiodefs import KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS, OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
 import ssd1306
 import secrets
+from display import Display
+from fake_panel import Panel
 
 # https://github.com/micropython/micropython-lib/blob/master/python-stdlib/functools/functools.py
 def partial(func, *args, **kwargs):
@@ -28,34 +30,31 @@ class Manager():
         self.write_socket = None
         self.port = 8888
         self.keypad = None
-        self.led_pin = Pin("LED", Pin.OUT)
-        self.display = ssd1306.SSD1306_I2C(
-            128,
-            64,
-            I2C(1, sda=Pin(OLED_SDA_GPIO_NO), scl=Pin(OLED_SCL_GPIO_NO))
-        )
+        #self.led_pin = Pin("LED", Pin.OUT)
+        self.display = Display()
+        self.panel = Panel()
         self.init_keypad()
 
     def init_keypad(self):
         row_pins = [Pin(gpio_num) for gpio_num in KEYPAD_ROW_GPIOS]
         col_pins = [Pin(gpio_num) for gpio_num in KEYPAD_COL_GPIOS]
         self.keypad = Keypad(row_pins, col_pins)
-        self.keypad.set_pressed_callback(0, 0, partial(self.display_message, "1"))
-        self.keypad.set_pressed_callback(0, 1, partial(self.display_message, "2"))
-        self.keypad.set_pressed_callback(0, 2, partial(self.display_message, "3"))
-        self.keypad.set_pressed_callback(0, 3, partial(self.display_message, "A"))
-        self.keypad.set_pressed_callback(1, 0, partial(self.display_message, "4"))
-        self.keypad.set_pressed_callback(1, 1, partial(self.display_message, "5"))
-        self.keypad.set_pressed_callback(1, 2, partial(self.display_message, "6"))
-        self.keypad.set_pressed_callback(1, 3, partial(self.display_message, "B"))
-        self.keypad.set_pressed_callback(2, 0, partial(self.display_message, "7"))
-        self.keypad.set_pressed_callback(2, 1, partial(self.display_message, "8"))
-        self.keypad.set_pressed_callback(2, 2, partial(self.display_message, "9"))
-        self.keypad.set_pressed_callback(2, 3, partial(self.display_message, "C"))
-        self.keypad.set_pressed_callback(3, 0, partial(self.display_message, "*"))
-        self.keypad.set_pressed_callback(3, 1, partial(self.display_message, "0"))
-        self.keypad.set_pressed_callback(3, 2, partial(self.display_message, "#"))
-        self.keypad.set_pressed_callback(3, 3, partial(self.display_message, "D"))
+        self.keypad.set_pressed_callback(0, 0, partial(self.display.set_port, "1"))
+        self.keypad.set_pressed_callback(0, 1, partial(self.display.set_port, "2"))
+        self.keypad.set_pressed_callback(0, 2, partial(self.display.set_port, "3"))
+        self.keypad.set_pressed_callback(0, 3, partial(self.display.set_port, "A"))
+        self.keypad.set_pressed_callback(1, 0, partial(self.display.set_port, "4"))
+        self.keypad.set_pressed_callback(1, 1, partial(self.display.set_port, "5"))
+        self.keypad.set_pressed_callback(1, 2, partial(self.display.set_port, "6"))
+        self.keypad.set_pressed_callback(1, 3, partial(self.display.set_port, "B"))
+        self.keypad.set_pressed_callback(2, 0, partial(self.display.set_port, "7"))
+        self.keypad.set_pressed_callback(2, 1, partial(self.display.set_port, "8"))
+        self.keypad.set_pressed_callback(2, 2, partial(self.display.set_port, "9"))
+        self.keypad.set_pressed_callback(2, 3, partial(self.display.set_port, "C"))
+        self.keypad.set_pressed_callback(3, 0, partial(self.display.set_port, "*"))
+        self.keypad.set_pressed_callback(3, 1, partial(self.display.set_port, "0"))
+        self.keypad.set_pressed_callback(3, 2, partial(self.display.set_port, "#"))
+        self.keypad.set_pressed_callback(3, 3, partial(self.display.set_port, "D"))
 
     def display_message(self, message):
         self.display.fill(0)
@@ -68,7 +67,7 @@ class Manager():
         """
         tasks = []
         tasks.append(asyncio.create_task(self.run_keypad()))
-        tasks.append(asyncio.create_task(self.forever_toggle()))
+        # tasks.append(asyncio.create_task(self.forever_toggle()))
         tasks.append(asyncio.create_task(self.run_reader()))
         tasks.append(asyncio.create_task(self.connect_to_wifi()))
         # tasks.append(asyncio.create_task(self.check_connection_health()))
@@ -92,14 +91,70 @@ class Manager():
             await asyncio.sleep(0.1)
 
 
-    async def forever_toggle(self):
-        """
-        Togle the state of the passed in pin forever
-        """
+    # async def forever_toggle(self):
+    #     """
+    #     Togle the state of the passed in pin forever
+    #     """
         
+    #     while True:
+    #         self.led_pin.toggle()
+    #         await asyncio.sleep(1)
+
+
+    async def process_panel_method_queue_forever(self):
         while True:
-            self.led_pin.toggle()
-            await asyncio.sleep(1)
+            job = await queue.get()
+            if "method" not in job:
+                print("No method in job, skipping")
+                queue.task_done()
+                continue
+
+            method = getattr(self.panel, job["method"])
+            if method is None:
+                print(f"Panel object has no {job['method']} method.")
+                queue.task_done()
+                continue
+
+            # Call the method with the args and kwargs
+            args = job.get("args", [])
+            kwargs = job.get("kwargs", {})
+            outcome = method.(*args. **kwargs)
+
+            if "job_id" in job:
+                if not isinstance(job["job_id"], int):
+                    print(f"Value for 'id' key is not an int. Got: {job['job_id']}")
+                else:
+                    # Reply back to the calling job that we're done
+                    await self.reply_to_job(job_id, outcome)
+
+            # Update all the displays of the panel
+            panel_display_state = self.panel.get_display_state()
+            self.display.update_panel_state(panel_display_state)
+            await self.update_remote_display_state(panel_display_state)
+
+            queue.task_done()
+
+            await asyncio.sleep(0.05)
+ 
+
+
+
+
+    async def update_remote_display_state(self, panel_display_state):
+        data = {
+            "purpose": "panel_display_update",
+            "body": panel_display_state
+        }
+        if self.socket_connected:
+            await self.write(data)
+
+    async def reply_to_job(self, job_id, outcome):
+        data = {
+            "purpose": "job_comms",
+            "body": outcome.to_dict()
+        }
+        if self.socket_connected:
+            await self.write(data)
 
     async def run_reader(self):
         while True:
@@ -141,7 +196,7 @@ class Manager():
                 self.last_transmission_recieved = time.ticks_ms()
                 data = json.loads(socket_data.decode("ascii"))
                 print(f"Recieved: {data}")
-                self.display_message(data["msg"])
+                self.display.set_port(data["msg"])
 
 
                 if not isinstance(data, dict):
@@ -152,36 +207,47 @@ class Manager():
                     print(f"'purpose' key not in data. Got: {data}")
                     continue
 
-                if data["purpose"] != "test":
-                    print(f"'purpose' was not 'test'. Got: {data}")
-                    continue
+                if data["purpose"] == "panel_method_call":
+                    if "job_id" not in data:
+                        print(f"'id' key not in data. Got: {data}")
+                        continue 
 
-                if "job_id" not in data:
-                    print(f"'id' key not in data. Got: {data}")
-                    continue
+                    if not isinstance(data["job_id"], int):
+                        print(f"Value for 'id' key is not an int. Got: {data}")
+                        continue
 
-                if not isinstance(data["job_id"], int):
-                    print(f"Value for 'id' key is not an int. Got: {data}")
-                    continue
+                    self.panel_method_call_queue.put_nowait(data)
 
-                if "msg" not in data:
-                    print(f"'msg' key not in data. Got: {data}")
-                    continue
+                elif data["purpose"] == "test":
+                    if "job_id" not in data:
+                        print(f"'id' key not in data. Got: {data}")
+                        continue
 
-                await asyncio.sleep(0.1)
+                    if not isinstance(data["job_id"], int):
+                        print(f"Value for 'id' key is not an int. Got: {data}")
+                        continue
 
-                ret = {
-                    "purpose": "job_comms",
-                    "id": data["job_id"],
-                    "body": {
-                        "type": "completion",
-                        "success": True,
-                        "message": f"Pico got the {data['msg']} message."
+                    if "msg" not in data:
+                        print(f"'msg' key not in data. Got: {data}")
+                        continue
+
+                    await asyncio.sleep(0.1)
+
+                    ret = {
+                        "purpose": "job_comms",
+                        "id": data["job_id"],
+                        "body": {
+                            "type": "completion",
+                            "success": True,
+                            "message": f"Pico got the {data['msg']} message."
+                        }
                     }
-                }
 
-                await self.write(ret)
+                    await self.write(ret)
 
+                else:
+                    print(f"Unknown message purpose. Got: {data['purpose']}")
+                    continue
 
             else:
                 # Wait for the socket connection to come back online
@@ -241,18 +307,18 @@ class Manager():
         for second in range(0, connection_seconds + 1):
             conn_msg = f"Conn {second}/{connection_seconds}s"
             print(conn_msg)
-            self.display_message(conn_msg)
+            self.display.set_ip(conn_msg)
 
             if wlan.isconnected():
                 print(f"Connected with IP: {wlan.ifconfig()[0]}")
-                self.display_message(wlan.ifconfig()[0])
+                self.display.set_ip(wlan.ifconfig()[0])
                 break
             else:
                 print(f"Status: {decode_status(wlan.status())}")
                 await asyncio.sleep(1)
         else:
             print(f"Unable to connect to Wifi.")
-            self.display_message("No WiFi")
+            self.display.set_ip("No WiFi")
 
 
 def decode_status(status):
