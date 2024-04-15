@@ -10,6 +10,7 @@ import ssd1306
 import secrets
 from display import Display
 from fake_panel import Panel
+from queue import Queue
 
 # https://github.com/micropython/micropython-lib/blob/master/python-stdlib/functools/functools.py
 def partial(func, *args, **kwargs):
@@ -34,6 +35,7 @@ class Manager():
         self.display = Display()
         self.panel = Panel()
         self.init_keypad()
+        self.panel_method_queue = Queue()
 
     def init_keypad(self):
         row_pins = [Pin(gpio_num) for gpio_num in KEYPAD_ROW_GPIOS]
@@ -103,16 +105,16 @@ class Manager():
 
     async def process_panel_method_queue_forever(self):
         while True:
-            job = await queue.get()
+            job = await self.panel_method_queue.get()
             if "method" not in job:
                 print("No method in job, skipping")
-                queue.task_done()
+                self.panel_method_queue.task_done()
                 continue
 
             method = getattr(self.panel, job["method"])
             if method is None:
                 print(f"Panel object has no {job['method']} method.")
-                queue.task_done()
+                self.panel_method_queue.task_done()
                 continue
 
             # Call the method with the args and kwargs
@@ -132,12 +134,9 @@ class Manager():
             self.display.update_panel_state(panel_display_state)
             await self.update_remote_display_state(panel_display_state)
 
-            queue.task_done()
+            self.panel_method_queue.task_done()
 
-            await asyncio.sleep(0.05)
- 
-
-
+            await asyncio.sleep(0.1)
 
 
     async def update_remote_display_state(self, panel_display_state):
@@ -151,7 +150,10 @@ class Manager():
     async def reply_to_job(self, job_id, outcome):
         data = {
             "purpose": "job_comms",
-            "body": outcome.to_dict()
+            "body": {
+                "job_id": job_id,
+                "outcome": outcome.to_dict()
+            }
         }
         if self.socket_connected:
             await self.write(data)
@@ -197,7 +199,6 @@ class Manager():
                 data = json.loads(socket_data.decode("ascii"))
                 print(f"Recieved: {data}")
                 self.display.set_port(data["msg"])
-
 
                 if not isinstance(data, dict):
                     print(f"Recieved invalid datatype - needs to be a dict. Got: {data}")

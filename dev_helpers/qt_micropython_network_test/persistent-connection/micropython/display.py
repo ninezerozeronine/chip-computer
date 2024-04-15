@@ -63,25 +63,28 @@ class Display():
         Set the frequency
         """
 
+        self._frequency_str = self._frequency_to_str(frequency)
+        self._redraw()
+
+    def _frequency_to_str(self, frequency)
         if frequency < 10.0:
-            self._frequency_str = f"{frequency:.2f}Hz"
+            frequency_str = f"{frequency:.2f}Hz"
         elif frequency < 100.0:
-            self._frequency_str = f"{frequency:.1f}Hz"
+            frequency_str = f"{frequency:.1f}Hz"
         elif frequency < 1000.0:
             rounded = round(frequency)
-            self._frequency_str = f"{rounded:d}Hz"
+            frequency_str = f"{rounded:d}Hz"
         elif frequency < 1000000.0:
             khz = frequency / 1000.0
             if khz < 10.0:
-                self._frequency_str = f"{khz:.1f}KHz"
+                frequency_str = f"{khz:.1f}KHz"
             else:
                 rounded = round(khz)
-                self._frequency_str = f"{rounded:d}KHz"
+                frequency_str = f"{rounded:d}KHz"
         else:
             mhz = frequency / 1000000.0
-            self._frequency_str = f"{mhz:.1f}MHz"
-
-        self._redraw()
+            frequency_str = f"{mhz:.1f}MHz"
+        return frequency_str
 
     def set_frequency_to_crystal(self):
         self._frequency_str = "XTAL"
@@ -95,13 +98,25 @@ class Display():
         self._port_str = port
         self._redraw()
 
-    # def update_panel_state(self, state):
-    #     address
-    #     data
-    #     user_input
-    #     mode
-    #     prog_name
-    #     frequency
+    def update_panel_state(self, state):
+        if "address" in state:
+            self._address_str = state["address"]
+        if "data" in state:
+            self._data_str = state["data"]
+        if "user_input" in state:
+            self._user_input_str = state["user_input"]
+        if "mode" in state:
+            self._mode_str = state["mode"]
+        if "program_name" in state:
+            self._program_name_str = state["program_name"]
+        if "frequency_type" in state:
+            if state["frequency_type"] == "crystal":
+                self._frequency_str = "XTAL"
+            if state["frequency_type"] == "arbitrary":
+                if "arbitrary_frequency" in state:
+                    self._frequency_str = self._frequency_to_str(self, state["arbitrary_frequency"])
+
+        self._redraw()
 
 
     def _redraw(self):

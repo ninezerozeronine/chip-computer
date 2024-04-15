@@ -30,42 +30,47 @@ def human_readable_state(state):
 
 # Send this:
 # {
-#     "purpose": "func_call,
-#     "job_id": 123456,
-#     "method": "do_a_thing",
-#     "args": [1, "a"],
-#     "kwargs": {"foo": 4, "bar":"hello"}
+#     "purpose": "panel_method_call",
+#     "body": {
+#         "job_id": 123456,
+#         "method": "do_a_thing",
+#         "args": [1, "a"], # optional
+#         "kwargs": {"foo": 4, "bar":"hello"} # optional
+#     }
 # }
 
 # Recieve this
 # {
 #     "purpose": "job_comms",
-#     "id": 123456,
 #     "body": {
-#         "type": "completion",
-#         "success": False,
-#         "return": 34,
-#         "message": "Ya dun goofed"
+#         "job_id": 123456,
+#         "outcome": {
+#             "success": False,
+#             "data": 34,
+#             "message": "Ya dun goofed"
+#         }
 #     }
 # }
 
 # {
-#     "purpose": "job_comms",
-#     "id": 123456,
+#     "purpose": "panel_display_update",
 #     "body": {
-#         "type": "progress",
-#         "percentage": 45
+#         "user_input": "4561",
+#         "program_name": "FIBB"
 #     }
 # }
+
 
 
 
 class Job():
 
-    def __init__(self, command):
+    def __init__(self, method, args=None, kwargs=None):
         self.state = State.new
         self.job_id = None
-        self.command = command
+        self.method = method
+        self.args = args
+        self.kwargs = kwargs
 
         self.created_at = datetime.datetime.now()
         self.sent_at = None
@@ -78,12 +83,20 @@ class Job():
 
 
     def send(self, socket):
-        print(f"Sending {self.command} for job {self.job_id}.")
+        #print(f"Sending {self.command} for job {self.job_id}.")
+
+        body = {
+            "job_id": self.job_id,
+            "method": self.method
+        }
+        if self.args is not None:
+            body["args"] = self.args
+        if self.kwargs is not None:
+            body["kwargs"] = self.kwargs
 
         to_send = {
-            "purpose": "test",
-            "job_id": self.job_id,
-            "msg": self.command
+            "purpose": "panel_method_call",
+            "body": body
         }
 
         data_str=json.dumps(to_send)
@@ -98,27 +111,18 @@ class Job():
         num_bytes_sent = socket.write(to_send)
         print(f"Wanted to send {num_bytes_to_send} bytes, actually sent {num_bytes_sent}")
 
-
         self.sent_at = datetime.datetime.now()
         self.state = State.sent
 
-    def process_comms(self, data):
+    def process_comms(self, outcome):
         self.last_comm_recieved_at = datetime.datetime.now()
 
         # Check data is correct type
-        if not isinstance(data, dict):
-            print(f"Malformed communication recieved - not a dict: {data}")
+        if not isinstance(outcome, dict):
+            print(f"Malformed communication recieved - not a dict: {outcome}")
             return
 
-        if "type" not in data:
-            print(f"Missing type key in data: {data}")
-            return
-
-        if data["type"] != "completion":
-            print(f"Unknown communication type {data['type']} in data: {data}")
-            return
-
-        print(f"Job ID {self.job_id} got: {data['message']}")
+        print(f"Job ID {self.job_id} got: {outcome}")
 
         self.completed_at = datetime.datetime.now()
         self.state = State.complete

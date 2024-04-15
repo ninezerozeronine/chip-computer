@@ -176,26 +176,50 @@ class SBCConnect(QtWidgets.QDialog):
             return
 
         if "purpose" not in data:
-            print(f"'purpose' key not in data. Got: {data}")
+            print(f"'purpose' key not in data.")
             return
 
-        if data["purpose"] != "job_comms":
-            print(f"'purpose' was not 'job_comms'. Got: {data}")
+        purpose = data["purpose"]
+        if purpose == "job_comms":
+            self.process_job_comms(data)
+        elif purpose == "panel_display_update":
+            self.process_panel_update(data)
+        else:
+            print(f"Unknown purpose: {purpose}")
+
+
+    def process_job_comms(self, data):
+        if "body" not in data:
+            print(f"'body' key not in data for.")
             return
 
-        if "id" not in data:
-            print(f"'id' key not in data. Got: {data}")
+        body = data["body"]
+
+        if "job_id" not in body:
+            print(f"'job_id' key not in body.")
             return
 
-        if not isinstance(data["id"], int):
-            print(f"Value for 'id' key is not an int. Got: {data}")
+        if "outcome" not in body:
+            print(f"'outcome' key not in body.")
             return
 
-        if not self.job_manager_model.id_exists(data["id"]):
-            print(f"Job with id {data['id']} does not exist. Got: {data}")
+        if not isinstance(body["job_id"], int):
+            print(f"Value for 'job_id' key is not an int.")
             return
 
-        self.job_manager_model.relay_comms(data["id"], data["body"])
+        # if not self.job_manager_model.job_id_exists(body["job_id"]):
+        #     print(f"Job with job_id {body['job_id']} does not exist.")
+        #     return
+
+        self.job_manager_model.relay_comms(body["job_id"], body["outcome"])
+
+    def process_panel_update(self, data):
+        if "body" not in data:
+            print(f"'body' key not in data.")
+            return
+
+        print(f"Updating panel state with {data['body']}")
+
 
     def send(self):
         """

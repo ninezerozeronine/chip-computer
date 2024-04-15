@@ -28,12 +28,12 @@ class SequentialJobManager():
 
         self.jobs[job_id].cancel()
 
-    def relay_comms(self, job_id, data):
+    def relay_comms(self, job_id, outcome):
         if job_id not in self.jobs:
             print(f"Found no job with id: {job_id}")
             return
 
-        self.jobs[job_id].process_comms(data)
+        self.jobs[job_id].process_comms(outcome)
 
     def work_on_top_job(self, socket):
         """
