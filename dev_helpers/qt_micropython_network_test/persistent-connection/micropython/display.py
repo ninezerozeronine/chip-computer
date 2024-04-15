@@ -66,7 +66,7 @@ class Display():
         self._frequency_str = self._frequency_to_str(frequency)
         self._redraw()
 
-    def _frequency_to_str(self, frequency)
+    def _frequency_to_str(self, frequency):
         if frequency < 10.0:
             frequency_str = f"{frequency:.2f}Hz"
         elif frequency < 100.0:

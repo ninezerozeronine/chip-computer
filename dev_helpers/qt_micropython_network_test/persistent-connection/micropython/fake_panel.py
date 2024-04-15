@@ -4,7 +4,7 @@ from outcome_mod import Outcome
 
 class FakePanel():
     def __init__(self):
-        self.read_pin = Pin(READ_PIN, Pin.In, Pin.PULL_DOWN)
+        self.read_pin = Pin(READ_PIN, Pin.IN, Pin.PULL_DOWN)
         self.led_pin = Pin("LED", Pin.OUT)
         self.user_input_char = ""
         self.allowed_chars = (
@@ -35,15 +35,15 @@ class FakePanel():
 
     def set_user_input_char(self, char):
         if char in self.allowed_chars:
-            self.user_input_str = char
+            self.user_input_char = char
             return Outcome(True)
         else:
-            return Outcome("False", message=f"{char} is not  valid character")
+            return Outcome("False", message=f"{char} is not a valid character")
 
     def do_a_slow_thing(self):
         pass
 
     def get_display_state(self):
         return {
-            "user_input": self.user_input_str
+            "user_input": self.user_input_char
         }

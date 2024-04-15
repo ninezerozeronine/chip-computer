@@ -10,9 +10,8 @@ class SBCConnect(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(SBCConnect, self).__init__(parent)
  
-        self.header_read = False
-        self.num_message_bytes = 0
-        self.in_socket = None
+        self.waiting_for = "header"
+        self.num_data_bytes = 0
         self.socket = QtNetwork.QTcpSocket(self)
         self.socket.readyRead.connect(self.read_from_socket)
         self.socket.error.connect(self.display_error)
@@ -31,17 +30,17 @@ class SBCConnect(QtWidgets.QDialog):
         self.port_line_edit.setValidator(QtGui.QIntValidator(1, 65535, self))
         port_label.setBuddy(self.port_line_edit)
         
-        message_label = QtWidgets.QLabel("Message:")
-        self.message_line_edit = QtWidgets.QLineEdit("Hello!")
-        message_label.setBuddy(self.message_line_edit)
+        # message_label = QtWidgets.QLabel("Message:")
+        # self.message_line_edit = QtWidgets.QLineEdit("Hello!")
+        # message_label.setBuddy(self.message_line_edit)
 
         connect_layout = QtWidgets.QGridLayout()
         connect_layout.addWidget(host_label, 0, 0)
         connect_layout.addWidget(self.host_line_edit, 0, 1)
         connect_layout.addWidget(port_label, 1, 0)
         connect_layout.addWidget(self.port_line_edit, 1, 1)
-        connect_layout.addWidget(message_label, 2, 0)
-        connect_layout.addWidget(self.message_line_edit, 2, 1)
+        # connect_layout.addWidget(message_label, 2, 0)
+        # connect_layout.addWidget(self.message_line_edit, 2, 1)
 
         # Connect
         self.connect_button = QtWidgets.QPushButton("Connect")
@@ -52,23 +51,54 @@ class SBCConnect(QtWidgets.QDialog):
         self.disconnect_button.setEnabled(False)
 
         # Send
-        self.send_button = QtWidgets.QPushButton("Send")
-        self.send_button.clicked.connect(self.send)
-        self.send_button.setEnabled(False)
+        # self.send_button = QtWidgets.QPushButton("Send")
+        # self.send_button.clicked.connect(self.send)
+        # self.send_button.setEnabled(False)
 
-        # Quit
-        quit_button = QtWidgets.QPushButton("Quit")
-        quit_button.clicked.connect(self.close)
-        quit_layout = QtWidgets.QHBoxLayout()
-        quit_layout.addStretch(1)
-        quit_layout.addWidget(quit_button)
- 
+        # Char send
+        char_label = QtWidgets.QLabel("Character:")
+        self.char_line_edit = QtWidgets.QLineEdit()
+        self.char_send_button = QtWidgets.QPushButton("Send")
+        self.char_send_button.clicked.connect(self.send_char)
+        char_layout = QtWidgets.QHBoxLayout()
+        char_layout.addWidget(char_label)
+        char_layout.addWidget(self.char_line_edit)
+        char_layout.addWidget(self.char_send_button)
+
+        # LED control
+        self.led_on_button = QtWidgets.QPushButton("LED On")
+        self.led_on_button.clicked.connect(partial(self.set_led, True))
+        self.led_off_button = QtWidgets.QPushButton("LED Off")
+        self.led_off_button.clicked.connect(partial(self.set_led, False))
+        led_on_off_layout = QtWidgets.QHBoxLayout()
+        led_on_off_layout.addWidget(self.led_on_button)
+        led_on_off_layout.addWidget(self.led_off_button)
+
+        # user_input
+        user_input_label = QtWidgets.QLabel("User input:")
+        self.user_input_line_edit = QtWidgets.QLineEdit()
+        self.user_input_line_edit.setReadOnly(True)
+        user_input_layout = QtWidgets.QHBoxLayout()
+        user_input_layout.addWidget(user_input_label)
+        user_input_layout.addWidget(self.user_input_line_edit)
+
+        # Pin State
+        pinstate_label = QtWidgets.QLabel("Pin State:")
+        self.pinstate_line_edit = QtWidgets.QLineEdit()
+        self.pinstate_line_edit.setReadOnly(True)
+        self.pinstate_send_button = QtWidgets.QPushButton("Get")
+        self.pinstate_send_button.clicked.connect(self.get_pinstate)
+        pinstate_layout = QtWidgets.QHBoxLayout()
+        pinstate_layout.addWidget(pinstate_label)
+        pinstate_layout.addWidget(self.pinstate_line_edit)
+        pinstate_layout.addWidget(self.pinstate_send_button)
+
         # Add job
-        add_job_button = QtWidgets.QPushButton("add_job")
-        add_job_button.clicked.connect(self.make_job)
+        # add_job_button = QtWidgets.QPushButton("Add job")
+        # add_job_button.clicked.connect(self.make_job)
 
         # Cancel selected job
-        cancel_job_button = QtWidgets.QPushButton("cancel_job")
+        cancel_job_button = QtWidgets.QPushButton("Cancel selected jobs")
         cancel_job_button.clicked.connect(self.cancel_selected_jobs)
 
         # Table
@@ -77,34 +107,63 @@ class SBCConnect(QtWidgets.QDialog):
         self.job_table.setModel(self.job_manager_model)
         self.job_table.verticalHeader().hide()
 
-        self.timer = QtCore.QTimer(self)
-        self.timer.setInterval(100)
-        self.timer.timeout.connect(self.work_on_top_job)
-        self.timer.start()
+        # Quit
+        quit_button = QtWidgets.QPushButton("Quit")
+        quit_button.clicked.connect(self.close)
+        quit_layout = QtWidgets.QHBoxLayout()
+        quit_layout.addStretch(1)
+        quit_layout.addWidget(quit_button)
 
         main_layout = QtWidgets.QVBoxLayout()
         main_layout.addLayout(connect_layout)
         main_layout.addWidget(self.connect_button)
         main_layout.addWidget(self.disconnect_button)
-        main_layout.addWidget(self.send_button)
-        main_layout.addWidget(add_job_button)
+        main_layout.addLayout(char_layout)
+        main_layout.addLayout(led_on_off_layout)
+        main_layout.addLayout(user_input_layout)
+        main_layout.addLayout(pinstate_layout)
+        # main_layout.addWidget(self.send_button)
+        # main_layout.addWidget(add_job_button)
         main_layout.addWidget(cancel_job_button)
         main_layout.addWidget(self.job_table)
         main_layout.addLayout(quit_layout)
 
-
         self.setLayout(main_layout)
+
+        self.timer = QtCore.QTimer(self)
+        self.timer.setInterval(100)
+        self.timer.timeout.connect(self.work_on_top_job)
+        self.timer.start()
 
         self.setWindowTitle("SBC Connect")
         self.port_line_edit.setFocus()
+
+    def get_pinstate(self):
+        job = job_mod.Job("read_pin_state")
+        job.complete_callback = self.pinstate_complete
+        self.job_manager_model.sumbit_job(job)
+
+    def pinstate_complete(self, outcome):
+        self.pinstate_line_edit.setText(str(outcome.data))
+
+    def set_led(self, state):
+        job = job_mod.Job("set_led_state", args=[state])
+        self.job_manager_model.sumbit_job(job)
+
+    def send_char(self):
+        char = self.char_line_edit.text()
+        if char:
+            char = char[0]
+            job = job_mod.Job("set_user_input_char", args=[char])
+            self.job_manager_model.sumbit_job(job)
 
     def work_on_top_job(self):
         # if self.socket.state() == QtNetwork.QAbstractSocket.ConnectedState
         self.job_manager_model.work_on_top_job(self.socket)
 
-    def make_job(self):
-        job = job_mod.Job(self.message_line_edit.text())
-        self.job_manager_model.sumbit_job(job)
+    # def make_job(self):
+    #     job = job_mod.Job(self.message_line_edit.text())
+    #     self.job_manager_model.sumbit_job(job)
 
     def cancel_selected_jobs(self):
         row_indexes_to_cancel = [
@@ -128,13 +187,13 @@ class SBCConnect(QtWidgets.QDialog):
         # self.socket.connected.connect(self.send_data)
 
     def socket_connected(self):
-        self.send_button.setEnabled(True)
+        # self.send_button.setEnabled(True)
         self.connect_button.setEnabled(False)
         self.disconnect_button.setEnabled(True)
         self.header_read = False
 
     def socket_disconnected(self):
-        self.send_button.setEnabled(False)
+        # self.send_button.setEnabled(False)
         self.connect_button.setEnabled(True)
         self.disconnect_button.setEnabled(False)
         self.header_read = False
@@ -147,45 +206,54 @@ class SBCConnect(QtWidgets.QDialog):
 
         """
 
-        if not self.header_read:
-            if self.socket.bytesAvailable() < 2:
-                return
+        while True:
+            if self.waiting_for == "header":
+                num_bytes_available = self.socket.bytesAvailable()
+                if num_bytes_available < 2:
+                    print(f"Waiting for header data, only {num_bytes_available} bytes available, need 2.")
+                    break
+                else:
+                    header_bytes = self.socket.read(2)
+                    self.num_data_bytes = int.from_bytes(
+                        header_bytes,
+                        byteorder="big"
+                    )
+                    print(f"Decoded header, data is {self.num_data_bytes} bytes long")
 
-            self.num_message_bytes = int.from_bytes(
-                self.socket.read(2),
-                byteorder="big"
-            )
-            self.header_read = True
+                    if self.num_data_bytes == 0:
+                        print("No data in transmission, waiting for next")
+                    else:
+                        self.waiting_for = "data"
 
-        if self.num_message_bytes == 0:
-            print("No data in transmission, waiting for next")
-            self.header_read = False
- 
-        num_available = self.socket.bytesAvailable()
-        if num_available < self.num_message_bytes:
-            print(f"Only {num_available} bytes are available, waiting for {self.num_message_bytes}")
-            return
+            if self.waiting_for == "data":
+                num_bytes_available = self.socket.bytesAvailable()
+                if num_bytes_available < self.num_data_bytes:
+                    print(f"Waiting for main data, only {num_bytes_available} bytes are available, need {self.num_data_bytes}.")
+                    break
+                else:
+                    data_bytes = self.socket.read(self.num_data_bytes)
+                    data_str = data_bytes.decode("ascii")
+                    data = json.loads(data_str)
+                    print(f"Decoded main data: {data}")
+                    self.waiting_for = "header"
 
-        data_str = self.socket.read(self.num_message_bytes).decode("ascii")
-        data = json.loads(data_str)
-        print(f"Recieved {data}")
-        self.header_read = False
+                    if not isinstance(data, dict):
+                        print(f"Recieved invalid datatype - needs to be a dict.")
+                        break
 
-        if not isinstance(data, dict):
-            print(f"Recieved invalid datatype - needs to be a dict. Got: {data}")
-            return
+                    if "purpose" not in data:
+                        print(f"'purpose' key not in data.")
+                        break
 
-        if "purpose" not in data:
-            print(f"'purpose' key not in data.")
-            return
+                    purpose = data["purpose"]
+                    if purpose == "job_comms":
+                        self.process_job_comms(data)
+                    elif purpose == "panel_display_update":
+                        self.process_panel_update(data)
+                    else:
+                        print(f"Unknown purpose: {purpose}")
 
-        purpose = data["purpose"]
-        if purpose == "job_comms":
-            self.process_job_comms(data)
-        elif purpose == "panel_display_update":
-            self.process_panel_update(data)
-        else:
-            print(f"Unknown purpose: {purpose}")
+                    # back around to the top in case there's another header ready to be read
 
 
     def process_job_comms(self, data):
@@ -218,7 +286,7 @@ class SBCConnect(QtWidgets.QDialog):
             print(f"'body' key not in data.")
             return
 
-        print(f"Updating panel state with {data['body']}")
+        self.user_input_line_edit.setText(data["body"]["user_input"])
 
 
     def send(self):

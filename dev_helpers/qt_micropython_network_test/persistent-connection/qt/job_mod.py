@@ -2,6 +2,8 @@ from enum import Enum, auto
 import datetime
 import json
 
+from . import outcome_mod
+
 class State(Enum):
     """
     Possible states a job can be in
@@ -126,6 +128,9 @@ class Job():
 
         self.completed_at = datetime.datetime.now()
         self.state = State.complete
+
+        if self.complete_callback is not None:
+            self.complete_callback(outcome_mod.Outcome.from_dict(outcome))
 
     def cancel(self):
         self.cancelled_at = datetime.datetime.now()
