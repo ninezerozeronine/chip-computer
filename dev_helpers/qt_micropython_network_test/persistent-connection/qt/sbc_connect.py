@@ -222,6 +222,7 @@ class SBCConnect(QtWidgets.QDialog):
 
                     if self.num_data_bytes == 0:
                         print("No data in transmission, waiting for next")
+                        self.waiting_for = "header"
                     else:
                         self.waiting_for = "data"
 
