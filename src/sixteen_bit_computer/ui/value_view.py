@@ -1,12 +1,17 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 
+from .. import number_utils
+
 class ValueView(QtWidgets.QWidget):
+    """
+    Widget to view a 16 bit value
+    """
     def __init__(self, parent=None):
+        """
+        Initialise class.
+        """
         super().__init__(parent=parent)
 
-
-        self.min_val = (2**16 / 2) * -1
-        self.max_val = 2**16 - 1
         self.signed_value = 0
         self.unsigned_value = 0
 
@@ -42,24 +47,26 @@ class ValueView(QtWidgets.QWidget):
 
     def set_value(self, value):
         """
-        Set the value to be dispalyed
+        Set the value to be dispalyed.
 
         Args:
             value (int): The value to set.
         """
 
-        if self.min_val <= value <= self.max_val:
+        if number_utils.number_is_within_bit_limit(value, bit_width=16):
             self.signed_value = value
-            self.unsigned_value = value
-            if value < 0:
-                self.unsigned_value = value + 2**16
+            self.unsigned_value = number_utils.get_positive_equivalent(
+                value, bitwidth=16
+            )
 
-        self._redraw()
+            self._redraw()
 
 
     def _redraw(self):
         """
+        Redraw all the views.
 
+        Generally used when the value changes.
         """
         self.dec_line_edit.setText(self._dec_str())
         self.hex_line_edit.setText(self._hex_str())
@@ -68,7 +75,7 @@ class ValueView(QtWidgets.QWidget):
 
     def _dec_str(self):
         """
-
+        Get the string to display the value in decimal.
         """
         if self.signed_checkbox.isChecked():
             return str(self.signed_value)
@@ -77,7 +84,7 @@ class ValueView(QtWidgets.QWidget):
 
     def _hex_str(self):
         """
-        
+        Get the string to display the value in hexadecimal.
         """
         if self.signed_checkbox.isChecked():
             return "{num:0{width}X}".format(
@@ -89,9 +96,11 @@ class ValueView(QtWidgets.QWidget):
 
     def _bin_str(self):
         """
-
+        Get the string to display the value in binary.
         """
-        packed = "{num:016b}".format(num=self.unsigned_value)
+        packed = number_utils.number_to_bitstring(
+            self.unsigned_value, bit_width=16
+        )
         unpacked = "{0} {1} {2} {3}".format(
             packed[0:4],
             packed[4:8],

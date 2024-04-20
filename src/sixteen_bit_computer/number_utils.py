@@ -39,10 +39,8 @@ def number_is_within_bit_limit(number, bit_width=8):
         bool: True if within limits, False if not.
     """
 
-    min_val = (2**bit_width / 2) * -1
-    max_val = 2**bit_width - 1
-
-    return min_val <= number <= max_val
+    min_max = get_min_max_values(bit_width)
+    return min_max[0] <= number <= min_max[1]
 
 
 def get_positive_equivalent(number, bitwidth=8):
@@ -99,4 +97,21 @@ def bitstring_to_hex_string(bitstring, zero_pad_width=2):
 
     return "{num:0{zero_pad_width}X}".format(
         num=int(bitstring, 2), zero_pad_width=zero_pad_width
+    )
+
+def get_min_max_values(bit_width):
+    """
+    Get the min and max values a word of a given bitwidth can represent.
+
+    This accounts for signed and unsigned interpretations of the word.
+
+    Args:
+        bitwidth (int): The number of bits in the word
+    Returns:
+        tuple(int, int): The min and max values
+    """
+
+    return (
+        ((2**bit_width // 2) * -1),
+        (2**bit_width - 1),
     )

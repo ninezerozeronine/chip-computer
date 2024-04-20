@@ -65,7 +65,13 @@ def test_bitstring_to_hex_string(test_input, test_pad, expected):
         test_input, zero_pad_width=test_pad) == expected
 
 
-
+@pytest.mark.parametrize("test_input,expected", [
+    (4, (-8, 15)),
+    (8, (-128, 255)),
+    (16, (-32768, 65535)),
+])
+def test_get_min_max_values(test_input, expected):
+    assert number_utils.get_min_max_values(test_input) == expected
 
 
 

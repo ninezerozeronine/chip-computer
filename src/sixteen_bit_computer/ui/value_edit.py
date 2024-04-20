@@ -1,7 +1,15 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 
+from .. import number_utils
+
 class BinButton(QtWidgets.QPushButton):
+    """
+    Button that holds a 1 or a zero and toggles when pressed.
+    """
     def __init__(self, parent=None):
+        """
+        Initialise class
+        """
         super().__init__(parent=parent)
 
         self.value = 0
@@ -9,17 +17,25 @@ class BinButton(QtWidgets.QPushButton):
         self.clicked.connect(self.toggle_value)
         self._redraw()
 
-    def _get_text(self):
-        if self.value == 0:
-            return "0"
-        else:
-            return "1"
-
     def set_value(self, value):
-        self.value = value
-        self._redraw()
+        """
+        Set the value the button currently holds.
+
+        This will redraw the button.
+
+        Args:
+            value (int): The value to set. Must be 0 or 1.
+        """
+        if value in (0, 1):
+            self.value = value
+            self._redraw()
 
     def toggle_value(self):
+        """
+        Toggle the value that the button holds.
+
+        This will redraw the button.
+        """
         if self.value == 0:
             self.value = 1
         else:
@@ -27,16 +43,23 @@ class BinButton(QtWidgets.QPushButton):
         self._redraw()
 
     def _redraw(self):
-        self.setText(self._get_text())
+        """
+        Redraw the button.
+        """
+        self.setText(str(self.value))
 
 
 class BinButtonRow(QtWidgets.QWidget):
+    """
+    Row of 16 buttons that represent a binary number.
+    """
 
+    #: Signal that gets emitted when the value of the row changes.
     value_edited = QtCore.pyqtSignal(int)
 
     def __init__(self, parent=None):
         """
-
+        Initialise the class
         """
         super().__init__(parent=parent)
 
@@ -60,7 +83,7 @@ class BinButtonRow(QtWidgets.QWidget):
 
     def _update_value(self):
         """
-
+        Read the state of the buttons and update the value.
         """
         new_val = 0
         for index, button in enumerate(self.bin_buttons):
@@ -71,30 +94,68 @@ class BinButtonRow(QtWidgets.QWidget):
 
     def set_value(self, value):
         """
+        Set all the states of the buttons to represent the passed value.
 
+        Args:
+            value (int): The new value to set. Must fit in a 16 bit
+                number.
         """
-        # Get positive equivalent
-        if value < 0:
-            value = value + 2**16
+        if number_utils.number_is_within_bit_limit(value, bit_width=16):
+            self.value = number_utils.get_positive_equivalent(
+                value, bitwidth=16
+            )
 
-        # Determine bit values at each index and set on the buttons
-        for index in range(16):
-            bit_value = 1 if value & (1 << index) else 0
-            self.bin_buttons[index].set_value(bit_value)
+            # Determine bit values at each index and set on the buttons
+            for index in range(16):
+                bit_value = 1 if self.value & (1 << index) else 0
+                self.bin_buttons[index].set_value(bit_value)
 
 
+class HexValidator(QtGui.QValidator):
+    """
+    Validates a 16 bit hex number.
+    """
 
+    def validate(self, field_content, cursor_pos):
+        """
+        Args:
+            field_content (str): The proposed content of the field
+                to validate.
+            cursor_pos (int): The position of the cursor in the input
+                field.
+        Return:
+            tuple (QtGui.QValidator.State, str, int): The judgement of
+                the proposed value, the proposed value, and the cursor
+                position (not sure what happens if you modify the last
+                two from what was passed as input).
+        """
+
+        if field_content in ("+", "-", ""):
+            return (QtGui.QValidator.Intermediate, field_content, cursor_pos)
+
+        try:
+            value = int(field_content, 16)
+        except:
+            return (QtGui.QValidator.Invalid, field_content, cursor_pos)
+
+        if number_utils.number_is_within_bit_limit(value, bit_width=16):
+            return (QtGui.QValidator.Acceptable, field_content, cursor_pos)
+        else:
+            return (QtGui.QValidator.Invalid, field_content, cursor_pos)
 
 class ValueEdit(QtWidgets.QWidget):
+    """
+    Widget that allows editing a value in decimal, hexadecimal, or binary.
+    """
+
+    #: Signal that gets emitted when the value of the widget changes.
     value_changed = QtCore.pyqtSignal(int)
 
     def __init__(self, parent=None):
+        """
+        Initialise the class.
+        """
         super().__init__(parent=parent)
-
-
-        self.min_val = (2**16 / 2) * -1
-        self.max_val = 2**16 - 1
-        self.value = 0
 
         dec_label = QtWidgets.QLabel("Dec:")
         self.dec_line_edit = QtWidgets.QLineEdit()
@@ -103,10 +164,16 @@ class ValueEdit(QtWidgets.QWidget):
 
         hex_label = QtWidgets.QLabel("Hex:")
         self.hex_line_edit = QtWidgets.QLineEdit()
+        self.hex_line_edit.setValidator(HexValidator())
         self.hex_line_edit.textEdited.connect(self.hex_edited)
 
         bin_label = QtWidgets.QLabel("Bin:")
         self.bin_line_edit = QtWidgets.QLineEdit()
+        self.bin_line_edit.setValidator(
+            QtGui.QRegularExpressionValidator(
+                QtCore.QRegularExpression("[01]{0,16}")
+            )
+        )
         self.bin_line_edit.textEdited.connect(self.bin_line_edited)
 
         self.bin_buttons = BinButtonRow()
@@ -130,49 +197,84 @@ class ValueEdit(QtWidgets.QWidget):
 
 
     def dec_edited(self, new_text):
+        """
+        Handle a new value being entered in the decimal field.
+
+        This could be an incomplete/invalid value e.g. "-" if the user
+        is typing a negative number. Or "".
+
+        Args:
+            new_text (str): The new text from the field.
+        """
         try:
             new_value = int(new_text)
         except:
             new_value = 0
-        self.set_values(
-            new_value,
-            _hex=True,
-            bin_line=True,
-            bin_buttons=True
-        )
-        self.value_changed.emit(new_value)
+        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.set_values(
+                new_value,
+                hex_=True,
+                bin_line=True,
+                bin_buttons=True
+            )
+            self.value_changed.emit(new_value)
 
     def hex_edited(self, new_text):
+        """
+        Handle a new value being entered in the hexadecimal field.
+
+        This could be an incomplete/invalid value e.g. "-" if the user
+        is typing a negative number. Or "".
+
+        Args:
+            new_text (str): The new text from the field.
+        """
         try:
             new_value = int(new_text, 16)
         except:
             new_value = 0
-        self.set_values(
-            new_value,
-            dec=True,
-            bin_line=True,
-            bin_buttons=True
-        )
-        self.value_changed.emit(new_value)
+        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.set_values(
+                new_value,
+                dec=True,
+                bin_line=True,
+                bin_buttons=True
+            )
+            self.value_changed.emit(new_value)
 
     def bin_line_edited(self, new_text):
+        """
+        Handle a new value being entered in the binary field.
+
+        This could be an incomplete/invalid value e.g. "".
+
+        Args:
+            new_text (str): The new text from the field.
+        """
         try:
             new_value = int(new_text, 2)
         except:
             new_value = 0
-        self.set_values(
-            new_value,
-            dec=True,
-            _hex=True,
-            bin_buttons=True
-        )
-        self.value_changed.emit(new_value)
+        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.set_values(
+                new_value,
+                dec=True,
+                hex_=True,
+                bin_buttons=True
+            )
+            self.value_changed.emit(new_value)
 
     def bin_buttons_edited(self, new_value):
+        """
+        Handle the value held by the binary buttons changing.
+
+        Args:
+            new_value (int): The new value from the buttons.
+        """
         self.set_values(
             new_value,
             dec=True,
-            _hex=True,
+            hex_=True,
             bin_line=True,
         )
         self.value_changed.emit(new_value)
@@ -181,23 +283,31 @@ class ValueEdit(QtWidgets.QWidget):
         self,
         value,
         dec=False,
-        _hex=False,
+        hex_=False,
         bin_line=False,
         bin_buttons=False
     ):
+        """
+        Set the given fields to the given value.
+
+        Args:
+            value (int): The new value.
+        Keyword Args:
+            dec (bool): Whether or not to set the decimal field.
+            hex_ (bool): Whether or not to set the hexadecimal field.
+            bin_line (bool): Whether or not to set the binary text field.
+            bin_buttons (bool): Whether or not to set the binary buttons.
+        """
         if dec:
             self.dec_line_edit.setText(str(value))
 
-        if _hex:
+        if hex_:
             self.hex_line_edit.setText(f"{value:X}")
 
         if bin_line:
-            # Get positive equivalent
-            pos_value = value
-            if pos_value < 0:
-                pos_value = pos_value + 2**16
-
-            self.bin_line_edit.setText(f"{pos_value:016b}")
+            self.bin_line_edit.setText(
+                number_utils.number_to_bitstring(value, bit_width=16)
+            )
 
         if bin_buttons:
             self.bin_buttons.set_value(value)
