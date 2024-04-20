@@ -159,7 +159,7 @@ class ValueEdit(QtWidgets.QWidget):
 
         dec_label = QtWidgets.QLabel("Dec:")
         self.dec_line_edit = QtWidgets.QLineEdit()
-        self.dec_line_edit.setValidator(QtGui.QIntValidator(-32768, 65535, self))
+        self.dec_line_edit.setValidator(QtGui.QIntValidator(-32768, 65535))
         self.dec_line_edit.textEdited.connect(self.dec_edited)
 
         hex_label = QtWidgets.QLabel("Hex:")
