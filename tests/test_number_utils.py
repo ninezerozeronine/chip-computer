@@ -8,6 +8,7 @@ from sixteen_bit_computer import number_utils
     (-1,  8, "11111111"),
     (255, 8, "11111111"),
     (1,   8, "00000001"),
+    (-1,  16, "1111111111111111"),
 ])
 def test_number_to_bitstring(test_input, test_bitwidth, expected):
     assert number_utils.number_to_bitstring(
@@ -39,6 +40,21 @@ def test_number_is_within_bit_limit(test_input, test_bitwidth, expected):
 ])
 def test_get_positive_equivalent(test_input, expected):
     assert number_utils.get_positive_equivalent(test_input) == expected
+
+
+@pytest.mark.parametrize("test_input,test_bitwidth,expected", [
+    (0,    8,  0),
+    (-1,   16, -1),
+    (200,  8,  -56),
+    (-15,  8,  -15),
+    (1,    8,  1),
+    (3,    3,  3),
+    (6,    3,  -2),
+])
+def test_get_signed_equivalent(test_input, test_bitwidth, expected):
+    assert number_utils.get_signed_equivalent(
+        test_input, bit_width=test_bitwidth
+    ) == expected
 
 
 @pytest.mark.parametrize("test_input,expected", [

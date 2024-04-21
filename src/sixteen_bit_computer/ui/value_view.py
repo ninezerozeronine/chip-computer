@@ -54,7 +54,9 @@ class ValueView(QtWidgets.QWidget):
         """
 
         if number_utils.number_is_within_bit_limit(value, bit_width=16):
-            self.signed_value = value
+            self.signed_value = number_utils.get_signed_equivalent(
+                value, bit_width=16
+            )
             self.unsigned_value = number_utils.get_positive_equivalent(
                 value, bitwidth=16
             )

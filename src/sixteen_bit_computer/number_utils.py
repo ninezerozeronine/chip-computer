@@ -19,7 +19,7 @@ def number_to_bitstring(number, bit_width=8):
                 number=number, num_bits=bit_width
             )
         )
-    number = get_positive_equivalent(number)
+    number = get_positive_equivalent(number, bitwidth=bit_width)
 
     return "{number:0{bit_width}b}".format(
         number=number, bit_width=bit_width
@@ -68,6 +68,40 @@ def get_positive_equivalent(number, bitwidth=8):
     if number < 0:
         ret = number + 2**bitwidth
     return ret
+
+
+def get_signed_equivalent(value, bit_width=8):
+    """
+    Get the signed equivalent of a value.
+
+        Bits    Signed  Unsigned
+        000     0       0
+        001     1       1
+        010     2       2
+        011     3       3
+        100     -4      4
+        101     -3      5
+        110     -2      6
+        111     -1      7
+
+    Args:
+        value (int): The value to convert to it's signed equivalent.
+        bit_width (int): The number of bits wide the word is.
+    Returns:
+        int: The signed equivalent.
+    """
+    if not number_is_within_bit_limit(value, bit_width=bit_width):
+        raise ValueError(
+            "{number} will not fit in {num_bits} bits.".format(
+                number=number, num_bits=bit_width
+            )
+        )
+
+    max_positive_signed = (2**bit_width // 2) - 1
+    if value > max_positive_signed:
+        value = value - 2**bit_width
+
+    return value
 
 
 def bitstring_to_number(bitstring):

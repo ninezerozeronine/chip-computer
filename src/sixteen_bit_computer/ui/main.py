@@ -14,6 +14,13 @@ class Main(QtWidgets.QDialog):
         self.input_box = QtWidgets.QGroupBox("Input")
         self.input_layout = QtWidgets.QVBoxLayout()
         self.input_widget = ValueEdit()
+        self.input_widget.set_values(
+            0,
+            dec=True,
+            hex_=True,
+            bin_line=True,
+            bin_buttons=True
+        )
         self.input_layout.addWidget(self.input_widget)
         self.input_box.setLayout(self.input_layout)
 
@@ -50,7 +57,7 @@ class Main(QtWidgets.QDialog):
         self.main_layout.addWidget(self.head_view_box, 0, 1)
         self.main_layout.addWidget(self.head_control_box, 1, 0)
         self.main_layout.addWidget(self.data_view_box, 1, 1)
-        self.main_layout.addWidget(self.run_control_box, 2, 0)
+        self.main_layout.addWidget(self.run_control_box, 2, 0, 1, 2)
 
         self.setLayout(self.main_layout)
 
