@@ -24,6 +24,25 @@ KEYPAD_GPIOS = [
     11,
 ]
 
+KEYPAD_ROW_GPIOS = [
+    0,
+    1,
+    2,
+    3
+]
+
+KEYPAD_COL_GPIOS = [
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+]
+
+
 # Pins that control the 74HC597s that read data from the computer.
 INPUT_STORAGE_CLOCK_GPIO_NO = 12
 INPUT_PARALLEL_LOAD_GPIO_NO = 13

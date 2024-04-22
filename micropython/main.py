@@ -9,17 +9,17 @@ import time
 import json
 
 from front_panel import FrontPanel
+from display import Display
 from keypad import Keypad
-from gpiodefs import KEYPAD_GPIOS
+from gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
 import secrets
 from queue import Queue
 
 PORT = 8888
-DEBUG = False
 
 def log(msg):
-    if DEBUG:
-        print(msg)
+    print(msg)
+    # pass
 
 # https://github.com/micropython/micropython-lib/blob/master/python-stdlib/functools/functools.py
 def partial(func, *args, **kwargs):
@@ -162,7 +162,7 @@ async def queue_processor(queue):
         job()
         queue.task_done()
 
-def main():
+def main_old():
     """
     Main async runner for the computer
     """
@@ -246,4 +246,273 @@ def main():
     # Run all tasks concurrently
     await asyncio.gather(*tasks)
 
-asyncio.run(main())
+# asyncio.run(main())
+
+
+
+
+
+
+
+
+class Manager():
+    """
+    Manages the front panel and keypad/network inputs
+    """
+
+    def __init__(self):
+        """
+        Initialise the class
+        """
+        self.socket_connected = False
+        self.read_socket = None
+        self.write_socket = None
+        self.port = 8888
+        self.keypad = None
+        self.display = Display()
+        # self.panel = FrontPanel()
+        self.init_keypad()
+        self.panel_method_call_queue = Queue()
+        self.led_pin = Pin("LED", Pin.OUT)
+
+    def init_keypad(self):
+        """
+        Initialise the keypad.
+        """
+
+        row_pins = [Pin(gpio_num) for gpio_num in KEYPAD_ROW_GPIOS]
+        col_pins = [Pin(gpio_num) for gpio_num in KEYPAD_COL_GPIOS]
+        self.keypad = Keypad(row_pins, col_pins)
+        # Lots of:
+        # keypad.set_pressed_callback(...)
+        # keypad.set_released_callback(...)
+        self.keypad.set_pressed_callback(0, 0, self.press_1)
+        self.keypad.set_pressed_callback(0, 1, self.press_2)
+
+    def press_1(self):
+        log("1")
+        self.display.set_port("1")
+
+    def press_2(self):
+        log("2")
+        self.display.set_port("2")
+
+    async def pulse(self):
+        """
+        Blink the onboard LED forever
+        """
+        
+        while True:
+            self.led_pin.toggle()
+            await asyncio.sleep(0.3)
+
+    async def run(self):
+        """
+        Run the manager - never returns.
+        """
+
+        server = await asyncio.start_server(
+            self.handle_connection,
+            host='0.0.0.0',
+            port=self.port
+        )
+
+        tasks = []
+        tasks.append(asyncio.create_task(self.run_keypad()))
+        tasks.append(asyncio.create_task(self.pulse()))
+        # tasks.append(asyncio.create_task(self.run_reader()))
+        tasks.append(asyncio.create_task(self.connect_to_wifi()))
+        # tasks.append(
+        #     asyncio.create_task(self.process_panel_method_queue_forever())
+        # )
+
+        # Run all tasks concurrently
+        await asyncio.gather(*tasks)
+
+    async def connect_to_wifi(self):
+        """
+        Connect to the WiFi network.
+        """
+        wlan = network.WLAN(network.STA_IF)
+        wlan.active(True)
+        wlan.connect(secrets.NETWORK_SSID, secrets.NETWORK_PASSWORD)
+        connection_seconds = 10
+        for second in range(0, connection_seconds + 1):
+            conn_msg = f"Conn {second}/{connection_seconds}s"
+            log(conn_msg)
+            self.display.set_ip(conn_msg)
+
+            if wlan.isconnected():
+                log(f"Connected with IP: {wlan.ifconfig()[0]}")
+                self.display.set_ip(wlan.ifconfig()[0])
+                break
+            else:
+                log(f"Status: {self.decode_status(wlan.status())}")
+                await asyncio.sleep(1)
+        else:
+            log(f"Unable to connect to Wifi.")
+            self.display.set_ip("No WiFi")
+
+    def decode_status(status):
+        """
+        Decode the status from a network.WLAN.
+
+        https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.status
+
+        Args:
+            status (?): The statues from the WLAN object
+        Return:
+            str: The human readable equivalent of the status constant.
+        """
+
+        if status == network.STAT_IDLE:
+            return "No connection and no activity."
+        elif status == network.STAT_CONNECTING:
+            return "Connecting in progress."
+        elif status == network.STAT_WRONG_PASSWORD:
+            return "Failed due to incorrect password."
+        elif status == network.STAT_NO_AP_FOUND:
+            return "Failed because no access point replied."
+        elif status == network.STAT_CONNECT_FAIL:
+            return "Failed due to other problems."
+        elif status == network.STAT_GOT_IP:
+            return "Vonnection successful."
+        else:
+            return f"Unknown status: {status}"
+
+    async def handle_connection(self, reader, writer):
+        """
+        Handle a connection to the server.
+
+        Args:
+            reader (asyncio.Stream): Reads data from the connection.
+            writer (asyncio.Stream): Writes data to the connection.
+        """
+        if self.socket_connected:
+            # Only one connection is allowed
+            log(
+                "Can only support one connection, closing new connection "
+                f"from {writer.get_extra_info('peername')!r}"
+            )
+            reader.close()
+            await reader.wait_closed()
+            writer.close()
+            await writer.wait_closed()
+        else:
+            log(f"Got connection from {writer.get_extra_info('peername')!r}")
+            self.socket_connected = True
+            self.read_socket = reader
+            self.write_socket = writer
+
+    async def write(self, data):
+        """
+        Write data to the connected client.
+
+        Args:
+            data (<json serialisable object>): The data to send. This is
+                typically a dictionary.
+        """
+
+        # Caller should check if the socket is connected, adding here as
+        # a safety check
+        if self.socket_connected:
+            to_send = bytearray(2)
+            msg_bytes = bytes(json.dumps(data), "ascii")
+            uint16_len_bytes = len(msg_bytes).to_bytes(2, "big")
+            to_send.extend(msg_bytes)
+            to_send[0] = uint16_len_bytes[0]
+            to_send[1] = uint16_len_bytes[1]
+            log(f"sending data (len {len(msg_bytes)}) {to_send}")
+            self.write_socket.write(to_send)
+            await self.write_socket.drain()
+
+    async def process_panel_method_queue_forever(self):
+        """
+        Process jobs on the panel method call queue forever.
+
+        Jobs on this queue can come from a connected client, or the
+        keypad.
+        """
+        while True:
+            display_needs_update = False
+            outcome = None
+            job_id = None
+
+            call = await self.panel_method_call_queue.get()
+
+            if "job_id" in call:
+                # It's a call from the network
+                job_id = call["job_id"]
+                if "method" not in call:
+                    log(
+                        "No \"method\" key in network call with job_id "
+                        f"{job_id}, skipping."
+                    )
+                    outcome = Outcome(
+                        False,
+                        msg="Missing \"method\" key"
+                    )
+                else:
+                    method = getattr(self.panel, call["method"])
+                    if method is None:
+                        log(
+                            f"Panel object has no {call['method']} method"
+                            f"in call with job_id {job_id}."
+                        )
+                        outcome = Outcome(
+                            False,
+                            msg=f"Panel object has no {call['method']} method."
+                        )
+                    else:
+                        # Call the method with the args and kwargs
+                        args = call.get("args", [])
+                        kwargs = call.get("kwargs", {})
+                        outcome = method(*args, **kwargs)
+                        display_needs_update = True
+            else:
+                # It's a local call
+                if "method" not in call:
+                    log("No \"method\" key in local call, skipping.")
+                else:
+                    method = getattr(self.panel, call["method"])
+                    if method is None:
+                        log(
+                            f"Panel object has no {call['method']} method, "
+                            "skipping."
+                        )
+                    else:
+                        # Call the method with the args and kwargs
+                        args = call.get("args", [])
+                        kwargs = call.get("kwargs", {})
+                        method(*args, **kwargs)
+                        display_needs_update = True
+
+            # Reply back to the calling job that we're done, if necessary
+            if outcome is not None:
+                await self.reply_to_job(job_id, outcome)
+
+            # Update the local and remote displays, if necessary
+            if display_needs_update:
+                panel_display_state = self.panel.get_display_state()
+                self.display.update_panel_state(panel_display_state)
+                await self.update_remote_display_state(panel_display_state)
+
+            # Finish the task, more useful/necessary if we have multiple
+            # queue processors - but good practice.
+            self.panel_method_call_queue.task_done()
+
+            await asyncio.sleep(0.1)
+
+    async def run_keypad(self):
+        """
+        Run the keypad
+        """
+        while True:
+            self.keypad.update()
+            await asyncio.sleep(0.1)
+
+def main():
+    manager = Manager()
+    asyncio.run(manager.run())
+
+main()
