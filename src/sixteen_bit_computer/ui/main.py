@@ -12,6 +12,21 @@ class Main(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
+
+        self.waiting_for = "header"
+        self.num_data_bytes = 0
+        self.socket = QtNetwork.QTcpSocket(self)
+        self.socket.readyRead.connect(self.read_from_socket)
+        self.socket.error.connect(self.display_error)
+        self.socket.stateChanged.connect(self.state_changed)
+        self.socket.connected.connect(self.socket_connected)
+        self.socket.disconnected.connect(self.socket_disconnected)
+
+        self.build_ui()
+        self.connect_ui()
+
+
+    def build_ui(self):
         connect_box = QtWidgets.QGroupBox("Connection")
         connect_layout = QtWidgets.QVBoxLayout()
         self.connect_control = ConnectControl()
@@ -68,6 +83,17 @@ class Main(QtWidgets.QDialog):
         self.main_layout.addWidget(self.run_control_box, 3, 0, 1, 2)
 
         self.setLayout(self.main_layout)
+
+    def connect_ui(self):
+        
+
+    def set_head(self):
+        pass
+
+    def set_word(self):
+        pass
+
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

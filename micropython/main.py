@@ -8,12 +8,14 @@ import network
 import time
 import json
 
-from front_panel import FrontPanel
-from display import Display
-from keypad import Keypad
-from gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
+from .front_panel import FrontPanel
+from .dummy_panel import DummyPanel
+from .display import Display
+from .keypad import Keypad
+from .socket_connection import SocketConnection
+from .queue import Queue
+from .gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
 import secrets
-from queue import Queue
 
 PORT = 8888
 
@@ -255,6 +257,14 @@ def main_old():
 
 
 
+
+
+
+
+
+
+
+
 class Manager():
     """
     Manages the front panel and keypad/network inputs
@@ -264,16 +274,20 @@ class Manager():
         """
         Initialise the class
         """
-        self.socket_connected = False
-        self.read_socket = None
-        self.write_socket = None
+        self.connection = SocketConnection()
+        self.connection.purpose_handlers["panel_method_call"] = self.handle_panel_method_call
         self.port = 8888
         self.keypad = None
         self.display = Display()
-        # self.panel = FrontPanel()
+        self.display.set_connection_ref(self.connection)
+        self.panel = DummyPanel()
+        self.panel.set_display_ref(self.display)
         self.init_keypad()
         self.panel_method_call_queue = Queue()
         self.led_pin = Pin("LED", Pin.OUT)
+
+        self.head = 0
+        self.data = 0
 
     def init_keypad(self):
         """
@@ -286,8 +300,10 @@ class Manager():
         # Lots of:
         # keypad.set_pressed_callback(...)
         # keypad.set_released_callback(...)
-        self.keypad.set_pressed_callback(0, 0, self.press_1)
-        self.keypad.set_pressed_callback(0, 1, self.press_2)
+        # self.keypad.set_pressed_callback(0, 0, self.press_1)
+        # self.keypad.set_pressed_callback(0, 1, self.press_2)
+        self.keypad.set_pressed_callback(0, 2, self.incr_head)
+        self.keypad.set_pressed_callback(0, 3, self.incr_data)
 
     def press_1(self):
         log("1")
@@ -296,6 +312,27 @@ class Manager():
     def press_2(self):
         log("2")
         self.display.set_port("2")
+
+    def incr_head(self):
+        self.panel_method_call_queue.put_nowait(
+            {
+                "method":"set_head",
+                "args": [self.head]
+            }
+        )
+        self.head += 1
+
+    def incr_data(self):
+        self.panel_method_call_queue.put_nowait(
+            {
+                "method":"set_data",
+                "args": [self.data]
+            }
+        )
+        self.data += 1
+
+    def handle_panel_method_call(self, body):
+        self.panel_method_call_queue.put_nowait(body)
 
     async def pulse(self):
         """
@@ -312,7 +349,7 @@ class Manager():
         """
 
         server = await asyncio.start_server(
-            self.handle_connection,
+            self.connection.handle_connection,
             host='0.0.0.0',
             port=self.port
         )
@@ -320,11 +357,11 @@ class Manager():
         tasks = []
         tasks.append(asyncio.create_task(self.run_keypad()))
         tasks.append(asyncio.create_task(self.pulse()))
-        # tasks.append(asyncio.create_task(self.run_reader()))
+        tasks.append(asyncio.create_task(self.connection.run_reader()))
         tasks.append(asyncio.create_task(self.connect_to_wifi()))
-        # tasks.append(
-        #     asyncio.create_task(self.process_panel_method_queue_forever())
-        # )
+        tasks.append(
+            asyncio.create_task(self.process_panel_method_queue_forever())
+        )
 
         # Run all tasks concurrently
         await asyncio.gather(*tasks)
@@ -353,7 +390,7 @@ class Manager():
             log(f"Unable to connect to Wifi.")
             self.display.set_ip("No WiFi")
 
-    def decode_status(status):
+    def decode_status(self, status):
         """
         Decode the status from a network.WLAN.
 
@@ -380,52 +417,6 @@ class Manager():
         else:
             return f"Unknown status: {status}"
 
-    async def handle_connection(self, reader, writer):
-        """
-        Handle a connection to the server.
-
-        Args:
-            reader (asyncio.Stream): Reads data from the connection.
-            writer (asyncio.Stream): Writes data to the connection.
-        """
-        if self.socket_connected:
-            # Only one connection is allowed
-            log(
-                "Can only support one connection, closing new connection "
-                f"from {writer.get_extra_info('peername')!r}"
-            )
-            reader.close()
-            await reader.wait_closed()
-            writer.close()
-            await writer.wait_closed()
-        else:
-            log(f"Got connection from {writer.get_extra_info('peername')!r}")
-            self.socket_connected = True
-            self.read_socket = reader
-            self.write_socket = writer
-
-    async def write(self, data):
-        """
-        Write data to the connected client.
-
-        Args:
-            data (<json serialisable object>): The data to send. This is
-                typically a dictionary.
-        """
-
-        # Caller should check if the socket is connected, adding here as
-        # a safety check
-        if self.socket_connected:
-            to_send = bytearray(2)
-            msg_bytes = bytes(json.dumps(data), "ascii")
-            uint16_len_bytes = len(msg_bytes).to_bytes(2, "big")
-            to_send.extend(msg_bytes)
-            to_send[0] = uint16_len_bytes[0]
-            to_send[1] = uint16_len_bytes[1]
-            log(f"sending data (len {len(msg_bytes)}) {to_send}")
-            self.write_socket.write(to_send)
-            await self.write_socket.drain()
-
     async def process_panel_method_queue_forever(self):
         """
         Process jobs on the panel method call queue forever.
@@ -434,7 +425,7 @@ class Manager():
         keypad.
         """
         while True:
-            display_needs_update = False
+            # display_needs_update = False
             outcome = None
             job_id = None
 
@@ -468,7 +459,7 @@ class Manager():
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
                         outcome = method(*args, **kwargs)
-                        display_needs_update = True
+                        # display_needs_update = True
             else:
                 # It's a local call
                 if "method" not in call:
@@ -485,17 +476,17 @@ class Manager():
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
                         method(*args, **kwargs)
-                        display_needs_update = True
+                        # display_needs_update = True
 
             # Reply back to the calling job that we're done, if necessary
             if outcome is not None:
                 await self.reply_to_job(job_id, outcome)
 
             # Update the local and remote displays, if necessary
-            if display_needs_update:
-                panel_display_state = self.panel.get_display_state()
-                self.display.update_panel_state(panel_display_state)
-                await self.update_remote_display_state(panel_display_state)
+            # if display_needs_update:
+            #     panel_display_state = self.panel.get_display_state()
+            #     self.display.update_panel_state(panel_display_state)
+            #     await self.update_remote_display_state(panel_display_state)
 
             # Finish the task, more useful/necessary if we have multiple
             # queue processors - but good practice.

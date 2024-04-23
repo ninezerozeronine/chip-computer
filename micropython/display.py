@@ -1,18 +1,29 @@
-"""
-Manages the OLED display on the front panel
-"""
 from machine import Pin, I2C
 
 import ssd1306
 from gpiodefs import OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
 
 class Display():
+    """
+    Manages the OLED and remote display of the panle state.
+
+    Almost all of the methods are protected with an asyncio Lock as
+    more the one task can interact with this class at once. (Albeit
+    rarely)
+
+    """
     def __init__(self):
+        """
+        Initialise the class.
+        """
         self._display = ssd1306.SSD1306_I2C(
             128,
             64,
             I2C(0, sda=Pin(OLED_SDA_GPIO_NO), scl=Pin(OLED_SCL_GPIO_NO))
         )
+        self._connection_ref = None
+        self._lock = asyncio.Lock()
+
         self._address_str = ""
         self._data_str = ""
         self._user_input_str = ""
@@ -22,6 +33,35 @@ class Display():
         self._ip_str = ""
         self._port_str = ""
         self._redraw()
+
+    def set_connection_ref(self, connection):
+        self._connection_ref = connection
+
+    async def send_data(self, data):
+        if self._connection_ref is not None:
+            if self._connection_ref.connected:
+                await self.connection.write(data)
+
+    async def set_head(self, head):
+        """
+        Set the value for the position of the head
+        """
+
+        async with self._lock:
+            # Set the OLED display
+            self._address_str = f"{address:d}"
+            self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "head":head
+                    }
+                }
+            )
+
 
     def set_address(self, address):
         """
@@ -34,8 +74,21 @@ class Display():
         """
         Set the data displayed.
         """
-        self._data_str = f"{data:d}"
-        self._redraw()
+
+        async with self._lock:
+            # Set the OLED display
+            self._data_str = f"{data:d}"
+            self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "data":head
+                    }
+                }
+            )
 
     def set_user_input(self, user_input):
         """
