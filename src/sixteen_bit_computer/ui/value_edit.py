@@ -157,6 +157,8 @@ class ValueEdit(QtWidgets.QWidget):
         """
         super().__init__(parent=parent)
 
+        self.value = 0
+
         dec_label = QtWidgets.QLabel("Dec:")
         self.dec_line_edit = QtWidgets.QLineEdit()
         self.dec_line_edit.setValidator(QtGui.QIntValidator(-32768, 65535))
@@ -195,6 +197,13 @@ class ValueEdit(QtWidgets.QWidget):
 
         self.setLayout(main_layout)
 
+        self.set_values(
+            dec=True,
+            hex_=True,
+            bin_line=True,
+            bin_buttons=True
+        )
+
 
     def dec_edited(self, new_text):
         """
@@ -207,17 +216,16 @@ class ValueEdit(QtWidgets.QWidget):
             new_text (str): The new text from the field.
         """
         try:
-            new_value = int(new_text)
+            self.value = int(new_text)
         except:
-            new_value = 0
-        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.value = 0
+        if number_utils.number_is_within_bit_limit(self.value, bit_width=16):
             self.set_values(
-                new_value,
                 hex_=True,
                 bin_line=True,
                 bin_buttons=True
             )
-            self.value_changed.emit(new_value)
+            self.value_changed.emit(self.value)
 
     def hex_edited(self, new_text):
         """
@@ -230,17 +238,16 @@ class ValueEdit(QtWidgets.QWidget):
             new_text (str): The new text from the field.
         """
         try:
-            new_value = int(new_text, 16)
+            self.value = int(new_text, 16)
         except:
-            new_value = 0
-        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.value = 0
+        if number_utils.number_is_within_bit_limit(self.value, bit_width=16):
             self.set_values(
-                new_value,
                 dec=True,
                 bin_line=True,
                 bin_buttons=True
             )
-            self.value_changed.emit(new_value)
+            self.value_changed.emit(self.value)
 
     def bin_line_edited(self, new_text):
         """
@@ -252,17 +259,16 @@ class ValueEdit(QtWidgets.QWidget):
             new_text (str): The new text from the field.
         """
         try:
-            new_value = int(new_text, 2)
+            self.value = int(new_text, 2)
         except:
-            new_value = 0
-        if number_utils.number_is_within_bit_limit(new_value, bit_width=16):
+            self.value = 0
+        if number_utils.number_is_within_bit_limit(self.value, bit_width=16):
             self.set_values(
-                new_value,
                 dec=True,
                 hex_=True,
                 bin_buttons=True
             )
-            self.value_changed.emit(new_value)
+            self.value_changed.emit(self.value)
 
     def bin_buttons_edited(self, new_value):
         """
@@ -271,17 +277,16 @@ class ValueEdit(QtWidgets.QWidget):
         Args:
             new_value (int): The new value from the buttons.
         """
+        self.value = new_value
         self.set_values(
-            new_value,
             dec=True,
             hex_=True,
             bin_line=True,
         )
-        self.value_changed.emit(new_value)
+        self.value_changed.emit(self.value)
 
     def set_values(
         self,
-        value,
         dec=False,
         hex_=False,
         bin_line=False,
@@ -290,8 +295,6 @@ class ValueEdit(QtWidgets.QWidget):
         """
         Set the given fields to the given value.
 
-        Args:
-            value (int): The new value.
         Keyword Args:
             dec (bool): Whether or not to set the decimal field.
             hex_ (bool): Whether or not to set the hexadecimal field.
@@ -299,15 +302,15 @@ class ValueEdit(QtWidgets.QWidget):
             bin_buttons (bool): Whether or not to set the binary buttons.
         """
         if dec:
-            self.dec_line_edit.setText(str(value))
+            self.dec_line_edit.setText(str(self.value))
 
         if hex_:
-            self.hex_line_edit.setText(f"{value:X}")
+            self.hex_line_edit.setText(f"{self.value:X}")
 
         if bin_line:
             self.bin_line_edit.setText(
-                number_utils.number_to_bitstring(value, bit_width=16)
+                number_utils.number_to_bitstring(self.value, bit_width=16)
             )
 
         if bin_buttons:
-            self.bin_buttons.set_value(value)
+            self.bin_buttons.set_value(self.value)

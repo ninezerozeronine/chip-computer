@@ -104,13 +104,13 @@ class SocketConnection():
                 typically a dictionary.
         """
 
-        if not self.socket_connected:
+        if not self.connected:
             return
 
         # There may be more than one task calling this method, bad
         # things will probably happen if two tasks try to write data
         # to the socket concurrently...
-        async with self.lock:
+        async with self.writer_lock:
             to_send = bytearray(2)
             msg_bytes = bytes(json.dumps(data), "ascii")
             uint16_len_bytes = len(msg_bytes).to_bytes(2, "big")
@@ -118,7 +118,7 @@ class SocketConnection():
             to_send[0] = uint16_len_bytes[0]
             to_send[1] = uint16_len_bytes[1]
             # One last check to see that we're still connected
-            if self.socket_connected:
+            if self.connected:
                 log(f"sending data (len {len(msg_bytes)}) {to_send}")
-                self.write_socket.write(to_send)
-                await self.write_socket.drain()
+                self.writer.write(to_send)
+                await self.writer.drain()

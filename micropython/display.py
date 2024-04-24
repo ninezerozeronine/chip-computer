@@ -1,4 +1,5 @@
 from machine import Pin, I2C
+import asyncio
 
 import ssd1306
 from gpiodefs import OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
@@ -40,7 +41,7 @@ class Display():
     async def send_data(self, data):
         if self._connection_ref is not None:
             if self._connection_ref.connected:
-                await self.connection.write(data)
+                await self._connection_ref.write(data)
 
     async def set_head(self, head):
         """
@@ -49,7 +50,7 @@ class Display():
 
         async with self._lock:
             # Set the OLED display
-            self._address_str = f"{address:d}"
+            self._address_str = f"{head:d}"
             self._redraw()
 
             # Set the remote display
@@ -70,7 +71,7 @@ class Display():
         self._address_str = f"{address:d}"
         self._redraw()
 
-    def set_data(self, data):
+    async def set_data(self, data):
         """
         Set the data displayed.
         """
@@ -85,7 +86,7 @@ class Display():
                 {
                     "purpose":"display_update",
                     "body": {
-                        "data":head
+                        "data":data
                     }
                 }
             )

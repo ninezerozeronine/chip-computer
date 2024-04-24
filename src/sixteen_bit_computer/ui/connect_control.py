@@ -19,7 +19,7 @@ class ConnectControl(QtWidgets.QWidget):
                 QtCore.QRegularExpression("[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}")
             )
         )
-        self.ip_line_edit.setText("192.168.1.0")
+        self.ip_line_edit.setText("192.168.1.231")
         port_label = QtWidgets.QLabel("Port:")
         self.port_line_edit = QtWidgets.QLineEdit()
         self.port_line_edit.setValidator(QtGui.QIntValidator(1, 65535))

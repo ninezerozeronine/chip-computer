@@ -7,19 +7,20 @@ import asyncio
 import network
 import time
 import json
+import gc
 
-from .front_panel import FrontPanel
-from .dummy_panel import DummyPanel
-from .display import Display
-from .keypad import Keypad
-from .socket_connection import SocketConnection
-from .queue import Queue
-from .gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
+from front_panel import FrontPanel
+from dummy_panel import DummyPanel
+from display import Display
+from keypad import Keypad
+from socket_connection import SocketConnection
+from queue import Queue
+from gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
 import secrets
 
 PORT = 8888
 
-def log(msg):
+def log_print(msg):
     print(msg)
     # pass
 
@@ -89,7 +90,7 @@ async def handle_socket_conn(queue, panel, reader, writer):
 
     """
     addr = writer.get_extra_info('peername')
-    log(f"Got connection from {addr!r}")
+    log_print(f"Got connection from {addr!r}")
 
     recd_bytes = await reader.read(-1)
     try:
@@ -306,14 +307,15 @@ class Manager():
         self.keypad.set_pressed_callback(0, 3, self.incr_data)
 
     def press_1(self):
-        log("1")
+        log_print("1")
         self.display.set_port("1")
 
     def press_2(self):
-        log("2")
+        log_print("2")
         self.display.set_port("2")
 
     def incr_head(self):
+        log_print("incr_head")
         self.panel_method_call_queue.put_nowait(
             {
                 "method":"set_head",
@@ -323,6 +325,7 @@ class Manager():
         self.head += 1
 
     def incr_data(self):
+        log_print("incr_data")
         self.panel_method_call_queue.put_nowait(
             {
                 "method":"set_data",
@@ -343,6 +346,11 @@ class Manager():
             self.led_pin.toggle()
             await asyncio.sleep(0.3)
 
+    async def report_mem(self):
+        while True:
+            print(f"Free mem: {gc.mem_free()}")
+            await asyncio.sleep(2)
+
     async def run(self):
         """
         Run the manager - never returns.
@@ -362,6 +370,7 @@ class Manager():
         tasks.append(
             asyncio.create_task(self.process_panel_method_queue_forever())
         )
+        tasks.append(asyncio.create_task(self.report_mem()))
 
         # Run all tasks concurrently
         await asyncio.gather(*tasks)
@@ -376,18 +385,18 @@ class Manager():
         connection_seconds = 10
         for second in range(0, connection_seconds + 1):
             conn_msg = f"Conn {second}/{connection_seconds}s"
-            log(conn_msg)
+            log_print(conn_msg)
             self.display.set_ip(conn_msg)
 
             if wlan.isconnected():
-                log(f"Connected with IP: {wlan.ifconfig()[0]}")
+                log_print(f"Connected with IP: {wlan.ifconfig()[0]}")
                 self.display.set_ip(wlan.ifconfig()[0])
                 break
             else:
-                log(f"Status: {self.decode_status(wlan.status())}")
+                log_print(f"Status: {self.decode_status(wlan.status())}")
                 await asyncio.sleep(1)
         else:
-            log(f"Unable to connect to Wifi.")
+            log_print(f"Unable to connect to Wifi.")
             self.display.set_ip("No WiFi")
 
     def decode_status(self, status):
@@ -425,6 +434,7 @@ class Manager():
         keypad.
         """
         while True:
+
             # display_needs_update = False
             outcome = None
             job_id = None
@@ -435,7 +445,7 @@ class Manager():
                 # It's a call from the network
                 job_id = call["job_id"]
                 if "method" not in call:
-                    log(
+                    log_print(
                         "No \"method\" key in network call with job_id "
                         f"{job_id}, skipping."
                     )
@@ -446,9 +456,12 @@ class Manager():
                 else:
                     method = getattr(self.panel, call["method"])
                     if method is None:
-                        log(
-                            f"Panel object has no {call['method']} method"
-                            f"in call with job_id {job_id}."
+                        log_print(
+                            "Panel object has no {method} method in "
+                            "call with job_id {job_id}.".format(
+                                method=call["method"],
+                                job_id=job_id
+                            )
                         )
                         outcome = Outcome(
                             False,
@@ -458,16 +471,16 @@ class Manager():
                         # Call the method with the args and kwargs
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
-                        outcome = method(*args, **kwargs)
+                        outcome = await method(*args, **kwargs)
                         # display_needs_update = True
             else:
                 # It's a local call
                 if "method" not in call:
-                    log("No \"method\" key in local call, skipping.")
+                    log_print("No \"method\" key in local call, skipping.")
                 else:
                     method = getattr(self.panel, call["method"])
                     if method is None:
-                        log(
+                        log_print(
                             f"Panel object has no {call['method']} method, "
                             "skipping."
                         )
@@ -475,7 +488,7 @@ class Manager():
                         # Call the method with the args and kwargs
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
-                        method(*args, **kwargs)
+                        await method(*args, **kwargs)
                         # display_needs_update = True
 
             # Reply back to the calling job that we're done, if necessary
@@ -493,6 +506,18 @@ class Manager():
             self.panel_method_call_queue.task_done()
 
             await asyncio.sleep(0.1)
+
+    async def reply_to_job(self, job_id, outcome):
+        data = {
+            "purpose": "job_comms",
+            "body": {
+                "job_id": job_id,
+                "outcome": outcome.to_dict()
+            }
+        }
+        if self.connection.connected:
+            await self.connection.write(data)
+
 
     async def run_keypad(self):
         """
