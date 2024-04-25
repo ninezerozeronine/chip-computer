@@ -101,6 +101,29 @@ class Main(QtWidgets.QDialog):
     def read_from_socket(self):
         """
 
+        .. code-block:: none
+
+            {
+                "purpose": "job_comms",
+                "body": {
+                    "job_id": 123456,
+                    "outcome": {
+                        "success": False,
+                        "data": 34,
+                        "message": "Ya dun goofed"
+                    }
+                }
+            }
+        
+        .. code-block:: none
+        
+            {
+                "purpose": "display_update",
+                "body": {
+                    "head": "4561",
+                    "program_name": "FIBB"
+                }
+            }
         """
 
         while True:

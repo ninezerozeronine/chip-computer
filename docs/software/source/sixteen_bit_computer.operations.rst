@@ -13,9 +13,9 @@ Submodules
    sixteen_bit_computer.operations.halt_op
    sixteen_bit_computer.operations.incr_decr_ops
    sixteen_bit_computer.operations.jump_if_acc_cmp_ops
-   sixteen_bit_computer.operations.jump_if_acc_xxx_op
+   sixteen_bit_computer.operations.jump_if_acc_eq_neq_ops
+   sixteen_bit_computer.operations.jump_if_eq_neq_zero_ops
    sixteen_bit_computer.operations.jump_if_flag_not_flag_ops
-   sixteen_bit_computer.operations.jump_if_xxx_zero_op
    sixteen_bit_computer.operations.jump_op
    sixteen_bit_computer.operations.load_store_ops
    sixteen_bit_computer.operations.lshift_op

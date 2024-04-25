@@ -1,17 +1,50 @@
 from .job import State
 
 class JobManager():
+    """
+    Manages jobs to send to the Pico.
+
+    We wait for the outcome of the last job that was sent before sending
+    the next job. This is to avoid flooding the Pico with jobs as it
+    has limited RAM.
+    """
 
     def __init__(self):
+        """
+        Initialise the class
+        """
+
+        # List of job ids to process in order starting at zero
         self.queue = []
+
+        # The order of all the jobs. Mostly present to help with UI
+        # display.
         self.job_order = []
+
+        # All the jobs, keyed by job_id, for fast lookup and retrieval
         self.jobs = {}
+
+        # ID that will be assigned to the next job submitted.
         self.next_id = 555
 
     def num_jobs(self):
+        """
+        Get the total number of jobs (regardless of state)
+
+        Returns:
+            int: The number of jobs
+        """
         return len(self.jobs)
 
     def sumbit_job(self, job):
+        """
+        Submit a job for the manager to handle.
+
+        Args:
+            job (Job): Job for the manager.
+        Returns:
+            int: The ID assigned to the job.
+        """
         job_id = self.next_id
         self.next_id += 1
 
@@ -51,7 +84,8 @@ class JobManager():
             job.send(socket)
             return True
 
-        # If it's been sent or is in progress, nothing to do
+        # If it's been sent or is in progress, nothing to do, wait for
+        # the outcome from the Pico.
         if job.state in (State.sent, State.in_progress):
             return False
 

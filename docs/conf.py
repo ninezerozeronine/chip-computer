@@ -185,6 +185,7 @@ epub_exclude_files = ['search.html']
 autodoc_default_options = {
     "member-order": "bysource",
     "special-members": "__init__",
+    # "members": True
 }
 napoleon_include_private_with_doc = True
 

@@ -301,21 +301,22 @@ def assembly_to_python(assembly):
     """
     Generate a minimal Python file to splice into the micropython code.
 
-    {
-        "name":"Dum1",
-        "content": (
-            (0, 0),
-            (1, 1),
-            (2, 2),
-            (3, 3),
-            (4, 4),
-        )
-    },
+    .. code-block:: none
 
+        {
+            "name":"Dum1",
+            "content": (
+                (0, 0),
+                (1, 1),
+                (2, 2),
+                (3, 3),
+                (4, 4),
+            )
+        },
 
     Args:
-    assembly (list(AssemblyLine)): The assembly to get address and
-        word lines for.
+        assembly (list(AssemblyLine)): The assembly to get address and
+            word lines for.
 
     Returns:
         (str): String for the contents of the Python file.

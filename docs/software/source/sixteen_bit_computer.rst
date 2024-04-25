@@ -7,7 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   sixteen_bit_computer.network
    sixteen_bit_computer.operations
+   sixteen_bit_computer.ui
 
 Submodules
 ----------

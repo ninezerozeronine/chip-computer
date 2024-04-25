@@ -469,7 +469,7 @@ The possible usages are:
 
 
 JUMP_IF_ACC_NEQ
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_ACC_NEQ`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the accumulator
@@ -487,7 +487,7 @@ The possible usages are:
  - ``JUMP_IF_ACC_NEQ CONST CONST``
 
 JUMP_IF_GTE_ACC
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_GTE_ACC`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
@@ -543,7 +543,7 @@ The possible usages are:
 
 
 JUMP_IF_NEQ_ZERO
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_NEQ_ZERO`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
