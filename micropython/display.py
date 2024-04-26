@@ -4,6 +4,8 @@ import asyncio
 import ssd1306
 from gpiodefs import OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
 
+from constants import PANEL_MODE_STEP, PANEL_MODE_RUN, PANEL_MODE_STOP, PANEL_MODE_READ_MEMORY
+
 class Display():
     """
     Manages the OLED and remote display of the panle state.
@@ -24,6 +26,26 @@ class Display():
         )
         self._connection_ref = None
         self._lock = asyncio.Lock()
+
+        self.panel_mode_to_display = {
+            PANEL_MODE_STEP: {
+                "OLED": "STEP",
+                "client": "Step"
+            },
+            PANEL_MODE_RUN: {
+                "OLED": "RUN",
+                "client": "Run"
+            },
+            PANEL_MODE_STOP: {
+                "OLED": "STOP",
+                "client": "Stop"
+            },
+            PANEL_MODE_READ_MEMORY: {
+                "OLED": "RDMEM",
+                "client": "Read Memory"
+            }
+        }
+
 
         self._address_str = ""
         self._data_str = ""

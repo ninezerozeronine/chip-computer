@@ -15,10 +15,13 @@ from gpiodefs import (
     OUTPUT_OUTPUT_CLOCK_GPIO_NO,
     CPU_CLOCK_GPIO_NO,
 )
+from constants import CPU_CLK_SRC_PANEL, CPU_CLK_SRC_CRYSTAL
+
+
 
 # CPU_Clock sources
-CPU_CLK_SRC_PANEL = 100
-CPU_CLK_SRC_CRYSTAL = 101
+# CPU_CLK_SRC_PANEL = 100
+# CPU_CLK_SRC_CRYSTAL = 101
 
 # Clock pin modes
 _STATIC = 200

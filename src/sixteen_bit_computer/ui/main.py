@@ -26,10 +26,10 @@ class Main(QtWidgets.QDialog):
         self.socket.disconnected.connect(self.socket_disconnected)
 
         self.job_manager_model = JobManagerModel()
-        self.timer = QtCore.QTimer(self)
-        self.timer.setInterval(100)
-        self.timer.timeout.connect(self.run_job_manager_model)
-        self.timer.start()
+        self.job_queue_timer = QtCore.QTimer(self)
+        self.job_queue_timer.setInterval(100)
+        self.job_queue_timer.timeout.connect(self.run_job_manager_model)
+        self.job_queue_timer.start()
 
         self.build_ui()
         self.connect_ui()
@@ -56,13 +56,13 @@ class Main(QtWidgets.QDialog):
         self.input_layout.addWidget(self.input_widget)
         self.input_box.setLayout(self.input_layout)
 
-        self.head_view_box = QtWidgets.QGroupBox("Head")
-        self.head_layout = QtWidgets.QVBoxLayout()
-        self.head_view = ValueView()
-        self.head_layout.addWidget(self.head_view)
-        self.head_view_box.setLayout(self.head_layout)
+        self.address_view_box = QtWidgets.QGroupBox("Address")
+        self.address_layout = QtWidgets.QVBoxLayout()
+        self.address_view = ValueView()
+        self.address_layout.addWidget(self.address_view)
+        self.address_view_box.setLayout(self.address_layout)
 
-        self.data_view_box = QtWidgets.QGroupBox("Last read word")
+        self.data_view_box = QtWidgets.QGroupBox("Data")
         self.data_layout = QtWidgets.QVBoxLayout()
         self.data_view = ValueView()
         self.data_layout.addWidget(self.data_view)
@@ -81,9 +81,6 @@ class Main(QtWidgets.QDialog):
         self.run_control_layout.addWidget(self.run_control)
         self.run_control_box.setLayout(self.run_control_layout)
 
-        self.input_widget.value_changed.connect(self.head_view.set_value)
-        self.input_widget.value_changed.connect(self.data_view.set_value)
-
         self.main_layout = QtWidgets.QGridLayout()
         self.main_layout.addWidget(connect_box, 0, 0, 1, 2)
         self.main_layout.addWidget(self.input_box, 1, 0)
@@ -94,8 +91,92 @@ class Main(QtWidgets.QDialog):
 
         self.setLayout(self.main_layout)
 
+
+    def connect_ui(self):
+        self.connect_control.connect_button.clicked.connect(self.connect)
+        self.connect_control.disconnect_button.clicked.connect(
+            self.socket.disconnectFromHost
+        )
+        self.head_control.decr_head_button.clicked.connect(self.decr_head)
+        self.head_control.set_head_button.clicked.connect(self.set_head)
+        self.head_control.incr_head_button.clicked.connect(self.incr_head)
+        self.head_control.set_word_button.clicked.connect(self.set_word)
+        self.head_control.get_word_button.clicked.connect(self.get_word)
+
+        self.run_control.run_button().clicked.connect(self.set_run_mode)
+        self.run_control.step_button().clicked.connect(self.set_step_mode)
+        self.run_control.stop_button().clicked.connect(self.set_stop_mode)
+        self.run_control.half_step_button().clicked.connect(self.send_half_steps)
+        self.run_control.full_step_button().clicked.connect(self.send_full_steps)
+        self.run_control.reset_button().pressed.connect(self.press_reset)
+        self.run_control.reset_button().released.connect(self.release_reset)
+
+        self.run_control.clock_mode_combobox.currentTextChanged.connect(self.change_clock_mode)
+        self.run_control.set_arb_frq_button.clicked.connect(self.set_arb_freq)
+        self.run_control.load_program_button.clicked.connect(self.change_clock_mode)
+
+    def connect(self):
+        """
+        Atempt to connect to the Pico
+        """
+        state = self.socket.state()
+        if state != QtNetwork.QAbstractSocket.UnconnectedState:
+            print("Cannot connect - socket is in incorrect state, state is:")
+            print(decode_state(state))
+        else:
+            self.socket.connectToHost(
+                self.connect_control.ip_line_edit.text(),
+                int(self.connect_control.port_line_edit.text())
+            )
+
+    def decr_head(self):
+        """
+        Decrement the read write head, optionally reading the word at
+        the new location.
+        """
+        job = Job("decr_head")
+        self.job_manager_model.sumbit_job(job)
+        if self.head_control.get_word_on_head_change_checkbox.isChecked():
+            job = Job("get_word_at_current_head")
+            self.job_manager_model.sumbit_job(job)
+
+    def set_head(self):
+        """
+        Set the location of the read/write head to the current input
+        """
+        job = Job("set_head", args=[self.input_widget.value])
+        self.job_manager_model.sumbit_job(job)
+
+    def incr_head(self):
+        """
+        Increment the read write head, optionally reading the word at
+        the new location.
+        """
+        job = Job("incr_head")
+        self.job_manager_model.sumbit_job(job)
+        if self.head_control.get_word_on_head_change_checkbox.isChecked():
+            job = Job("get_word_at_current_head")
+            self.job_manager_model.sumbit_job(job)
+
+    def set_word(self):
+        """
+        St the word at the current read write head position to the
+        value in the input.
+        """
+        job = Job("set_data", args=[self.input_widget.value])
+        self.job_manager_model.sumbit_job(job)
+
+    def get_word(self):
+        """
+        Get the word at the current read write head position.
+        """
+        job = Job("get_word_at_current_head")
+        self.job_manager_model.sumbit_job(job)
+
+
+
     def run_job_manager_model(self):
-        self.job_manager_model.work_on_top_job(self.socket)
+        self.job_manager_model.work_on_queue(self.socket)
 
 
     def read_from_socket(self):
@@ -116,7 +197,7 @@ class Main(QtWidgets.QDialog):
             }
         
         .. code-block:: none
-        
+
             {
                 "purpose": "display_update",
                 "body": {
@@ -236,44 +317,33 @@ class Main(QtWidgets.QDialog):
     def state_changed(self, state):
         print(f"Socket state changed: {decode_state(state)}")
 
-    def connect(self):
-        state = self.socket.state()
-        if state != QtNetwork.QAbstractSocket.UnconnectedState:
-            print("Cannot connect - socket is in incorrect state, state is:")
-            print(decode_state(state))
-        else:
-            self.socket.connectToHost(
-                self.connect_control.ip_line_edit.text(),
-                int(self.connect_control.port_line_edit.text())
-            )
+
 
     def socket_connected(self):
         self.connect_control.connect_button.setEnabled(False)
         self.connect_control.disconnect_button.setEnabled(True)
+        self.input_box.setEnabled(True)
+        self.head_view_box.setEnabled(True)
+        self.head_control_box.setEnabled(True)
+        self.data_view_box.setEnabled(True)
+        self.run_control_box.setEnabled(True)
+        self.job_queue_timer.start()
         self.header_read = False
 
     def socket_disconnected(self):
         self.connect_control.connect_button.setEnabled(True)
         self.connect_control.disconnect_button.setEnabled(False)
+        self.input_box.setEnabled(False)
+        self.head_view_box.setEnabled(False)
+        self.head_control_box.setEnabled(False)
+        self.data_view_box.setEnabled(False)
+        self.run_control_box.setEnabled(False)
+        self.job_queue_timer.stop()
         self.header_read = False
 
-    def connect_ui(self):
-        self.connect_control.connect_button.clicked.connect(
-            self.connect
-        )
-        self.connect_control.disconnect_button.clicked.connect(
-            self.socket.disconnectFromHost
-        )
-        self.head_control.set_head_button.clicked.connect(self.set_head)
-        self.head_control.set_word_button.clicked.connect(self.set_word)
 
-    def set_head(self):
-        job = Job("set_head", args=[self.input_widget.value])
-        self.job_manager_model.sumbit_job(job)
 
-    def set_word(self):
-        job = Job("set_data", args=[self.input_widget.value])
-        self.job_manager_model.sumbit_job(job)
+
 
 
 def decode_state(state):

@@ -46,10 +46,10 @@ class JobManagerModel(QtCore.QAbstractTableModel):
             self.createIndex(row, Job.get_num_columns())
         )
 
-    def work_on_top_job(self, socket):
+    def work_on_queue(self, socket):
         top_job_row_index = self.manager.top_job_row_index()
         if top_job_row_index != -1:
-            made_change = self.manager.work_on_top_job(socket)
+            made_change = self.manager.work_on_queue(socket)
             if made_change:
                 self.dataChanged.emit(
                     self.createIndex(top_job_row_index, 0),

@@ -283,6 +283,7 @@ class Manager():
         self.display.set_connection_ref(self.connection)
         self.panel = DummyPanel()
         self.panel.set_display_ref(self.display)
+        await self.panel.initialise()
         self.init_keypad()
         self.panel_method_call_queue = Queue()
         self.led_pin = Pin("LED", Pin.OUT)

@@ -1,30 +1,35 @@
-"""
-
-"""
 import time
+import asyncio
 
 import interface
-import display
+from outcome import Outcome
 from programs import PROGRAMS
+from constants import PANEL_MODE_STEP as STEP
+from constants import PANEL_MODE_RUN as RUN
+from constants import PANEL_MODE_STOP as STOP
+from constants import PANEL_MODE_READ_MEMORY as READ_MEMORY
+from constants import CPU_CLK_SRC_CRYSTAL, CPU_CLK_SRC_PANEL
 
-# The current mode the panel is in
-# Allows single stepping of the CPU. The CPU is in full control
-# of the peripherals.
-STEP = 100
 
-# Running at a given frequency. The CPU is in full control of the
-# peripherals.
-RUN = 101
+# # The current mode the panel is in
+# # Allows single stepping of the CPU. The CPU is in full control
+# # of the peripherals.
+# STEP = 100
 
-# The CPU is stopped. Control of peripherals is given to the panel.
-STOP = 102
+# # Running at a given frequency. The CPU is in full control of the
+# # peripherals.
+# RUN = 101
 
-# The memory can be read manually
-READ_MEMORY = 103
+# # The CPU is stopped. Control of peripherals is given to the panel.
+# STOP = 102
 
-# The clock source for the CPU 
-CPU_CLK_SRC_PANEL = 200
-CPU_CLK_SRC_CRYSTAL = 201
+# # The memory can be read manually
+# READ_MEMORY = 103
+
+
+# # The clock source for the CPU 
+# CPU_CLK_SRC_PANEL = 200
+# CPU_CLK_SRC_CRYSTAL = 201
 
 # Maximum 16 bit value
 _MAX_VALUE = 2**16 - 1
@@ -32,6 +37,9 @@ _MAX_VALUE = 2**16 - 1
 class FrontPanel():
     """
     The user facing interface to the computer.
+
+    Almost all the methods are async because they update the display,
+    which needs to send data over the network if a client is connected.
     """
 
     def __init__(self):
@@ -50,50 +58,83 @@ class FrontPanel():
         self._readwrite_address = 0
         self._user_input_string = ""
         self._interface = interface.Interface()
-        self._display = display.Display()
-        self._display.set_program_name(PROGRAMS[self._program_index]["name"][0:6])
-        self._update_frequency_display()
+        self._display_ref = None
+        # self._display.set_program_name(PROGRAMS[self._program_index]["name"][0:6])
+        # self._update_frequency_display()
         self._panel_mode = RUN
-        self.stop()
-        self.set_reset(True)
-        time.sleep_us(1)
-        self.set_reset(False)
+        # self.stop()
+        # self.set_reset(True)
+        # time.sleep_us(1)
+        # self.set_reset(False)
 
-    def set_ip(self, ip):
+    async def initialise(self):
+        """
+        Initialise the Panel.
+
+        Can't be done in __init__ because calling async in there is ...
+        problematic.
+
+        https://stackoverflow.com/questions/33128325/how-to-set-class-attribute-with-await-in-init
+        """
+        await self.stop_mode()
+        await self.set_reset(True)
+        await asyncio.sleep(1)
+        await self.set_reset(False)
+
+    def set_display_ref(self, display):
+        """
+        Set the panels reference to the display
+
+        Args:
+            display (Display): Reference to the display held by the
+                manager.
+        """
+        self._display_ref=display
+
+    async def half_steps(self, num_steps=1):
+        """
+        Advance the CPU by the given number of half steps.
+
+        Keyword Args:
+            num_steps (int): The number of half steps to advance by.
+        """
+        if self._panel_mode != STEP:
+            return Outcome(
+                False,
+                msg="Cannot step when not in step mode."
+            )
+
+        self._send_clock_pulses(num_steps)
+
+        # Read and display the address and data
+        await self._display_ref.set_address(self._interface.get_address())
+        await self._display_ref.set_data(self._interface.get_data())
+
+        return Outcome(True)
+
+    async def full_steps(self, num_steps=1):
+        """
+        Advance the CPU by the given number of full steps.
+
+        Keyword Args:
+            num_steps (int): The number of full steps to advance by.
         """
 
-        """
-        self._display.set_ip(ip)
+        if self._panel_mode != STEP:
+            return Outcome(
+                False,
+                msg="Cannot step when not in step mode."
+            )
 
-    def set_port(self, port):
-        """
+        self._send_clock_pulses(num_steps * 2)
 
-        """
-        self._display.set_port(port)
+        # Read and display the address and data
+        await self._display_ref.set_address(self._interface.get_address())
+        await self._display_ref.set_data(self._interface.get_data())
 
-    def half_step(self):
-        """
-        Advance the CPU by a half step.
-        """
-        if self._panel_mode == STEP:
-            self._send_clock_pulses(1)
+        return Outcome(True)
 
-            # Read and display the address and data
-            self._display.set_address(self._interface.get_address())
-            self._display.set_data(self._interface.get_data())
-
-    def full_step(self):
-        """
-        Advance the CPU by a full step.
-        """
-        if self._panel_mode == STEP:
-            self._send_clock_pulses(2)
-
-            # Read and display the address and data
-            self._display.set_address(self._interface.get_address())
-            self._display.set_data(self._interface.get_data())
-
-    def step(self):
+    async def set_step_mode(self):
         """
         Puts the panel into step mode.
         """
@@ -118,7 +159,7 @@ class FrontPanel():
 
             # Make sure the CPU gets clock pulses from the
             # microcontroller
-            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
+            self._interface.set_cpu_clock_source(CPU_CLK_SRC_PANEL)
 
             # Set the interface clock pin to a static state, ready for
             # stepping.
@@ -128,13 +169,15 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(True)
 
             # Read and display the address and data
-            self._display.set_address(self._interface.get_address())
-            self._display.set_data(self._interface.get_data())
+            await self._display_ref.set_address(self._interface.get_address())
+            await self._display_ref.set_data(self._interface.get_data())
 
             # Set Mode on dipslay
-            self._display.set_mode("STEP")
+            await self._display_ref.set_mode(STEP)
 
             self._panel_mode = STEP
+
+        return Outcome(True)
 
     def set_readwrite_address_from_user_input(self):
         """
@@ -192,7 +235,7 @@ class FrontPanel():
         self._display.set_address(self._readwrite_address)
         self._display.set_data(self._get_word(self._readwrite_address))
 
-    def run(self):
+    def set_run_mode(self):
         """
         Put the panel into run mode.
         """
@@ -295,7 +338,7 @@ class FrontPanel():
             self._set_clock_source()
             self._interface.set_cpu_clock_input_enabled(True)
 
-    def stop(self):
+    def set_stop_mode(self):
         """
         Put the panel into stop mode.
         """
@@ -304,7 +347,7 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(False)
 
             # Set the CPU to get clock pulses from the microcontroller
-            self._interface.set_cpu_clock_source(interface.PERIPH_CLK_SRC_PANEL)
+            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
 
             # Set the interface clock pin to a static state, ready for
             # stepping.
@@ -336,7 +379,7 @@ class FrontPanel():
             self._interface.set_rfm_wtm(False)
 
             # Set the source of the control and data clocks, and the
-            # memory control lines to the Panel
+            # memory control lines for the peripherals to the Panel
             self._interface.set_peripheral_mem_ctl_source(
                 interface.PERIPH_MEM_CTL_SRC_PANEL
             )
@@ -501,7 +544,6 @@ class FrontPanel():
             # Set the panel mode
             self._panel_mode = READ_MEMORY 
 
-
     def _set_clock_source(self):
         """
         Set the clock source for the CPU.
@@ -510,12 +552,12 @@ class FrontPanel():
         """
 
         if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
-            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
+            self._interface.set_cpu_clock_source(CPU_CLK_SRC_PANEL)
             self._interface.set_clock_pin_frequency(
                 self._compensate_clock_frequency(self._frequency)
             )
         if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
-            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_CRYSTAL)
+            self._interface.set_cpu_clock_source(CPU_CLK_SRC_CRYSTAL)
 
     def _at_beginning_of_clock_cycle(self):
         """

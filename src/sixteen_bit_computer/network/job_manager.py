@@ -68,7 +68,7 @@ class JobManager():
 
         self.jobs[job_id].process_comms(outcome)
 
-    def work_on_top_job(self, socket):
+    def work_on_queue(self, socket):
         """
         Call this repeatedly
 
