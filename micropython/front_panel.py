@@ -8,8 +8,14 @@ from constants import PANEL_MODE_STEP as STEP
 from constants import PANEL_MODE_RUN as RUN
 from constants import PANEL_MODE_STOP as STOP
 from constants import PANEL_MODE_READ_MEMORY as READ_MEMORY
-from constants import CPU_CLK_SRC_CRYSTAL, CPU_CLK_SRC_PANEL
-
+from constants import (
+    CPU_CLK_SRC_CRYSTAL,
+    CPU_CLK_SRC_PANEL,
+    PERIPH_CLK_SRC_PANEL,
+    PERIPH_CLK_SRC_CPU,
+    PERIPH_MEM_CTL_SRC_PANEL,
+    PERIPH_MEM_CTL_SRC_CPU,
+)
 
 # # The current mode the panel is in
 # # Allows single stepping of the CPU. The CPU is in full control
@@ -147,8 +153,8 @@ class FrontPanel():
 
             # Set the source of the control and data clocks, and the
             # memory control lines for the peripherals to the CPU
-            self._interface.set_peripheral_clock_source(interface.PERIPH_CLK_SRC_CPU)
-            self._interface.set_peripheral_mem_ctl_source(interface.PERIPH_MEM_CTL_SRC_CPU)
+            self._interface.set_peripheral_clock_source(PERIPH_CLK_SRC_CPU)
+            self._interface.set_peripheral_mem_ctl_source(PERIPH_MEM_CTL_SRC_CPU)
 
             # Allow CPU to assert onto the buses.
             self._interface.set_cpu_data_assert(True)
@@ -176,10 +182,12 @@ class FrontPanel():
             await self._display_ref.set_mode(STEP)
 
             self._panel_mode = STEP
+            return Outcome(True)
 
-        return Outcome(True)
+        else:
+            return Outcome(False, msg="Panel is already in step mode")
 
-    def set_readwrite_address_from_user_input(self):
+    async def set_readwrite_address_from_user_input(self):
         """
         Attempt to set the readwrite address from the user input.
 
@@ -190,16 +198,17 @@ class FrontPanel():
         """
 
         if self._panel_mode != STOP:
-            return
+            return Outcome(False)
 
         if not self._is_valid_address(self._user_input_string):
-            return
+            return Outcome(False)
 
         self._readwrite_address = int(self._user_input_string)
-        self._display.set_address(self._readwrite_address)
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_address(self._readwrite_address)
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        return Outcome(True)
 
-    def incr_readwrite_address(self):
+    async def incr_readwrite_address(self):
         """
         Increment the current readwrite address by one.
 
@@ -207,17 +216,18 @@ class FrontPanel():
         """
         
         if self._panel_mode != STOP:
-            return
+            return Outcome(False, msg="Can only increment head in stop mode.")
 
         # Increment, wrapping if necessary
         self._readwrite_address += 1
         if self._readwrite_address > _MAX_VALUE:
             self._readwrite_address = 0
 
-        self._display.set_address(self._readwrite_address)
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_address(self._readwrite_address)
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        return Outcome(True)
 
-    def decr_readwrite_address(self):
+    async def decr_readwrite_address(self):
         """
         Decrement the current readwrite address by one.
 
@@ -225,17 +235,18 @@ class FrontPanel():
         """
         
         if self._panel_mode != STOP:
-            return
+            return Outcome(False, msg="Can only decrement head in stop mode.")
 
         # Decrement, wrapping if necessary
         self._readwrite_address -= 1
         if self._readwrite_address < 0:
             self._readwrite_address = _MAX_VALUE
 
-        self._display.set_address(self._readwrite_address)
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_address(self._readwrite_address)
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        return Outcome(True)
 
-    def set_run_mode(self):
+    async def set_mode_to_run(self):
         """
         Put the panel into run mode.
         """
@@ -247,12 +258,8 @@ class FrontPanel():
 
             # Set the source of the control and data clocks, and the
             # memory control lines for the peripherals to the CPU
-            self._interface.set_peripheral_clock_source(
-                interface.PERIPH_CLK_SRC_CPU
-            )
-            self._interface.set_peripheral_mem_ctl_source(
-                interface.PERIPH_MEM_CTL_SRC_CPU
-            )
+            self._interface.set_peripheral_clock_source(PERIPH_CLK_SRC_CPU)
+            self._interface.set_peripheral_mem_ctl_source(PERIPH_MEM_CTL_SRC_CPU)
 
             # Allow CPU to assert onto the buses.
             self._interface.set_cpu_data_assert(True)
@@ -268,30 +275,33 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(True)
 
             # Set Mode on dipslay
-            self._display.set_mode("RUN")
+            await self._display_ref.set_mode(RUN)
 
             self._panel_mode = RUN
+            return Outcome(True)
+        else:
+            return Outcome(False, msg="Panel already in run mode.")
 
-    def set_word_from_user_input(self):
+    async def set_word_from_user_input(self):
         """
         Set the word at the readwrite address from the current user
         input.
         """
 
         if self._panel_mode != STOP:
-            return
+            return Outcome(False)
 
         # Check user input is valid
         if not self._is_valid_word(self._user_input_string):
-            return
+            return Outcome(False)
 
         # Set word at current readwrite address
         self._set_word(self._readwrite_address, int(self._user_input_string))
 
         # Read word at readwrite address and set to display
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
 
-    def set_word_from_user_input_then_incr_addr(self):
+    async def set_word_from_user_input_then_incr_addr(self):
         """
         Set word from user input, then increment readwrite addr.
 
@@ -299,12 +309,11 @@ class FrontPanel():
         """
 
         if self._panel_mode != STOP:
-            return
+            return Outcome(False)
 
         # Check user input is valid
         if not self._is_valid_word(self._user_input_string):
-            return
-
+            return Outcome(False)
 
         # Set word at current readwrite address
         self._set_word(self._readwrite_address, int(self._user_input_string))
@@ -314,12 +323,14 @@ class FrontPanel():
         if self._readwrite_address > _MAX_VALUE:
             self._readwrite_address = 0
 
-        self._display.set_address(self._readwrite_address)
+        await self._display_ref.set_address(self._readwrite_address)
 
         # Read word at readwrite address and set to display
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
 
-    def next_clock_source(self):
+        return Outcome(True)
+
+    async def next_clock_source(self):
         """
         Cycle to the next clock source
         """
@@ -330,7 +341,7 @@ class FrontPanel():
         )
         self._cpu_clock_source = self._cpu_clock_sources[self._cpu_clock_source_index]
 
-        self._update_frequency_display()
+        await self._update_frequency_display()
 
         # If running, do the switch
         if self._panel_mode == RUN:
@@ -338,7 +349,9 @@ class FrontPanel():
             self._set_clock_source()
             self._interface.set_cpu_clock_input_enabled(True)
 
-    def set_stop_mode(self):
+        return Outcome(True)
+
+    async def set_mode_to_stop(self):
         """
         Put the panel into stop mode.
         """
@@ -347,7 +360,7 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(False)
 
             # Set the CPU to get clock pulses from the microcontroller
-            self._interface.set_cpu_clock_source(interface.CPU_CLK_SRC_PANEL)
+            self._interface.set_cpu_clock_source(CPU_CLK_SRC_PANEL)
 
             # Set the interface clock pin to a static state, ready for
             # stepping.
@@ -381,24 +394,27 @@ class FrontPanel():
             # Set the source of the control and data clocks, and the
             # memory control lines for the peripherals to the Panel
             self._interface.set_peripheral_mem_ctl_source(
-                interface.PERIPH_MEM_CTL_SRC_PANEL
+                PERIPH_MEM_CTL_SRC_PANEL
             )
             self._interface.set_peripheral_clock_source(
-                interface.PERIPH_CLK_SRC_PANEL
+                PERIPH_CLK_SRC_PANEL
             )
 
             # Set display to show current readwrite address
-            self._display.set_address(self._readwrite_address)
+            await self._display_ref.set_address(self._readwrite_address)
 
             # Read word at readwrite address and set to display
-            self._display.set_data(self._get_word(self._readwrite_address))
+            await self._display_ref.set_data(self._get_word(self._readwrite_address))
 
             # Set Mode on dipslay
-            self._display.set_mode("STOP")
+            await self._display_ref.set_mode(STOP)
 
             self._panel_mode = STOP
+            return Outcome(True)
+        else:
+            return Outcome(False, msg="Panel is already in stop mode.")
 
-    def next_program(self):
+    async def next_program(self):
         """
         Cycle between the available programs
         """
@@ -406,21 +422,23 @@ class FrontPanel():
         # Increment, wrapping to 0 if necessary
         self._program_index = (self._program_index + 1) % len(PROGRAMS)
 
-        self._display.set_program_name(
+        await self._display_ref.set_program_name(
             PROGRAMS[self._program_index]["name"][0:5]
         )
+        return Outcome(True)
 
-    def set_current_program(self):
+    async def set_current_program(self):
         """
         Write the current program to memory
         """
 
         if self._panel_mode != STOP:
-            return
+            return Outcome(False, msg="Can only load program in stop mode")
 
-        self.set_words(PROGRAMS[self._program_index]["content"])
+        await self.set_words(PROGRAMS[self._program_index]["content"])
+        return Outcome(True)
 
-    def set_frequency_from_user_input(self):
+    async def set_frequency_from_user_input(self):
         """
         Set the clock frequency of the CPU (in Hz) from user input.
 
@@ -428,11 +446,11 @@ class FrontPanel():
         clock source set to panel) or saves the value for use later.
         """
         if not self._is_valid_frequency(self._user_input_string):
-            return
+            return Outcome(False)
 
         self._frequency = float(self._user_input_string)
 
-        self._update_frequency_display()
+        await self._update_frequency_display()
 
         if (self._panel_mode == RUN and self._cpu_clock_source == CPU_CLK_SRC_PANEL):
             self._interface.set_cpu_clock_input_enabled(False)
@@ -441,42 +459,49 @@ class FrontPanel():
             )
             self._interface.set_cpu_clock_input_enabled(True)
 
-    def set_reset(self, state):
+        return Outcome(True)
+
+    async def set_reset(self, state):
         """
         Set state of the reset lines for the CPU and peripherals.
         """
         self._interface.set_reset_to_cpu(state)
         self._interface.set_reset_to_peripherals(state)
 
-    def propose_user_input_character(self, character):
+    async def propose_user_input_character(self, character):
         """
         Propose a character to add to the user input.
         """
         if character not in ".0123456789":
-            return
+            return Outcome(False)
 
         if len(self._user_input_string) >= 7:
-            return
+            return Outcome(False)
 
         self._user_input_string += character
-        self._display.set_user_input(self._user_input_string)
+        await self._display_ref.set_user_input(self._user_input_string)
+        return Outcome(True)
 
-    def clear_user_input(self):
+    async def clear_user_input(self):
         """
         Clear the user input.
         """
         self._user_input_string = ""
-        self._display.set_user_input(self._user_input_string)
+        await self._display_ref.set_user_input(self._user_input_string)
+        return Outcome(True)
 
-    def delete_last_user_input_char(self):
+    async def delete_last_user_input_char(self):
         """
-
+        Delete the last character of the user input.
         """
         if len(self._user_input_string) >= 1:
             self._user_input_string = self._user_input_string[:-1]
-            self._display.set_user_input(self._user_input_string)
+            await self._display_ref.set_user_input(self._user_input_string)
+            return Outcome(True)
+        else:
+            return Outcome(False)
 
-    def set_words(self, addresses_and_words):
+    async def set_words(self, addresses_and_words):
         """
         Set a number of addresses and words at once.
 
@@ -485,7 +510,10 @@ class FrontPanel():
                 of addresses and words.
         """
         if self._panel_mode != STOP:
-            return
+            return Outcome(
+                False,
+                msg="Can only set words when panel is in stop mode"
+            )
 
         self._interface.set_memory_active(True)
         self._interface.set_rfm_wtm(True)
@@ -509,7 +537,7 @@ class FrontPanel():
                     spinner=spinners[spinner_index],
                     last_percentage=last_percentage
                 )
-                self._display.set_user_input(status_update)
+                await self._display_ref.set_user_input(status_update)
                 spinner_index = (spinner_index + 1) % num_spinners
             current_word += 1
             self._interface.set_address(address)
@@ -522,27 +550,35 @@ class FrontPanel():
         self._interface.set_interface_address_assert(False)
         self._interface.set_interface_data_assert(False)
         
-        self._display.set_user_input(self._user_input_string)
-        self._display.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_user_input(self._user_input_string)
+        await self._display_ref.set_data(self._get_word(self._readwrite_address))
 
-    def read_memory(self):
+        return Outcome(True)
+
+    async def set_mode_to_read_memory(self):
         """
         Put the computer into a state where memory can be read manually.
+
+        Expects something to be setting values on the address bus, data
+        will be presented on the data bus.
         """
 
         if self._panel_mode != READ_MEMORY:
             # Stop computer first
-            self.stop()
+            await self.set_mode_to_stop()
 
             # Set memory control lines so mem is active and we're reading
             self._interface.set_memory_active(True)
             self._interface.set_rfm_wtm(False)
 
             # Set Mode on dipslay
-            self._display.set_mode("RDMEM")
+            await self._display_ref.set_mode("RDMEM")
 
             # Set the panel mode
-            self._panel_mode = READ_MEMORY 
+            self._panel_mode = READ_MEMORY
+            return True
+        else:
+            return Outcome(False, msg="Panel is already in Read Memory mode")
 
     def _set_clock_source(self):
         """
@@ -680,9 +716,9 @@ class FrontPanel():
 
         return True
 
-    def _update_frequency_display(self):
+    async def _update_frequency_display(self):
         if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
-            self._display.set_frequency_to_value(self._frequency)
+            await self._display_ref.set_frequency_to_value(self._frequency)
 
         if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
-            self._display.set_frequency_to_crystal()
+            await self._display_ref.set_frequency_to_crystal()

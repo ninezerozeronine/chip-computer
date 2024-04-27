@@ -4,15 +4,20 @@ import asyncio
 import ssd1306
 from gpiodefs import OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
 
-from constants import PANEL_MODE_STEP, PANEL_MODE_RUN, PANEL_MODE_STOP, PANEL_MODE_READ_MEMORY
+from constants import (
+    PANEL_MODE_STEP,
+    PANEL_MODE_RUN,
+    PANEL_MODE_STOP,
+    PANEL_MODE_READ_MEMORY
+)
 
 class Display():
     """
     Manages the OLED and remote display of the panle state.
 
     Almost all of the methods are protected with an asyncio Lock as
-    more the one task can interact with this class at once. (Albeit
-    rarely)
+    more the one task can interact with this class at once (panel method
+    call processor and wifi connector). (Albeit rarely)
 
     """
     def __init__(self):
