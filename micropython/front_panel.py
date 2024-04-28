@@ -65,13 +65,7 @@ class FrontPanel():
         self._user_input_string = ""
         self._interface = interface.Interface()
         self._display_ref = None
-        # self._display.set_program_name(PROGRAMS[self._program_index]["name"][0:6])
-        # self._update_frequency_display()
         self._panel_mode = RUN
-        # self.stop()
-        # self.set_reset(True)
-        # time.sleep_us(1)
-        # self.set_reset(False)
 
     async def initialise(self):
         """
@@ -82,7 +76,12 @@ class FrontPanel():
 
         https://stackoverflow.com/questions/33128325/how-to-set-class-attribute-with-await-in-init
         """
-        await self.stop_mode()
+        await self._display_ref.set_frequency(self._frequency)
+        await self._display_ref.set_cpu_clock_source(
+            self._cpu_clock_sources[self._cpu_clock_source_index]
+        )
+        await self._display_ref.set_program(self._program_index)
+        await self.set_mode_to_stop()
         await self.set_reset(True)
         await asyncio.sleep(1)
         await self.set_reset(False)
@@ -140,7 +139,7 @@ class FrontPanel():
 
         return Outcome(True)
 
-    async def set_step_mode(self):
+    async def set_mode_to_step(self):
         """
         Puts the panel into step mode.
         """
@@ -179,7 +178,7 @@ class FrontPanel():
             await self._display_ref.set_data(self._interface.get_data())
 
             # Set Mode on dipslay
-            await self._display_ref.set_mode(STEP)
+            await self._display_ref.set_run_mode(STEP)
 
             self._panel_mode = STEP
             return Outcome(True)
@@ -275,7 +274,7 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(True)
 
             # Set Mode on dipslay
-            await self._display_ref.set_mode(RUN)
+            await self._display_ref.set_run_mode(RUN)
 
             self._panel_mode = RUN
             return Outcome(True)
@@ -341,7 +340,7 @@ class FrontPanel():
         )
         self._cpu_clock_source = self._cpu_clock_sources[self._cpu_clock_source_index]
 
-        await self._update_frequency_display()
+        await self._display_ref.set_cpu_clock_source(self._cpu_clock_source)
 
         # If running, do the switch
         if self._panel_mode == RUN:
@@ -407,7 +406,7 @@ class FrontPanel():
             await self._display_ref.set_data(self._get_word(self._readwrite_address))
 
             # Set Mode on dipslay
-            await self._display_ref.set_mode(STOP)
+            await self._display_ref.set_run_mode(STOP)
 
             self._panel_mode = STOP
             return Outcome(True)
@@ -422,12 +421,10 @@ class FrontPanel():
         # Increment, wrapping to 0 if necessary
         self._program_index = (self._program_index + 1) % len(PROGRAMS)
 
-        await self._display_ref.set_program_name(
-            PROGRAMS[self._program_index]["name"][0:5]
-        )
+        await self._display_ref.set_program(self._program_index)
         return Outcome(True)
 
-    async def set_current_program(self):
+    async def load_current_program(self):
         """
         Write the current program to memory
         """
@@ -435,7 +432,7 @@ class FrontPanel():
         if self._panel_mode != STOP:
             return Outcome(False, msg="Can only load program in stop mode")
 
-        await self.set_words(PROGRAMS[self._program_index]["content"])
+        await self.set_words(PROGRAMS[self._program_index]["data"])
         return Outcome(True)
 
     async def set_frequency_from_user_input(self):
@@ -450,7 +447,7 @@ class FrontPanel():
 
         self._frequency = float(self._user_input_string)
 
-        await self._update_frequency_display()
+        await self._display_ref.set_frequency(self._frequency)
 
         if (self._panel_mode == RUN and self._cpu_clock_source == CPU_CLK_SRC_PANEL):
             self._interface.set_cpu_clock_input_enabled(False)
@@ -572,7 +569,7 @@ class FrontPanel():
             self._interface.set_rfm_wtm(False)
 
             # Set Mode on dipslay
-            await self._display_ref.set_mode("RDMEM")
+            await self._display_ref.set_run_mode(READ_MEMORY)
 
             # Set the panel mode
             self._panel_mode = READ_MEMORY
@@ -603,7 +600,9 @@ class FrontPanel():
         clock is high.
         """
 
-        return self._interface.get_control_clock()
+        print("Dont forget to revert _at_beginning_of_clock_cycle!")
+        return True
+        # return self._interface.get_control_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """
@@ -715,10 +714,3 @@ class FrontPanel():
             return False
 
         return True
-
-    async def _update_frequency_display(self):
-        if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
-            await self._display_ref.set_frequency_to_value(self._frequency)
-
-        if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
-            await self._display_ref.set_frequency_to_crystal()

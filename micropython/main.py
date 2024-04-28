@@ -281,9 +281,8 @@ class Manager():
         self.keypad = None
         self.display = Display()
         self.display.set_connection_ref(self.connection)
-        self.panel = DummyPanel()
+        self.panel = FrontPanel()
         self.panel.set_display_ref(self.display)
-        await self.panel.initialise()
         self.init_keypad()
         self.panel_method_call_queue = Queue()
         self.led_pin = Pin("LED", Pin.OUT)
@@ -304,8 +303,8 @@ class Manager():
         # keypad.set_released_callback(...)
         # self.keypad.set_pressed_callback(0, 0, self.press_1)
         # self.keypad.set_pressed_callback(0, 1, self.press_2)
-        self.keypad.set_pressed_callback(0, 2, self.incr_head)
-        self.keypad.set_pressed_callback(0, 3, self.incr_data)
+        self.keypad.set_pressed_callback(0, 0, self.incr_head)
+        self.keypad.set_pressed_callback(0, 1, self.decr_head)
 
     def press_1(self):
         log_print("1")
@@ -319,18 +318,16 @@ class Manager():
         log_print("incr_head")
         self.panel_method_call_queue.put_nowait(
             {
-                "method":"set_head",
-                "args": [self.head]
+                "method":"incr_readwrite_address",
             }
         )
         self.head += 1
 
-    def incr_data(self):
-        log_print("incr_data")
+    def decr_head(self):
+        log_print("decr_head")
         self.panel_method_call_queue.put_nowait(
             {
-                "method":"set_data",
-                "args": [self.data]
+                "method":"decr_readwrite_address",
             }
         )
         self.data += 1
@@ -364,6 +361,7 @@ class Manager():
         )
 
         tasks = []
+        tasks.append(asyncio.create_task(self.panel.initialise()))
         tasks.append(asyncio.create_task(self.run_keypad()))
         tasks.append(asyncio.create_task(self.pulse()))
         tasks.append(asyncio.create_task(self.connection.run_reader()))
@@ -387,18 +385,19 @@ class Manager():
         for second in range(0, connection_seconds + 1):
             conn_msg = f"Conn {second}/{connection_seconds}s"
             log_print(conn_msg)
-            self.display.set_ip(conn_msg)
+            await self.display.set_ip(conn_msg)
 
             if wlan.isconnected():
                 log_print(f"Connected with IP: {wlan.ifconfig()[0]}")
-                self.display.set_ip(wlan.ifconfig()[0])
+                await self.display.set_ip(wlan.ifconfig()[0])
+                await self.display.set_port(str(self.port))
                 break
             else:
                 log_print(f"Status: {self.decode_status(wlan.status())}")
                 await asyncio.sleep(1)
         else:
             log_print(f"Unable to connect to Wifi.")
-            self.display.set_ip("No WiFi")
+            await self.display.set_ip("No WiFi")
 
     def decode_status(self, status):
         """
@@ -530,6 +529,7 @@ class Manager():
 
 def main():
     manager = Manager()
+
     asyncio.run(manager.run())
 
 main()

@@ -4,20 +4,24 @@ import asyncio
 import ssd1306
 from gpiodefs import OLED_SDA_GPIO_NO, OLED_SCL_GPIO_NO
 
+from programs import PROGRAMS
+
 from constants import (
     PANEL_MODE_STEP,
     PANEL_MODE_RUN,
     PANEL_MODE_STOP,
-    PANEL_MODE_READ_MEMORY
+    PANEL_MODE_READ_MEMORY,
+    CPU_CLK_SRC_PANEL,
+    CPU_CLK_SRC_CRYSTAL
 )
 
 class Display():
     """
-    Manages the OLED and remote display of the panle state.
+    Manages the OLED and remote display of the panel state.
 
     Almost all of the methods are protected with an asyncio Lock as
-    more the one task can interact with this class at once (panel method
-    call processor and wifi connector). (Albeit rarely)
+    more than one task can interact with this class at once (panel method
+    call processor, and wifi connector). (Albeit rarely)
 
     """
     def __init__(self):
@@ -34,20 +38,29 @@ class Display():
 
         self.panel_mode_to_display = {
             PANEL_MODE_STEP: {
-                "OLED": "STEP",
+                "oled": "STEP",
                 "client": "Step"
             },
             PANEL_MODE_RUN: {
-                "OLED": "RUN",
+                "oled": "RUN",
                 "client": "Run"
             },
             PANEL_MODE_STOP: {
-                "OLED": "STOP",
+                "oled": "STOP",
                 "client": "Stop"
             },
             PANEL_MODE_READ_MEMORY: {
-                "OLED": "RDMEM",
+                "oled": "RDMEM",
                 "client": "Read Memory"
+            }
+        }
+
+        self.cpu_clk_src_to_display = {
+            CPU_CLK_SRC_PANEL: {
+                "client": "Arbitrary"
+            },
+            CPU_CLK_SRC_CRYSTAL: {
+                "client": "Crystal"
             }
         }
 
@@ -58,8 +71,10 @@ class Display():
         self._mode_str = ""
         self._program_name_str = ""
         self._frequency_str = ""
+        self._display_frequency_str = ""
         self._ip_str = ""
         self._port_str = ""
+        self._cpu_clock_source = CPU_CLK_SRC_PANEL
         self._redraw()
 
     def set_connection_ref(self, connection):
@@ -70,14 +85,17 @@ class Display():
             if self._connection_ref.connected:
                 await self._connection_ref.write(data)
 
-    async def set_head(self, head):
+    async def initialise_client(self):
+        pass
+
+    async def set_address(self, value):
         """
-        Set the value for the position of the head
+        Set the value for the address
         """
 
         async with self._lock:
             # Set the OLED display
-            self._address_str = f"{head:d}"
+            self._address_str = f"{value:d}"
             self._redraw()
 
             # Set the remote display
@@ -85,27 +103,19 @@ class Display():
                 {
                     "purpose":"display_update",
                     "body": {
-                        "head":head
+                        "address":value
                     }
                 }
             )
 
-
-    def set_address(self, address):
+    async def set_data(self, value):
         """
-        Set the address displayed.
-        """
-        self._address_str = f"{address:d}"
-        self._redraw()
-
-    async def set_data(self, data):
-        """
-        Set the data displayed.
+        Set the value for the data
         """
 
         async with self._lock:
             # Set the OLED display
-            self._data_str = f"{data:d}"
+            self._data_str = f"{value:d}"
             self._redraw()
 
             # Set the remote display
@@ -113,68 +123,155 @@ class Display():
                 {
                     "purpose":"display_update",
                     "body": {
-                        "data":data
+                        "data":value
                     }
                 }
             )
 
-    def set_user_input(self, user_input):
+    async def set_user_input(self, user_input):
         """
         Set the value of the current user input.
-        """
-        self._user_input_str = user_input
-        self._redraw()
 
-    def set_mode(self, mode):
+        Has no equivalent on the client.
         """
-        Set the current mode.
-        """
-        self._mode_str = mode
-        self._redraw()
+        async with self._lock:
+            self._user_input_str = user_input
+            self._redraw()
 
-    def set_program_name(self, program_name):
+    async def set_run_mode(self, mode):
         """
-        Set the program name.
-        """
-        self._program_name_str = program_name
-        self._redraw()
+        Set the current run mode.
 
-    def set_frequency_to_value(self, frequency):
+        Args:
+            source (int): Id of the run mode as per the run modes
+                defined in constants.
         """
-        Set the frequency
+        async with self._lock:
+            # Set OLED
+            self._mode_str = self.panel_mode_to_display[mode]["oled"]
+            self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "mode":mode
+                    }
+                }
+            )
+
+    async def set_program(self, program_index):
         """
+        Set the program.
+
+        Args:
+            program_index (int): Index of the program as per the
+                programs module.
+        """
+        async with self._lock:
+            self._program_name_str = PROGRAMS[program_index]["oled_name"]
+            self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "program":program_index
+                    }
+                }
+            )
+
+    async def set_frequency(self, frequency):
+        """
+        Set the value of the arbitrary frequency
+
+        Args:
+            frequency (float): The new frequency
+        """
+
+        async with self._lock:
+            self._arb_frequency_str = self._frequency_to_str(frequency)
+            if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
+                self._frequency_str = self._arb_frequency_str
+                self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "frequency":frequency
+                    }
+                }
+            )
+
+    async def set_cpu_clock_source(self, source):
+        """
+        Set the clock source for the CPU
+
+        Args:
+            source (int): Index of the program as per the clock sources
+                defined in constants.
+        """
+
+        async with self._lock:
+            self._cpu_clock_source = source
+
+            if source == CPU_CLK_SRC_CRYSTAL:
+                self._display_frequency_str = "XTAL"
+            if source == CPU_CLK_SRC_PANEL:
+                self._display_frequency_str = self._frequency_str
+                
+            self._redraw()
+
+            # Set the remote display
+            await self.send_data(
+                {
+                    "purpose":"display_update",
+                    "body": {
+                        "clock_soucre":source
+                    }
+                }
+            )
+
+    async def set_ip(self, ip):
+        async with self._lock:
+            self._ip_str = ip
+            self._redraw()
+
+    async def set_port(self, port):
+        async with self._lock:
+            self._port_str = port
+            self._redraw()
+
+    def _frequency_to_str(self, frequency):
+        """
+        Convert a frequency value to a string
+        """
+
+        frequency_str = "ERROR"
 
         if frequency < 10.0:
-            self._frequency_str = f"{frequency:.2f}Hz"
+            frequency_str = f"{frequency:.2f}Hz"
         elif frequency < 100.0:
-            self._frequency_str = f"{frequency:.1f}Hz"
+            frequency_str = f"{frequency:.1f}Hz"
         elif frequency < 1000.0:
             rounded = round(frequency)
-            self._frequency_str = f"{rounded:d}Hz"
+            frequency_str = f"{rounded:d}Hz"
         elif frequency < 1000000.0:
             khz = frequency / 1000.0
             if khz < 10.0:
-                self._frequency_str = f"{khz:.1f}KHz"
+                frequency_str = f"{khz:.1f}KHz"
             else:
                 rounded = round(khz)
-                self._frequency_str = f"{rounded:d}KHz"
+                frequency_str = f"{rounded:d}KHz"
         else:
             mhz = frequency / 1000000.0
-            self._frequency_str = f"{mhz:.1f}MHz"
+            frequency_str = f"{mhz:.1f}MHz"
 
-        self._redraw()
-
-    def set_frequency_to_crystal(self):
-        self._frequency_str = "XTAL"
-        self._redraw()
-
-    def set_ip(self, ip):
-        self._ip_str = ip
-        self._redraw()
-
-    def set_port(self, port):
-        self._port_str = port
-        self._redraw()
+        return frequency_str
 
     def _redraw(self):
         """
@@ -215,10 +312,13 @@ class Display():
 
         # Frequency
         self._display.text("F:", 64, 16, 1)
-        self._display.text(self._frequency_str, 80, 16, 1)
+        self._display.text(self._display_frequency_str, 80, 16, 1)
 
         #IP and port
         self._display.text(self._ip_str, 0, 24, 1)
         self._display.text(self._port_str, 0, 32, 1)
+        # self._display.text("foo", 0, 40, 1)
+        # self._display.text("bar", 0, 48, 1)
+        # self._display.text("baz", 0, 56, 1)
 
         self._display.show()
