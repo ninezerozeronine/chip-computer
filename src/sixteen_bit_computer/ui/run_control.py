@@ -41,16 +41,19 @@ class RunControl(QtWidgets.QWidget):
         self.reset_button = QtWidgets.QPushButton("Reset")
 
         clock_mode_label = QtWidgets.QLabel("Clock mode:")
-
+        self.clock_mode_line_edit = QtWidgets.QLineEdit()
+        self.clock_mode_line_edit.setReadOnly(True)
         self.clock_mode_combobox = QtWidgets.QComboBox()
-        self.clock_mode_combobox.addItems(["Crystal", "Arbitrary"])
-        arb_freq_label = QtWidgets.QLabel("Arb. clock freq. (Hz):")
-        self.arb_freq_line_edit = QtWidgets.QLineEdit("10.0")
-        self.arb_freq_line_edit.setValidator(
+        self.clock_mode_set_button = QtWidgets.QPushButton("Set")
+
+        custom_freq_label = QtWidgets.QLabel("Custom frequency:")
+        self.custom_freq_display_line_edit = QtWidgets.QLineEdit()
+        self.custom_freq_display_line_edit.setReadOnly(True)
+        self.custom_freq_input_line_edit = QtWidgets.QLineEdit("10.0")
+        self.custom_freq_input_line_edit.setValidator(
             QtGui.QDoubleValidator(0.1, 4000000, 1)
         )
-        self.arb_freq_line_edit.setEnabled(False)
-        self.set_arb_frq_button = QtWidgets.QPushButton("Set arb. freq.")
+        self.custom_freq_set_button = QtWidgets.QPushButton("Set")
 
         program_label = QtWidgets.QLabel("Program:")
         self.program_combobox = QtWidgets.QComboBox()
@@ -80,16 +83,17 @@ class RunControl(QtWidgets.QWidget):
 
         # Right side
         main_layout.addWidget(clock_mode_label, 0, 6, 1, 2)
-        main_layout.addWidget(self.clock_mode_combobox, 0, 8, 1, 4)
+        main_layout.addWidget(self.clock_mode_line_edit, 0, 8, 1, 4)
+        main_layout.addWidget(self.clock_mode_combobox, 1, 8, 1, 2)
+        main_layout.addWidget(self.clock_mode_set_button, 1, 10, 1, 2)
 
-        main_layout.addWidget(arb_freq_label, 1, 6, 1, 2)
-        main_layout.addWidget(self.arb_freq_line_edit, 1, 8, 1, 4)
+        main_layout.addWidget(custom_freq_label, 2, 6, 1, 2)
+        main_layout.addWidget(self.custom_freq_display_line_edit, 2, 8, 1, 4)
+        main_layout.addWidget(self.custom_freq_input_line_edit, 3, 8, 1, 2)
+        main_layout.addWidget(self.custom_freq_set_button, 3, 10, 1, 2)
 
-        main_layout.addWidget(self.set_arb_frq_button, 2, 10, 1, 2)
-
-        main_layout.addWidget(program_label, 3, 6, 1, 2)
-        main_layout.addWidget(self.program_combobox, 3, 8, 1, 4)
-
+        main_layout.addWidget(program_label, 4, 6, 1, 2)
+        main_layout.addWidget(self.program_combobox, 4, 8, 1, 2)
         main_layout.addWidget(self.load_program_button, 4, 10, 1, 2)
 
         self.setLayout(main_layout)

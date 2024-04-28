@@ -13,6 +13,9 @@ from ..network.job import Job
 
 class Main(QtWidgets.QDialog):
     def __init__(self, parent=None):
+        """
+        Initialise the class
+        """
         super().__init__(parent=parent)
 
 
@@ -38,6 +41,9 @@ class Main(QtWidgets.QDialog):
 
 
     def build_ui(self):
+        """
+        Create UI widgets and add them to layouts.
+        """
         connect_box = QtWidgets.QGroupBox("Connection")
         connect_layout = QtWidgets.QVBoxLayout()
         self.connect_control = ConnectControl()
@@ -56,7 +62,7 @@ class Main(QtWidgets.QDialog):
         self.input_layout.addWidget(self.input_widget)
         self.input_box.setLayout(self.input_layout)
 
-        self.address_view_box = QtWidgets.QGroupBox("Address")
+        self.address_view_box = QtWidgets.QGroupBox("Address/Head")
         self.address_layout = QtWidgets.QVBoxLayout()
         self.address_view = ValueView()
         self.address_layout.addWidget(self.address_view)
@@ -84,7 +90,7 @@ class Main(QtWidgets.QDialog):
         self.main_layout = QtWidgets.QGridLayout()
         self.main_layout.addWidget(connect_box, 0, 0, 1, 2)
         self.main_layout.addWidget(self.input_box, 1, 0)
-        self.main_layout.addWidget(self.head_view_box, 1, 1)
+        self.main_layout.addWidget(self.address_view_box, 1, 1)
         self.main_layout.addWidget(self.head_control_box, 2, 0)
         self.main_layout.addWidget(self.data_view_box, 2, 1)
         self.main_layout.addWidget(self.run_control_box, 3, 0, 1, 2)
@@ -93,6 +99,9 @@ class Main(QtWidgets.QDialog):
 
 
     def connect_ui(self):
+        """
+        Connect UI events to callbacks
+        """
         self.connect_control.connect_button.clicked.connect(self.connect)
         self.connect_control.disconnect_button.clicked.connect(
             self.socket.disconnectFromHost
@@ -103,17 +112,17 @@ class Main(QtWidgets.QDialog):
         self.head_control.set_word_button.clicked.connect(self.set_word)
         self.head_control.get_word_button.clicked.connect(self.get_word)
 
-        self.run_control.run_button().clicked.connect(self.set_run_mode)
-        self.run_control.step_button().clicked.connect(self.set_step_mode)
-        self.run_control.stop_button().clicked.connect(self.set_stop_mode)
-        self.run_control.half_step_button().clicked.connect(self.send_half_steps)
-        self.run_control.full_step_button().clicked.connect(self.send_full_steps)
-        self.run_control.reset_button().pressed.connect(self.press_reset)
-        self.run_control.reset_button().released.connect(self.release_reset)
+        # self.run_control.run_button.clicked.connect(self.set_mode_to_run)
+        # self.run_control.step_button.clicked.connect(self.set_mode_to_step)
+        # self.run_control.stop_button.clicked.connect(self.set_mode_to_stop)
+        # self.run_control.half_step_button.clicked.connect(self.send_half_steps)
+        # self.run_control.full_step_button.clicked.connect(self.send_full_steps)
+        # self.run_control.reset_button.pressed.connect(self.press_reset)
+        # self.run_control.reset_button.released.connect(self.release_reset)
 
-        self.run_control.clock_mode_combobox.currentTextChanged.connect(self.change_clock_mode)
-        self.run_control.set_arb_frq_button.clicked.connect(self.set_arb_freq)
-        self.run_control.load_program_button.clicked.connect(self.change_clock_mode)
+        # self.run_control.clock_mode_set_button.clicked.connect(self.change_clock_mode)
+        # self.run_control.custom_freq_set_button.clicked.connect(self.set_custom_freq)
+        # self.run_control.load_program_button.clicked.connect(self.load_program)
 
     def connect(self):
         """
@@ -160,7 +169,7 @@ class Main(QtWidgets.QDialog):
 
     def set_word(self):
         """
-        St the word at the current read write head position to the
+        Set the word at the current read write head position to the
         value in the input.
         """
         job = Job("set_data", args=[self.input_widget.value])
@@ -173,6 +182,90 @@ class Main(QtWidgets.QDialog):
         job = Job("get_word_at_current_head")
         self.job_manager_model.sumbit_job(job)
 
+    def set_mode_to_run(self):
+        """
+        Set mode to run mode
+        """
+        job = Job("set_mode_to_run")
+        self.job_manager_model.sumbit_job(job)
+
+    def set_mode_to_step(self):
+        """
+        Set mode to step
+        """
+        job = Job("set_mode_to_step")
+        self.job_manager_model.sumbit_job(job)
+
+    def set_mode_to_stop(self):
+        """
+        Set mode to stop
+        """
+        job = Job("set_mode_to_stop")
+        self.job_manager_model.sumbit_job(job)
+
+    def send_half_steps(self):
+        """
+        Send the number of half steps specified by the user
+        """
+        job = Job(
+            "half_steps",
+            kwargs={
+                "num_steps": int(self.num_steps_line_edit.text())
+            }
+        )
+        self.job_manager_model.sumbit_job(job)
+
+    def send_full_steps(self):
+        """
+        Send the number of full steps specified by the user
+        """
+        job = Job(
+            "full_steps",
+            kwargs={
+                "num_steps": int(self.num_steps_line_edit.text())
+            }
+        )
+        self.job_manager_model.sumbit_job(job)
+
+    def press_reset(self):
+        """
+        Set reset state high.
+        """
+        job = Job(
+            "set_reset",
+            args=[True],
+            human_description="Set reset high."
+        )
+        self.job_manager_model.sumbit_job(job)
+
+    def release_reset(self):
+        """
+        Set reset state low.
+        """
+        job = Job(
+            "set_reset",
+            args=[False],
+            human_description="Set reset low."
+        )
+        self.job_manager_model.sumbit_job(job)
+
+    def change_clock_mode(self):
+        """
+        Change the clock mode to the one in the combobox.
+        """
+        pass
+
+    def set_custom_freq(self):
+        """
+        Set a custom frequency.
+        """
+        pass
+
+    def load_program(self):
+        """
+        Load the program selected in the combobox.
+        """
+        pass
 
 
     def run_job_manager_model(self):
@@ -280,8 +373,8 @@ class Main(QtWidgets.QDialog):
             self.job_manager_model.relay_comms(body["job_id"], body["outcome"])
 
     def process_display_update(self, data):
-        if "head" in data:
-            self.head_view.set_value(data["head"])
+        if "address" in data:
+            self.address_view.set_value(data["address"])
         if "data" in data:
             self.data_view.set_value(data["data"])
 

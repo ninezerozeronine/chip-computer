@@ -461,6 +461,9 @@ class FrontPanel():
     async def set_reset(self, state):
         """
         Set state of the reset lines for the CPU and peripherals.
+
+        Args:
+            state (bool)
         """
         self._interface.set_reset_to_cpu(state)
         self._interface.set_reset_to_peripherals(state)

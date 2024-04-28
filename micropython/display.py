@@ -57,7 +57,7 @@ class Display():
 
         self.cpu_clk_src_to_display = {
             CPU_CLK_SRC_PANEL: {
-                "client": "Arbitrary"
+                "client": "User"
             },
             CPU_CLK_SRC_CRYSTAL: {
                 "client": "Crystal"
@@ -86,7 +86,14 @@ class Display():
                 await self._connection_ref.write(data)
 
     async def initialise_client(self):
-        pass
+        await self.send_data(
+            {
+                "purpose":"display_init",
+                "body": {
+                    
+                }
+            }
+        )
 
     async def set_address(self, value):
         """
@@ -231,7 +238,7 @@ class Display():
                 {
                     "purpose":"display_update",
                     "body": {
-                        "clock_soucre":source
+                        "clock_source":source
                     }
                 }
             )
