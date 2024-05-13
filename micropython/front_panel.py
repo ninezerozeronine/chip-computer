@@ -61,7 +61,7 @@ class FrontPanel():
         self._cpu_clock_source = self._cpu_clock_sources[self._cpu_clock_source_index]
         self._program_index = 0
         self._frequency = 10
-        self._readwrite_address = 0
+        self._head = 0
         self._user_input_string = ""
         self._interface = interface.Interface()
         self._display_ref = None
@@ -106,7 +106,7 @@ class FrontPanel():
         if self._panel_mode != STEP:
             return Outcome(
                 False,
-                msg="Cannot step when not in step mode."
+                message="Cannot step when not in step mode."
             )
 
         self._send_clock_pulses(num_steps)
@@ -128,7 +128,7 @@ class FrontPanel():
         if self._panel_mode != STEP:
             return Outcome(
                 False,
-                msg="Cannot step when not in step mode."
+                message="Cannot step when not in step mode."
             )
 
         self._send_clock_pulses(num_steps * 2)
@@ -184,16 +184,20 @@ class FrontPanel():
             return Outcome(True)
 
         else:
-            return Outcome(False, msg="Panel is already in step mode")
+            return Outcome(False, message="Panel is already in step mode")
 
-    async def set_readwrite_address_from_user_input(self):
+    async def set_head_from_user_input(self, get_word=True):
         """
-        Attempt to set the readwrite address from the user input.
+        Attempt to set the head position from the user input.
 
         Nothing happens if the user input is invalid.
 
-        If the user input is valid, that new address is set, and the
-        word at the new address read and displayed.
+        If the user input is valid, that new address is set, if desired,
+        the word at the new address is then read and displayed.
+
+        Keyword Args:
+            get_word (bool): Whether or not to get the word at the new
+                head position.
         """
 
         if self._panel_mode != STOP:
@@ -202,47 +206,99 @@ class FrontPanel():
         if not self._is_valid_address(self._user_input_string):
             return Outcome(False)
 
-        self._readwrite_address = int(self._user_input_string)
-        await self._display_ref.set_address(self._readwrite_address)
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        self._head = int(self._user_input_string)
+        await self._display_ref.set_address(self._head)
+        if get_word:
+            await self._display_ref.set_data(self._get_word(self._head))
         return Outcome(True)
 
-    async def incr_readwrite_address(self):
+    async def incr_head(self, get_word=True):
         """
-        Increment the current readwrite address by one.
+        Increment the head position by one.
 
         If the value is at the max, wrap back to zero.
+
+        Keyword Args:
+            get_word (bool): Whether or not to get the word at the new
+                head position.
         """
         
         if self._panel_mode != STOP:
-            return Outcome(False, msg="Can only increment head in stop mode.")
+            return Outcome(
+                False,
+                message="Can only increment head in stop mode."
+            )
 
         # Increment, wrapping if necessary
-        self._readwrite_address += 1
-        if self._readwrite_address > _MAX_VALUE:
-            self._readwrite_address = 0
+        self._head += 1
+        if self._head > _MAX_VALUE:
+            self._head = 0
 
-        await self._display_ref.set_address(self._readwrite_address)
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_address(self._head)
+        if get_word:
+            await self._display_ref.set_data(self._get_word(self._head))
         return Outcome(True)
 
-    async def decr_readwrite_address(self):
+    async def decr_head(self, get_word=True):
         """
-        Decrement the current readwrite address by one.
+        Decrement the head position by one.
 
-        If the value goes below zero, wrap back to the max
+        If the value goes below zero, wrap back to the max.
+
+        Keyword Args:
+            get_word (bool): Whether or not to get the word at the new
+                head position.
         """
         
         if self._panel_mode != STOP:
-            return Outcome(False, msg="Can only decrement head in stop mode.")
+            return Outcome(
+                False,
+                message="Can only decrement head in stop mode."
+            )
 
         # Decrement, wrapping if necessary
-        self._readwrite_address -= 1
-        if self._readwrite_address < 0:
-            self._readwrite_address = _MAX_VALUE
+        self._head -= 1
+        if self._head < 0:
+            self._head = _MAX_VALUE
 
-        await self._display_ref.set_address(self._readwrite_address)
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_address(self._head)
+        if get_word:
+            await self._display_ref.set_data(self._get_word(self._head))
+        return Outcome(True)
+
+    async def set_head(self, new_pos, get_word=True):
+        """
+        Attempt to set the head position.
+
+        Nothing happens if the new position is invalid.
+
+        If the user input is valid, that new address is set, if desired,
+        the word at the new address is then read and displayed.
+
+        Args:
+            new_pos (int): New position for the head. Should be between
+                0 and 65535.
+        Keyword Args:
+            get_word (bool): Whether or not to get the word at the new
+                head position.
+        """
+
+        if self._panel_mode != STOP:
+            return Outcome(
+                False,
+                message="Can only set head in stop mode"
+            )
+
+        if not self._is_valid_address(new_pos):
+            return Outcome(
+                False,
+                message="New head position is invalid"
+            )
+
+        self._head = new_pos
+        await self._display_ref.set_address(self._head)
+        if get_word:
+            await self._display_ref.set_data(self._get_word(self._head))
         return Outcome(True)
 
     async def set_mode_to_run(self):
@@ -279,12 +335,11 @@ class FrontPanel():
             self._panel_mode = RUN
             return Outcome(True)
         else:
-            return Outcome(False, msg="Panel already in run mode.")
+            return Outcome(False, message="Panel already in run mode.")
 
     async def set_word_from_user_input(self):
         """
-        Set the word at the readwrite address from the current user
-        input.
+        Set the word at the head from the current user input.
         """
 
         if self._panel_mode != STOP:
@@ -294,17 +349,17 @@ class FrontPanel():
         if not self._is_valid_word(self._user_input_string):
             return Outcome(False)
 
-        # Set word at current readwrite address
-        self._set_word(self._readwrite_address, int(self._user_input_string))
+        # Set word at head position
+        self._set_word(self._head, int(self._user_input_string))
 
-        # Read word at readwrite address and set to display
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        # Read word at head position and set to display
+        await self._display_ref.set_data(self._get_word(self._head))
 
-    async def set_word_from_user_input_then_incr_addr(self):
+    async def set_word_from_user_input_then_incr_head(self):
         """
-        Set word from user input, then increment readwrite addr.
+        Set word from user input, then increment the head.
 
-        The readwrite addr will wrap if necessary
+        The head position will wrap if necessary
         """
 
         if self._panel_mode != STOP:
@@ -314,18 +369,18 @@ class FrontPanel():
         if not self._is_valid_word(self._user_input_string):
             return Outcome(False)
 
-        # Set word at current readwrite address
-        self._set_word(self._readwrite_address, int(self._user_input_string))
+        # Set word at current head position
+        self._set_word(self._head, int(self._user_input_string))
 
         # Increment readwrite, wrapping if necessary
-        self._readwrite_address += 1
-        if self._readwrite_address > _MAX_VALUE:
-            self._readwrite_address = 0
+        self._head += 1
+        if self._head > _MAX_VALUE:
+            self._head = 0
 
-        await self._display_ref.set_address(self._readwrite_address)
+        await self._display_ref.set_address(self._head)
 
         # Read word at readwrite address and set to display
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_data(self._get_word(self._head))
 
         return Outcome(True)
 
@@ -349,6 +404,36 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(True)
 
         return Outcome(True)
+
+    async def set_clock_source(self, clock_source):
+        """
+        Cycle to the next clock source
+
+        Args:
+            clock_source (int): Clock source ID defined in constants.
+        """
+
+        if clock_source not in self._cpu_clock_sources:
+            return Outcome(
+                False,
+                message=f"Unknown clock source id: {clock_source}"
+            )
+
+        self._cpu_clock_source = clock_source
+        self._cpu_clock_source_index = self._cpu_clock_sources.index(
+            clock_source
+        )
+
+        await self._display_ref.set_cpu_clock_source(self._cpu_clock_source)
+
+        # If running, do the switch
+        if self._panel_mode == RUN:
+            self._interface.set_cpu_clock_input_enabled(False)
+            self._set_clock_source()
+            self._interface.set_cpu_clock_input_enabled(True)
+
+        return Outcome(True)
+
 
     async def set_mode_to_stop(self):
         """
@@ -399,11 +484,11 @@ class FrontPanel():
                 PERIPH_CLK_SRC_PANEL
             )
 
-            # Set display to show current readwrite address
-            await self._display_ref.set_address(self._readwrite_address)
+            # Set display to show current head position
+            await self._display_ref.set_address(self._head)
 
-            # Read word at readwrite address and set to display
-            await self._display_ref.set_data(self._get_word(self._readwrite_address))
+            # Read word at head and set to display
+            await self._display_ref.set_data(self._get_word(self._head))
 
             # Set Mode on dipslay
             await self._display_ref.set_run_mode(STOP)
@@ -411,7 +496,7 @@ class FrontPanel():
             self._panel_mode = STOP
             return Outcome(True)
         else:
-            return Outcome(False, msg="Panel is already in stop mode.")
+            return Outcome(False, message="Panel is already in stop mode.")
 
     async def next_program(self):
         """
@@ -430,7 +515,7 @@ class FrontPanel():
         """
 
         if self._panel_mode != STOP:
-            return Outcome(False, msg="Can only load program in stop mode")
+            return Outcome(False, message="Can only load program in stop mode")
 
         await self.set_words(PROGRAMS[self._program_index]["data"])
         return Outcome(True)
@@ -512,7 +597,7 @@ class FrontPanel():
         if self._panel_mode != STOP:
             return Outcome(
                 False,
-                msg="Can only set words when panel is in stop mode"
+                message="Can only set words when panel is in stop mode"
             )
 
         self._interface.set_memory_active(True)
@@ -551,7 +636,7 @@ class FrontPanel():
         self._interface.set_interface_data_assert(False)
         
         await self._display_ref.set_user_input(self._user_input_string)
-        await self._display_ref.set_data(self._get_word(self._readwrite_address))
+        await self._display_ref.set_data(self._get_word(self._head))
 
         return Outcome(True)
 
@@ -578,7 +663,10 @@ class FrontPanel():
             self._panel_mode = READ_MEMORY
             return True
         else:
-            return Outcome(False, msg="Panel is already in Read Memory mode")
+            return Outcome(
+                False,
+                message="Panel is already in Read Memory mode"
+            )
 
     def _set_clock_source(self):
         """

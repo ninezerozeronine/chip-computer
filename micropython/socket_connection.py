@@ -11,6 +11,7 @@ class SocketConnection():
         self.reader = None
         self.writer = None
         self.purpose_handlers = {}
+        self.connect_callbacks = []
         self.writer_lock = asyncio.Lock()
 
     async def handle_connection(self, reader, writer):
@@ -26,6 +27,8 @@ class SocketConnection():
             self.connected = True
             self.reader = reader
             self.writer = writer
+            for callback in self.connect_callbacks:
+                await callback()
 
     async def run_reader(self):
         while True:

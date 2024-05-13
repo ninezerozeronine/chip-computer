@@ -43,8 +43,8 @@ class RunControl(QtWidgets.QWidget):
         clock_mode_label = QtWidgets.QLabel("Clock mode:")
         self.clock_mode_line_edit = QtWidgets.QLineEdit()
         self.clock_mode_line_edit.setReadOnly(True)
-        self.clock_mode_combobox = QtWidgets.QComboBox()
-        self.clock_mode_set_button = QtWidgets.QPushButton("Set")
+        self.clock_mode_crystal_button = QtWidgets.QPushButton("Crystal")
+        self.clock_mode_custom_button = QtWidgets.QPushButton("Custom")
 
         custom_freq_label = QtWidgets.QLabel("Custom frequency:")
         self.custom_freq_display_line_edit = QtWidgets.QLineEdit()
@@ -84,8 +84,8 @@ class RunControl(QtWidgets.QWidget):
         # Right side
         main_layout.addWidget(clock_mode_label, 0, 6, 1, 2)
         main_layout.addWidget(self.clock_mode_line_edit, 0, 8, 1, 4)
-        main_layout.addWidget(self.clock_mode_combobox, 1, 8, 1, 2)
-        main_layout.addWidget(self.clock_mode_set_button, 1, 10, 1, 2)
+        main_layout.addWidget(self.clock_mode_crystal_button, 1, 8, 1, 2)
+        main_layout.addWidget(self.clock_mode_custom_button, 1, 10, 1, 2)
 
         main_layout.addWidget(custom_freq_label, 2, 6, 1, 2)
         main_layout.addWidget(self.custom_freq_display_line_edit, 2, 8, 1, 4)

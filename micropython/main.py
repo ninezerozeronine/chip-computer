@@ -16,6 +16,8 @@ from keypad import Keypad
 from socket_connection import SocketConnection
 from queue import Queue
 from gpiodefs import KEYPAD_GPIOS, KEYPAD_ROW_GPIOS, KEYPAD_COL_GPIOS
+from programs import PROGRAMS
+from outcome import Outcome
 import secrets
 
 PORT = 8888
@@ -277,6 +279,7 @@ class Manager():
         """
         self.connection = SocketConnection()
         self.connection.purpose_handlers["panel_method_call"] = self.handle_panel_method_call
+        self.connection.connect_callbacks.append(self.init_client)
         self.port = 8888
         self.keypad = None
         self.display = Display()
@@ -305,6 +308,9 @@ class Manager():
         # self.keypad.set_pressed_callback(0, 1, self.press_2)
         self.keypad.set_pressed_callback(0, 0, self.incr_head)
         self.keypad.set_pressed_callback(0, 1, self.decr_head)
+
+    async def init_client(self):
+        await self.display.initialise_client()
 
     def press_1(self):
         log_print("1")
@@ -369,7 +375,7 @@ class Manager():
         tasks.append(
             asyncio.create_task(self.process_panel_method_queue_forever())
         )
-        tasks.append(asyncio.create_task(self.report_mem()))
+        # tasks.append(asyncio.create_task(self.report_mem()))
 
         # Run all tasks concurrently
         await asyncio.gather(*tasks)
@@ -451,10 +457,10 @@ class Manager():
                     )
                     outcome = Outcome(
                         False,
-                        msg="Missing \"method\" key"
+                        message="Missing \"method\" key"
                     )
                 else:
-                    method = getattr(self.panel, call["method"])
+                    method = getattr(self.panel, call["method"], None)
                     if method is None:
                         log_print(
                             "Panel object has no {method} method in "
@@ -465,7 +471,7 @@ class Manager():
                         )
                         outcome = Outcome(
                             False,
-                            msg=f"Panel object has no {call['method']} method."
+                            message=f"Panel object has no {call['method']} method."
                         )
                     else:
                         # Call the method with the args and kwargs
@@ -478,7 +484,7 @@ class Manager():
                 if "method" not in call:
                     log_print("No \"method\" key in local call, skipping.")
                 else:
-                    method = getattr(self.panel, call["method"])
+                    method = getattr(self.panel, call["method"], None)
                     if method is None:
                         log_print(
                             f"Panel object has no {call['method']} method, "

@@ -10,6 +10,7 @@ from .head_control import HeadControl
 from .connect_control import ConnectControl
 from .job_manager_model import JobManagerModel
 from ..network.job import Job
+from . import constants
 
 class Main(QtWidgets.QDialog):
     def __init__(self, parent=None):
@@ -112,15 +113,20 @@ class Main(QtWidgets.QDialog):
         self.head_control.set_word_button.clicked.connect(self.set_word)
         self.head_control.get_word_button.clicked.connect(self.get_word)
 
-        # self.run_control.run_button.clicked.connect(self.set_mode_to_run)
-        # self.run_control.step_button.clicked.connect(self.set_mode_to_step)
-        # self.run_control.stop_button.clicked.connect(self.set_mode_to_stop)
+        self.run_control.run_button.clicked.connect(self.set_mode_to_run)
+        self.run_control.step_button.clicked.connect(self.set_mode_to_step)
+        self.run_control.stop_button.clicked.connect(self.set_mode_to_stop)
         # self.run_control.half_step_button.clicked.connect(self.send_half_steps)
         # self.run_control.full_step_button.clicked.connect(self.send_full_steps)
         # self.run_control.reset_button.pressed.connect(self.press_reset)
         # self.run_control.reset_button.released.connect(self.release_reset)
 
-        # self.run_control.clock_mode_set_button.clicked.connect(self.change_clock_mode)
+        self.run_control.clock_mode_crystal_button.clicked.connect(
+            self.set_clock_to_crystal
+        )
+        self.run_control.clock_mode_custom_button.clicked.connect(
+            self.set_clock_to_custom
+        )
         # self.run_control.custom_freq_set_button.clicked.connect(self.set_custom_freq)
         # self.run_control.load_program_button.clicked.connect(self.load_program)
 
@@ -143,17 +149,21 @@ class Main(QtWidgets.QDialog):
         Decrement the read write head, optionally reading the word at
         the new location.
         """
-        job = Job("decr_head")
+        
+        get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
+        job = Job("decr_head", kwargs={"get_word":get_word})
         self.job_manager_model.sumbit_job(job)
-        if self.head_control.get_word_on_head_change_checkbox.isChecked():
-            job = Job("get_word_at_current_head")
-            self.job_manager_model.sumbit_job(job)
 
     def set_head(self):
         """
         Set the location of the read/write head to the current input
         """
-        job = Job("set_head", args=[self.input_widget.value])
+        get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
+        job = Job(
+            "set_head",
+            args=[self.input_widget.value],
+            kwargs={"get_word":get_word}
+        )
         self.job_manager_model.sumbit_job(job)
 
     def incr_head(self):
@@ -161,11 +171,9 @@ class Main(QtWidgets.QDialog):
         Increment the read write head, optionally reading the word at
         the new location.
         """
-        job = Job("incr_head")
+        get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
+        job = Job("incr_head", kwargs={"get_word":get_word})
         self.job_manager_model.sumbit_job(job)
-        if self.head_control.get_word_on_head_change_checkbox.isChecked():
-            job = Job("get_word_at_current_head")
-            self.job_manager_model.sumbit_job(job)
 
     def set_word(self):
         """
@@ -249,11 +257,27 @@ class Main(QtWidgets.QDialog):
         )
         self.job_manager_model.sumbit_job(job)
 
-    def change_clock_mode(self):
+    def set_clock_to_crystal(self):
         """
-        Change the clock mode to the one in the combobox.
+        Set the clock to crystal mode
         """
-        pass
+        job = Job(
+            "set_clock_source",
+            args=[constants.CPU_CLK_SRC_CRYSTAL],
+            human_description="Set the clock source to crystal."
+        )
+        self.job_manager_model.sumbit_job(job)
+
+    def set_clock_to_custom(self):
+        """
+        Set the clock to custom mode
+        """
+        job = Job(
+            "set_clock_source",
+            args=[constants.CPU_CLK_SRC_PANEL],
+            human_description="Set the clock source to custom."
+        )
+        self.job_manager_model.sumbit_job(job)
 
     def set_custom_freq(self):
         """
@@ -377,6 +401,24 @@ class Main(QtWidgets.QDialog):
             self.address_view.set_value(data["address"])
         if "data" in data:
             self.data_view.set_value(data["data"])
+        if "panel_mode" in data:
+            self.run_control.run_mode_line_edit.setText(
+                constants.PANEL_MODE_TO_NAME.get(
+                    data["panel_mode"],
+                    "Unknown mode"
+                )
+            )
+        if "clock_source" in data:
+            self.run_control.clock_mode_line_edit.setText(
+                constants.CLOCK_MODE_TO_NAME.get(
+                    data["clock_source"],
+                    "Unknown mode"
+                )
+            )
+        if "frequency" in data:
+            self.run_control.custom_freq_display_line_edit.setText(
+                str(data["frequency"])
+            )
 
     def display_error(self, socket_error):
         if socket_error == QtNetwork.QAbstractSocket.RemoteHostClosedError:
@@ -416,7 +458,7 @@ class Main(QtWidgets.QDialog):
         self.connect_control.connect_button.setEnabled(False)
         self.connect_control.disconnect_button.setEnabled(True)
         self.input_box.setEnabled(True)
-        self.head_view_box.setEnabled(True)
+        self.address_view_box.setEnabled(True)
         self.head_control_box.setEnabled(True)
         self.data_view_box.setEnabled(True)
         self.run_control_box.setEnabled(True)
@@ -427,7 +469,7 @@ class Main(QtWidgets.QDialog):
         self.connect_control.connect_button.setEnabled(True)
         self.connect_control.disconnect_button.setEnabled(False)
         self.input_box.setEnabled(False)
-        self.head_view_box.setEnabled(False)
+        self.address_view_box.setEnabled(False)
         self.head_control_box.setEnabled(False)
         self.data_view_box.setEnabled(False)
         self.run_control_box.setEnabled(False)

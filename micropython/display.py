@@ -37,43 +37,32 @@ class Display():
         self._lock = asyncio.Lock()
 
         self.panel_mode_to_display = {
-            PANEL_MODE_STEP: {
-                "oled": "STEP",
-                "client": "Step"
-            },
-            PANEL_MODE_RUN: {
-                "oled": "RUN",
-                "client": "Run"
-            },
-            PANEL_MODE_STOP: {
-                "oled": "STOP",
-                "client": "Stop"
-            },
-            PANEL_MODE_READ_MEMORY: {
-                "oled": "RDMEM",
-                "client": "Read Memory"
-            }
+            PANEL_MODE_STEP: "STEP",
+            PANEL_MODE_RUN: "RUN",
+            PANEL_MODE_STOP: "STOP",
+            PANEL_MODE_READ_MEMORY: "RDMEM",
         }
 
-        self.cpu_clk_src_to_display = {
-            CPU_CLK_SRC_PANEL: {
-                "client": "User"
-            },
-            CPU_CLK_SRC_CRYSTAL: {
-                "client": "Crystal"
-            }
-        }
-
-
+        self._address = 0
         self._address_str = ""
+
+        self._data = 0
         self._data_str = ""
+
         self._user_input_str = ""
+
+        self._mode = PANEL_MODE_STOP
         self._mode_str = ""
+
         self._program_name_str = ""
+
+        self._frequency = 10
         self._frequency_str = ""
         self._display_frequency_str = ""
+
         self._ip_str = ""
         self._port_str = ""
+
         self._cpu_clock_source = CPU_CLK_SRC_PANEL
         self._redraw()
 
@@ -86,11 +75,19 @@ class Display():
                 await self._connection_ref.write(data)
 
     async def initialise_client(self):
+        """
+        Set the client to represent the current state if the display
+
+        """
         await self.send_data(
             {
-                "purpose":"display_init",
+                "purpose":"display_update",
                 "body": {
-                    
+                    "address": self._address,
+                    "data": self._data,
+                    "panel_mode": self._mode,
+                    "clock_source": self._cpu_clock_source,
+                    "frequency": self._frequency
                 }
             }
         )
@@ -101,6 +98,8 @@ class Display():
         """
 
         async with self._lock:
+            self._address = value
+
             # Set the OLED display
             self._address_str = f"{value:d}"
             self._redraw()
@@ -121,6 +120,8 @@ class Display():
         """
 
         async with self._lock:
+            self._data = value
+
             # Set the OLED display
             self._data_str = f"{value:d}"
             self._redraw()
@@ -139,7 +140,8 @@ class Display():
         """
         Set the value of the current user input.
 
-        Has no equivalent on the client.
+        Has no equivalent on the client but still needs to be async
+        as all display calls are awaited.
         """
         async with self._lock:
             self._user_input_str = user_input
@@ -154,8 +156,10 @@ class Display():
                 defined in constants.
         """
         async with self._lock:
+            self._mode = mode
+
             # Set OLED
-            self._mode_str = self.panel_mode_to_display[mode]["oled"]
+            self._mode_str = self.panel_mode_to_display.get(mode, "???")
             self._redraw()
 
             # Set the remote display
@@ -163,7 +167,7 @@ class Display():
                 {
                     "purpose":"display_update",
                     "body": {
-                        "mode":mode
+                        "panel_mode": mode
                     }
                 }
             )
@@ -199,6 +203,8 @@ class Display():
         """
 
         async with self._lock:
+            self._frequeancy = frequency
+
             self._arb_frequency_str = self._frequency_to_str(frequency)
             if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
                 self._frequency_str = self._arb_frequency_str
@@ -219,8 +225,8 @@ class Display():
         Set the clock source for the CPU
 
         Args:
-            source (int): Index of the program as per the clock sources
-                defined in constants.
+            source (int): ID of the clock source as per the clock
+                sources defined in constants.
         """
 
         async with self._lock:
