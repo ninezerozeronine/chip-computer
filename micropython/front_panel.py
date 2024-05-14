@@ -389,21 +389,8 @@ class FrontPanel():
         Cycle to the next clock source
         """
 
-        # Cycle the clock source
-        self._cpu_clock_source_index = (
-            (self._cpu_clock_source_index + 1) % len(self._cpu_clock_sources)
-        )
-        self._cpu_clock_source = self._cpu_clock_sources[self._cpu_clock_source_index]
-
-        await self._display_ref.set_cpu_clock_source(self._cpu_clock_source)
-
-        # If running, do the switch
-        if self._panel_mode == RUN:
-            self._interface.set_cpu_clock_input_enabled(False)
-            self._set_clock_source()
-            self._interface.set_cpu_clock_input_enabled(True)
-
-        return Outcome(True)
+        next_index = (self._cpu_clock_source_index + 1) % len(self._cpu_clock_sources)
+        await self.set_clock_source(self._cpu_clock_sources[next_index])
 
     async def set_clock_source(self, clock_source):
         """
@@ -433,7 +420,6 @@ class FrontPanel():
             self._interface.set_cpu_clock_input_enabled(True)
 
         return Outcome(True)
-
 
     async def set_mode_to_stop(self):
         """
@@ -514,23 +500,62 @@ class FrontPanel():
         Write the current program to memory
         """
 
+        outcome = await self.load_program(self._program_index)
+        return outcome
+
+    async def load_program(self, program_index):
+        """
+        Load the program with the given index.
+
+        Args:
+            program_index (int): index of the program to load
+        """
+
+        # Check the index is valid
+        if program_index > (len(PROGRAMS) - 1):
+            return Outcome(
+                False,
+                message="Invalid program index"
+            )
+
+        # Check we're in stop mode
         if self._panel_mode != STOP:
             return Outcome(False, message="Can only load program in stop mode")
 
+        # Store new index and display it
+        self._program_index = program_index
+        await self._display_ref.set_program(self._program_index)
+
+        # Set it
         await self.set_words(PROGRAMS[self._program_index]["data"])
         return Outcome(True)
 
     async def set_frequency_from_user_input(self):
         """
         Set the clock frequency of the CPU (in Hz) from user input.
+        """
+
+        outcome = self.set_frequency(self._user_input_string)
+        return outcome
+
+    async def set_frequency(self, frequency):
+        """
+        Set the clock frequency of the CPU (in Hz).
 
         Either sets the frequency immediately (when in run mode and with
         clock source set to panel) or saves the value for use later.
-        """
-        if not self._is_valid_frequency(self._user_input_string):
-            return Outcome(False)
 
-        self._frequency = float(self._user_input_string)
+        Args:
+            frequency (str or float or int): The frequency to set.
+        """
+
+        if not self._is_valid_frequency(frequency):
+            return Outcome(
+                False,
+                message=f"Frequency ({frequency}) is invalid."
+            )
+
+        self._frequency = float(frequency)
 
         await self._display_ref.set_frequency(self._frequency)
 
@@ -552,6 +577,7 @@ class FrontPanel():
         """
         self._interface.set_reset_to_cpu(state)
         self._interface.set_reset_to_peripherals(state)
+        return Outcome(True)
 
     async def propose_user_input_character(self, character):
         """

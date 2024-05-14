@@ -57,8 +57,6 @@ class Display():
         self._program_name_str = ""
 
         self._frequency = 10
-        self._frequency_str = ""
-        self._display_frequency_str = ""
 
         self._ip_str = ""
         self._port_str = ""
@@ -184,16 +182,6 @@ class Display():
             self._program_name_str = PROGRAMS[program_index]["oled_name"]
             self._redraw()
 
-            # Set the remote display
-            await self.send_data(
-                {
-                    "purpose":"display_update",
-                    "body": {
-                        "program":program_index
-                    }
-                }
-            )
-
     async def set_frequency(self, frequency):
         """
         Set the value of the arbitrary frequency
@@ -203,19 +191,15 @@ class Display():
         """
 
         async with self._lock:
-            self._frequeancy = frequency
-
-            self._arb_frequency_str = self._frequency_to_str(frequency)
-            if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
-                self._frequency_str = self._arb_frequency_str
-                self._redraw()
+            self._frequency = frequency
+            self._redraw()
 
             # Set the remote display
             await self.send_data(
                 {
                     "purpose":"display_update",
                     "body": {
-                        "frequency":frequency
+                        "frequency":self._frequency
                     }
                 }
             )
@@ -231,12 +215,6 @@ class Display():
 
         async with self._lock:
             self._cpu_clock_source = source
-
-            if source == CPU_CLK_SRC_CRYSTAL:
-                self._display_frequency_str = "XTAL"
-            if source == CPU_CLK_SRC_PANEL:
-                self._display_frequency_str = self._frequency_str
-                
             self._redraw()
 
             # Set the remote display
@@ -325,7 +303,12 @@ class Display():
 
         # Frequency
         self._display.text("F:", 64, 16, 1)
-        self._display.text(self._display_frequency_str, 80, 16, 1)
+        display_str = "???"
+        if self._cpu_clock_source == CPU_CLK_SRC_CRYSTAL:
+            display_str = "XTAL"
+        if self._cpu_clock_source == CPU_CLK_SRC_PANEL:
+            display_str = self._frequency_to_str(self._frequency)
+        self._display.text(display_str, 80, 16, 1)
 
         #IP and port
         self._display.text(self._ip_str, 0, 24, 1)

@@ -286,8 +286,8 @@ class Manager():
         self.display.set_connection_ref(self.connection)
         self.panel = FrontPanel()
         self.panel.set_display_ref(self.display)
-        self.init_keypad()
         self.panel_method_call_queue = Queue()
+        self.init_keypad()
         self.led_pin = Pin("LED", Pin.OUT)
 
         self.head = 0
@@ -301,13 +301,50 @@ class Manager():
         row_pins = [Pin(gpio_num) for gpio_num in KEYPAD_ROW_GPIOS]
         col_pins = [Pin(gpio_num) for gpio_num in KEYPAD_COL_GPIOS]
         self.keypad = Keypad(row_pins, col_pins)
+
+        self.keypad.set_pressed_callback(0, 0, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["1"]}))
+        self.keypad.set_pressed_callback(0, 1, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["2"]}))
+        self.keypad.set_pressed_callback(0, 2, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["3"]}))
+        self.keypad.set_pressed_callback(1, 0, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["4"]}))
+        self.keypad.set_pressed_callback(1, 1, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["5"]}))
+        self.keypad.set_pressed_callback(1, 2, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["6"]}))
+        self.keypad.set_pressed_callback(2, 0, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["7"]}))
+        self.keypad.set_pressed_callback(2, 1, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["8"]}))
+        self.keypad.set_pressed_callback(2, 2, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["9"]}))
+        self.keypad.set_pressed_callback(3, 1, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["0"]}))
+        self.keypad.set_pressed_callback(3, 0, partial(self.panel_method_call_queue.put_nowait, {"method":"propose_user_input_character", "args":["."]}))
+
+        self.keypad.set_pressed_callback(3, 2, partial(self.panel_method_call_queue.put_nowait, {"method":"delete_last_user_input_char"}))
+        self.keypad.set_pressed_callback(3, 3, partial(self.panel_method_call_queue.put_nowait, {"method":"clear_user_input"}))
+
+        # self.keypad.set_pressed_callback(3, 6, partial(self.panel_method_call_queue.put_nowait, panel.half_step))
+        # self.keypad.set_pressed_callback(3, 5, partial(self.panel_method_call_queue.put_nowait, panel.full_step))
+        # self.keypad.set_pressed_callback(3, 4, partial(self.panel_method_call_queue.put_nowait, panel.step))
+
+        # self.keypad.set_pressed_callback(2, 7, partial(self.panel_method_call_queue.put_nowait, panel.set_readwrite_address_from_user_input))
+        # self.keypad.set_pressed_callback(2, 6, partial(self.panel_method_call_queue.put_nowait, panel.decr_readwrite_address))
+        # self.keypad.set_pressed_callback(2, 5, partial(self.panel_method_call_queue.put_nowait, panel.incr_readwrite_address))
+        # self.keypad.set_pressed_callback(2, 4, partial(self.panel_method_call_queue.put_nowait, panel.run))
+
+        # self.keypad.set_pressed_callback(1, 7, partial(self.panel_method_call_queue.put_nowait, panel.set_word_from_user_input))
+        # self.keypad.set_pressed_callback(1, 6, partial(self.panel_method_call_queue.put_nowait, panel.set_word_from_user_input_then_incr_addr))
+        # self.keypad.set_pressed_callback(1, 5, partial(self.panel_method_call_queue.put_nowait, panel.next_clock_source))
+        # self.keypad.set_pressed_callback(1, 4, partial(self.panel_method_call_queue.put_nowait, panel.stop))
+
+        # self.keypad.set_pressed_callback(0, 7, partial(self.panel_method_call_queue.put_nowait, panel.set_frequency_from_user_input))
+        # self.keypad.set_pressed_callback(0, 6, partial(self.panel_method_call_queue.put_nowait, panel.next_program))
+        # self.keypad.set_pressed_callback(0, 5, partial(self.panel_method_call_queue.put_nowait, panel.set_current_program))
+        # self.keypad.set_pressed_callback(0, 4, partial(self.panel_method_call_queue.put_nowait, partial(panel.set_reset, True)))
+        # self.keypad.set_released_callback(0, 4, partial(self.panel_method_call_queue.put_nowait, partial(panel.set_reset, False)))
+
+
         # Lots of:
         # keypad.set_pressed_callback(...)
         # keypad.set_released_callback(...)
         # self.keypad.set_pressed_callback(0, 0, self.press_1)
         # self.keypad.set_pressed_callback(0, 1, self.press_2)
-        self.keypad.set_pressed_callback(0, 0, self.incr_head)
-        self.keypad.set_pressed_callback(0, 1, self.decr_head)
+        # self.keypad.set_pressed_callback(0, 0, self.incr_head)
+        # self.keypad.set_pressed_callback(0, 1, self.decr_head)
 
     async def init_client(self):
         await self.display.initialise_client()

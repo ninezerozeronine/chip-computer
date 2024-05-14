@@ -116,10 +116,10 @@ class Main(QtWidgets.QDialog):
         self.run_control.run_button.clicked.connect(self.set_mode_to_run)
         self.run_control.step_button.clicked.connect(self.set_mode_to_step)
         self.run_control.stop_button.clicked.connect(self.set_mode_to_stop)
-        # self.run_control.half_step_button.clicked.connect(self.send_half_steps)
-        # self.run_control.full_step_button.clicked.connect(self.send_full_steps)
-        # self.run_control.reset_button.pressed.connect(self.press_reset)
-        # self.run_control.reset_button.released.connect(self.release_reset)
+        self.run_control.half_step_button.clicked.connect(self.send_half_steps)
+        self.run_control.full_step_button.clicked.connect(self.send_full_steps)
+        self.run_control.reset_button.pressed.connect(self.press_reset)
+        self.run_control.reset_button.released.connect(self.release_reset)
 
         self.run_control.clock_mode_crystal_button.clicked.connect(
             self.set_clock_to_crystal
@@ -127,8 +127,8 @@ class Main(QtWidgets.QDialog):
         self.run_control.clock_mode_custom_button.clicked.connect(
             self.set_clock_to_custom
         )
-        # self.run_control.custom_freq_set_button.clicked.connect(self.set_custom_freq)
-        # self.run_control.load_program_button.clicked.connect(self.load_program)
+        self.run_control.custom_freq_set_button.clicked.connect(self.set_custom_freq)
+        self.run_control.load_program_button.clicked.connect(self.load_program)
 
     def connect(self):
         """
@@ -151,7 +151,11 @@ class Main(QtWidgets.QDialog):
         """
         
         get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
-        job = Job("decr_head", kwargs={"get_word":get_word})
+        job = Job(
+            "decr_head",
+            kwargs={"get_word":get_word},
+            human_description="Decrement the head."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def set_head(self):
@@ -159,10 +163,12 @@ class Main(QtWidgets.QDialog):
         Set the location of the read/write head to the current input
         """
         get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
+        new_val = self.input_widget.value
         job = Job(
             "set_head",
-            args=[self.input_widget.value],
-            kwargs={"get_word":get_word}
+            args=[new_val],
+            kwargs={"get_word":get_word},
+            human_description=f"Set the head to {new_val}."
         )
         self.job_manager_model.sumbit_job(job)
 
@@ -172,7 +178,11 @@ class Main(QtWidgets.QDialog):
         the new location.
         """
         get_word = self.head_control.get_word_on_head_change_checkbox.isChecked()
-        job = Job("incr_head", kwargs={"get_word":get_word})
+        job = Job(
+            "incr_head",
+            kwargs={"get_word":get_word},
+            human_description="Increment the head."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def set_word(self):
@@ -180,46 +190,65 @@ class Main(QtWidgets.QDialog):
         Set the word at the current read write head position to the
         value in the input.
         """
-        job = Job("set_data", args=[self.input_widget.value])
+        new_word = self.input_widget.value
+        job = Job(
+            "set_data",
+            args=[new_word],
+            human_description=f"Set word at current head pos to {new_word}."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def get_word(self):
         """
         Get the word at the current read write head position.
         """
-        job = Job("get_word_at_current_head")
+        job = Job(
+            "get_word_at_current_head",
+            human_description="Get word at current head pos."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def set_mode_to_run(self):
         """
         Set mode to run mode
         """
-        job = Job("set_mode_to_run")
+        job = Job(
+            "set_mode_to_run",
+            human_description="Set mode to run."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def set_mode_to_step(self):
         """
         Set mode to step
         """
-        job = Job("set_mode_to_step")
+        job = Job(
+            "set_mode_to_step",
+            human_description="Set mode to step."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def set_mode_to_stop(self):
         """
         Set mode to stop
         """
-        job = Job("set_mode_to_stop")
+        job = Job(
+            "set_mode_to_stop",
+            human_description="Set mode to stop."
+        )
         self.job_manager_model.sumbit_job(job)
 
     def send_half_steps(self):
         """
         Send the number of half steps specified by the user
         """
+        num_half_steps = int(self.run_control.num_steps_line_edit.text())
         job = Job(
             "half_steps",
             kwargs={
-                "num_steps": int(self.num_steps_line_edit.text())
-            }
+                "num_steps": num_half_steps
+            },
+            human_description=f"Step {num_half_steps} half steps."
         )
         self.job_manager_model.sumbit_job(job)
 
@@ -227,11 +256,13 @@ class Main(QtWidgets.QDialog):
         """
         Send the number of full steps specified by the user
         """
+        num_full_steps = int(self.run_control.num_steps_line_edit.text())
         job = Job(
             "full_steps",
             kwargs={
-                "num_steps": int(self.num_steps_line_edit.text())
-            }
+                "num_steps": num_full_steps
+            },
+            human_description=f"Step {num_full_steps} full steps."
         )
         self.job_manager_model.sumbit_job(job)
 
@@ -283,21 +314,41 @@ class Main(QtWidgets.QDialog):
         """
         Set a custom frequency.
         """
-        pass
+        new_freq = self.run_control.custom_freq_input_line_edit.text()
+        job = Job(
+            "set_frequency",
+            args=[new_freq],
+            human_description=f"Set the clock frequency to {new_freq} Hz."
+        )
+        self.job_manager_model.sumbit_job(job)
 
     def load_program(self):
         """
         Load the program selected in the combobox.
         """
-        pass
-
+        program_index = self.run_control.program_combobox.currentIndex()
+        program_name = self.run_control.program_combobox.currentText()
+        job = Job(
+            "load_program",
+            args=[program_index],
+            human_description=f"Load the program {program_name} at index {program_index}"
+        )
+        self.job_manager_model.sumbit_job(job)
 
     def run_job_manager_model(self):
-        self.job_manager_model.work_on_queue(self.socket)
+        """
+        Process the job queue.
 
+        Call this repeatedly.
+        """
+        self.job_manager_model.work_on_queue(self.socket)
 
     def read_from_socket(self):
         """
+        Process data when it's ready to be read fomr the socket.
+
+        We expect to get data in the form of json dumped dictionaries
+        like:
 
         .. code-block:: none
 
@@ -322,6 +373,9 @@ class Main(QtWidgets.QDialog):
                     "program_name": "FIBB"
                 }
             }
+
+        We never know how many bytes of data are ready in the read
+        buffer, so the logic/statefulness has to account for that.
         """
 
         while True:
@@ -379,6 +433,12 @@ class Main(QtWidgets.QDialog):
                     # back around to the top in case there's another header ready to be read
 
     def process_job_comms(self, body):
+        """
+        Handle some data being sent back to a job call.
+
+        Args:
+            body (dict): The body of the message sent from the Pico.
+        """
         if "job_id" not in body:
             print(f"'job_id' key not in body.")
             return
@@ -396,31 +456,42 @@ class Main(QtWidgets.QDialog):
         else:
             self.job_manager_model.relay_comms(body["job_id"], body["outcome"])
 
-    def process_display_update(self, data):
-        if "address" in data:
-            self.address_view.set_value(data["address"])
-        if "data" in data:
-            self.data_view.set_value(data["data"])
-        if "panel_mode" in data:
+    def process_display_update(self, body):
+        """
+        Handle a display update
+
+        Args:
+            body (dict): The body of the message sent from the Pico with
+                info about what needs to be displayed.
+        """
+
+        if "address" in body:
+            self.address_view.set_value(body["address"])
+        if "data" in body:
+            self.data_view.set_value(body["data"])
+        if "panel_mode" in body:
             self.run_control.run_mode_line_edit.setText(
                 constants.PANEL_MODE_TO_NAME.get(
-                    data["panel_mode"],
+                    body["panel_mode"],
                     "Unknown mode"
                 )
             )
-        if "clock_source" in data:
+        if "clock_source" in body:
             self.run_control.clock_mode_line_edit.setText(
                 constants.CLOCK_MODE_TO_NAME.get(
-                    data["clock_source"],
+                    body["clock_source"],
                     "Unknown mode"
                 )
             )
-        if "frequency" in data:
+        if "frequency" in body:
             self.run_control.custom_freq_display_line_edit.setText(
-                str(data["frequency"])
+                str(body["frequency"])
             )
 
     def display_error(self, socket_error):
+        """
+        Show an error relating to the socket.
+        """
         if socket_error == QtNetwork.QAbstractSocket.RemoteHostClosedError:
             pass
         elif socket_error == QtNetwork.QAbstractSocket.HostNotFoundError:
@@ -450,11 +521,15 @@ class Main(QtWidgets.QDialog):
             )
 
     def state_changed(self, state):
+        """
+        React to the state of the socket changing
+        """
         print(f"Socket state changed: {decode_state(state)}")
 
-
-
     def socket_connected(self):
+        """
+        Handle the sockect connection to the Pico being made.
+        """
         self.connect_control.connect_button.setEnabled(False)
         self.connect_control.disconnect_button.setEnabled(True)
         self.input_box.setEnabled(True)
@@ -466,6 +541,9 @@ class Main(QtWidgets.QDialog):
         self.header_read = False
 
     def socket_disconnected(self):
+        """
+        Handle the sockect connection to the Pico being broken.
+        """
         self.connect_control.connect_button.setEnabled(True)
         self.connect_control.disconnect_button.setEnabled(False)
         self.input_box.setEnabled(False)
@@ -477,11 +555,18 @@ class Main(QtWidgets.QDialog):
         self.header_read = False
 
 
-
-
-
-
 def decode_state(state):
+    """
+    Decode a network state.
+
+    https://doc.qt.io/qtforpython-6/PySide6/QtNetwork/QAbstractSocket.html#PySide6.QtNetwork.QAbstractSocket.SocketState
+
+    Args:
+        state (QtNetwork.QAbstractSocket.SocketState): The state to be
+            decoded.
+    Returns:
+        str: Human readable state.
+    """
     if state == QtNetwork.QAbstractSocket.UnconnectedState:
         return "The socket is not connected."
     elif state == QtNetwork.QAbstractSocket.HostLookupState:
