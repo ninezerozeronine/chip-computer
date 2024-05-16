@@ -384,13 +384,46 @@ class FrontPanel():
 
         return Outcome(True)
 
+    async def set_word_at_head(self, word):
+        """
+
+        """
+        if self._panel_mode != STOP:
+            return Outcome(
+                False,
+                message="Can only set words when panel is in stop mode"
+            )
+
+        # Check user input is valid
+        if not self._is_valid_word(word):
+            return Outcome(
+                False,
+                message=f"New word {word} is invalid."
+            )
+
+        # Set word at current head position
+        self._set_word(self._head, int(word))
+
+        # Read word at readwrite address and set to display
+        await self._display_ref.set_data(self._get_word(self._head))
+
+        return Outcome(True)
+
+    async def get_word_at_head(self):
+        """
+
+        """
+        await self._display_ref.set_data(self._get_word(self._head))
+        return Outcome(True)
+
     async def next_clock_source(self):
         """
         Cycle to the next clock source
         """
 
         next_index = (self._cpu_clock_source_index + 1) % len(self._cpu_clock_sources)
-        await self.set_clock_source(self._cpu_clock_sources[next_index])
+        outcome = await self.set_clock_source(self._cpu_clock_sources[next_index])
+        return outcome
 
     async def set_clock_source(self, clock_source):
         """
@@ -535,7 +568,7 @@ class FrontPanel():
         Set the clock frequency of the CPU (in Hz) from user input.
         """
 
-        outcome = self.set_frequency(self._user_input_string)
+        outcome = await self.set_frequency(self._user_input_string)
         return outcome
 
     async def set_frequency(self, frequency):

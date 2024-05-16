@@ -57,7 +57,7 @@ class RunControl(QtWidgets.QWidget):
 
         program_label = QtWidgets.QLabel("Program:")
         self.program_combobox = QtWidgets.QComboBox()
-        self.program_combobox.addItems(["Fibbonaci", "Dummy"])
+        self.program_combobox.addItems(["Dummy1", "Dummy2", "Fibonacci"])
         self.load_program_button = QtWidgets.QPushButton("Load")
 
 

@@ -1,5 +1,6 @@
 from . import dummy1
 from . import dummy2
+from . import fibonacci
 
 PROGRAMS = [
     {
@@ -9,5 +10,9 @@ PROGRAMS = [
     {
         "oled_name": "DUM2",
         "data": dummy2.DATA
+    },
+    {
+        "oled_name": "Fib",
+        "data": fibonacci.DATA
     }
 ]

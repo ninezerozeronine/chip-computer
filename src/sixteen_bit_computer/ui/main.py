@@ -192,7 +192,7 @@ class Main(QtWidgets.QDialog):
         """
         new_word = self.input_widget.value
         job = Job(
-            "set_data",
+            "set_word_at_head",
             args=[new_word],
             human_description=f"Set word at current head pos to {new_word}."
         )
@@ -203,7 +203,7 @@ class Main(QtWidgets.QDialog):
         Get the word at the current read write head position.
         """
         job = Job(
-            "get_word_at_current_head",
+            "get_word_at_head",
             human_description="Get word at current head pos."
         )
         self.job_manager_model.sumbit_job(job)
