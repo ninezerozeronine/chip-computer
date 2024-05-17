@@ -9,6 +9,7 @@ from .run_control import RunControl
 from .head_control import HeadControl
 from .connect_control import ConnectControl
 from .job_manager_model import JobManagerModel
+from .assembler import Assembler
 from ..network.job import Job
 from . import constants
 
@@ -39,7 +40,6 @@ class Main(QtWidgets.QDialog):
         self.connect_ui()
 
         self.setWindowTitle("SBC Connect")
-
 
     def build_ui(self):
         """
@@ -88,16 +88,37 @@ class Main(QtWidgets.QDialog):
         self.run_control_layout.addWidget(self.run_control)
         self.run_control_box.setLayout(self.run_control_layout)
 
-        self.main_layout = QtWidgets.QGridLayout()
-        self.main_layout.addWidget(connect_box, 0, 0, 1, 2)
-        self.main_layout.addWidget(self.input_box, 1, 0)
-        self.main_layout.addWidget(self.address_view_box, 1, 1)
-        self.main_layout.addWidget(self.head_control_box, 2, 0)
-        self.main_layout.addWidget(self.data_view_box, 2, 1)
-        self.main_layout.addWidget(self.run_control_box, 3, 0, 1, 2)
+        self.panel_layout = QtWidgets.QGridLayout()
+        self.panel_layout.setContentsMargins(QtCore.QMargins(0,0,0,0))
+        self.panel_layout.addWidget(connect_box, 0, 0, 1, 2)
+        self.panel_layout.addWidget(self.input_box, 1, 0)
+        self.panel_layout.addWidget(self.address_view_box, 1, 1)
+        self.panel_layout.addWidget(self.head_control_box, 2, 0)
+        self.panel_layout.addWidget(self.data_view_box, 2, 1)
+        self.panel_layout.addWidget(self.run_control_box, 3, 0, 1, 2)
+
+        self.panel_widget = QtWidgets.QWidget()
+        self.panel_widget.setLayout(self.panel_layout)
+
+        self.assembler = Assembler()
+        self.assembler.setAutoFillBackground(True)
+
+        self.tab_widget = QtWidgets.QTabWidget()
+        self.tab_widget.addTab(self.assembler, "Assembler")
+        self.tab_widget.addTab(QtWidgets.QPushButton("Big button"), "Button")
+
+        self.splitter = QtWidgets.QSplitter()
+        self.splitter.addWidget(self.panel_widget)
+        self.splitter.addWidget(self.tab_widget)
+        handle = self.splitter.handle(1)
+        palette = handle.palette()
+        palette.setColor(QtGui.QPalette.ColorRole.Window, QtGui.QColor("lightGray"))
+        handle.setPalette(palette)
+
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self.main_layout.addWidget(self.splitter)
 
         self.setLayout(self.main_layout)
-
 
     def connect_ui(self):
         """
