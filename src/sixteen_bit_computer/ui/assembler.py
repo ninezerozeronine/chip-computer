@@ -1,10 +1,11 @@
 """
 Line numbers inspired by:
 
-https://stackoverflow.com/questions/50074155/how-to-add-line-number-in-this-texteditor
 """
 
 from PyQt5 import Qt, QtGui, QtCore, QtWidgets
+
+from .line_number_text_edit import LineNumberTextEdit
 
 class Assembler(QtWidgets.QWidget):
     """
@@ -17,138 +18,120 @@ class Assembler(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.last_send = []
+        self.current_file = None
 
-        self.editor = AssemblyEditor()
-        self.assemble_and_send_button = QtWidgets.QPushButton("Assemble and send")
-        self.only_changes_checkbox = QtWidgets.QCheckBox("Only send changes")
+        # File controls
+        self.clear_button = QtWidgets.QPushButton("Clear")
+        self.open_button = QtWidgets.QPushButton("Open")
+        self.save_button = QtWidgets.QPushButton("Save")
+        self.save_as_button = QtWidgets.QPushButton("Save As")
+        file_controls_layout = QtWidgets.QHBoxLayout()
+        file_controls_layout.addWidget(self.clear_button)
+        file_controls_layout.addWidget(self.open_button)
+        file_controls_layout.addWidget(self.save_button)
+        file_controls_layout.addWidget(self.save_as_button)
+        self.clear_button.clicked.connect(self.clear_editor)
+        self.open_button.clicked.connect(self.open_file)
+        self.save_button.clicked.connect(self.save_editor)
+        self.save_as_button.clicked.connect(self.save_editor_as)
+
+        # File status
+        self.current_file_label = QtWidgets.QLabel("File:")
+        self.current_file_line_edit = QtWidgets.QLineEdit()
+        self.current_file_line_edit.setReadOnly(True)
+        file_status_layout = QtWidgets.QHBoxLayout()
+        file_status_layout.addWidget(self.current_file_label)
+        file_status_layout.addWidget(self.current_file_line_edit)
+        file_status_layout.setStretch(1, 5)
+
+        # Editor
+        self.line_numer_text_edit = LineNumberTextEdit()
+
+        # Controls
+        self.line_wrap_checkbox = QtWidgets.QCheckBox("Line wrap")
+        self.assemble_and_send_button = QtWidgets.QPushButton(
+            "Assemble and send"
+        )
+        self.only_changes_checkbox = QtWidgets.QCheckBox(
+            "Only send changes"
+        )
+        controls_layout = QtWidgets.QHBoxLayout()
+        controls_layout.addWidget(self.line_wrap_checkbox)
+        controls_layout.addStretch()
+        controls_layout.addWidget(self.only_changes_checkbox)
+        controls_layout.addWidget(self.assemble_and_send_button)
+        self.line_wrap_checkbox.clicked.connect(self.set_line_wrap)
+
+        # Status
         self.status_label = QtWidgets.QLabel("Status:")
         self.status_line_edit = QtWidgets.QLineEdit()
-
-        send_layout = QtWidgets.QHBoxLayout()
-        send_layout.addStretch()
-        send_layout.addWidget(self.only_changes_checkbox)
-        send_layout.addWidget(self.assemble_and_send_button)
-
+        self.status_line_edit.setReadOnly(True)
         status_layout = QtWidgets.QHBoxLayout()
         status_layout.addWidget(self.status_label)
         status_layout.addWidget(self.status_line_edit)
 
+        # Main layout
         main_layout = QtWidgets.QVBoxLayout()
-        main_layout.addWidget(self.editor)
-        main_layout.addLayout(send_layout)
+        main_layout.addLayout(file_controls_layout)
+        main_layout.addLayout(file_status_layout)
+        main_layout.addWidget(self.line_numer_text_edit)
+        main_layout.addLayout(controls_layout)
         main_layout.addLayout(status_layout)
         main_layout.setStretch(0, 5)
 
         self.setLayout(main_layout)
 
 
-class LineNumberArea(QtWidgets.QWidget):
+    def set_line_wrap(self):
+        """
+        Set line wrap for editor based on checkbox state.
+        """
 
-    def __init__(self, editor, parent=None):
-        super().__init__(parent=parent)
-        self.editor_ref = editor
-
-    def sizeHint(self):
-        return QtCore.QSize(self.editor_ref.get_line_no_width(), 0)
-
-    def paintEvent(self, event):
-        super().paintEvent(event)
-        painter = QtGui.QPainter(self)
-
-        painter.fillRect(event.rect(), QtGui.QColor("lightGray"))
-
-        block = self.editor_ref.firstVisibleBlock()
-        block_number = block.blockNumber()
-        block_bounds = self.editor_ref.blockBoundingGeometry(block)
-        top = block_bounds.translated(self.editor_ref.contentOffset()).top()
-        bottom = top + self.editor_ref.blockBoundingRect(block).height()
-
-        height = self.editor_ref.fontMetrics().height()
-        while block.isValid() and (top <= event.rect().bottom()):
-            if block.isVisible() and (bottom >= event.rect().top()):
-                line_number = str(block_number + 1)
-                painter.setPen(QtCore.Qt.black)
-                painter.drawText(
-                    0,
-                    top,
-                    self.width() - 3,
-                    height,
-                    QtCore.Qt.AlignRight,
-                    line_number
-                )
-
-            block = block.next()
-            top = bottom
-            bottom = top + self.editor_ref.blockBoundingRect(block).height()
-            block_number += 1
-
-
-class AssemblyEditor(QtWidgets.QPlainTextEdit):
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-
-        self.setFont(QtGui.QFont("Courier"))
-        # self.setTabStopWidth(40)
-
-        # In this instance - passing the parent seems necessary to
-        # ensure a connection between the widgets. Maybe because they're
-        # not in a layout together?
-        self.line_number_area = LineNumberArea(self, parent=self)
-        self.blockCountChanged.connect(self.update_left_margin_width)
-        self.updateRequest.connect(self.update_line_number_area)
-
-
-        self.update_left_margin_width(0)
-
-
-    def get_line_no_width(self):
-        num_digits = len(str(self.blockCount()))
-        width = 6 + self.fontMetrics().width("9") * num_digits
-        return width
-
-
-    def update_left_margin_width(self, _):
-        self.setViewportMargins(self.get_line_no_width(), 0, 0, 0)
-
-
-    def update_line_number_area(self, rect, dy):
-        if dy:
-            self.line_number_area.scroll(0, dy)
-            
+        if self.line_wrap_checkbox.isChecked():
+            self.line_numer_text_edit.setLineWrapMode(
+                self.line_numer_text_edit.WidgetWidth
+            )
         else:
-            self.line_number_area.update(
-                0,
-                rect.y(),
-                self.line_number_area.width(),
-                rect.height()
+            self.line_numer_text_edit.setLineWrapMode(
+                self.line_numer_text_edit.NoWrap
             )
 
-        if rect.contains(self.viewport().rect()):
-            self.update_left_margin_width(0)
+    def clear_editor(self):
+        """
 
+        """
+        pass
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
+    def open_file(self):
+        """
 
-        content_rect = self.contentsRect();
-        self.line_number_area.setGeometry(
-            QtCore.QRect(
-                content_rect.left(),
-                content_rect.top(),
-                self.get_line_no_width(),
-                content_rect.height()
-            )
+        """
+        filepath, file_filter = QtWidgets.QFileDialog.getOpenFileName(
+            parent=self,
+            caption="Open assembly file",
+            filter="Assmebly files (*.asm);;All files (*)"
         )
+        print(filepath)
 
-    def keyPressEvent(self, event):
+    def save_editor(self):
         """
-        https://stackoverflow.com/questions/45880941/replace-all-tab-operations-with-inserting-four-spaces-in-qplaintextedit-widget
+
         """
-        if event.key() == QtCore.Qt.Key_Tab:
-            event = QtGui.QKeyEvent(
-                QtCore.QEvent.KeyPress,
-                QtCore.Qt.Key_Space,
-                QtCore.Qt.KeyboardModifiers(event.nativeModifiers()),
-                "    "
-            )
-        super().keyPressEvent(event)
+        pass
+
+    def save_editor_as(self):
+        """
+
+        """
+        filepath, file_filter = QtWidgets.QFileDialog.getSaveFileName(
+            parent=self,
+            caption="Save assembly as",
+            filter="Assmebly files (*.asm);;All files (*)"
+        )
+        print(filepath)
+
+    def assemble_and_send(self):
+        """
+
+        """
+        pass
