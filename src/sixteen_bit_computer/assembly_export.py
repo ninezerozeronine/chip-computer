@@ -404,10 +404,12 @@ def assembly_lines_to_list(assembly_lines):
     assembly = []
     for line in assembly_lines:
         for word in line.pattern.machinecode:
-            assembly.append([
-                word.index,
-                number_utils.get_positive_equivalent(word.value, bitwidth=16)
-            ])
+            assembly.append(
+                (
+                    word.index,
+                    number_utils.get_positive_equivalent(word.value, bitwidth=16)
+                )
+            )
     return assembly
 
 

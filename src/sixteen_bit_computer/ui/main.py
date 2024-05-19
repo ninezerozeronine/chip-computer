@@ -10,6 +10,7 @@ from .head_control import HeadControl
 from .connect_control import ConnectControl
 from .job_manager_model import JobManagerModel
 from .assembler import Assembler
+from .batch_mem_read_writer import BatchMemReadWriter
 from ..network.job import Job
 from . import constants
 
@@ -34,7 +35,6 @@ class Main(QtWidgets.QDialog):
         self.job_queue_timer = QtCore.QTimer(self)
         self.job_queue_timer.setInterval(100)
         self.job_queue_timer.timeout.connect(self.run_job_manager_model)
-        self.job_queue_timer.start()
 
         self.build_ui()
         self.connect_ui()
@@ -48,10 +48,12 @@ class Main(QtWidgets.QDialog):
         connect_box = QtWidgets.QGroupBox("Connection")
         connect_layout = QtWidgets.QVBoxLayout()
         self.connect_control = ConnectControl()
+        self.connect_control.disconnect_button.setEnabled(False)
         connect_layout.addWidget(self.connect_control)
         connect_box.setLayout(connect_layout)
 
         self.input_box = QtWidgets.QGroupBox("Input")
+        self.input_box.setEnabled(False)
         self.input_layout = QtWidgets.QVBoxLayout()
         self.input_widget = ValueEdit()
         self.input_widget.set_values(
@@ -64,18 +66,21 @@ class Main(QtWidgets.QDialog):
         self.input_box.setLayout(self.input_layout)
 
         self.address_view_box = QtWidgets.QGroupBox("Address/Head")
+        self.address_view_box.setEnabled(False)
         self.address_layout = QtWidgets.QVBoxLayout()
         self.address_view = ValueView()
         self.address_layout.addWidget(self.address_view)
         self.address_view_box.setLayout(self.address_layout)
 
         self.data_view_box = QtWidgets.QGroupBox("Data")
+        self.data_view_box.setEnabled(False)
         self.data_layout = QtWidgets.QVBoxLayout()
         self.data_view = ValueView()
         self.data_layout.addWidget(self.data_view)
         self.data_view_box.setLayout(self.data_layout)
 
         self.head_control_box = QtWidgets.QGroupBox("Head Control")
+        self.head_control_box.setEnabled(False)
         self.head_control_layout = QtWidgets.QVBoxLayout()
         self.head_control = HeadControl()
         self.head_control_layout.addWidget(self.head_control)
@@ -83,6 +88,7 @@ class Main(QtWidgets.QDialog):
         self.head_control_box.setLayout(self.head_control_layout)   
 
         self.run_control_box = QtWidgets.QGroupBox("Run Control")
+        self.run_control_box.setEnabled(False)
         self.run_control_layout = QtWidgets.QVBoxLayout()
         self.run_control = RunControl()
         self.run_control_layout.addWidget(self.run_control)
@@ -100,12 +106,16 @@ class Main(QtWidgets.QDialog):
         self.panel_widget = QtWidgets.QWidget()
         self.panel_widget.setLayout(self.panel_layout)
 
-        self.assembler = Assembler()
+        self.assembler = Assembler(self.job_manager_model)
         self.assembler.setAutoFillBackground(True)
+
+        self.batch_mem_read_writer = BatchMemReadWriter(self.job_manager_model)
+        self.batch_mem_read_writer.setAutoFillBackground(True)
 
         self.tab_widget = QtWidgets.QTabWidget()
         self.tab_widget.addTab(self.assembler, "Assembler")
-        self.tab_widget.addTab(QtWidgets.QPushButton("Big button"), "Button")
+        self.tab_widget.addTab(self.batch_mem_read_writer, "Batch memory R/W")
+        self.tab_widget.addTab(QtWidgets.QPushButton("Big button"), "Jobs")
 
         self.splitter = QtWidgets.QSplitter()
         self.splitter.addWidget(self.panel_widget)
@@ -558,8 +568,9 @@ class Main(QtWidgets.QDialog):
         self.head_control_box.setEnabled(True)
         self.data_view_box.setEnabled(True)
         self.run_control_box.setEnabled(True)
+        self.assembler.assemble_and_send_button.setEnabled(True)
         self.job_queue_timer.start()
-        self.header_read = False
+        self.waiting_for = "header"
 
     def socket_disconnected(self):
         """
@@ -572,8 +583,9 @@ class Main(QtWidgets.QDialog):
         self.head_control_box.setEnabled(False)
         self.data_view_box.setEnabled(False)
         self.run_control_box.setEnabled(False)
+        self.assembler.assemble_and_send_button.setEnabled(False)
         self.job_queue_timer.stop()
-        self.header_read = False
+        self.waiting_for = "header"
 
 
 def decode_state(state):

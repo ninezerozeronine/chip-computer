@@ -1,66 +1,45 @@
-"""
-Line numbers inspired by:
-
-"""
-
 from PyQt5 import Qt, QtGui, QtCore, QtWidgets
 
-from .line_number_text_edit import LineNumberTextEdit
+from .text_file_editor import TextFileEditor
+from .assembly_highlighter import AssemblyHighlighter
+from .. import assembler
+from .. import utils
+from .. import assembly_export
+from .. import exceptions
+from ..network.job import Job
 
 class Assembler(QtWidgets.QWidget):
     """
     Widget assemble and send machine code
     """
-    def __init__(self, parent=None):
+    def __init__(self, job_manager_model_ref, parent=None):
         """
         Initialise class.
         """
         super().__init__(parent=parent)
 
-        self.last_send = []
-        self.current_file = None
-
-        # File controls
-        self.clear_button = QtWidgets.QPushButton("Clear")
-        self.open_button = QtWidgets.QPushButton("Open")
-        self.save_button = QtWidgets.QPushButton("Save")
-        self.save_as_button = QtWidgets.QPushButton("Save As")
-        file_controls_layout = QtWidgets.QHBoxLayout()
-        file_controls_layout.addWidget(self.clear_button)
-        file_controls_layout.addWidget(self.open_button)
-        file_controls_layout.addWidget(self.save_button)
-        file_controls_layout.addWidget(self.save_as_button)
-        self.clear_button.clicked.connect(self.clear_editor)
-        self.open_button.clicked.connect(self.open_file)
-        self.save_button.clicked.connect(self.save_editor)
-        self.save_as_button.clicked.connect(self.save_editor_as)
-
-        # File status
-        self.current_file_label = QtWidgets.QLabel("File:")
-        self.current_file_line_edit = QtWidgets.QLineEdit()
-        self.current_file_line_edit.setReadOnly(True)
-        file_status_layout = QtWidgets.QHBoxLayout()
-        file_status_layout.addWidget(self.current_file_label)
-        file_status_layout.addWidget(self.current_file_line_edit)
-        file_status_layout.setStretch(1, 5)
+        self.job_manager_model_ref = job_manager_model_ref
 
         # Editor
-        self.line_numer_text_edit = LineNumberTextEdit()
+        self.text_file_editor = TextFileEditor(
+            file_filter="Assembly files (*.asm);;All files (*))"
+        )
+        self.highlighter = AssemblyHighlighter(
+            parent=self.text_file_editor.line_number_text_edit.document()
+        )
 
         # Controls
-        self.line_wrap_checkbox = QtWidgets.QCheckBox("Line wrap")
+        self.assemble_button = QtWidgets.QPushButton("Assemble")
         self.assemble_and_send_button = QtWidgets.QPushButton(
             "Assemble and send"
         )
-        self.only_changes_checkbox = QtWidgets.QCheckBox(
-            "Only send changes"
-        )
+        self.assemble_and_send_button.setEnabled(False)
+        self.assemble_button.clicked.connect(self.assemble)
+        self.assemble_and_send_button.clicked.connect(self.assemble_and_send)
         controls_layout = QtWidgets.QHBoxLayout()
-        controls_layout.addWidget(self.line_wrap_checkbox)
         controls_layout.addStretch()
-        controls_layout.addWidget(self.only_changes_checkbox)
+        controls_layout.addWidget(self.assemble_button)
         controls_layout.addWidget(self.assemble_and_send_button)
-        self.line_wrap_checkbox.clicked.connect(self.set_line_wrap)
 
         # Status
         self.status_label = QtWidgets.QLabel("Status:")
@@ -72,66 +51,52 @@ class Assembler(QtWidgets.QWidget):
 
         # Main layout
         main_layout = QtWidgets.QVBoxLayout()
-        main_layout.addLayout(file_controls_layout)
-        main_layout.addLayout(file_status_layout)
-        main_layout.addWidget(self.line_numer_text_edit)
+        main_layout.addWidget(self.text_file_editor)
         main_layout.addLayout(controls_layout)
         main_layout.addLayout(status_layout)
         main_layout.setStretch(0, 5)
 
         self.setLayout(main_layout)
 
-
-    def set_line_wrap(self):
+    def assemble(self):
         """
-        Set line wrap for editor based on checkbox state.
+        Assemble the assembly in the editor
         """
+        lines = self.text_file_editor.line_number_text_edit.toPlainText().splitlines()
+        processed_assembly = None
+        try:
+            processed_assembly = assembler.assemble(lines)
+        except exceptions.AssemblyError as exception:
+            self.status_line_edit.setText(exception.args[0])
 
-        if self.line_wrap_checkbox.isChecked():
-            self.line_numer_text_edit.setLineWrapMode(
-                self.line_numer_text_edit.WidgetWidth
-            )
-        else:
-            self.line_numer_text_edit.setLineWrapMode(
-                self.line_numer_text_edit.NoWrap
-            )
-
-    def clear_editor(self):
-        """
-
-        """
-        pass
-
-    def open_file(self):
-        """
-
-        """
-        filepath, file_filter = QtWidgets.QFileDialog.getOpenFileName(
-            parent=self,
-            caption="Open assembly file",
-            filter="Assmebly files (*.asm);;All files (*)"
-        )
-        print(filepath)
-
-    def save_editor(self):
-        """
-
-        """
-        pass
-
-    def save_editor_as(self):
-        """
-
-        """
-        filepath, file_filter = QtWidgets.QFileDialog.getSaveFileName(
-            parent=self,
-            caption="Save assembly as",
-            filter="Assmebly files (*.asm);;All files (*)"
-        )
-        print(filepath)
+        if processed_assembly is not None:
+            self.status_line_edit.setText("Assembled successfully")
 
     def assemble_and_send(self):
         """
-
+        Assemble the assembly in the editor, then send it to the computer
         """
-        pass
+        lines = self.text_file_editor.line_number_text_edit.toPlainText().splitlines()
+        processed_assembly = None
+        try:
+            processed_assembly = assembler.assemble(lines)
+        except exceptions.AssemblyError as exception:
+            self.status_line_edit.setText(exception.args[0])
+
+        if processed_assembly is not None:
+            machinecode = assembly_export.assembly_lines_to_list(processed_assembly)
+            if machinecode:
+                machinecode_chunks = list(utils.chunker(machinecode, 200))
+                num_chunks = len(machinecode_chunks)
+                for counter, chunk in enumerate(machinecode_chunks, start=1):
+                    job = Job(
+                        "set_words",
+                        args=[chunk],
+                        human_description=f"Assembly send chunk {counter} of {num_chunks}."
+                    )
+                    self.job_manager_model_ref.sumbit_job(job)
+                self.status_line_edit.setText("Sent successfully")
+            else:
+                self.status_line_edit.setText("No assembly to send.")
+
+

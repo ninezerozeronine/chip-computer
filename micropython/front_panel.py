@@ -699,6 +699,60 @@ class FrontPanel():
 
         return Outcome(True)
 
+    async def batch_mem_read_write(self, commands):
+        """
+        Do a batch of reads and writes to memory.
+
+        Invalid commands are ignored.
+
+        Args:
+            commands (list(tuple())): The commands to perform, read an
+                address in memory or write data to memory at a given
+                address. E.g.:
+
+                    [
+                        ("R", 123),
+                        ("R", 24),
+                        ("W", 12, 448)
+                    ]
+
+                For write (W) commands, the first element is the
+                address, the second is the data to write.
+        Returns:
+            Outcome: The result of running the command
+        """
+
+        if self._panel_mode != STOP:
+            return Outcome(
+                False,
+                message= (
+                    "Can only run batch reads and writes when panel "
+                    "is in stop mode."
+                )
+            )
+
+        self._interface.set_memory_active(True)
+        self._interface.set_interface_address_assert(True)
+        
+        for command in commands:
+            if command[0] == "R":
+                self._interface.set_address(command[1])
+                self._interface.set_rfm_wtm(False)
+                # Eventually could store and return these reads.
+                self._interface.get_data()
+            if command[0] == "W":
+                self._interface.set_rfm_wtm(True)
+                self._interface.set_address(command[1])
+                self._interface.set_data(command[2])
+                self._interface.set_interface_data_assert(True)
+                time.sleep_us(1)
+                self._send_cpu_like_clock_cycle()
+                time.sleep_us(1)
+                self._interface.set_interface_data_assert(False)
+
+        self._interface.set_memory_active(False)
+        self._interface.set_interface_address_assert(False)
+        
     async def set_mode_to_read_memory(self):
         """
         Put the computer into a state where memory can be read manually.
@@ -720,7 +774,7 @@ class FrontPanel():
 
             # Set the panel mode
             self._panel_mode = READ_MEMORY
-            return True
+            return Outcome(True)
         else:
             return Outcome(
                 False,
