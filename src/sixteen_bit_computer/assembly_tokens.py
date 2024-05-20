@@ -429,6 +429,10 @@ class OPCODE(Token):
         else:
             return None
 
+    @classmethod
+    def all_opcode_strings(cls):
+        return list(cls._OPCODE_TO_COMPONENT.keys())
+
     @property
     def component(self):
         return self._OPCODE_TO_COMPONENT[self.value]
@@ -476,6 +480,10 @@ class MODULE(Token):
             return cls(_string, _string)
         else:
             return None
+
+    @classmethod
+    def all_module_strings(cls):
+        return list(cls._MODULE_TO_COMPONENT.keys())
 
     @property
     def component(self):

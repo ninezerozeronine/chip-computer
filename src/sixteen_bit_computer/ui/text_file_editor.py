@@ -204,6 +204,9 @@ class LineNumberTextEdit(QtWidgets.QPlainTextEdit):
         super().__init__(parent=parent)
 
         self.setFont(QtGui.QFont("Courier"))
+        # Background                dark grey       40  41  35  282923
+        # Text                      off white       248 248 242 F8F8F2
+        self.setStyleSheet("background-color: #282923; color: #F8F8F2")
 
         # In this instance - passing the parent seems necessary to
         # ensure a connection between the widgets. Maybe because they're
