@@ -136,7 +136,7 @@ async def assemble_and_send(
     print("\n\nAssembly summary:\n")
     print(generate_assembly_summary(processed_assembly))
 
-    machinecode = assembly_export.assembly_lines_to_list(processed_assembly)
+    machinecode = assembly_export.assembly_lines_to_address_word_pairs(processed_assembly)
     machinecode_chunks = list(utils.chunker(machinecode, 200))
     num_chunks = len(machinecode_chunks)
     aborted = False

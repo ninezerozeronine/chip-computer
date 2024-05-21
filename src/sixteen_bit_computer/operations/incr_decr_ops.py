@@ -13,6 +13,8 @@ from ..instruction_components import (
     A,
     B,
     C,
+    M_A,
+    memory_ref_to_component,
 )
 from .. import number_utils
 from ..language_defs import (
@@ -27,10 +29,12 @@ _SUPPORTED_SIGNATURES = (
     (INCR, A),
     (INCR, B),
     (INCR, C),
+    (INCR, M_A),
     (DECR, ACC),
     (DECR, A),
     (DECR, B),
     (DECR, C),
+    (DECR, M_A),
 )
 
 
@@ -70,33 +74,76 @@ def generate_microcode_templates():
             instr_index, bit_width=8
         )
         flags_bitdefs = [FLAGS["ANY"]]
-        step_0 = [
-                MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
+
+        if signature[1] in (ACC, A, B, C):
+            step_0 = [
+                    MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
+                    MODULE_CONTROL["ALU"]["STORE_RESULT"],
+                    MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+                    MODULE_CONTROL["ALU"]["A_IS_BUS"],
+            ]
+            if signature[0] == INCR:
+                step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+            elif signature[0] == DECR:
+                step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+            else:
+                raise RuntimeError(
+                    "Unexpected signature {sig} in incr/decr "
+                    "microcode generation".format(sig=signature)
+                )
+
+            step_1 = [
+                MODULE_CONTROL["ALU"]["OUT"],
+                MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
+            ]
+
+            control_steps = [step_0, step_1]
+
+            templates = utils.assemble_instruction_steps(
+                instr_index_bitdef, flags_bitdefs, control_steps
+            )
+            data_templates.extend(templates)
+        else:
+            # Put module into MAR
+            step_0 = [
+                MODULE_CONTROL[
+                    utils.component_to_module_name(
+                        memory_ref_to_component(
+                            signature[1]
+                        )
+                    )
+                ]["OUT"],
+                MODULE_CONTROL["MAR"]["IN"],
+            ]
+
+            # Get the value from Mem, increment it, store result in the ALU
+            step_1 = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["ALU"]["STORE_RESULT"],
                 MODULE_CONTROL["ALU"]["STORE_FLAGS"],
                 MODULE_CONTROL["ALU"]["A_IS_BUS"],
-        ]
-        if signature[0] == INCR:
-            step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
-        elif signature[0] == DECR:
-            step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
-        else:
-            raise RuntimeError(
-                "Unexpected signature {sig} in incr/decr "
-                "microcode generation".format(sig=signature)
+            ]
+            if signature[0] == INCR:
+                step_1.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+            elif signature[0] == DECR:
+                step_1.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+            else:
+                raise RuntimeError(
+                    "Unexpected signature {sig} in incr/decr "
+                    "microcode generation".format(sig=signature)
+                )
+
+            # Write the value back into memory
+            step_2 = [
+                MODULE_CONTROL["MEM"]["WRITE_TO"],
+                MODULE_CONTROL["ALU"]["OUT"],
+            ]
+            control_steps = [step_0, step_1, step_2]
+
+            templates = utils.assemble_instruction_steps(
+                instr_index_bitdef, flags_bitdefs, control_steps
             )
-
-        step_1 = [
-            MODULE_CONTROL["ALU"]["OUT"],
-            MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
-        ]
-
-        control_steps = [step_0, step_1]
-
-        templates = utils.assemble_instruction_steps(
-            instr_index_bitdef, flags_bitdefs, control_steps
-        )
-        data_templates.extend(templates)
+            data_templates.extend(templates)
 
     return data_templates
 

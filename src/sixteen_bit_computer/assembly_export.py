@@ -383,7 +383,7 @@ def assembly_lines_to_dictionary(assembly_lines):
             )
     return assembly
 
-def assembly_lines_to_list(assembly_lines):
+def assembly_lines_to_address_word_pairs(assembly_lines):
     """
     Convert the assembly lines to a list of indexes and values.
 
@@ -395,7 +395,7 @@ def assembly_lines_to_list(assembly_lines):
 
     Args:
         assembly_lines (List(AssemblyLine)): Fully processed assembly
-            lines to convert to a raw dictionary.
+            lines to convert to a set of addresses and words.
 
     Returns:
         List(List(int,int))

@@ -304,6 +304,8 @@ _INSTRUCTION_SIGNATURES = (
     (ROT_LEFT, A),
     (ROT_LEFT, B),
     (ROT_LEFT, C),
+    (INCR, M_A),
+    (DECR, M_A)
 )
 """
 All possible instruction signatures.

@@ -84,7 +84,7 @@ class Assembler(QtWidgets.QWidget):
             self.status_line_edit.setText(exception.args[0])
 
         if processed_assembly is not None:
-            machinecode = assembly_export.assembly_lines_to_list(processed_assembly)
+            machinecode = assembly_export.assembly_lines_to_address_word_pairs(processed_assembly)
             if machinecode:
                 machinecode_chunks = list(utils.chunker(machinecode, 200))
                 num_chunks = len(machinecode_chunks)
