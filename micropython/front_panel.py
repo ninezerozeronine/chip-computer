@@ -659,27 +659,24 @@ class FrontPanel():
                 message="Can only set words when panel is in stop mode"
             )
 
+
         self._interface.set_memory_active(True)
         self._interface.set_rfm_wtm(True)
         self._interface.set_interface_address_assert(True)
         self._interface.set_interface_data_assert(True)
         
         num_words = len(addresses_and_words)
-        word = 1
         spinners = ["-", "\\", "|", "/"]
         spinner_index = 0
         num_spinners = len(spinners)
         
         current_word = 1
-        last_percentage = 0
         for address, word in addresses_and_words:
-            if word % 50 == 0:
-                percentage = int((current_word / num_words) * 100)
-                if percentage > last_percentage + 10:
-                    last_percentage += 10
-                status_update = "{spinner} - {last_percentage}%".format(
+            if current_word % 50 == 0:
+                percentage = (int(((current_word / num_words) * 100) // 10) * 10)
+                status_update = "{spinner} - {percentage}%".format(
                     spinner=spinners[spinner_index],
-                    last_percentage=last_percentage
+                    percentage=percentage
                 )
                 await self._display_ref.set_user_input(status_update)
                 spinner_index = (spinner_index + 1) % num_spinners
@@ -752,6 +749,8 @@ class FrontPanel():
 
         self._interface.set_memory_active(False)
         self._interface.set_interface_address_assert(False)
+
+        return Outcome(True)
         
     async def set_mode_to_read_memory(self):
         """
@@ -804,9 +803,9 @@ class FrontPanel():
         clock is high.
         """
 
-        print("Dont forget to revert _at_beginning_of_clock_cycle!")
-        return True
-        # return self._interface.get_control_clock()
+        # print("Dont forget to revert _at_beginning_of_clock_cycle!")
+        # return True
+        return self._interface.get_control_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """

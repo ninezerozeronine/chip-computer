@@ -62,7 +62,7 @@ class SocketConnection():
 
                 num_bytes_recieved = len(socket_data)
                 if num_bytes_recieved < num_data_bytes:
-                    print("Tried to read {num_data_bytes} bytes, got {num_bytes_recieved}. Connection probably dead.")
+                    print(f"Tried to read {num_data_bytes} bytes, got {num_bytes_recieved}. Connection probably dead.")
                     self.connected = False
                     continue
 

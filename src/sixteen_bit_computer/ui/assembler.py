@@ -86,7 +86,7 @@ class Assembler(QtWidgets.QWidget):
         if processed_assembly is not None:
             machinecode = assembly_export.assembly_lines_to_address_word_pairs(processed_assembly)
             if machinecode:
-                machinecode_chunks = list(utils.chunker(machinecode, 200))
+                machinecode_chunks = list(utils.chunker(machinecode, 100))
                 num_chunks = len(machinecode_chunks)
                 for counter, chunk in enumerate(machinecode_chunks, start=1):
                     job = Job(

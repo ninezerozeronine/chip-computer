@@ -440,8 +440,6 @@ class Manager():
         keypad.
         """
         while True:
-
-            # display_needs_update = False
             outcome = None
             job_id = None
 
@@ -478,7 +476,6 @@ class Manager():
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
                         outcome = await method(*args, **kwargs)
-                        # display_needs_update = True
             else:
                 # It's a local call
                 if "method" not in call:
@@ -495,17 +492,10 @@ class Manager():
                         args = call.get("args", [])
                         kwargs = call.get("kwargs", {})
                         await method(*args, **kwargs)
-                        # display_needs_update = True
 
             # Reply back to the calling job that we're done, if necessary
             if outcome is not None:
                 await self.reply_to_job(job_id, outcome)
-
-            # Update the local and remote displays, if necessary
-            # if display_needs_update:
-            #     panel_display_state = self.panel.get_display_state()
-            #     self.display.update_panel_state(panel_display_state)
-            #     await self.update_remote_display_state(panel_display_state)
 
             # Finish the task, more useful/necessary if we have multiple
             # queue processors - but good practice.

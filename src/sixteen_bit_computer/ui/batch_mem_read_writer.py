@@ -214,7 +214,7 @@ class BatchMemReadWriter(QtWidgets.QWidget):
 
         if valid:
             if commands:
-                command_chunks = list(utils.chunker(commands, 100))
+                command_chunks = list(utils.chunker(commands, 75))
                 num_chunks = len(command_chunks)
                 for counter, chunk in enumerate(command_chunks, start=1):
                     job = Job(
