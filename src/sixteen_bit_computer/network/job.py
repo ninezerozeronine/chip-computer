@@ -125,6 +125,7 @@ class Job():
 
         data_str=json.dumps(to_send)
         print(f"Sending {data_str}")
+        print(self.human_description)
         to_send = bytearray(2)
         msg_bytes = bytes(data_str, encoding="ascii")
         to_send.extend(msg_bytes)

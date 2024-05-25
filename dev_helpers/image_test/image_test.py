@@ -38,5 +38,15 @@ def to_program(image_path):
                     
             print("")
 
+def to_commands(image_path):
+    with Image.open(image_path) as im:
+        px = im.load()
+        for row_index in range(im.height):
+            print(f"W 65532 {row_index} // Set Row")
+            for column_index in range(im.width):
+                print(f"W 65533 {column_index}")
+                print(f"W 65534 {px[column_index, row_index]}")
+
 if __name__ == "__main__":
-    to_program(sys.argv[1])
+    # to_program(sys.argv[1])
+    to_commands(sys.argv[1])
