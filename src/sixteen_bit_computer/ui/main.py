@@ -570,6 +570,7 @@ class Main(QtWidgets.QDialog):
         self.run_control_box.setEnabled(True)
         self.assembler.assemble_and_send_button.setEnabled(True)
         self.batch_mem_read_writer.send_button.setEnabled(True)
+        self.batch_mem_read_writer.send_selected_button.setEnabled(True)
         self.job_queue_timer.start()
         self.waiting_for = "header"
 
@@ -586,6 +587,7 @@ class Main(QtWidgets.QDialog):
         self.run_control_box.setEnabled(False)
         self.assembler.assemble_and_send_button.setEnabled(False)
         self.batch_mem_read_writer.send_button.setEnabled(False)
+        self.batch_mem_read_writer.send_selected_button.setEnabled(False)
         self.job_queue_timer.stop()
         self.waiting_for = "header"
 

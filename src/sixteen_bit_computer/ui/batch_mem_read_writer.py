@@ -1,6 +1,7 @@
 from PyQt5 import Qt, QtGui, QtCore, QtWidgets
 
 from .text_file_editor import TextFileEditor
+from .batch_mem_read_write_highlighter import BatchMemReadWriteHighlighter
 from ..network.job import Job
 from .. import number_utils
 from .. import utils
@@ -21,16 +22,23 @@ class BatchMemReadWriter(QtWidgets.QWidget):
         self.text_file_editor = TextFileEditor(
             file_filter="Batch Memory Read Write files (*.bmrw);;All files (*))"
         )
+        self.highlighter = BatchMemReadWriteHighlighter(
+            parent=self.text_file_editor.line_number_text_edit.document()
+        )
 
         # Controls
         self.check_button = QtWidgets.QPushButton("Check")
         self.check_button.clicked.connect(self.check)
+        self.send_selection_button = QtWidgets.QPushButton("Send Selection")
+        self.send_selection_button.setEnabled(False)
+        self.send_selection_button.clicked.connect(self.send_selection)
         self.send_button = QtWidgets.QPushButton("Send")
         self.send_button.setEnabled(False)
         self.send_button.clicked.connect(self.send)
         controls_layout = QtWidgets.QHBoxLayout()
         controls_layout.addStretch()
         controls_layout.addWidget(self.check_button)
+        controls_layout.addWidget(self.send_selection_button)
         controls_layout.addWidget(self.send_button)
 
         # Status
@@ -204,14 +212,29 @@ class BatchMemReadWriter(QtWidgets.QWidget):
         else:
             return valid, message, []
 
+
+    def send_selection(self):
+        """
+        Check and send the selected lines.
+        """
+        lines = self.text_file_editor.line_number_text_edit.textCursor().selectedText().splitlines()
+        valid, message, commands = self.validate_and_extract(lines)
+        _send(valid, message, commands)
+
+
     def send(self):
         """
         Send the memory read write commands to the computer
         """
         lines = self.text_file_editor.line_number_text_edit.toPlainText().splitlines()
-
         valid, message, commands = self.validate_and_extract(lines)
+        _send(valid, message, commands)
 
+
+    def _send(self, valid, message, commands):
+        """
+
+        """
         if valid:
             if commands:
                 command_chunks = list(utils.chunker(commands, 75))
