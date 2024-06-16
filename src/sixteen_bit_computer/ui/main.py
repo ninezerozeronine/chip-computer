@@ -1,13 +1,15 @@
 import sys
 import json
+import time
 
-from PyQt5 import QtGui, QtCore, QtWidgets, QtNetwork
+from PyQt5 import QtGui, QtCore, QtWidgets, QtNetwork, QtTest
 
 from .value_edit import ValueEdit
 from .value_view import ValueView
 from .run_control import RunControl
 from .head_control import HeadControl
 from .connect_control import ConnectControl
+from .job_control import JobControl
 from .job_manager_model import JobManagerModel
 from .assembler import Assembler
 from .batch_mem_read_writer import BatchMemReadWriter
@@ -32,6 +34,7 @@ class Main(QtWidgets.QDialog):
         self.socket.disconnected.connect(self.socket_disconnected)
 
         self.job_manager_model = JobManagerModel()
+        # QtTest.QAbstractItemModelTester(self.job_manager_model, QtTest.QAbstractItemModelTester.FailureReportingMode.Fatal)
         self.job_queue_timer = QtCore.QTimer(self)
         self.job_queue_timer.setInterval(100)
         self.job_queue_timer.timeout.connect(self.run_job_manager_model)
@@ -39,7 +42,20 @@ class Main(QtWidgets.QDialog):
         self.build_ui()
         self.connect_ui()
 
+        self.add_dummy_jobs()
+
         self.setWindowTitle("SBC Connect")
+
+    def add_dummy_jobs(self):
+        self.job_manager_model.sumbit_job(Job("dummy_method3", human_description="abc"))
+        time.sleep(0.05)
+        self.job_manager_model.sumbit_job(Job("dummy_method1", human_description="aba"))
+        time.sleep(0.05)
+        self.job_manager_model.sumbit_job(Job("dummy_method2", human_description="bbb"))
+        time.sleep(0.05)
+        self.job_manager_model.sumbit_job(Job("dummy_method2", human_description="zzz"))
+        time.sleep(0.05)
+        self.job_manager_model.sumbit_job(Job("dummy_method1", human_description="yyy"))
 
     def build_ui(self):
         """
@@ -112,10 +128,13 @@ class Main(QtWidgets.QDialog):
         self.batch_mem_read_writer = BatchMemReadWriter(self.job_manager_model)
         self.batch_mem_read_writer.setAutoFillBackground(True)
 
+        self.job_control = JobControl(self.job_manager_model)
+        self.job_control.setAutoFillBackground(True)
+
         self.tab_widget = QtWidgets.QTabWidget()
         self.tab_widget.addTab(self.assembler, "Assembler")
         self.tab_widget.addTab(self.batch_mem_read_writer, "Batch memory R/W")
-        self.tab_widget.addTab(QtWidgets.QPushButton("Big button"), "Jobs")
+        self.tab_widget.addTab(self.job_control, "Jobs")
 
         self.splitter = QtWidgets.QSplitter()
         self.splitter.addWidget(self.panel_widget)

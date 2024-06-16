@@ -198,6 +198,10 @@ class Job():
             return self.job_id
         if column == 1:
             return human_readable_state(self.state)
+        if column == 2:
+            return self.human_description
+        if column == 3:
+            return str(self.created_at)
 
         return "Invalid column"
 
@@ -210,7 +214,7 @@ class Job():
             int: The number of columns needed to display all the
                 properties of a job.
         """
-        return 2
+        return 4
 
     @classmethod
     def get_header_data(cls, column):
@@ -224,6 +228,10 @@ class Job():
             return "ID"
         if column == 1:
             return "State"
+        if column == 2:
+            return "Description"
+        if column == 3:
+            return "Submission Time"
 
         return "Invalid column header"
 
