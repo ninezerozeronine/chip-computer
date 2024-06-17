@@ -431,15 +431,15 @@ class Interface():
 
         # Capture the state of the pins
         self._input_storage_reg_clock_pin.value(True)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._input_storage_reg_clock_pin.value(False)
-        time.sleep_us(1)
+        # time.sleep_us(1)
 
         # Load it into the shift register (pin is active low)
         self._input_parallel_load_pin.value(False)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._input_parallel_load_pin.value(True)
-        time.sleep_us(1)
+        # time.sleep_us(1)
 
         ret = {}
 
@@ -475,11 +475,11 @@ class Interface():
         """
 
         ret = self._input_serial_read_pin.value()
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._input_shift_reg_clock_pin.value(True)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._input_shift_reg_clock_pin.value(False)
-        time.sleep_us(1)
+        # time.sleep_us(1)
 
         return bool(ret)
 

@@ -683,9 +683,9 @@ class FrontPanel():
             current_word += 1
             self._interface.set_address(address)
             self._interface.set_data(word)
-            time.sleep_us(1)
+            # time.sleep_us(1)
             self._send_cpu_like_clock_cycle()
-            time.sleep_us(1)
+            # time.sleep_us(1)
 
         self._interface.set_memory_active(False)
         self._interface.set_interface_address_assert(False)
@@ -742,9 +742,9 @@ class FrontPanel():
                 self._interface.set_address(command[1])
                 self._interface.set_data(command[2])
                 self._interface.set_interface_data_assert(True)
-                time.sleep_us(1)
+                # time.sleep_us(1)
                 self._send_cpu_like_clock_cycle()
-                time.sleep_us(1)
+                # time.sleep_us(1)
                 self._interface.set_interface_data_assert(False)
 
         self._interface.set_memory_active(False)
@@ -813,9 +813,9 @@ class FrontPanel():
         """
         for _ in range(num_pulses):
             self._interface.set_clock_pin_static_state(True)
-            time.sleep_us(1)
+            # time.sleep_us(1)
             self._interface.set_clock_pin_static_state(False)
-            time.sleep_us(1)
+            # time.sleep_us(1)
 
     def _compensate_clock_frequency(self, frequency):
         """
@@ -831,9 +831,9 @@ class FrontPanel():
         """
         
         self._interface.set_data_and_control_clocks(True, False)
-        time.sleep_us(1)
+        # time.sleep_us(1)
         self._interface.set_data_and_control_clocks(False, True)
-        time.sleep_us(1)
+        # time.sleep_us(1)
 
     def _set_word(self, address, word):
         """
@@ -847,9 +847,9 @@ class FrontPanel():
             self._interface.set_interface_address_assert(True)
             self._interface.set_interface_data_assert(True)
 
-            time.sleep_us(1)
+            # time.sleep_us(1)
             self._send_cpu_like_clock_cycle()
-            time.sleep_us(1)
+            # time.sleep_us(1)
 
             self._interface.set_memory_active(False)
             self._interface.set_interface_address_assert(False)
@@ -868,7 +868,7 @@ class FrontPanel():
             self._interface.set_rfm_wtm(False)
             self._interface.set_interface_address_assert(True)
 
-            time.sleep_us(1)
+            # time.sleep_us(1)
             word = self._interface.get_data()
 
             self._interface.set_memory_active(False)
