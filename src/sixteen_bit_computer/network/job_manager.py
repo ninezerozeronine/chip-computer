@@ -94,9 +94,16 @@ class JobManager():
             del self.queue[0]
             return False
 
+    def get_table_display_data(self, row, column):
+        """
+        Helper function to display jobs in a table.
+        """
+
+        return self.jobs[self.job_order[row]].get_table_display_data(column)
+
     def get_table_data(self, row, column):
         """
-        Helper function to display jobs in a table
+        Helper function to get the data for a job when dislayed in a table.
         """
 
         return self.jobs[self.job_order[row]].get_table_data(column)

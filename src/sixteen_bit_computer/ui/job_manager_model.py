@@ -16,6 +16,8 @@ class JobManagerModel(QtCore.QAbstractTableModel):
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
+            return self.manager.get_table_display_data(index.row(), index.column())
+        if role == QtCore.Qt.UserRole:
             return self.manager.get_table_data(index.row(), index.column())
 
     def headerData(self, index, orientation, role):

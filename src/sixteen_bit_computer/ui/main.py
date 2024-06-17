@@ -34,7 +34,6 @@ class Main(QtWidgets.QDialog):
         self.socket.disconnected.connect(self.socket_disconnected)
 
         self.job_manager_model = JobManagerModel()
-        # QtTest.QAbstractItemModelTester(self.job_manager_model, QtTest.QAbstractItemModelTester.FailureReportingMode.Fatal)
         self.job_queue_timer = QtCore.QTimer(self)
         self.job_queue_timer.setInterval(100)
         self.job_queue_timer.timeout.connect(self.run_job_manager_model)
@@ -118,6 +117,8 @@ class Main(QtWidgets.QDialog):
         self.panel_layout.addWidget(self.head_control_box, 2, 0)
         self.panel_layout.addWidget(self.data_view_box, 2, 1)
         self.panel_layout.addWidget(self.run_control_box, 3, 0, 1, 2)
+        self.panel_layout.addWidget(QtWidgets.QWidget(), 4, 0)
+        self.panel_layout.setRowStretch(4, 2)
 
         self.panel_widget = QtWidgets.QWidget()
         self.panel_widget.setLayout(self.panel_layout)

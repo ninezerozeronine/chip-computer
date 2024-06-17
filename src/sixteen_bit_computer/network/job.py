@@ -6,13 +6,26 @@ from .outcome import Outcome
 
 class State(Enum):
     """
-    Defines the possible states a job can be in
+    Defines the possible states a job can be in.
     """
     new = auto()
     sent = auto()
     in_progress = auto()
     complete = auto()
     cancelled = auto()
+
+
+def get_all_states():
+    """
+
+    """
+    return (
+        State.new,
+        State.sent,
+        State.in_progress,
+        State.complete,
+        State.cancelled
+    )
 
 
 def human_readable_state(state):
@@ -185,7 +198,7 @@ class Job():
         if self.cancelled_callback is not None:
             cancelled_callback()
 
-    def get_table_data(self, column):
+    def get_table_display_data(self, column):
         """
         Helper method to display this job in a table.
 
@@ -202,6 +215,26 @@ class Job():
             return self.human_description
         if column == 3:
             return str(self.created_at)
+
+        return "Invalid column"
+
+    def get_table_data(self, column):
+        """
+        Helper method to display this job in a table.
+
+        Args:
+            column (int): Index of the column in the table.
+        Returns:
+            The data for the column of this jobs row.
+        """
+        if column == 0:
+            return self.job_id
+        if column == 1:
+            return self.state
+        if column == 2:
+            return self.human_description
+        if column == 3:
+            return self.created_at
 
         return "Invalid column"
 
