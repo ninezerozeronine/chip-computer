@@ -16,13 +16,12 @@ from .batch_mem_read_writer import BatchMemReadWriter
 from ..network.job import Job
 from . import constants
 
-class Main(QtWidgets.QDialog):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         """
         Initialise the class
         """
         super().__init__(parent=parent)
-
 
         self.waiting_for = "header"
         self.num_data_bytes = 0
@@ -43,7 +42,7 @@ class Main(QtWidgets.QDialog):
 
         self.add_dummy_jobs()
 
-        self.setWindowTitle("SBC Connect")
+        self.setWindowTitle("Chip Computer Connect")
 
     def add_dummy_jobs(self):
         self.job_manager_model.sumbit_job(Job("dummy_method3", human_description="abc"))
@@ -110,7 +109,6 @@ class Main(QtWidgets.QDialog):
         self.run_control_box.setLayout(self.run_control_layout)
 
         self.panel_layout = QtWidgets.QGridLayout()
-        self.panel_layout.setContentsMargins(QtCore.QMargins(0,0,0,0))
         self.panel_layout.addWidget(connect_box, 0, 0, 1, 2)
         self.panel_layout.addWidget(self.input_box, 1, 0)
         self.panel_layout.addWidget(self.address_view_box, 1, 1)
@@ -145,10 +143,7 @@ class Main(QtWidgets.QDialog):
         palette.setColor(QtGui.QPalette.ColorRole.Window, QtGui.QColor("lightGray"))
         handle.setPalette(palette)
 
-        self.main_layout = QtWidgets.QVBoxLayout()
-        self.main_layout.addWidget(self.splitter)
-
-        self.setLayout(self.main_layout)
+        self.setCentralWidget(self.splitter)
 
     def connect_ui(self):
         """
@@ -456,7 +451,7 @@ class Main(QtWidgets.QDialog):
                     break
                 else:
                     data_bytes = self.socket.read(self.num_data_bytes)
-                    data_str = data_bytes.decode("ascii")
+                    data_str = data_bytes.data().decode("ascii")
                     data = json.loads(data_str)
                     print(f"Decoded main data: {data}")
                     self.waiting_for = "header"
@@ -644,5 +639,6 @@ def decode_state(state):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    main = Main()
-    sys.exit(main.exec_())
+    main_window = MainWindow()
+    main_window.show()
+    app.exec()

@@ -71,7 +71,8 @@ class BinButtonRow(QtWidgets.QWidget):
         button_layout.setSpacing(2)
         for index in range(16):
             bin_button = BinButton()
-            bin_button.setMaximumWidth(25)
+            bin_button.setMaximumWidth(18)
+            bin_button.setMinimumWidth(10)
             bin_button.clicked.connect(self._update_value)
             self.bin_buttons.append(bin_button)
             button_layout.addWidget(bin_button)

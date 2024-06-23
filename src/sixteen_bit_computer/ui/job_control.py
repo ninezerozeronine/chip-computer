@@ -87,13 +87,13 @@ class JobModelProxy(QtCore.QSortFilterProxyModel):
 
     def filterAcceptsRow(self, source_row, source_parent):
         """
-        Determins whether or not the row should be displayed or not.
+        Determines whether or not the row should be displayed.
 
         Args:
             source_row (int): The row of the source model being
                 considered.
-            source_parnet (?): Maybe the modelindex representing the
-                parent of the current row?
+            source_parent (?): Maybe the modelindex representing the
+                parent of the row in the source?
         Returns:
             bool: Whether or not the row should be displayed.
         """

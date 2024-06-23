@@ -9,10 +9,16 @@ class JobManagerModel(QtCore.QAbstractTableModel):
         self.manager = JobManager()
 
     def rowCount(self, index):
-        return self.manager.num_jobs()
-
+        if index.isValid():
+            return 0
+        else:
+            return self.manager.num_jobs()
+    
     def columnCount(self, index):
-        return Job.get_num_columns()
+        if index.isValid():
+            return 0
+        else:
+            return Job.get_num_columns()
 
     def data(self, index, role):
         if role == QtCore.Qt.DisplayRole:
@@ -27,7 +33,7 @@ class JobManagerModel(QtCore.QAbstractTableModel):
 
     def sumbit_job(self, job):
         num_jobs = self.manager.num_jobs()
-        self.beginInsertRows(QtCore.QModelIndex(), num_jobs+1, num_jobs+1)
+        self.beginInsertRows(QtCore.QModelIndex(), num_jobs, num_jobs)
         job_id = self.manager.sumbit_job(job)
         self.endInsertRows()
         return job_id
@@ -37,7 +43,7 @@ class JobManagerModel(QtCore.QAbstractTableModel):
         row = self.manager.job_id_to_row_index(job_id)
         self.dataChanged.emit(
             self.createIndex(row, 0),
-            self.createIndex(row, Job.get_num_columns())
+            self.createIndex(row, Job.get_num_columns() - 1)
         )
 
     def relay_comms(self, job_id, outcome):
@@ -45,7 +51,7 @@ class JobManagerModel(QtCore.QAbstractTableModel):
         row = self.manager.job_id_to_row_index(job_id)
         self.dataChanged.emit(
             self.createIndex(row, 0),
-            self.createIndex(row, Job.get_num_columns())
+            self.createIndex(row, Job.get_num_columns() - 1)
         )
 
     def work_on_queue(self, socket):
@@ -55,7 +61,7 @@ class JobManagerModel(QtCore.QAbstractTableModel):
             if made_change:
                 self.dataChanged.emit(
                     self.createIndex(top_job_row_index, 0),
-                    self.createIndex(top_job_row_index, Job.get_num_columns())
+                    self.createIndex(top_job_row_index, Job.get_num_columns() - 1)
                 )
 
     def cancel_jobs_in_rows(self, rows):
