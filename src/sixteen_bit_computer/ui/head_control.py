@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets
 
 class HeadControl(QtWidgets.QWidget):
     """

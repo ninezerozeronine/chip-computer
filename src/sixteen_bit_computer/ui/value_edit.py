@@ -1,4 +1,4 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from qtpy import QtGui, QtCore, QtWidgets
 
 from .. import number_utils
 
@@ -55,7 +55,7 @@ class BinButtonRow(QtWidgets.QWidget):
     """
 
     #: Signal that gets emitted when the value of the row changes.
-    value_edited = QtCore.pyqtSignal(int)
+    value_edited = QtCore.Signal(int)
 
     def __init__(self, parent=None):
         """
@@ -149,7 +149,7 @@ class ValueEdit(QtWidgets.QWidget):
     """
 
     #: Signal that gets emitted when the value of the widget changes.
-    value_changed = QtCore.pyqtSignal(int)
+    value_changed = QtCore.Signal(int)
 
     def __init__(self, parent=None):
         """

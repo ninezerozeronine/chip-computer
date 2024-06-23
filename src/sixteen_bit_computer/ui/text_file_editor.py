@@ -2,7 +2,7 @@
 QPlainTextEdit with line numbers
 """
 
-from PyQt5 import Qt, QtGui, QtCore, QtWidgets
+from qtpy import QtGui, QtCore, QtWidgets
 
 
 class TextFileEditor(QtWidgets.QWidget):
@@ -88,19 +88,20 @@ class TextFileEditor(QtWidgets.QWidget):
 
         if self.line_wrap_checkbox.isChecked():
             self.line_number_text_edit.setLineWrapMode(
-                self.line_number_text_edit.WidgetWidth
+                self.line_number_text_edit.LineWrapMode.WidgetWidth
+                # QtWidgets.QPlainTextEdit.LineWrapMode.WidgetWidth
             )
         else:
             self.line_number_text_edit.setLineWrapMode(
-                self.line_number_text_edit.NoWrap
+                self.line_number_text_edit.LineWrapMode.NoWrap
             )
 
-    def clear_editor(self):
+    def clear_editor(self, force=False):
         """
         Clear the contents of the editor.
         """
         do_clear = False
-        if not self.edited:
+        if not self.edited or force:
             do_clear = True
         else:
             res = QtWidgets.QMessageBox.question(
@@ -319,7 +320,8 @@ class LineNumberArea(QtWidgets.QWidget):
     """
     Line number part of the text editor with line numbers.
 
-    Inspired by https://stackoverflow.com/questions/50074155/how-to-add-line-number-in-this-texteditor    """
+    Inspired by https://stackoverflow.com/questions/50074155/how-to-add-line-number-in-this-texteditor
+    """
 
     def __init__(self, editor, parent=None):
         """

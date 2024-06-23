@@ -1,4 +1,4 @@
-from PyQt5 import Qt, QtGui, QtCore, QtWidgets
+from qtpy import QtCore, QtWidgets
 
 from ..network import job
 
@@ -53,6 +53,9 @@ class JobControl(QtWidgets.QWidget):
         self.setLayout(main_layout)
 
     def cancel_selected(self):
+        """
+        Cancel the jobs in the selected rows.
+        """
         row_indexes_to_cancel = [
             self.job_model_proxy.mapToSource(index).row()
             for index in self.job_table.selectedIndexes()
@@ -61,7 +64,7 @@ class JobControl(QtWidgets.QWidget):
 
     def update_state_filters(self):
         """
-
+        Update the state filter to reflect the checkboxes.
         """
         states = []
         for checkbox in self.state_checkboxes:
@@ -73,18 +76,26 @@ class JobControl(QtWidgets.QWidget):
 
 class JobModelProxy(QtCore.QSortFilterProxyModel):
     """
-
+    Allow filtering by custom criteria.
     """
     def __init__(self, parent=None):
         """
-
+        Initialise the class.
         """
         super().__init__(parent=parent)
         self.filter_states = job.get_all_states()
 
     def filterAcceptsRow(self, source_row, source_parent):
         """
+        Determins whether or not the row should be displayed or not.
 
+        Args:
+            source_row (int): The row of the source model being
+                considered.
+            source_parnet (?): Maybe the modelindex representing the
+                parent of the current row?
+        Returns:
+            bool: Whether or not the row should be displayed.
         """
         source_index = self.sourceModel().index(source_row, 1, source_parent)
         source_state = self.sourceModel().data(source_index, QtCore.Qt.UserRole)

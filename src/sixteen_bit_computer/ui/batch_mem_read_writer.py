@@ -1,4 +1,4 @@
-from PyQt5 import Qt, QtGui, QtCore, QtWidgets
+from qtpy import QtWidgets
 
 from .text_file_editor import TextFileEditor
 from .batch_mem_read_write_highlighter import BatchMemReadWriteHighlighter
@@ -25,6 +25,7 @@ class BatchMemReadWriter(QtWidgets.QWidget):
         self.highlighter = BatchMemReadWriteHighlighter(
             parent=self.text_file_editor.line_number_text_edit.document()
         )
+        self.text_file_editor.clear_editor(force=True)
 
         # Controls
         self.check_button = QtWidgets.QPushButton("Check")

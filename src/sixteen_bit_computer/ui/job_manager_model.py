@@ -1,4 +1,4 @@
-from PyQt5 import QtCore
+from qtpy import QtCore
 
 from ..network.job_manager import JobManager
 from ..network.job import Job

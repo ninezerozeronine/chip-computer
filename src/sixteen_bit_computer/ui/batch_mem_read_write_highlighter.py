@@ -1,6 +1,6 @@
 import re
 
-from PyQt5 import QtGui, QtCore
+from qtpy import QtGui
 
 class BatchMemReadWriteHighlighter(QtGui.QSyntaxHighlighter):
     """

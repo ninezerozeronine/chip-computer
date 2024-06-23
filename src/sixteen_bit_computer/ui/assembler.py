@@ -1,4 +1,4 @@
-from PyQt5 import Qt, QtGui, QtCore, QtWidgets
+from qtpy import QtWidgets
 
 from .text_file_editor import TextFileEditor
 from .assembly_highlighter import AssemblyHighlighter
@@ -27,6 +27,7 @@ class Assembler(QtWidgets.QWidget):
         self.highlighter = AssemblyHighlighter(
             parent=self.text_file_editor.line_number_text_edit.document()
         )
+        self.text_file_editor.clear_editor(force=True)
 
         # Controls
         self.assemble_button = QtWidgets.QPushButton("Assemble")

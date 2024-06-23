@@ -2,7 +2,7 @@ import sys
 import json
 import time
 
-from PyQt5 import QtGui, QtCore, QtWidgets, QtNetwork, QtTest
+from qtpy import QtGui, QtCore, QtWidgets, QtNetwork
 
 from .value_edit import ValueEdit
 from .value_view import ValueView
@@ -28,7 +28,7 @@ class Main(QtWidgets.QDialog):
         self.num_data_bytes = 0
         self.socket = QtNetwork.QTcpSocket(self)
         self.socket.readyRead.connect(self.read_from_socket)
-        self.socket.error.connect(self.display_error)
+        self.socket.errorOccurred.connect(self.display_error)
         self.socket.stateChanged.connect(self.state_changed)
         self.socket.connected.connect(self.socket_connected)
         self.socket.disconnected.connect(self.socket_disconnected)
@@ -590,7 +590,7 @@ class Main(QtWidgets.QDialog):
         self.run_control_box.setEnabled(True)
         self.assembler.assemble_and_send_button.setEnabled(True)
         self.batch_mem_read_writer.send_button.setEnabled(True)
-        self.batch_mem_read_writer.send_selected_button.setEnabled(True)
+        self.batch_mem_read_writer.send_selection_button.setEnabled(True)
         self.job_queue_timer.start()
         self.waiting_for = "header"
 
@@ -607,7 +607,7 @@ class Main(QtWidgets.QDialog):
         self.run_control_box.setEnabled(False)
         self.assembler.assemble_and_send_button.setEnabled(False)
         self.batch_mem_read_writer.send_button.setEnabled(False)
-        self.batch_mem_read_writer.send_selected_button.setEnabled(False)
+        self.batch_mem_read_writer.send_selection_button.setEnabled(False)
         self.job_queue_timer.stop()
         self.waiting_for = "header"
 

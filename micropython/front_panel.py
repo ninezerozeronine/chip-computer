@@ -803,9 +803,9 @@ class FrontPanel():
         clock is high.
         """
 
-        # print("Dont forget to revert _at_beginning_of_clock_cycle!")
-        # return True
-        return self._interface.get_control_clock()
+        print("Dont forget to revert _at_beginning_of_clock_cycle!")
+        return True
+        # return self._interface.get_control_clock()
 
     def _send_clock_pulses(self, num_pulses):
         """
