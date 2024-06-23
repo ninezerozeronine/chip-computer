@@ -5,12 +5,9 @@ Main entry point for Micropython functionality
 from machine import Pin
 import asyncio
 import network
-import time
-import json
 import gc
 
 from front_panel import FrontPanel
-from dummy_panel import DummyPanel
 from display import Display
 from keypad import Keypad
 from socket_connection import SocketConnection

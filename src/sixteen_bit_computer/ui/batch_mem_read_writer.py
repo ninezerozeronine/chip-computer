@@ -220,7 +220,7 @@ class BatchMemReadWriter(QtWidgets.QWidget):
         """
         lines = self.text_file_editor.line_number_text_edit.textCursor().selectedText().splitlines()
         valid, message, commands = self.validate_and_extract(lines)
-        _send(valid, message, commands)
+        self._send(valid, message, commands)
 
 
     def send(self):
@@ -229,7 +229,7 @@ class BatchMemReadWriter(QtWidgets.QWidget):
         """
         lines = self.text_file_editor.line_number_text_edit.toPlainText().splitlines()
         valid, message, commands = self.validate_and_extract(lines)
-        _send(valid, message, commands)
+        self._send(valid, message, commands)
 
 
     def _send(self, valid, message, commands):
@@ -251,6 +251,7 @@ class BatchMemReadWriter(QtWidgets.QWidget):
                 self.status_line_edit.setText("No commands to send.")
         else:
             self.status_line_edit.setText(message)
+
 
     def check(self):
         """

@@ -89,6 +89,7 @@ class Job():
         self.last_comm_recieved_at = None
         self.cancelled_at = None
         self.completed_at = None
+        self.outcome = None
 
         # This will be called and passed the outcome when the job
         # completes
@@ -163,15 +164,9 @@ class Job():
         This is called by the JobManager.
 
         Args:
-            outcome (dict): The outcome of the remote method call
-                "serialised" to a dictionary.
+            outcome (Outcome): The outcome of the remote method call
         """
         self.last_comm_recieved_at = datetime.datetime.now()
-
-        # Check data is correct type
-        if not isinstance(outcome, dict):
-            print(f"Malformed communication recieved - not a dict: {outcome}")
-            return
 
         print(f"Job ID {self.job_id} got: {outcome}")
 
@@ -181,9 +176,10 @@ class Job():
 
         self.completed_at = datetime.datetime.now()
         self.state = State.complete
+        self.outcome = outcome
 
         if self.complete_callback is not None:
-            self.complete_callback(Outcome.from_dict(outcome))
+            self.complete_callback(outcome)
 
     def cancel(self):
         """
@@ -196,7 +192,7 @@ class Job():
         self.cancelled_at = datetime.datetime.now()
         self.state = State.cancelled
         if self.cancelled_callback is not None:
-            cancelled_callback()
+            self.cancelled_callback()
 
     def get_table_display_data(self, column):
         """
@@ -215,6 +211,16 @@ class Job():
             return self.human_description
         if column == 3:
             return str(self.created_at)
+        if column == 4:
+            if self.outcome is None:
+                return "N/A"
+            else:
+                return str(self.outcome.success)
+        if column == 5:
+            if self.outcome is None:
+                return "N/A"
+            else:
+                return self.outcome.message
 
         return "Invalid column"
 
@@ -235,6 +241,16 @@ class Job():
             return self.human_description
         if column == 3:
             return self.created_at
+        if column == 4:
+            if self.outcome is None:
+                return None
+            else:
+                return self.outcome.success
+        if column == 5:
+            if self.outcome is None:
+                return None
+            else:
+                return self.outcome.message
 
         return "Invalid column"
 
@@ -247,7 +263,7 @@ class Job():
             int: The number of columns needed to display all the
                 properties of a job.
         """
-        return 4
+        return 6
 
     @classmethod
     def get_header_data(cls, column):
@@ -265,6 +281,10 @@ class Job():
             return "Description"
         if column == 3:
             return "Submission Time"
+        if column == 4:
+            return "Success"
+        if column == 5:
+            return "Outcome msg."
 
         return "Invalid column header"
 

@@ -41,11 +41,16 @@ def to_program(image_path):
 def to_commands(image_path):
     with Image.open(image_path) as im:
         px = im.load()
+        print("W 65531 0b0000_0000_0000_1000 // Bank 0 80x60")
         for row_index in range(im.height):
             print(f"W 65532 {row_index} // Set Row")
             for column_index in range(im.width):
                 print(f"W 65533 {column_index}")
                 print(f"W 65534 {px[column_index, row_index]}")
+            
+            print("W 65531 0b0000_0000_0010_1000 // Bank 1 80x60")
+            print("W 65531 0b0000_0000_0000_1000 // Bank 0 80x60")
+
 
 if __name__ == "__main__":
     # to_program(sys.argv[1])

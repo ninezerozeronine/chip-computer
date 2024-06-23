@@ -5,7 +5,7 @@ Hardware
    :maxdepth: 2
    :caption: Hardware:
 
-   ls_vs_hct_vs_ls
+   ls_vs_hct_vs_hc
    fanout
    materials_and_tools
    edge_detection

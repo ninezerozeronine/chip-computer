@@ -14,6 +14,7 @@ from .job_manager_model import JobManagerModel
 from .assembler import Assembler
 from .batch_mem_read_writer import BatchMemReadWriter
 from ..network.job import Job
+from ..network.outcome import Outcome
 from . import constants
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -488,19 +489,23 @@ class MainWindow(QtWidgets.QMainWindow):
         if "job_id" not in body:
             print(f"'job_id' key not in body.")
             return
-
-        if "outcome" not in body:
-            print(f"'outcome' key not in body.")
-            return
-
+        
         if not isinstance(body["job_id"], int):
             print(f"Value for 'job_id' key is not an int.")
             return
 
         if not self.job_manager_model.job_id_exists(body["job_id"]):
             print(f"Job with job_id {body['job_id']} does not exist.")
-        else:
-            self.job_manager_model.relay_comms(body["job_id"], body["outcome"])
+            return
+        
+        if "outcome" not in body:
+            print(f"'outcome' key not in body.")
+            return
+
+        self.job_manager_model.relay_comms(
+            body["job_id"],
+            Outcome.from_dict(body["outcome"])
+        )
 
     def process_display_update(self, body):
         """

@@ -53,10 +53,14 @@ class SocketConnection():
                     continue
 
                 try:
-                    socket_data = await self.reader.read(num_data_bytes)
+                    socket_data = await self.reader.readexactly(num_data_bytes)
                 except OSError as e:
                     # The connection died for some reason
                     print("Connection died waiting for read")
+                    self.connected = False
+                    continue
+                except EOFError as e:
+                    print(f"The stream ended before reading {num_data_bytes} bytes")
                     self.connected = False
                     continue
 
@@ -70,15 +74,15 @@ class SocketConnection():
                 print(f"Recieved: {data}")
 
                 if not isinstance(data, dict):
-                    print(f"Recieved invalid datatype - needs to be a dict.")
+                    print("Recieved invalid datatype - needs to be a dict.")
                     continue
 
                 if "purpose" not in data:
-                    print(f"'purpose' key not in data.")
+                    print("'purpose' key not in data.")
                     continue
 
                 if "body" not in data:
-                    print(f"'body' key not in data.")
+                    print("'body' key not in data.")
                     continue   
 
                 purpose = data["purpose"]
