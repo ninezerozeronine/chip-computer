@@ -67,11 +67,11 @@
       39,
       40
     ],
-    "visible_layers": "0017fff_80000001",
+    "visible_layers": "fff7fff_ffffffff",
     "zone_display_mode": 0
   },
   "meta": {
-    "filename": "program_counter.kicad_prl",
+    "filename": "multi_register.kicad_prl",
     "version": 3
   },
   "project": {
