@@ -1,7 +1,7 @@
-Eight Bit Computer
-==================
+Sixteen Bit Computer
+====================
 
-Welcome to the documentation for the 8 bit computer project!
+Welcome to the documentation for the 16 bit computer project!
 
 .. toctree::
    :maxdepth: 2

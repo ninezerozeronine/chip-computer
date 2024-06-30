@@ -1,0 +1,6 @@
+SET ACC #3
+STORE ACC [#10]
+SET A #10
+INCR [A]
+DECR [A]
+HALT

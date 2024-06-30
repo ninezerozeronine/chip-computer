@@ -1,50 +1,420 @@
+import pytest
 import textwrap
 
-import pytest
-
-from eight_bit_computer import assembly_summary
-
-
-def test_get_assembly_summary_data(assembly_line_infos, assembly_summary_data):
-    assert assembly_summary.get_assembly_summary_data(assembly_line_infos) == assembly_summary_data
-
-
-def test_generate_assembly_summary_lines(assembly_line_infos):
-    expected = [
-        " 1 $variable0 [#0] #123         |",
-        " 2 $variable1 [#1] #-45         |",
-        " 3 @label1                      |",
-        " 4     LOAD [$variable0] A      |  0 00 00000000 - @label1 255 FF 11111111",
-        "                                |  1 01 00000001 -           0 00 00000000 $variable0",
-        " 5                              |",
-        " 6 @label2                      |",
-        " 7     LOAD [$variable1] A      |  2 02 00000010 - @label2 255 FF 11111111",
-        "                                |  3 03 00000011 -           1 01 00000001 $variable1",
-        " 8     JUMP @label1             |  4 04 00000100 -         255 FF 11111111",
-        "                                |  5 05 00000101 -           0 00 00000000 @label1",
-        " 9                              |",
-        "10     STORE A [#123]           |  6 06 00000110 -         255 FF 11111111",
-        "                                |  7 07 00000111 -         123 7B 01111011 #123",
-        "11 @label3                      |",
-        "12     LOAD [$variable2] B      |  8 08 00001000 - @label3 255 FF 11111111",
-        "                                |  9 09 00001001 -           2 02 00000010 $variable2",
-        "13     LOAD [$variable0] C      | 10 0A 00001010 -         255 FF 11111111",
-        "                                | 11 0B 00001011 -           0 00 00000000 $variable0",
-        "14 $variable2 [#2] #42          |",
-        "15 // comment                   |",
-        "16  JUMP_IF_LT_ACC #85 @label1  | 12 0C 00001100 -          55 37 00110111",
-        "                                | 13 0D 00001101 -          85 55 01010101 #85",
-        "                                | 14 0E 00001110 -           0 00 00000000 @label1",
-    ]
-    assert assembly_summary.generate_assembly_summary_lines(assembly_line_infos) == expected
+from sixteen_bit_computer import (
+    assembler,
+    assembly_summary
+)
+from sixteen_bit_computer.instruction_listings import (
+    get_instruction_index
+)
+from sixteen_bit_computer.instruction_components import (
+    NOOP,
+    SET_ZERO,
+    ADD,
+    AND,
+    ACC,
+    A,
+    B,
+    C,
+    CONST,
+    M_CONST,
+)
 
 
-def test_get_widest_column_values(assembly_summary_data):
-    expected = {
-        "asm_line_no": 2,
-        "asm_line": 28,
-        "mc_index_decimal": 2,
-        "mc_byte_decimal": 3,
-        "mc_label": 7,
-    }
-    assert assembly_summary.get_widest_column_values(assembly_summary_data) == expected
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        """\
+        // A comment
+
+        !alias #23
+        """,
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "!alias #23",
+                    "line_no": "3"
+                },
+            }
+        ]
+    ),
+    (
+        """\
+        // A comment
+
+        NOOP
+        """,
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "NOOP",
+                    "line_no": "3"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": str(get_instruction_index((NOOP,))),
+                    "value_hex": "0x{:04X}".format(get_instruction_index((NOOP,)))
+                }
+            }
+        ]
+    ),
+    (
+        """\
+        @ #10
+        &label
+            AND &label
+            NOOP
+        """,
+        [
+            {
+                "assembly" : {
+                    "raw": "@ #10",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "&label",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "    AND &label",
+                    "line_no": "3"
+                },
+                "word" : {
+                    "index_decimal": "10",
+                    "index_hex": "0x000A",
+                    "value_decimal": str(get_instruction_index((AND, CONST))),
+                    "value_hex": "0x{:04X}".format(get_instruction_index((AND, CONST))),
+                    "label": "&label",
+
+                }
+            },
+            {
+                "word" : {
+                    "index_decimal": "11",
+                    "index_hex": "0x000B",
+                    "value_decimal": str(10),
+                    "value_hex": "0x{:04X}".format(10),
+                    "const": "&label"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "    NOOP",
+                    "line_no": "4"
+                },
+                "word" : {
+                    "index_decimal": "12",
+                    "index_hex": "0x000C",
+                    "value_decimal": str(get_instruction_index((NOOP,))),
+                    "value_hex": "0x{:04X}".format(get_instruction_index((NOOP,)))
+                }
+            }
+        ]
+    ),
+    (
+        """\
+        NOOP
+        $var #1 #2
+        AND A
+        """,
+        [
+            {
+                "assembly" : {
+                    "raw": "NOOP",
+                    "line_no": "1"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": str(get_instruction_index((NOOP,))),
+                    "value_hex": "0x{:04X}".format(get_instruction_index((NOOP,)))
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "$var #1 #2",
+                    "line_no": "2"
+                },
+                "word" : {
+                    "index_decimal": "1",
+                    "index_hex": "0x0001",
+                    "value_decimal": str(1),
+                    "value_hex": "0x{:04X}".format(1),
+                    "const": "#1"
+                }
+            },
+            {
+                "word" : {
+                    "index_decimal": "2",
+                    "index_hex": "0x0002",
+                    "value_decimal": str(2),
+                    "value_hex": "0x{:04X}".format(2),
+                    "const": "#2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "AND A",
+                    "line_no": "3"
+                },
+                "word" : {
+                    "index_decimal": "3",
+                    "index_hex": "0x0003",
+                    "value_decimal": str(get_instruction_index((AND, A))),
+                    "value_hex": "0x{:04X}".format(get_instruction_index((AND, A))),
+                }
+            },
+        ]
+    ),
+])
+def test_get_assembly_summary_data(test_input, expected):
+    dedent_and_split = textwrap.dedent(test_input).splitlines()
+    lines = assembler.ingest_raw_assembly_lines(dedent_and_split)
+    assembler.process_assembly_lines(lines)
+    label_map = assembler.build_label_map(lines)
+    assert assembly_summary.get_assembly_summary_data(lines, label_map) == expected
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "NOOP",
+                    "line_no": "3"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": "123",
+                    "value_hex": "0x00AF"
+                }
+            }
+        ],
+        {
+            "asm_line_no": 1,
+            "asm_line": 12,
+            "word_index_decimal": 1,
+            "word_value_decimal": 3,
+            "word_label": 0,
+        }
+    ),
+    (
+        [
+            {
+                "assembly" : {
+                    "raw": "123456789012345678",
+                    "line_no": "1"
+                }
+            },
+            {
+                "word" : {
+                    "index_decimal": "123",
+                    "index_hex": "0xFFFF",
+                    "value_decimal": "1234",
+                    "value_hex": "0x00AF"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "NOOP",
+                    "line_no": "500"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": "123",
+                    "value_hex": "0x00AF",
+                    "label": "mylabel"
+                }
+            },
+
+        ],
+        {
+            "asm_line_no": 3,
+            "asm_line": 18,
+            "word_index_decimal": 3,
+            "word_value_decimal": 4,
+            "word_label": 7,
+        }
+    )
+])
+def test_get_widest_column_values(test_input, expected):
+    assert assembly_summary.get_widest_column_values(test_input) == expected
+
+@pytest.mark.parametrize("test_input,expected", [
+    (
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "!alias #23",
+                    "line_no": "3"
+                },
+            }
+        ],
+        [
+            "1 // A comment |",
+            "2              |",
+            "3 !alias #23   |",
+        ]
+    ),
+    (
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2"
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "NOOP",
+                    "line_no": "3"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": "123",
+                    "value_hex": "0x00AF"
+                }
+            }
+        ],
+        [
+            "1 // A comment |",
+            "2              |",
+            "3 NOOP         | 0 0x0000 - 123 0x00AF",
+        ]
+    ),
+    (
+        [
+            {
+                "assembly" : {
+                    "raw": "// A comment",
+                    "line_no": "1",
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "",
+                    "line_no": "2",
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "@ #123",
+                    "line_no": "3",
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "    FOOBAR",
+                    "line_no": "555",
+                },
+                "word" : {
+                    "index_decimal": "123",
+                    "index_hex": "0xFFFE",
+                    "value_decimal": "13",
+                    "value_hex": "0x00AF",
+                    "label": "&mylabel",
+                }
+            },
+            {
+                "word" : {
+                    "index_decimal": "3",
+                    "index_hex": "0x0003",
+                    "value_decimal": "123",
+                    "value_hex": "0xBEEF",
+                    "label": "&myotherlabel",
+                    "const": "!alias",
+                }
+            },
+            {
+                "assembly" : {
+                    "raw": "    NOOP",
+                    "line_no": "6"
+                },
+                "word" : {
+                    "index_decimal": "0",
+                    "index_hex": "0x0000",
+                    "value_decimal": "1",
+                    "value_hex": "0x00FF"
+                }
+            }
+        ],
+        [
+            "  1 // A comment |",
+            "  2              |",
+            "  3 @ #123       |",
+            "555     FOOBAR   | 123 0xFFFE - &mylabel       13 0x00AF",
+            "                 |   3 0x0003 - &myotherlabel 123 0xBEEF !alias",
+            "  6     NOOP     |   0 0x0000 -                 1 0x00FF",
+        ]
+    ),
+])
+def test_generate_assembly_summary_lines(test_input, expected):
+    assert assembly_summary.generate_assembly_summary_lines(test_input) == expected

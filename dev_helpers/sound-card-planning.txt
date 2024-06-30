@@ -1,0 +1,53 @@
+Sound Card Plan
+===============
+
+bit index   
+7           255
+
+8           511
+9           1023
+10          2047
+11          4095
+
+12          8191
+13          16383
+14          32767
+15          65535
+
+A piano note range is from A0 to C8
+C2 to C6 is 2 octave either side of middle C (C4) and spans most of the human note range
+
+Op amp: https://www.mouser.ca/ProductDetail/Nisshinbo/NJM4580DD?qs=7jPOr0kCrUAW4ecLiGVihQ%3D%3D
+Common op amps:
+    LM741
+    LM1458
+Resettable Register: 74HC273
+
+Part in James Sharman's video where he talks about note error
+https://youtu.be/G4AxdkR7dZA?list=PLFhc0MFC8MiAfS8UTTFlGkoqgCuEqusmg&t=1108
+
+
+Volume equivalents
+
+00000   11111   0   31      
+00001   11110   1   30      
+00010   11101   2   29      
+00011   11100   3   28      
+00100   11011   4   27      
+00101   11010   5   26      
+00110   11001   6   25      
+00111   11000   7   24      
+01000   10111   8   23      
+01001   10110   9   22      
+01010   10101   10  21      
+01011   10100   11  20      
+01100   10011   12  19      
+01101   10010   13  18      
+01110   10001   14  17      
+01111   10000   15  16      2.344   2.500
+
+With a 5 bit R2R Ladder, the max volatge is 4.844V
+
+Merging all the 0-5V audio signals through 100K resistors into the input of a 358 op amp configured as a voltage follower, then through a 100nf de-biasing cap seemed to work fine!
+
+The 358 can voltage follow all the way up to 5V, which means we can't use one prior to the 100K mix. It's fine afterwards as after all the mixing the voltage drops.

@@ -377,6 +377,7 @@ The possible usages are:
  - ``SET_ZERO A``
  - ``SET_ZERO B``
  - ``SET_ZERO C``
+ - ``SET_ZERO SP``
 
 Program Control Operations
 --------------------------
@@ -448,26 +449,45 @@ The possible usages are:
  - ``JUMP_IF_LTE_ACC SP CONST``
  - ``JUMP_IF_LTE_ACC CONST CONST``
 
-JUMP_IF_EQ_ACC
+JUMP_IF_ACC_EQ
 ^^^^^^^^^^^^^^
 
-The ``JUMP_IF_EQ_ACC`` operation will set the program counter (jump)
-to the value of a given constant (second argument) if the value of the
-first argument (module or constant) is equal to the accumulator.
+The ``JUMP_IF_ACC_EQ`` operation will set the program counter (jump)
+to the value of a given constant (second argument) if the accumulator
+is equal to the value of the first argument (module or constant).
 
 The instruction generates and stores (clobbers) the ALU flags.
 
 The possible usages are:
 
- - ``JUMP_IF_EQ_ACC A CONST``
- - ``JUMP_IF_EQ_ACC B CONST``
- - ``JUMP_IF_EQ_ACC C CONST``
- - ``JUMP_IF_EQ_ACC PC CONST``
- - ``JUMP_IF_EQ_ACC SP CONST``
- - ``JUMP_IF_EQ_ACC CONST CONST``
+ - ``JUMP_IF_ACC_EQ A CONST``
+ - ``JUMP_IF_ACC_EQ B CONST``
+ - ``JUMP_IF_ACC_EQ C CONST``
+ - ``JUMP_IF_ACC_EQ PC CONST``
+ - ``JUMP_IF_ACC_EQ SP CONST``
+ - ``JUMP_IF_ACC_EQ CONST CONST``
+
+
+JUMP_IF_ACC_NEQ
+^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_ACC_NEQ`` operation will set the program counter (jump)
+to the value of a given constant (second argument) if the accumulator
+is not equal to the value of the first argument (module or constant).
+
+The instruction generates and stores (clobbers) the ALU flags.
+
+The possible usages are:
+
+ - ``JUMP_IF_ACC_NEQ A CONST``
+ - ``JUMP_IF_ACC_NEQ B CONST``
+ - ``JUMP_IF_ACC_NEQ C CONST``
+ - ``JUMP_IF_ACC_NEQ PC CONST``
+ - ``JUMP_IF_ACC_NEQ SP CONST``
+ - ``JUMP_IF_ACC_NEQ CONST CONST``
 
 JUMP_IF_GTE_ACC
-^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_GTE_ACC`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
@@ -520,6 +540,26 @@ The possible usages are:
  - ``JUMP_IF_EQ_ZERO C CONST``
  - ``JUMP_IF_EQ_ZERO PC CONST``
  - ``JUMP_IF_EQ_ZERO SP CONST``
+
+
+JUMP_IF_NEQ_ZERO
+^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_NEQ_ZERO`` operation will set the program counter (jump)
+to the value of a given constant (second argument) if the value of the
+first argument (a module) is not equal to zero.
+
+The instruction generates and stores (clobbers) the ALU flags.
+
+The possible usages are:
+
+ - ``JUMP_IF_NEQ_ZERO ACC CONST``
+ - ``JUMP_IF_NEQ_ZERO A CONST``
+ - ``JUMP_IF_NEQ_ZERO B CONST``
+ - ``JUMP_IF_NEQ_ZERO C CONST``
+ - ``JUMP_IF_NEQ_ZERO PC CONST``
+ - ``JUMP_IF_NEQ_ZERO SP CONST``
+
 
 JUMP_IF_POSITIVE_FLAG
 ^^^^^^^^^^^^^^^^^^^^^

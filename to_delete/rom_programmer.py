@@ -389,7 +389,7 @@ def rom_to_logisim(rom, directory=None, filename_base="rom", bytes_per_line=8, b
     for byte_list in byte_lists:
         hex_lines = []
         hex_bytes = byte_list_to_hex_string_list(byte_list)
-        for index_start in xrange(0, len(byte_list), bytes_per_line):
+        for index_start in range(0, len(byte_list), bytes_per_line):
             hex_line_vals = hex_bytes[index_start : index_start + bytes_per_line]
             hex_chunks = []
             for chunk_index_start in range(0, bytes_per_line, bytes_per_chunk):
@@ -399,11 +399,12 @@ def rom_to_logisim(rom, directory=None, filename_base="rom", bytes_per_line=8, b
         rom_strings.append("\n".join(hex_lines))
 
     for index, rom_string in enumerate(rom_strings):
-        print "ROM {0} - Length: {1}, Address bit width: {2}\n{3}".format(
+        print("ROM {0} - Length: {1}, Address bit width: {2}\n{3}".format(
             index, 
             len(rom),
             bit_width(max(rom.keys())),
             rom_string)
+        )
 
         if directory is not None:
             romname = "{0}_{1}".format(filename_base, index)
@@ -435,7 +436,7 @@ def rom_to_arduino(rom):
         prune_zero_values(parallel_rom)
 
     for index, parallel_rom in enumerate(parallel_roms):
-        print "ROM {0} (length {1})".format(index, len(parallel_rom))
+        print("ROM {0} (length {1})".format(index, len(parallel_rom)))
         pprint(parallel_rom)
 
 

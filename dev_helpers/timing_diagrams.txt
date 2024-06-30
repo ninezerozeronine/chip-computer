@@ -1,0 +1,268 @@
+https://wavedrom.com/ 
+
+Safe clock enable and disable
+
+{
+    "signal" : [
+        {
+            "name": "Input clock",
+            "wave": "lhlhlhlhlhlhlhl"
+        },
+        {
+            "name": "Clock Enable",
+            "wave": "lnh..pl.nh..pl."
+        },
+        {
+            "name": "Data Clock",
+            "wave": "l..hlhl..hlhl.."
+        },
+        {
+            "name": "Control Clock",
+            "wave": "h..lhlh..lhlh.."
+        },
+    ],
+    "head": {
+        "tick": 0,
+        "every": 0
+    }
+}
+
+Resetting after a halt
+
+{
+    "signal" : [
+        {
+            "name": "Input clock",
+            "wave": "lhlhlhlhlh"
+        },
+        {
+            "name": "Clock enable",
+            "wave": "h.........",
+        },
+        {
+            "name": "Halt",
+            "wave": "l..h..l....",
+            "phase": 0.8
+        },
+        {
+            "name": "Reset",
+            "wave": "l....hl...",
+        },
+        {
+            "name": "Data Clock",
+            "wave": "lhl....hlh"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "hlh....lhl"
+        },
+    ],
+    "head": {
+        "tick": 0,
+        "every": 0
+    }
+}
+
+Step reset
+
+{
+    "signal" :
+    [
+        {
+            "name": "Data Clock",
+            "wave": "lhlhlhlhl"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "hlhlhlhlh"
+        },
+        {
+            "name": "Instruction Register",
+            "wave": "==.......",
+        },
+        {
+            "name": "Mirror Instruction Register",
+            "wave": "=.=......",
+        },
+        {
+            "name": "Step Reset",
+            "wave": "l....h.l.",
+            "phase": 0.6
+        },
+        {
+            "name": "Step Reset delay",
+            "wave": "l....h.l.",
+            "phase": 0.3
+        },
+        {
+            "name": "Microstep",
+            "wave": "=.=.=.=.=",
+            "data": ["3", "4", "5", "0", "1"]
+        },
+    ],
+    "head": {
+        "tick": 0,
+        "every": 0
+    }
+}
+
+
+RAM (With ~CE control)
+
+{
+    "signal" :
+    [
+        {
+            "name": "Data Clock",
+            "wave": "hl...h...l...h...l...h...l...h"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "lh...l...h...l...h...l...h...l"
+        },
+        {
+            "name": "WTM",
+            "wave": "lh.......l....................",
+        },
+        {
+            "name": "RFM",
+            "wave": "l................h.......l....",
+        },
+        {
+            "name": "RAM ~WE",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "RAM ~CE",
+            "wave": "h....l.h.........l.......h....",
+        },
+        {
+            "name": "Buf ~OE",
+            "wave": "h.....lh.........l.......h....",
+        },
+        {
+            "name": "Buf dir",
+            "wave": "l.....hl......................",
+        },
+      {},
+        {
+            "name": "Long Pulse",
+            "wave": "l....h.l......................",
+        },
+        {
+            "name": "~Short Pulse",
+            "wave": "h....lh.......................",
+        },
+        {
+            "name": "~RFM",
+            "wave": "h................l.......h....",
+        },
+        {},
+        {
+            "name": "~Long pulse (RAM ~WE)",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "~Long Pulse AND ~RFM (RAM ~CE)",
+            "wave": "h....l.h.........l.......h....",
+        }, 
+        {
+            "name": "Long Pulse AND ~Short Pulse (Buf dir)",
+            "wave": "l.....hl......................",
+        },
+        {
+            "name": "Buf dir AND ~RFM (Buf ~OE)",
+            "wave": "h.....lh.........l.......h....",
+        },
+
+
+    ],
+    "head": {
+        "tick": 0,
+        "every": 1
+    }
+}
+
+      
+
+RAM (No ~CE control)
+
+{
+    "signal" :
+    [
+        {
+            "name": "Data Clock",
+            "wave": "hl...h...l...h...l...h...l...h"
+        },
+        {
+            "name": "Control Clock",
+            "wave": "lh...l...h...l...h...l...h...l"
+        },
+        {
+            "name": "WTM",
+            "wave": "lh.......l....................",
+        },
+        {
+            "name": "RFM",
+            "wave": "l................h.......l....",
+        },
+      {},
+        {
+            "name": "RAM ~WE",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "Buf ~OE",
+            "wave": "h.....lh.........l.......h....",
+        },
+        {
+            "name": "Buf dir",
+            "wave": "l.....hl......................",
+        },
+        {},
+        {
+            "name": "Long Pulse",
+            "wave": "l....h.l......................",
+        },
+        {
+            "name": "~Long Pulse",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "Short Pulse",
+            "wave": "l....hl.......................",
+        },
+        {
+            "name": "~Short Pulse",
+            "wave": "h....lh.......................",
+        },
+        {
+            "name": "~RFM",
+            "wave": "h................l.......h....",
+        },
+        {},
+        {
+            "name": "~Long pulse (RAM ~WE)",
+            "wave": "h....l.h......................",
+        },
+        {
+            "name": "Long Pulse AND ~Short Pulse (Buf dir)",
+            "wave": "l.....hl......................",
+        },
+        {
+            "name": "~Buf dir",
+            "wave": "h.....lh......................",
+        },
+        {
+            "name": "~Buf dir AND ~RFM (Buf ~OE)",
+            "wave": "h.....lh.........l.......h....",
+        },
+
+
+    ],
+    "head": {
+        "tick": 0,
+        "every": 1
+    }
+}
+

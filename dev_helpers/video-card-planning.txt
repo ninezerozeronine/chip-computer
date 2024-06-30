@@ -1,0 +1,285 @@
+PCB/Module plan
+===============
+
+Timing
+------
+    Input
+    Output
+        scan column (8 bits)
+            Number from 0 - 159 giving the index of the current column.
+        scan row (8 bits)
+            Number from 0 - 119 giving the index of the current row.
+        hsync (1 bit)
+            The horizontal sync pulse. This is a low going pulse.
+        vsync (1 bit)
+            The vertical sync pulse. This is a low going pulse.
+        hblank (1 bit)
+            The horizontal blanking period. When high - this is the blank portion of each row.
+        vblank (1 bit)
+            The vertical blanking period. When high - this is the blank portion of each frame - a good time to swap buffers!
+        anyblank (1 bit)
+            Any period of time where no image is being displayed.
+
+    Notes
+        Using 640x480 @ 60Hz timing
+        25.175MHz Pixel freq / 39.72ns per pixel
+
+        640x480     10 1000 0000    x   1 1110 0000     =   307,200
+        320x240      1 0100 0000    x     1111 0000     =    76,800
+        160x120        1010 0000    x      111 1000     =    19,200
+        80x60           101 0000    x       11 1100     =     4,800
+        40x30            10 1000    x        1 1110     =     1,200
+        20x15             1 0100    x          1111     =       300
+
+        Horizontal:
+                            Pixels                          Time (us)
+            Visible area    640     320     160     80      25.42204
+            Front porch     16      8       4       2       0.63555
+            Sync Pulse      96      48      24      12      3.813306
+            Back Porch      48      24      12      6       1.906653
+            Whole line      800     400     200     100     31.777557
+
+            The sync pulse is low going
+
+        Vertical:
+                            Lines   Time (us)
+            Visible area    480     15253.227
+            Front porch     10      317.775
+            Sync pulse      2       63.555
+            Back porch      33      1048.659
+            Whole frame     525     16683.217
+
+            The sync pulse is low going
+
+        The order of porches and pulses seems to be:
+            Sync
+            Back porch
+            Display
+            Front porch
+
+            Per the DSView traces, the falling edge of the hsync pulse
+            coincides with the faling edge of the vsync pulse. This would
+            indicate that a line starts and ends with the falling edge of
+            the hsync pulse.
+
+
+        Take the 25.175MHz crystal and divide by 4 to get 6.29375 MHz / 158.887ns per pixel.
+
+        Counting to 200 needs 8 bits (200 = 11001000) = 2 x 74HC161
+        Counting to 525 needs 10 bits (525 = 1000001101) = 3 x 74HC161
+
+        For horizontal counts:
+            24 =    0001 1000 Set sync high
+            36 =    0010 0100 Set blanking low
+            196 =   1100 0100 Set blanking high
+            200 =   1100 1000 Set sync low / clock v count (reset count)
+
+            ... or ...
+
+            160 =   1010 0000   Set blanking high
+            164 =   1010 0100   Set sync low (clock v count)
+            188 =   1011 1100   Set sync high
+            200 =   1100 1000   Set blanking low (reset count) 
+
+        For vertical counts:
+            2 =     00 0000 0010    Set sync high
+            35 =    00 0010 0011    Set blanking low
+            515 =   10 0000 0011    Set blanking high
+            525 =   10 0000 1101    Set sync low (reset count)
+
+            ... or ...
+
+            480 =   01 1110 0000    Set blanking high
+            490 =   01 1110 1010    Set sync low
+            492 =   01 1110 1100    Set sync high
+            525 =   10 0000 1101    Set blanking low (reset count)
+
+    Chip totals
+        6 x 74HC161 (4 bit counter) - 2 for the horizontal count, 3 for the vertical, 1 for the crytal divider
+        8 x 74HC30  (8 input NAND) - To check when numbers have been reached
+        2 x 74HC27  (3 x 3 input NOR) - to check bits in positions 4, 6, and 7 are zero on vertical. Should be some left over to calculate anyblank too
+        3 x 74HC04  (6 x inverters) - need 14 in total
+        2 x 74HC00  (4 x NAND)- For SR latches
+
+
+
+
+Cursor
+------
+    Input
+        data (8 bits)
+            Data to set for the row or column.
+        column device active (1 bit)
+            Whether the column cursor is active (addressed).
+        row device active (1 bit)
+            Whether the column cursor is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or write (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+    Output
+        cursor column (8 bits)
+            Number from 0 - 159 giving the index of the current column for the cursor.
+        cursor row (8 bits)
+            Number from 0 - 119 giving the index of the current row for the cursor.
+
+    Notes
+    Chip Totals
+        1 x 74HC04 (6 x inverter) - To invert the ~R/W and the oupit of the glue logic for the 
+        1 x 74HC08 (4 x AND) - Glue logic to determine when input enable and ouput enable should be active
+        1 x 74HC00 (4 x NAND) - Glue logic to determine when input enable and ouput enable should be active
+        2 x 74HC377 (8 bit register) - to store row and column cursor values
+        2 x 74HC245 (8 bit buffer) - to control output to the bus
+
+
+Shifter
+-------
+    Input
+        column (8 bits)
+            Column input to shift left (towards LSB).
+        row (8 bits)
+            Row input to shift left (towards LSB).
+        shift amount (2 bits)
+            How many places to shift the inputs to the left (toward the LSB).
+            Can shift 0, 1, or 2 places (3 may be possible depending on board space, if not, 3 is the same as 0).
+    Output
+        shifted column (8 bits)
+            Column shifted left.
+        shifted row (8 bits)
+            Row shifted left.
+    Notes
+        The buffers can be stacked very tightly on on top of the other.
+    Chip totals
+        6/8 x 74HC245 (8 bit buffer) - To output the shifted versions to a bus.
+        1 x 74HC138 (3 to 8 decoder) - To choose which shifted version is output.
+
+Status
+------
+    Input
+        data (8 bits)
+            The data that controls the video card:
+                bit 0: Bank select (read and write).
+                bit 1 + 2: Shift amount (read and write).
+                bit 3: hblank (read only).
+                bit 4: vblank (read only).
+        status device active (1 bit)
+            Whether the status register is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or wrtie (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+        control clock (1 bit)
+            When to sample the hblank and vblank states.
+    Chip Totals
+        2 x 74HC174 (4 bit register) - One for hblank and vblank, one for bank and shift amount
+        1 x 74HC245 (8 bit buffer) - To control output onto the bus
+        1 x 74HC08 (4 x AND) - Logic to see when to read or write
+        1 x 74HC04 (6 x NOT) - Logic to see when to read or write
+
+
+Switcher
+--------
+    Input
+        cursor column (8 bits)
+            The current column index of the cursor.
+        cursor row (8 bits)
+            The current row index of the cursor.
+        live column (8 bits)
+            The index of the column being drawn (this comes from the timing board).
+        live row (8 bits)
+            The index of the row being drawn (this comes from the timing board).
+        switch (1 bit)
+            Whether to pass the inputs straight through or switch them.
+    Output
+        X column (8 bits)
+        X row (8 bits)
+        Y column (8 bits)
+        Y row (8 bits)
+    Chip Totals
+        8 x 74HC245 (8 bit buffer) to control whether certain inputs reach certain outputs.
+        1 x 74HC04 (6 x NOT) to invert the switcher signal to coordinate the buffers.
+
+Output
+------
+    Input
+        bank 0 column (8 bits)
+            The column for bank 0.
+        bank 0 row (8 bits)
+            The row for bank 0.
+        bank 1 column (8 bits)
+            The column for bank 1.
+        bank 1 row (8 bits)
+            The row for bank 1.
+        bank select (1 bit)
+            Select which bank is drawing pixels, and which is interacting with the CPU:
+                0 = bank 0 interacting with CPU, bank 1 drawing pixels.
+                1 = bank 1 interacting with CPU, bank 0 drawing pixels.
+        hsync (1 bit)
+            The hsync signal coming from the timer.
+        vsync (1 bit)
+            The vsync signal coming from the timer.
+        anyblank (1 bit)
+            Any period of time where no image is being displayed.
+        pixel clock (1 bit)
+            The pixel clock (likely divided) coming from the timer.
+            This is used to delay the hsync, vsync and outgoing RGB signals by half a clock
+                cycle so that the (relitively) slow speed of the RAM won't lead to visual
+                artefacts.
+        video data active (1 bit)
+            Whether the video data device is active (addressed).
+        mem active (1 bit)
+            Whether the CPU wants to interact with memory.
+        mem ~r/w (1 bit)
+            Whether the CPU wants to read (0) or wrtie (1) to memory.
+        data clock (1 bit)
+            Write data into the device on a rising clock edge.
+    Output
+        VGA red
+        VGA green
+        VGA blue
+        VGA hsync
+        VGA vsync
+        video data (8 bits)
+    Chip totals
+        2 X RAM - For video memory
+        5 x 74HC245 (8 bit buffer) - 4 for RAM input and output management, 1 for an output buffer
+        2 x 74HC574 (8 bit register) - To make pixel transitions cleaner by not reading directly from RAM - the pixel data and h/vsync and h/v blank are all delayed by half a clock cycle.
+        1 x 74HC157 (4 x 2 line to 1 line data selectors) - To switch control signals for the RAM/buffers depending on which bank is active.
+        1 x 74HC123 (dual monostable) - To generate RAM timing signals
+        1 x 74HC08 (Quad AND)
+        1 x 74HC02 (Quad NOR)
+        1 x 74HC32 (Quad OR)
+        1 x 74HC04 (Hex NOT)
+    Notes
+        It takes a while (~100ns) for the signals to propogate from the divided clock, through the column count and the row count to arrive at a stable pixel address and sync times.
+        On the breadboards, the inverted divided clock was being used to capture the value from the RAM, and delay the syc and blanking pulses. It turned out that the delay was too great and the first half of the first "smallest pixel" on each row as reading a delayed/garbage value.
+        On the breadboard the solution was to feed in the original divided clock (not the inverted one). It seems like the first clock re-caputured the prior state, but the next one was far enough along that things had settled and the next state was captured.
+        On the final PCBs there will need to be a jumper (or multiple) to choose what degree of delay is applied to the clock fed to the capture mechanism.
+        The resistor values to derive the voltages for thr R, G and B signals are:
+         - 0/low bit - 1.5k ohm
+         - 1/high bit - 680 ohm
+        RAM/bank A is on the left, B is on the right
+        As an example of the bank select, when bank sel is 0:
+         - RAM A is interacting with the CPU, B is drawing pixels
+         - RAM A should be getting changing R/W control signals, RAM B should be getting a constant read signal
+         - Draw buffer A should be disabled, draw buffer B should be enabled (getting values from RAM B)
+         - Data buffer A should be getting changing dir and OE signals, Data buffer B should be disabled.
+         - RAM A should be being addressed by the cursor, RAM B should be getting addressed by the scan column/row
+
+
+
+Shared Signals
+--------------
+
+The following need to be passed between boards:
+ - hsync (from timing to output)
+ - vsync (from timing to output)
+ - pixel clock (the clock that drives the column counter) (from timing to shift status delay)
+ - pixel clock delay (delayed version of the pixel clock) (from shift status delay to output)
+ - bank sel (from shift/status to output)
+ - hblank (from timing to output and status)
+ - vblank (from timing to output and status)

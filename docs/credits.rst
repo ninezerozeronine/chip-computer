@@ -13,3 +13,5 @@ Ben Eater
 
 James Bates
 -----------
+
+https://training.ti.com/generate-reset-signal-system-power?

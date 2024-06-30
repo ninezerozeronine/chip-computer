@@ -14,66 +14,66 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L eight-bit-computer:Aux_connection J5
+L sixteen-bit-computer:Aux_connection J5
 U 1 1 5F84FDFB
 P 9900 4100
 F 0 "J5" H 9812 4725 50  0000 C CNN
 F 1 "Aux_connection" H 9812 4634 50  0000 C CNN
-F 2 "eight-bit-computer:aux-connection" H 9900 4100 50  0001 C CNN
+F 2 "sixteen-bit-computer:aux-connection" H 9900 4100 50  0001 C CNN
 F 3 "~" H 9900 4100 50  0001 C CNN
 	1    9900 4100
 	-1   0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:Bus_connection J6
+L sixteen-bit-computer:Bus_connection J6
 U 1 1 5F851371
 P 9900 5700
 F 0 "J6" H 9762 6625 50  0000 C CNN
 F 1 "Bus_connection" H 9762 6534 50  0000 C CNN
-F 2 "eight-bit-computer:bus-connection" H 9800 6100 50  0001 C CNN
+F 2 "sixteen-bit-computer:bus-connection" H 9800 6100 50  0001 C CNN
 F 3 "~" H 9800 6100 50  0001 C CNN
 	1    9900 5700
 	-1   0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:Control_signal_backplane J4
+L sixteen-bit-computer:Control_signal_backplane J4
 U 1 1 5F853275
 P 8850 4950
 F 0 "J4" H 8737 6675 50  0000 C CNN
 F 1 "Control_signal_backplane" H 8737 6584 50  0000 C CNN
-F 2 "eight-bit-computer:backplane-connector-annotated" H 8850 4950 50  0001 C CNN
+F 2 "sixteen-bit-computer:backplane-connector-annotated" H 8850 4950 50  0001 C CNN
 F 3 "~" H 8850 4950 50  0001 C CNN
 	1    8850 4950
 	-1   0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT377 U3
+L sixteen-bit-computer:74HC377 U3
 U 1 1 5F855C32
 P 1950 5950
 F 0 "U3" H 2350 5550 50  0000 C CNN
-F 1 "74HCT377" H 2500 5450 50  0000 C CNN
+F 1 "74HC377" H 2500 5450 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1950 5950 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 1950 5950 50  0001 C CNN
 	1    1950 5950
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT377 U2
+L sixteen-bit-computer:74HC377 U2
 U 1 1 5F857635
 P 1950 4150
 F 0 "U2" H 2350 3750 50  0000 C CNN
-F 1 "74HCT377" H 2500 3650 50  0000 C CNN
+F 1 "74HC377" H 2500 3650 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 1950 4150 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 1950 4150 50  0001 C CNN
 	1    1950 4150
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U5
+L sixteen-bit-computer:74HC245 U5
 U 1 1 5F858330
 P 4500 6250
 F 0 "U5" H 4850 6800 50  0000 C CNN
-F 1 "74HCT245" H 5000 6700 50  0000 C CNN
+F 1 "74HC245" H 5000 6700 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 4150 6250 50  0001 C CNN
 F 3 "" H 4150 6250 50  0001 C CNN
 	1    4500 6250
@@ -102,99 +102,99 @@ F 3 "http://www.vishay.com/docs/31509/csc.pdf" H 9950 2400 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 1 1 5F89775D
 P 900 4350
 F 0 "U1" H 900 4050 50  0000 C CNN
-F 1 "74HCT04" H 900 4150 50  0000 C CNN
+F 1 "74HC04" H 900 4150 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 900 4350 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 900 4350 50  0001 C CNN
 	1    900  4350
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 2 1 5F898EF8
 P 3600 3300
 F 0 "U1" H 3600 3000 50  0000 C CNN
-F 1 "74HCT04" H 3600 3100 50  0000 C CNN
+F 1 "74HC04" H 3600 3100 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3600 3300 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3600 3300 50  0001 C CNN
 	2    3600 3300
 	0    1    1    0   
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 3 1 5F899C5B
 P 2150 950
 F 0 "U1" H 2150 1267 50  0000 C CNN
-F 1 "74HCT04" H 2150 1176 50  0000 C CNN
+F 1 "74HC04" H 2150 1176 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2150 950 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2150 950 50  0001 C CNN
 	3    2150 950 
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 4 1 5F89C4C9
 P 2150 1450
 F 0 "U1" H 2150 1767 50  0000 C CNN
-F 1 "74HCT04" H 2150 1676 50  0000 C CNN
+F 1 "74HC04" H 2150 1676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 2150 1450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 2150 1450 50  0001 C CNN
 	4    2150 1450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 5 1 5F89DBF3
 P 3000 950
 F 0 "U1" H 3000 1267 50  0000 C CNN
-F 1 "74HCT04" H 3000 1176 50  0000 C CNN
+F 1 "74HC04" H 3000 1176 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3000 950 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3000 950 50  0001 C CNN
 	5    3000 950 
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 6 1 5F89F049
 P 3000 1450
 F 0 "U1" H 3000 1767 50  0000 C CNN
-F 1 "74HCT04" H 3000 1676 50  0000 C CNN
+F 1 "74HC04" H 3000 1676 50  0000 C CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 3000 1450 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 3000 1450 50  0001 C CNN
 	6    3000 1450
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74HCT04 U1
+L 74xx:74HC04 U1
 U 7 1 5F8A0462
 P 1100 1150
 F 0 "U1" H 1330 1196 50  0000 L CNN
-F 1 "74HCT04" H 1330 1105 50  0000 L CNN
+F 1 "74HC04" H 1330 1105 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 1100 1150 50  0001 C CNN
 F 3 "https://assets.nexperia.com/documents/data-sheet/74HC_HCT04.pdf" H 1100 1150 50  0001 C CNN
 	7    1100 1150
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U6
+L sixteen-bit-computer:74HC245 U6
 U 1 1 5F8AC977
 P 6850 1650
 F 0 "U6" H 7200 2250 50  0000 C CNN
-F 1 "74HCT245" H 7350 2100 50  0000 C CNN
+F 1 "74HC245" H 7350 2100 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6500 1650 50  0001 C CNN
 F 3 "" H 6500 1650 50  0001 C CNN
 	1    6850 1650
 	1    0    0    -1  
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U7
+L sixteen-bit-computer:74HC245 U7
 U 1 1 5F8ADF71
 P 6850 3750
 F 0 "U7" H 7200 4350 50  0000 C CNN
-F 1 "74HCT245" H 7350 4200 50  0000 C CNN
+F 1 "74HC245" H 7350 4200 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 6500 3750 50  0001 C CNN
 F 3 "" H 6500 3750 50  0001 C CNN
 	1    6850 3750
@@ -381,7 +381,7 @@ U 1 1 5F90C434
 P 8750 2900
 F 0 "D15" H 8500 2850 50  0000 C CNN
 F 1 "LED" H 8300 2850 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2900 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2900 50  0001 C CNN
 F 3 "~" H 8750 2900 50  0001 C CNN
 	1    8750 2900
 	-1   0    0    1   
@@ -392,7 +392,7 @@ U 1 1 5F90C42A
 P 8750 3050
 F 0 "D16" H 8500 3000 50  0000 C CNN
 F 1 "LED" H 8300 3000 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 3050 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 3050 50  0001 C CNN
 F 3 "~" H 8750 3050 50  0001 C CNN
 	1    8750 3050
 	-1   0    0    1   
@@ -403,7 +403,7 @@ U 1 1 5F90C420
 P 8750 2600
 F 0 "D13" H 8500 2550 50  0000 C CNN
 F 1 "LED" H 8300 2550 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2600 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2600 50  0001 C CNN
 F 3 "~" H 8750 2600 50  0001 C CNN
 	1    8750 2600
 	-1   0    0    1   
@@ -414,7 +414,7 @@ U 1 1 5F90C416
 P 8750 2750
 F 0 "D14" H 8500 2700 50  0000 C CNN
 F 1 "LED" H 8300 2700 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2750 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2750 50  0001 C CNN
 F 3 "~" H 8750 2750 50  0001 C CNN
 	1    8750 2750
 	-1   0    0    1   
@@ -425,7 +425,7 @@ U 1 1 5F90C408
 P 8750 2300
 F 0 "D11" H 8500 2250 50  0000 C CNN
 F 1 "LED" H 8300 2250 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2300 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2300 50  0001 C CNN
 F 3 "~" H 8750 2300 50  0001 C CNN
 	1    8750 2300
 	-1   0    0    1   
@@ -436,7 +436,7 @@ U 1 1 5F90C3FE
 P 8750 2450
 F 0 "D12" H 8500 2400 50  0000 C CNN
 F 1 "LED" H 8300 2400 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2450 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2450 50  0001 C CNN
 F 3 "~" H 8750 2450 50  0001 C CNN
 	1    8750 2450
 	-1   0    0    1   
@@ -447,7 +447,7 @@ U 1 1 5F90C3F4
 P 8750 2000
 F 0 "D9" H 8500 1950 50  0000 C CNN
 F 1 "LED" H 8300 1950 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2000 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2000 50  0001 C CNN
 F 3 "~" H 8750 2000 50  0001 C CNN
 	1    8750 2000
 	-1   0    0    1   
@@ -458,7 +458,7 @@ U 1 1 5F90C3EA
 P 8750 2150
 F 0 "D10" H 8500 2100 50  0000 C CNN
 F 1 "LED" H 8300 2100 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2150 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 2150 50  0001 C CNN
 F 3 "~" H 8750 2150 50  0001 C CNN
 	1    8750 2150
 	-1   0    0    1   
@@ -469,7 +469,7 @@ U 1 1 5F908B8B
 P 8750 1700
 F 0 "D7" H 8500 1650 50  0000 C CNN
 F 1 "LED" H 8300 1650 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1700 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1700 50  0001 C CNN
 F 3 "~" H 8750 1700 50  0001 C CNN
 	1    8750 1700
 	-1   0    0    1   
@@ -480,7 +480,7 @@ U 1 1 5F908B81
 P 8750 1850
 F 0 "D8" H 8500 1800 50  0000 C CNN
 F 1 "LED" H 8300 1800 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1850 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1850 50  0001 C CNN
 F 3 "~" H 8750 1850 50  0001 C CNN
 	1    8750 1850
 	-1   0    0    1   
@@ -491,7 +491,7 @@ U 1 1 5F908B77
 P 8750 1400
 F 0 "D5" H 8500 1350 50  0000 C CNN
 F 1 "LED" H 8300 1350 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1400 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1400 50  0001 C CNN
 F 3 "~" H 8750 1400 50  0001 C CNN
 	1    8750 1400
 	-1   0    0    1   
@@ -502,7 +502,7 @@ U 1 1 5F908B6D
 P 8750 1550
 F 0 "D6" H 8500 1500 50  0000 C CNN
 F 1 "LED" H 8300 1500 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1550 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1550 50  0001 C CNN
 F 3 "~" H 8750 1550 50  0001 C CNN
 	1    8750 1550
 	-1   0    0    1   
@@ -513,7 +513,7 @@ U 1 1 5F86B1BF
 P 8750 1100
 F 0 "D3" H 8500 1050 50  0000 C CNN
 F 1 "LED" H 8300 1050 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1100 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1100 50  0001 C CNN
 F 3 "~" H 8750 1100 50  0001 C CNN
 	1    8750 1100
 	-1   0    0    1   
@@ -524,7 +524,7 @@ U 1 1 5F86B1B5
 P 8750 1250
 F 0 "D4" H 8500 1200 50  0000 C CNN
 F 1 "LED" H 8300 1200 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1250 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 1250 50  0001 C CNN
 F 3 "~" H 8750 1250 50  0001 C CNN
 	1    8750 1250
 	-1   0    0    1   
@@ -535,7 +535,7 @@ U 1 1 5F85DE40
 P 8750 800
 F 0 "D1" H 8500 750 50  0000 C CNN
 F 1 "LED" H 8300 750 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 800 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 800 50  0001 C CNN
 F 3 "~" H 8750 800 50  0001 C CNN
 	1    8750 800 
 	-1   0    0    1   
@@ -546,7 +546,7 @@ U 1 1 5F859984
 P 8750 950
 F 0 "D2" H 8500 900 50  0000 C CNN
 F 1 "LED" H 8300 900 50  0000 C CNN
-F 2 "eight-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 950 50  0001 C CNN
+F 2 "sixteen-bit-computer:LED_D5.0mm_Horizontal_O3.81mm_Z3.0mm" H 8750 950 50  0001 C CNN
 F 3 "~" H 8750 950 50  0001 C CNN
 	1    8750 950 
 	-1   0    0    1   
@@ -756,16 +756,6 @@ Wire Wire Line
 	6100 3350 6300 3350
 Wire Wire Line
 	6300 3200 6000 3200
-Wire Wire Line
-	6000 3200 6000 4550
-Wire Wire Line
-	6000 4550 6850 4550
-Wire Wire Line
-	6850 2450 6000 2450
-Wire Wire Line
-	6000 2450 6000 1100
-Wire Wire Line
-	6000 1100 6300 1100
 $Comp
 L power:GND #PWR0101
 U 1 1 5FA3D458
@@ -1040,7 +1030,6 @@ Wire Wire Line
 	7850 1650 7850 2450
 Wire Wire Line
 	7850 2450 6850 2450
-Connection ~ 6850 2450
 Wire Wire Line
 	6850 2800 7850 2800
 Wire Wire Line
@@ -1050,7 +1039,6 @@ Wire Wire Line
 	7850 3900 7850 4550
 Wire Wire Line
 	7850 4550 6850 4550
-Connection ~ 6850 4550
 Text Label 6850 700  0    50   ~ 0
 VCC
 Text Label 6850 2450 0    50   ~ 0
@@ -1202,11 +1190,11 @@ F 3 "~" H 4650 1050 50  0001 C CNN
 	0    1    -1   0   
 $EndComp
 $Comp
-L eight-bit-computer:74HCT245 U4
+L sixteen-bit-computer:74HC245 U4
 U 1 1 5F854F6D
 P 4500 4150
 F 0 "U4" H 4850 4700 50  0000 C CNN
-F 1 "74HCT245" H 5000 4600 50  0000 C CNN
+F 1 "74HC245" H 5000 4600 50  0000 C CNN
 F 2 "Package_DIP:DIP-20_W7.62mm_Socket" H 4150 4150 50  0001 C CNN
 F 3 "" H 4150 4150 50  0001 C CNN
 	1    4500 4150
@@ -1275,4 +1263,89 @@ Wire Wire Line
 Connection ~ 8000 5450
 Wire Wire Line
 	8000 5450 8000 5900
+$Comp
+L Device:R_US R1
+U 1 1 62FF3B9E
+P 4900 2450
+F 0 "R1" H 4968 2496 50  0000 L CNN
+F 1 "10K" H 4968 2405 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 4940 2440 50  0001 C CNN
+F 3 "~" H 4900 2450 50  0001 C CNN
+	1    4900 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x03_Male J11
+U 1 1 62FF46DF
+P 5400 2300
+F 0 "J11" H 5372 2274 50  0000 R CNN
+F 1 "LED_CONTROL" H 5372 2183 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Horizontal" H 5400 2300 50  0001 C CNN
+F 3 "~" H 5400 2300 50  0001 C CNN
+	1    5400 2300
+	-1   0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x02_Female J12
+U 1 1 62FF5407
+P 6650 5000
+F 0 "J12" H 6678 4976 50  0000 L CNN
+F 1 "TOP_POWER" H 6678 4885 50  0000 L CNN
+F 2 "Connector_PinSocket_2.54mm:PinSocket_1x02_P2.54mm_Horizontal" H 6650 5000 50  0001 C CNN
+F 3 "~" H 6650 5000 50  0001 C CNN
+	1    6650 5000
+	1    0    0    -1  
+$EndComp
+Text Label 6450 5100 2    50   ~ 0
+GND
+Text Label 6450 5000 2    50   ~ 0
+VCC
+Text Label 5200 2600 2    50   ~ 0
+GND
+Text Label 5200 2000 2    50   ~ 0
+VCC
+Text Label 4750 2300 2    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	4750 2300 4900 2300
+Text Label 5550 1100 0    50   ~ 0
+LED_CONTROL
+Text Label 5500 3000 0    50   ~ 0
+LED_CONTROL
+Wire Wire Line
+	6000 3200 6000 3000
+Wire Wire Line
+	6000 3000 5500 3000
+Wire Wire Line
+	5550 1100 6300 1100
+$Comp
+L Device:R R2
+U 1 1 639155A2
+P 3950 3400
+F 0 "R2" H 4020 3446 50  0000 L CNN
+F 1 "10K" H 4020 3355 50  0000 L CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3880 3400 50  0001 C CNN
+F 3 "~" H 3950 3400 50  0001 C CNN
+	1    3950 3400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3950 3600 3950 3550
+Connection ~ 3950 3600
+Wire Wire Line
+	3950 3250 3950 3200
+Wire Wire Line
+	3950 3200 4500 3200
+Connection ~ 4500 3200
+Connection ~ 4900 2300
+Wire Wire Line
+	4900 2300 5200 2300
+Wire Wire Line
+	5200 2200 5200 2000
+Wire Wire Line
+	5200 2650 4900 2650
+Wire Wire Line
+	4900 2650 4900 2600
+Wire Wire Line
+	5200 2400 5200 2650
 $EndSCHEMATC

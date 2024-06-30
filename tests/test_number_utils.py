@@ -1,6 +1,6 @@
 import pytest
 
-from eight_bit_computer import number_utils
+from sixteen_bit_computer import number_utils
 
 
 @pytest.mark.parametrize("test_input,test_bitwidth,expected", [
@@ -8,6 +8,7 @@ from eight_bit_computer import number_utils
     (-1,  8, "11111111"),
     (255, 8, "11111111"),
     (1,   8, "00000001"),
+    (-1,  16, "1111111111111111"),
 ])
 def test_number_to_bitstring(test_input, test_bitwidth, expected):
     assert number_utils.number_to_bitstring(
@@ -41,6 +42,21 @@ def test_get_positive_equivalent(test_input, expected):
     assert number_utils.get_positive_equivalent(test_input) == expected
 
 
+@pytest.mark.parametrize("test_input,test_bitwidth,expected", [
+    (0,    8,  0),
+    (-1,   16, -1),
+    (200,  8,  -56),
+    (-15,  8,  -15),
+    (1,    8,  1),
+    (3,    3,  3),
+    (6,    3,  -2),
+])
+def test_get_signed_equivalent(test_input, test_bitwidth, expected):
+    assert number_utils.get_signed_equivalent(
+        test_input, bit_width=test_bitwidth
+    ) == expected
+
+
 @pytest.mark.parametrize("test_input,expected", [
     ("00000000", 0),
     ("11111111", 255),
@@ -65,7 +81,13 @@ def test_bitstring_to_hex_string(test_input, test_pad, expected):
         test_input, zero_pad_width=test_pad) == expected
 
 
-
+@pytest.mark.parametrize("test_input,expected", [
+    (4, (-8, 15)),
+    (8, (-128, 255)),
+    (16, (-32768, 65535)),
+])
+def test_get_min_max_values(test_input, expected):
+    assert number_utils.get_min_max_values(test_input) == expected
 
 
 

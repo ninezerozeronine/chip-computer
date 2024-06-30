@@ -21,7 +21,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'Eight Bit Computer'
+project = u'Sixteen Bit Computer'
 copyright = u'2019, Andy Palmer'
 author = u'Andy Palmer'
 
@@ -45,7 +45,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
-    'sphinxarg.ext.',
+    'sphinxarg.ext',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -108,7 +108,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'EightBitComputerdoc'
+htmlhelp_basename = 'SixteenBitComputerdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'EightBitComputer.tex', u'Eight Bit Computer Documentation',
+    (master_doc, 'SixteenBitComputer.tex', u'Sixteen Bit Computer Documentation',
      u'Andy Palmer', 'manual'),
 ]
 
@@ -145,7 +145,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'eightbitcomputer', u'Eight Bit Computer Documentation',
+    (master_doc, 'sixteenbitcomputer', u'Sixteen Bit Computer Documentation',
      [author], 1)
 ]
 
@@ -156,8 +156,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'EightBitComputer', u'Eight Bit Computer Documentation',
-     author, 'EightBitComputer', 'One line description of project.',
+    (master_doc, 'SixteenBitComputer', u'Sixteen Bit Computer Documentation',
+     author, 'SixteenBitComputer', 'One line description of project.',
      'Miscellaneous'),
 ]
 
@@ -182,7 +182,11 @@ epub_exclude_files = ['search.html']
 
 # -- Extension configuration -------------------------------------------------
 
-autodoc_member_order = "bysource"
+autodoc_default_options = {
+    "member-order": "bysource",
+    "special-members": "__init__",
+}
+napoleon_include_private_with_doc = True
 
 
 def run_apidoc(_):
@@ -196,7 +200,7 @@ def run_apidoc(_):
     import sys
     sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
     cur_dir = os.path.abspath(os.path.dirname(__file__))
-    module = os.path.join(cur_dir, "..", "src", "eight_bit_computer")
+    module = os.path.join(cur_dir, "..", "src", "sixteen_bit_computer")
     output_dir = os.path.join(cur_dir, "software", "source")
     main(["--separate", "--force", "--no-toc", "--output-dir", output_dir, module])
 
