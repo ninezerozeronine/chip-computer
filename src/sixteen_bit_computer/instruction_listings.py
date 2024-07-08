@@ -517,3 +517,738 @@ def get_machinecode_function(signature):
 # SUB D
 # SUB E
 # SUB F
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_NEW_INSTRS = (
+    (NOOP,),
+    (COPY, ACC, A),
+    (COPY, ACC, B),
+    (COPY, ACC, SP),
+    (COPY, ACC, W),
+    (COPY, ACC, X),
+    (COPY, ACC, Y),
+    (COPY, ACC, Z),
+    (COPY, W, ACC),
+    (COPY, X, ACC),
+    (COPY, Y, ACC),
+    (COPY, Z, ACC),
+    (COPY, A, ACC),
+    (COPY, A, B),
+    (COPY, A, C),
+    (COPY, B, ACC),
+    (COPY, B, A),
+    (COPY, B, C),
+    (COPY, C, ACC),
+    (COPY, C, A),
+    (COPY, C, B),
+    (COPY, PC, ACC),
+    (COPY, SP, ACC),
+    (LOAD, M_ACC, A),
+    (LOAD, M_ACC, B),
+    (LOAD, M_ACC, C),
+    (LOAD, M_A, ACC),
+    (LOAD, M_A, B),
+    (LOAD, M_A, C),
+    (LOAD, M_B, ACC),
+    (LOAD, M_B, A),
+    (LOAD, M_B, C),
+    (LOAD, M_C, ACC),
+    (LOAD, M_C, A),
+    (LOAD, M_C, B),
+    (LOAD, M_SP, ACC),
+    (LOAD, M_SP, A),
+    (LOAD, M_SP, B),
+    (LOAD, M_SP, C),
+    (LOAD, M_CONST, ACC),
+    (LOAD, M_CONST, A),
+    (LOAD, M_CONST, B),
+    (LOAD, M_CONST, C),
+    (STORE, ACC, M_A),
+    (STORE, ACC, M_B),
+    (STORE, ACC, M_C),
+    (STORE, ACC, M_SP),
+    (STORE, ACC, M_CONST),
+    (STORE, A, M_ACC),
+    (STORE, A, M_B),
+    (STORE, A, M_C),
+    (STORE, A, M_SP),
+    (STORE, A, M_CONST),
+    (STORE, B, M_ACC),
+    (STORE, B, M_A),
+    (STORE, B, M_C),
+    (STORE, B, M_SP),
+    (STORE, B, M_CONST),
+    (STORE, C, M_ACC),
+    (STORE, C, M_A),
+    (STORE, C, M_B),
+    (STORE, C, M_SP),
+    (STORE, C, M_CONST),
+    (STORE, SP, M_ACC),
+    (STORE, SP, M_A),
+    (STORE, SP, M_B),
+    (STORE, SP, M_C),
+    (STORE, SP, M_CONST),
+    (PUSH, ACC),
+    (PUSH, A),
+    (PUSH, B),
+    (PUSH, C),
+    (POP, ACC),
+    (POP, A),
+    (POP, B),
+    (POP, C),
+    (SET, ACC, CONST),
+    (SET, A, CONST),
+    (SET, B, CONST),
+    (SET, C, CONST),
+    (SET, SP, CONST),
+    (SET_ZERO, ACC),
+    (SET_ZERO, A),
+    (SET_ZERO, B),
+    (SET_ZERO, C),
+    (JUMP, ACC),
+    (JUMP, A),
+    (JUMP, B),
+    (JUMP, C),
+    (JUMP, CONST),
+    (JUMP, M_ACC),
+    (JUMP, M_A),
+    (JUMP, M_B),
+    (JUMP, M_C),
+    (JUMP, M_SP),
+    (JUMP, M_CONST),
+    (JUMP_IF_ACC_LT, A, CONST),
+    (JUMP_IF_ACC_LT, B, CONST),
+    (JUMP_IF_ACC_LT, C, CONST),
+    (JUMP_IF_ACC_LT, CONST, CONST),
+    (JUMP_IF_ACC_LTE, A, CONST),
+    (JUMP_IF_ACC_LTE, B, CONST),
+    (JUMP_IF_ACC_LTE, C, CONST),
+    (JUMP_IF_ACC_LTE, CONST, CONST),
+    (JUMP_IF_ACC_EQ, A, CONST),
+    (JUMP_IF_ACC_EQ, B, CONST),
+    (JUMP_IF_ACC_EQ, C, CONST),
+    (JUMP_IF_ACC_EQ, CONST, CONST),
+    (JUMP_IF_ACC_NEQ, A, CONST),
+    (JUMP_IF_ACC_NEQ, B, CONST),
+    (JUMP_IF_ACC_NEQ, C, CONST),
+    (JUMP_IF_ACC_NEQ, CONST, CONST),
+    (JUMP_IF_ACC_GTE, A, CONST),
+    (JUMP_IF_ACC_GTE, B, CONST),
+    (JUMP_IF_ACC_GTE, C, CONST),
+    (JUMP_IF_ACC_GTE, CONST, CONST),
+    (JUMP_IF_ACC_GT, A, CONST),
+    (JUMP_IF_ACC_GT, B, CONST),
+    (JUMP_IF_ACC_GT, C, CONST),
+    (JUMP_IF_ACC_GT, CONST, CONST),
+    (JUMP_IF_EQ_ZERO, ACC, CONST),
+    (JUMP_IF_EQ_ZERO, A, CONST),
+    (JUMP_IF_EQ_ZERO, B, CONST),
+    (JUMP_IF_EQ_ZERO, C, CONST),
+    (JUMP_IF_NEQ_ZERO, ACC, CONST),
+    (JUMP_IF_NEQ_ZERO, A, CONST),
+    (JUMP_IF_NEQ_ZERO, B, CONST),
+    (JUMP_IF_NEQ_ZERO, C, CONST),
+    (JUMP_IF_NEGATIVE_FLAG, CONST),
+    (JUMP_IF_NOT_NEGATIVE_FLAG, CONST),
+    (JUMP_IF_CARRYBORROW_FLAG, CONST),
+    (JUMP_IF_NOT_CARRYBORROW_FLAG, CONST),
+    (JUMP_IF_EQUAL_FLAG, CONST),
+    (JUMP_IF_NOT_EQUAL_FLAG, CONST),
+    (JUMP_IF_ZERO_FLAG, CONST),
+    (JUMP_IF_NOT_ZERO_FLAG, CONST),
+    (CALL, ACC),
+    (CALL, A),
+    (CALL, B),
+    (CALL, C),
+    (CALL, CONST),
+    (RETURN,),
+    (HALT,),
+    (NOT, ACC),
+    (NOT, A),
+    (NOT, B),
+    (NOT, C),
+    (NOT, M_CONST),
+    (AND, A),
+    (AND, B),
+    (AND, C),
+    (AND, CONST),
+    (AND, M_CONST),
+    (NAND, A),
+    (NAND, B),
+    (NAND, C),
+    (NAND, CONST),
+    (NAND, M_CONST),
+    (OR, A),
+    (OR, B),
+    (OR, C),
+    (OR, CONST),
+    (OR, M_CONST),
+    (NOR, A),
+    (NOR, B),
+    (NOR, C),
+    (NOR, CONST),
+    (NOR, M_CONST),
+    (XOR, A),
+    (XOR, B),
+    (XOR, C),
+    (XOR, CONST),
+    (XOR, M_CONST),
+    (NXOR, A),
+    (NXOR, B),
+    (NXOR, C),
+    (NXOR, CONST),
+    (NXOR, M_CONST),
+    (ROT_LEFT, ACC),
+    (ROT_LEFT, A),
+    (ROT_LEFT, B),
+    (ROT_LEFT, C),
+    (ROT_LEFT, M_CONST),
+    (SHIFT_LEFT, ACC),
+    (SHIFT_LEFT, A),
+    (SHIFT_LEFT, B),
+    (SHIFT_LEFT, C),
+    (SHIFT_LEFT, M_CONST),
+    (ROT_RIGHT, ACC),
+    (ROT_RIGHT, A),
+    (ROT_RIGHT, B),
+    (ROT_RIGHT, C),
+    (ROT_RIGHT, M_CONST),
+    (SHIFT_RIGHT, ACC),
+    (SHIFT_RIGHT, A),
+    (SHIFT_RIGHT, B),
+    (SHIFT_RIGHT, C),
+    (SHIFT_RIGHT, M_CONST),
+    (ADD, A),
+    (ADD, B),
+    (ADD, C),
+    (ADD, CONST),
+    (ADD, M_CONST),
+    # (ADDC, A),
+    # (ADDC, B),
+    # (ADDC, C),
+    # (ADDC, CONST),
+    # (ADDC, M_CONST),
+    (SUB, A),
+    (SUB, B),
+    (SUB, C),
+    (SUB, CONST),
+    (SUB, M_CONST),
+    # (SUBB, A),
+    # (SUBB, B),
+    # (SUBB, C),
+    # (SUBB, CONST),
+    # (SUBB, M_CONST),
+    (INCR, ACC),
+    (INCR, A),
+    (INCR, B),
+    (INCR, C),
+    (INCR, M_CONST),
+    (DECR, ACC),
+    (DECR, A),
+    (DECR, B),
+    (DECR, C),
+    (DECR, M_CONST),
+    (STORE_DECR, ACC, M_CONST, M_CONST),
+    (STORE_DECR, A, M_CONST, M_CONST),
+    (STORE_DECR, B, M_CONST, M_CONST),
+    (STORE_DECR, C, M_CONST, M_CONST),
+    (STORE_INCR, ACC, M_CONST, M_CONST),
+    (STORE_INCR, A, M_CONST, M_CONST),
+    (STORE_INCR, B, M_CONST, M_CONST),
+    (STORE_INCR, C, M_CONST, M_CONST),
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
