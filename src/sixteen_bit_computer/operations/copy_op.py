@@ -1,5 +1,5 @@
 """
-The simple ALU Ops
+Copy operations
 """
 from ..instruction_listings import get_instruction_index
 from ..instruction_components import (
@@ -8,6 +8,9 @@ from ..instruction_components import (
     A,
     B,
     C,
+    X,
+    Y,
+    Z,
     PC,
     SP,
 )
@@ -17,7 +20,6 @@ from ..data_structures import Word
 from ..language_defs import (
     FLAGS,
     MODULE_CONTROL,
-    ALU_CONTROL_FLAGS,
 )
 
 
@@ -26,27 +28,23 @@ _SUPPORTED_SIGNATURES = (
     (COPY, ACC, B),
     (COPY, ACC, C),
     (COPY, ACC, SP),
+    (COPY, ACC, X),
+    (COPY, ACC, Y),
+    (COPY, ACC, Z),
     (COPY, A, ACC),
     (COPY, A, B),
     (COPY, A, C),
-    (COPY, A, SP),
     (COPY, B, ACC),
     (COPY, B, A),
     (COPY, B, C),
-    (COPY, B, SP),
     (COPY, C, ACC),
     (COPY, C, A),
     (COPY, C, B),
-    (COPY, C, SP),
+    (COPY, X, ACC),
+    (COPY, Y, ACC),
+    (COPY, Z, ACC),
     (COPY, PC, ACC),
-    (COPY, PC, A),
-    (COPY, PC, B),
-    (COPY, PC, C),
-    (COPY, PC, SP),
     (COPY, SP, ACC),
-    (COPY, SP, A),
-    (COPY, SP, B),
-    (COPY, SP, C),
 )
 
 
