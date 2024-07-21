@@ -50,6 +50,8 @@ from .instruction_components import (
     SHIFT_LEFT,
     ROT_RIGHT,
     SHIFT_RIGHT,
+    STORE_DECR,
+    STORE_INCR,
     ACC,
     A,
     B,
@@ -1232,14 +1234,8 @@ _INSTRUCTION_SIGNATURES = (
     (DECR, B),
     (DECR, C),
     (DECR, M_CONST),
-    (STORE_DECR, ACC, M_CONST, M_CONST),
-    (STORE_DECR, A, M_CONST, M_CONST),
-    (STORE_DECR, B, M_CONST, M_CONST),
-    (STORE_DECR, C, M_CONST, M_CONST),
-    (STORE_INCR, ACC, M_CONST, M_CONST),
-    (STORE_INCR, A, M_CONST, M_CONST),
-    (STORE_INCR, B, M_CONST, M_CONST),
-    (STORE_INCR, C, M_CONST, M_CONST),
+    (STORE_INCR, ACC, M_A, M_B),
+    (STORE_DECR, ACC, M_A, M_B),
 )
 """
 All possible instruction signatures.
