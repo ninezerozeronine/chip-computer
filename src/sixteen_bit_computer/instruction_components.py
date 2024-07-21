@@ -25,8 +25,6 @@ class OpCode(Enum):
     ADDC = auto()
     SUB = auto()
     SUBB = auto()
-    LSHIFT = auto()
-    LSHIFTC = auto()
     INCR = auto()
     DECR= auto()
 
@@ -73,14 +71,17 @@ class OpCode(Enum):
 
     # Misc
     ROT_LEFT = auto()
+    SHIFT_LEFT = auto()
+    ROT_RIGHT = auto()
+    SHIFT_RIGHT = auto()
+    STORE_DECR = auto()
+    STORE_INCR = auto()
 
 
 ADD = OpCode.ADD
 ADDC = OpCode.ADDC
 SUB = OpCode.SUB
 SUBB = OpCode.SUBB
-LSHIFT = OpCode.LSHIFT
-LSHIFTC = OpCode.LSHIFTC
 INCR = OpCode.INCR
 DECR = OpCode.DECR
 
@@ -123,7 +124,11 @@ XOR = OpCode.XOR
 NXOR = OpCode.NXOR
 
 ROT_LEFT = OpCode.ROT_LEFT
-
+ROT_RIGHT = OpCode.ROT_RIGHT
+SHIFT_LEFT = OpCode.SHIFT_LEFT
+SHIFT_RIGHT = OpCode.SHIFT_RIGHT
+STORE_DECR = OpCode.STORE_DECR
+STORE_INCR = OpCode.STORE_INCR
 
 class Module(Enum):
     """
@@ -133,6 +138,9 @@ class Module(Enum):
     A = auto()
     B = auto()
     C = auto()
+    X = auto()
+    Y = auto()
+    Z = auto()
     SP = auto()
     PC = auto()
 
@@ -141,6 +149,9 @@ ACC = Module.ACC
 A = Module.A
 B = Module.B
 C = Module.C
+X = Module.X
+Y = Module.Y
+Z = Module.Z
 SP = Module.SP
 PC = Module.PC
 
