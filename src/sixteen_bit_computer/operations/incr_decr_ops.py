@@ -77,16 +77,16 @@ def generate_microcode_templates():
 
         if signature[1] in (ACC, A, B, C):
             # Module +/- 1 into ALU
-            step_0 = [
+            modlue_pm_into_alu = [
                     MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
                     MODULE_CONTROL["ALU"]["STORE_RESULT"],
                     MODULE_CONTROL["ALU"]["STORE_FLAGS"],
                     MODULE_CONTROL["ALU"]["A_IS_BUS"],
             ]
             if signature[0] == INCR:
-                step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+                modlue_pm_into_alu.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
             elif signature[0] == DECR:
-                step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+                modlue_pm_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
             else:
                 raise RuntimeError(
                     "Unexpected signature {sig} in incr/decr "
@@ -94,12 +94,12 @@ def generate_microcode_templates():
                 )
             
             # ALU back into module
-            step_1 = [
+            alu_into_module = [
                 MODULE_CONTROL["ALU"]["OUT"],
                 MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
             ]
 
-            control_steps = [step_0, step_1]
+            control_steps = [modlue_pm_into_alu, alu_into_module]
 
             templates = utils.assemble_instruction_steps(
                 instr_index_bitdef, flags_bitdefs, control_steps
@@ -107,22 +107,22 @@ def generate_microcode_templates():
             data_templates.extend(templates)
 
         elif signature[1] == M_CONST:
-            mem_into_MAR = [
+            mem_into_MAR_pc_count = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
             ]
 
-            mem_val_pm_into_alu_pc_count = [
+            mem_val_pm_into_alu = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["ALU"]["STORE_RESULT"],
                 MODULE_CONTROL["ALU"]["STORE_FLAGS"],
                 MODULE_CONTROL["ALU"]["A_IS_BUS"],
-                MODULE_CONTROL["PC"]["COUNT"],
             ]
             if signature[0] == INCR:
-                step_0.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
+                mem_val_pm_into_alu.extend(ALU_CONTROL_FLAGS["A_PLUS_1"])
             elif signature[0] == DECR:
-                step_0.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+                mem_val_pm_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
             else:
                 raise RuntimeError(
                     "Unexpected signature {sig} in incr/decr "
@@ -135,8 +135,8 @@ def generate_microcode_templates():
             ]
 
             control_steps = [
-                mem_into_MAR,
-                mem_val_pm_into_alu_pc_count,
+                mem_into_MAR_pc_count,
+                mem_val_pm_into_alu,
                 alu_into_mem
             ]
 
