@@ -107,8 +107,12 @@ def generate_microcode_templates():
             data_templates.extend(templates)
 
         elif signature[1] == M_CONST:
-            # Value from mem +/-1 -> ALU
-            step_0 = [
+            mem_into_MAR = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL["MAR"]["IN"],
+            ]
+
+            mem_val_pm_into_alu_pc_count = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["ALU"]["STORE_RESULT"],
                 MODULE_CONTROL["ALU"]["STORE_FLAGS"],
@@ -125,12 +129,17 @@ def generate_microcode_templates():
                     "microcode generation".format(sig=signature)
                 )
 
-            # Write the value back into memory
-            step_1 = [
+            alu_into_mem = [
                 MODULE_CONTROL["MEM"]["WRITE_TO"],
                 MODULE_CONTROL["ALU"]["OUT"],
             ]
-            control_steps = [step_0, step_1]
+
+            control_steps = [
+                mem_into_MAR,
+                mem_val_pm_into_alu_pc_count,
+                alu_into_mem
+            ]
+
             templates = utils.assemble_instruction_steps(
                 instr_index_bitdef, flags_bitdefs, control_steps
             )
