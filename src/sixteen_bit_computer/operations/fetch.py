@@ -66,6 +66,7 @@ def fetch_step_1():
     control_bitdef = bitdef.merge(
         [
             MODULE_CONTROL["PC"]["COUNT"],
+            MODULE_CONTROL["MAR"]["COUNT"],
             MODULE_CONTROL["MEM"]["READ_FROM"],
             MODULE_CONTROL["IR"]["IN"],
         ]

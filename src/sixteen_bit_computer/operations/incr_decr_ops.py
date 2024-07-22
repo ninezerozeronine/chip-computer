@@ -76,6 +76,7 @@ def generate_microcode_templates():
         flags_bitdefs = [FLAGS["ANY"]]
 
         if signature[1] in (ACC, A, B, C):
+            # Module +/- 1 into ALU
             step_0 = [
                     MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
                     MODULE_CONTROL["ALU"]["STORE_RESULT"],
@@ -91,7 +92,8 @@ def generate_microcode_templates():
                     "Unexpected signature {sig} in incr/decr "
                     "microcode generation".format(sig=signature)
                 )
-
+            
+            # ALU back into module
             step_1 = [
                 MODULE_CONTROL["ALU"]["OUT"],
                 MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
@@ -103,7 +105,7 @@ def generate_microcode_templates():
                 instr_index_bitdef, flags_bitdefs, control_steps
             )
             data_templates.extend(templates)
-            
+
         elif signature[1] == M_CONST:
             # Value from mem +/-1 -> ALU
             step_0 = [
@@ -122,6 +124,7 @@ def generate_microcode_templates():
                     "Unexpected signature {sig} in incr/decr "
                     "microcode generation".format(sig=signature)
                 )
+
             # Write the value back into memory
             step_1 = [
                 MODULE_CONTROL["MEM"]["WRITE_TO"],
