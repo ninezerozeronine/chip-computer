@@ -113,82 +113,74 @@ def generate_microcode_templates():
                 alu_into_sp,
             ]
 
-        elif signature[1] == CONST:
-            sp_minus1_into_alu_incr_pc = [
-                MODULE_CONTROL["SP"]["OUT"],
-                MODULE_CONTROL["ALU"]["A_IS_BUS"],
-                MODULE_CONTROL["ALU"]["STORE_RESULT"],
-                MODULE_CONTROL["PC"]["COUNT"],
-            ]
-            sp_minus1_into_alu_incr_pc.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+        elif signature[0] == CALL:
+            if signature[1] == CONST:
+                mem_into_shr_pc_count = [
+                    MODULE_CONTROL["MEM"]["READ_FROM"],
+                    MODULE_CONTROL["SHR"]["IN"],
+                    MODULE_CONTROL["PC"]["COUNT"],
+                ]
 
-            alu_into_mar_and_sp = [
-                MODULE_CONTROL["ALU"]["OUT"],
-                MODULE_CONTROL["SP"]["IN"],
-                MODULE_CONTROL["MAR"]["IN"],
-            ]
+                sp_minus1_into_alu = [
+                    MODULE_CONTROL["SP"]["OUT"],
+                    MODULE_CONTROL["ALU"]["A_IS_BUS"],
+                    MODULE_CONTROL["ALU"]["STORE_RESULT"],
+                    MODULE_CONTROL["PC"]["COUNT"],
+                ]
+                sp_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
-            pc_into_mem_at_sp = [
-                MODULE_CONTROL["PC"]["OUT"],
-                MODULE_CONTROL["MEM"]["WRITE_TO"],
-            ]
+                alu_into_mar_and_sp = [
+                    MODULE_CONTROL["ALU"]["OUT"],
+                    MODULE_CONTROL["SP"]["IN"],
+                    MODULE_CONTROL["MAR"]["IN"],
+                ]
 
-            pc_minus1_into_alu = [
-                MODULE_CONTROL["PC"]["OUT"],
-                MODULE_CONTROL["ALU"]["A_IS_BUS"],
-                MODULE_CONTROL["ALU"]["STORE_RESULT"],
-            ]
-            pc_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+                pc_into_mem_at_sp = [
+                    MODULE_CONTROL["PC"]["OUT"],
+                    MODULE_CONTROL["MEM"]["WRITE_TO"],
+                ]
 
-            alu_into_mar = [
-                MODULE_CONTROL["ALU"]["OUT"],
-                MODULE_CONTROL["MAR"]["IN"],
-            ]
+                shr_into_pc = [
+                    MODULE_CONTROL["SHR"]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
+                ]
+                control_steps = [
+                    mem_into_shr_pc_count,
+                    sp_minus1_into_alu,
+                    alu_into_mar_and_sp,
+                    pc_into_mem_at_sp,
+                    shr_into_pc
+                ]
+            else:
+                sp_minus1_into_alu = [
+                    MODULE_CONTROL["SP"]["OUT"],
+                    MODULE_CONTROL["ALU"]["A_IS_BUS"],
+                    MODULE_CONTROL["ALU"]["STORE_RESULT"],
+                ]
+                sp_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
-            constant_from_mem_to_pc = [
-                MODULE_CONTROL["MEM"]["READ_FROM"],
-                MODULE_CONTROL["PC"]["IN"],
-            ]
+                alu_into_mar_and_sp = [
+                    MODULE_CONTROL["ALU"]["OUT"],
+                    MODULE_CONTROL["SP"]["IN"],
+                    MODULE_CONTROL["MAR"]["IN"],
+                ]
 
-            control_steps = [
-                sp_minus1_into_alu_incr_pc,
-                alu_into_mar_and_sp,
-                pc_into_mem_at_sp,
-                pc_minus1_into_alu,
-                alu_into_mar,
-                constant_from_mem_to_pc,
-            ]
+                pc_onto_stack = [
+                    MODULE_CONTROL["PC"]["OUT"],
+                    MODULE_CONTROL["MEM"]["WRITE_TO"],
+                ]
 
-        else:
-            sp_minus1_into_alu = [
-                MODULE_CONTROL["SP"]["OUT"],
-                MODULE_CONTROL["ALU"]["A_IS_BUS"],
-                MODULE_CONTROL["ALU"]["STORE_RESULT"],
-            ]
-            sp_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
+                module_into_pc = [
+                    MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
+                    MODULE_CONTROL["PC"]["IN"],
+                ]
 
-            alu_into_mar_and_sp = [
-                MODULE_CONTROL["ALU"]["OUT"],
-                MODULE_CONTROL["SP"]["IN"],
-                MODULE_CONTROL["MAR"]["IN"],
-            ]
-
-            pc_onto_stack = [
-                MODULE_CONTROL["PC"]["OUT"],
-                MODULE_CONTROL["MEM"]["WRITE_TO"],
-            ]
-
-            module_into_pc = [
-                MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
-                MODULE_CONTROL["PC"]["IN"],
-            ]
-
-            control_steps = [
-                sp_minus1_into_alu,
-                alu_into_mar_and_sp,
-                pc_onto_stack,
-                module_into_pc,
-            ]
+                control_steps = [
+                    sp_minus1_into_alu,
+                    alu_into_mar_and_sp,
+                    pc_onto_stack,
+                    module_into_pc,
+                ]
 
         templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps
