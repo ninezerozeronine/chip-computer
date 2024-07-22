@@ -135,67 +135,69 @@ def generate_templates_for_signature(signature):
     # Comparing to a constant value, e.g.
     # JUMP_IF_ACC_<CMP> #34 &label
     if signature[1] == CONST:
-        # First unconditional step to put PC into MAR
+        # # First unconditional step to put PC into MAR
+        # step_0_flags = [FLAGS["ANY"]]
+        # step_0_module_controls = [
+        #     MODULE_CONTROL["PC"]["OUT"],
+        #     MODULE_CONTROL["MAR"]["IN"],
+        # ]
+        # microcode_defs.append({
+        #     "step": 0,
+        #     "flags": step_0_flags,
+        #     "module_controls": step_0_module_controls,
+        # })
+
+        # First unconditional step to actually generate the flags,
+        # comparing the value from memory
         step_0_flags = [FLAGS["ANY"]]
         step_0_module_controls = [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
+            MODULE_CONTROL["MEM"]["READ_FROM"],
+            MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+            MODULE_CONTROL["PC"]["COUNT"],
+            MODULE_CONTROL["MAR"]["COUNT"]
         ]
+        step_0_module_controls.extend(CONTROLS_MAP[signature[0]]["gen_flags_controls"])
         microcode_defs.append({
             "step": 0,
             "flags": step_0_flags,
             "module_controls": step_0_module_controls,
         })
 
-        # Second Unconditional step to actually generate the flags,
-        # comparing the value from memory
-        step_1_flags = [FLAGS["ANY"]]
-        step_1_module_controls = [
-            MODULE_CONTROL["MEM"]["READ_FROM"],
-            MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-            MODULE_CONTROL["PC"]["COUNT"],
-        ]
-        step_1_module_controls.extend(CONTROLS_MAP[signature[0]]["gen_flags_controls"])
-        microcode_defs.append({
-            "step": 1,
-            "flags": step_1_flags,
-            "module_controls": step_1_module_controls,
-        })
+        # # If flag is the true condition, comparison is true, do the jump
+        # true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
+        # true_step_1_module_controls = [
+        #     MODULE_CONTROL["PC"]["OUT"],
+        #     MODULE_CONTROL["MAR"]["IN"],
+        # ]
+        # microcode_defs.append({
+        #     "step": 1,
+        #     "flags": true_step_1_flags,
+        #     "module_controls": true_step_1_module_controls,
+        # })
 
         # If flag is the true condition, comparison is true, do the jump
-        true_step_2_flags = CONTROLS_MAP[signature[0]]["true_flags"]
-        true_step_2_module_controls = [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
-        ]
-        microcode_defs.append({
-            "step": 2,
-            "flags": true_step_2_flags,
-            "module_controls": true_step_2_module_controls,
-        })
-
-        true_step_3_flags = [FLAGS["ANY"]]
-        true_step_3_module_controls = [
+        true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
+        true_step_1_module_controls = [
             MODULE_CONTROL["MEM"]["READ_FROM"],
             MODULE_CONTROL["PC"]["IN"],
             MODULE_CONTROL["CU"]["STEP_RESET"],
         ]
         microcode_defs.append({
-            "step": 3,
-            "flags": true_step_3_flags,
-            "module_controls": true_step_3_module_controls,
+            "step": 1,
+            "flags": true_step_1_flags,
+            "module_controls": true_step_1_module_controls,
         })
 
-        # If flag is the false condition, comparison is fasle, do not do the jump
-        false_step_2_flags = CONTROLS_MAP[signature[0]]["false_flags"]
-        false_step_2_module_controls = [
+        # If flag is the false condition, comparison is false, do not do the jump
+        false_step_1_flags = CONTROLS_MAP[signature[0]]["false_flags"]
+        false_step_1_module_controls = [
             MODULE_CONTROL["PC"]["COUNT"],
             MODULE_CONTROL["CU"]["STEP_RESET"],
         ]
         microcode_defs.append({
-            "step": 2,
-            "flags": false_step_2_flags,
-            "module_controls": false_step_2_module_controls,
+            "step": 1,
+            "flags": false_step_1_flags,
+            "module_controls": false_step_1_module_controls,
         })
 
     # Comparing to a module, e.g.
@@ -214,28 +216,29 @@ def generate_templates_for_signature(signature):
             "module_controls": step_0_module_controls,
         })
 
+        # # If flag is the true condition, comparison is true, do the jump
+        # true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
+        # true_step_1_module_controls = [
+        #     MODULE_CONTROL["PC"]["OUT"],
+        #     MODULE_CONTROL["MAR"]["IN"],
+        # ]
+        # microcode_defs.append({
+        #     "step": 1,
+        #     "flags": true_step_1_flags,
+        #     "module_controls": true_step_1_module_controls,
+        # })
+
         # If flag is the true condition, comparison is true, do the jump
         true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
         true_step_1_module_controls = [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
-        ]
-        microcode_defs.append({
-            "step": 1,
-            "flags": true_step_1_flags,
-            "module_controls": true_step_1_module_controls,
-        })
-
-        true_step_2_flags = [FLAGS["ANY"]]
-        true_step_2_module_controls = [
             MODULE_CONTROL["MEM"]["READ_FROM"],
             MODULE_CONTROL["PC"]["IN"],
             MODULE_CONTROL["CU"]["STEP_RESET"],
         ]
         microcode_defs.append({
-            "step": 2,
-            "flags": true_step_2_flags,
-            "module_controls": true_step_2_module_controls,
+            "step": 1,
+            "flags": true_step_1_flags,
+            "module_controls": true_step_1_module_controls,
         })
 
         # If flag is the false condition, comparison is fasle, do not do the jump
