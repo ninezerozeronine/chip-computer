@@ -40,7 +40,7 @@ _SUPPORTED_SIGNATURES = (
 
 def generate_machinecode(signature, const_tokens):
     """
-    Generate machinecode for the JUMP_IF_ACC_XXX operations.
+    Generate machinecode for the JUMP_IF_ACC_(N)EQ operations.
 
     Args:
         signature (Tuple(:mod:`Instruction component<.instruction_components>`)):
@@ -68,10 +68,10 @@ def generate_machinecode(signature, const_tokens):
 
 def generate_microcode_templates():
     """
-    Generate microcode for the JUMP_IF_ACC_XXX operations.
+    Generate microcode for the JUMP_IF_ACC_(N)EQ operations.
 
     Returns:
-        list(DataTemplate): DataTemplates for all the JUMP_IF_ACC_XXX microcode.
+        list(DataTemplate): DataTemplates for all the JUMP_IF_ACC_(N)EQ microcode.
     """
 
     data_templates = []
@@ -88,78 +88,54 @@ def generate_microcode_templates():
 
 def compare_to_const_templates(signature):
     """
-
+    E.g. JUMP_IF_ACC_(N)EQ #VAL #DEST
     """
     microcode_defs = []
 
-    # First unconditional step to put PC into MAR
+    # First Unconditional step to actually generate the flags
     step_0_flags = [FLAGS["ANY"]]
     step_0_module_controls = [
-        MODULE_CONTROL["PC"]["OUT"],
-        MODULE_CONTROL["MAR"]["IN"],
+        MODULE_CONTROL["MEM"]["READ_FROM"],
+        MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+        MODULE_CONTROL["PC"]["COUNT"],
+        MODULE_CONTROL["MAR"]["COUNT"],
     ]
+    step_0_module_controls.extend(ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"])
     microcode_defs.append({
         "step": 0,
         "flags": step_0_flags,
         "module_controls": step_0_module_controls,
     })
 
-    # Second Unconditional step to actually generate the flags
-    step_1_flags = [FLAGS["ANY"]]
-    step_1_module_controls = [
-        MODULE_CONTROL["MEM"]["READ_FROM"],
-        MODULE_CONTROL["ALU"]["STORE_FLAGS"],
-        MODULE_CONTROL["PC"]["COUNT"],
-    ]
-    step_1_module_controls.extend(ALU_CONTROL_FLAGS["COMPARE_LTE_GT_EQ"])
-    microcode_defs.append({
-        "step": 1,
-        "flags": step_1_flags,
-        "module_controls": step_1_module_controls,
-    })
-
     # If true, do the jump
-    # First step of jump
     if signature[0] == JUMP_IF_ACC_EQ:
-        true_step_2_flags = [FLAGS["EQUAL"]["HIGH"]]
+        true_step_1_flags = [FLAGS["EQUAL"]["HIGH"]]
     else:
-        true_step_2_flags = [FLAGS["EQUAL"]["LOW"]]
-    true_step_2_module_controls = [
-        MODULE_CONTROL["PC"]["OUT"],
-        MODULE_CONTROL["MAR"]["IN"],
-    ]
-    microcode_defs.append({
-        "step": 2,
-        "flags": true_step_2_flags,
-        "module_controls": true_step_2_module_controls,
-    })
-
-    # Second step of the jump
-    true_step_3_flags = [FLAGS["ANY"]]
-    true_step_3_module_controls = [
+        true_step_1_flags = [FLAGS["EQUAL"]["LOW"]]
+    true_step_1_module_controls = [
         MODULE_CONTROL["MEM"]["READ_FROM"],
         MODULE_CONTROL["PC"]["IN"],
         MODULE_CONTROL["CU"]["STEP_RESET"],
     ]
     microcode_defs.append({
-        "step": 3,
-        "flags": true_step_3_flags,
-        "module_controls": true_step_3_module_controls,
+        "step": 1,
+        "flags": true_step_1_flags,
+        "module_controls": true_step_1_module_controls,
     })
 
     # If false, don't do the jump
     if signature[0] == JUMP_IF_ACC_EQ:
-        false_step_2_flags = [FLAGS["EQUAL"]["LOW"]]
+        false_step_1_flags = [FLAGS["EQUAL"]["LOW"]]
     else:
-        false_step_2_flags = [FLAGS["EQUAL"]["HIGH"]]
-    false_step_2_module_controls = [
+        false_step_1_flags = [FLAGS["EQUAL"]["HIGH"]]
+    false_step_1_module_controls = [
         MODULE_CONTROL["PC"]["COUNT"],
         MODULE_CONTROL["CU"]["STEP_RESET"],
     ]
     microcode_defs.append({
-        "step": 2,
-        "flags": false_step_2_flags,
-        "module_controls": false_step_2_module_controls,
+        "step": 1,
+        "flags": false_step_1_flags,
+        "module_controls": false_step_1_module_controls,
     })
 
     instr_index = get_instruction_index(signature)
@@ -171,6 +147,9 @@ def compare_to_const_templates(signature):
 
 
 def compare_to_module_templates(signature):
+    """
+    E.g. E.g. JUMP_IF_ACC_(N)EQ A #DEST
+    """
     microcode_defs = []
 
     # First unconditional step to generate flags
@@ -187,32 +166,19 @@ def compare_to_module_templates(signature):
     })
 
     # If true, do the jump
-    # First step of jump
     if signature[0] == JUMP_IF_ACC_EQ:
         true_step_1_flags = [FLAGS["EQUAL"]["HIGH"]]
     else:
         true_step_1_flags = [FLAGS["EQUAL"]["LOW"]]
     true_step_1_module_controls = [
-        MODULE_CONTROL["PC"]["OUT"],
-        MODULE_CONTROL["MAR"]["IN"],
-    ]
-    microcode_defs.append({
-        "step": 1,
-        "flags": true_step_1_flags,
-        "module_controls": true_step_1_module_controls,
-    })
-
-    # Second step of the jump
-    true_step_2_flags = [FLAGS["ANY"]]
-    true_step_2_module_controls = [
         MODULE_CONTROL["MEM"]["READ_FROM"],
         MODULE_CONTROL["PC"]["IN"],
         MODULE_CONTROL["CU"]["STEP_RESET"],
     ]
     microcode_defs.append({
-        "step": 2,
-        "flags": true_step_2_flags,
-        "module_controls": true_step_2_module_controls,
+        "step": 1,
+        "flags": true_step_1_flags,
+        "module_controls": true_step_1_module_controls,
     })
 
     # If false, don't do the jump
