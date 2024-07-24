@@ -9,8 +9,10 @@ from ..data_structures import Word
 from ..instruction_components import (
     JUMP_IF_NEGATIVE_FLAG,
     JUMP_IF_NOT_NEGATIVE_FLAG,
-    JUMP_IF_CARRYBORROW_FLAG,
-    JUMP_IF_NOT_CARRYBORROW_FLAG,
+    JUMP_IF_CARRY,
+    JUMP_IF_NOT_CARRY,
+    JUMP_IF_BORROW,
+    JUMP_IF_NOT_BORROW,
     JUMP_IF_EQUAL_FLAG,
     JUMP_IF_NOT_EQUAL_FLAG,
     JUMP_IF_ZERO_FLAG,
@@ -28,8 +30,10 @@ from . import utils
 _SUPPORTED_SIGNATURES = (
     (JUMP_IF_NEGATIVE_FLAG, CONST),
     (JUMP_IF_NOT_NEGATIVE_FLAG, CONST),
-    (JUMP_IF_CARRYBORROW_FLAG, CONST),
-    (JUMP_IF_NOT_CARRYBORROW_FLAG, CONST),
+    (JUMP_IF_CARRY, CONST),
+    (JUMP_IF_NOT_CARRY, CONST),
+    (JUMP_IF_BORROW, CONST),
+    (JUMP_IF_NOT_BORROW, CONST),
     (JUMP_IF_EQUAL_FLAG, CONST),
     (JUMP_IF_NOT_EQUAL_FLAG, CONST),
     (JUMP_IF_ZERO_FLAG, CONST),
@@ -45,13 +49,21 @@ _OPERATION_TO_FLAGS = {
         "true_flags":[FLAGS["NEGATIVE"]["LOW"]],
         "false_flags":[FLAGS["NEGATIVE"]["HIGH"]],
     },
-    JUMP_IF_CARRYBORROW_FLAG : {
-        "true_flags":[FLAGS["CARRY_BORROW"]["HIGH"]],
-        "false_flags":[FLAGS["CARRY_BORROW"]["LOW"]],
+    JUMP_IF_CARRY:{
+        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
     },
-    JUMP_IF_NOT_CARRYBORROW_FLAG : {
-        "true_flags":[FLAGS["CARRY_BORROW"]["LOW"]],
-        "false_flags":[FLAGS["CARRY_BORROW"]["HIGH"]],
+    JUMP_IF_NOT_CARRY:{
+        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+    },
+    JUMP_IF_BORROW:{
+        "true_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+    },
+    JUMP_IF_NOT_BORROW:{
+        "true_flags": [FLAGS["CARRY_BORROW"]["HIGH"]],
+        "false_flags": [FLAGS["CARRY_BORROW"]["LOW"]],
     },
     JUMP_IF_EQUAL_FLAG : {
         "true_flags":[FLAGS["EQUAL"]["HIGH"]],
@@ -107,32 +119,19 @@ def generate_microcode_templates():
     data_templates = []
 
     for signature in _SUPPORTED_SIGNATURES:
-
         microcode_defs = []
 
-        # If true, address memory with PC
+        # If true, do the jump
         true_step_0_flags = _OPERATION_TO_FLAGS[signature[0]]["true_flags"]
         true_step_0_module_controls = [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
-        ]
-        microcode_defs.append({
-            "step": 0,
-            "flags": true_step_0_flags,
-            "module_controls": true_step_0_module_controls,
-        })
-
-        # Read from mem, write into PC
-        true_step_1_flags = [FLAGS["ANY"]]
-        true_step_1_module_controls = [
             MODULE_CONTROL["MEM"]["READ_FROM"],
             MODULE_CONTROL["PC"]["IN"],
             MODULE_CONTROL["CU"]["STEP_RESET"],
         ]
         microcode_defs.append({
-            "step": 1,
-            "flags": true_step_1_flags,
-            "module_controls": true_step_1_module_controls,
+            "step": 0,
+            "flags": true_step_0_flags,
+            "module_controls": true_step_0_module_controls,
         })
 
         # If false, don't jump
