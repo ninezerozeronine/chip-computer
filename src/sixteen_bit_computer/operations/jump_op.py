@@ -13,7 +13,6 @@ from ..instruction_components import (
     A,
     B,
     C,
-    SP,
     M_ACC,
     M_A,
     M_B,
@@ -35,7 +34,6 @@ _SUPPORTED_SIGNATURES = (
     (JUMP, A),
     (JUMP, B),
     (JUMP, C),
-    (JUMP, SP),
     (JUMP, CONST),
     (JUMP, M_ACC),
     (JUMP, M_A),
@@ -90,15 +88,11 @@ def generate_microcode_templates():
         if signature[1] == CONST:
             control_steps = [
                 [
-                    MODULE_CONTROL["PC"]["OUT"],
-                    MODULE_CONTROL["MAR"]["IN"],
-                ],
-                [
                     MODULE_CONTROL["MEM"]["READ_FROM"],
                     MODULE_CONTROL["PC"]["IN"],
                 ],
             ]
-        elif signature[1] in (ACC, A, B, C, SP):
+        elif signature[1] in (ACC, A, B, C):
             control_steps = [
                 [
                     MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
@@ -119,31 +113,15 @@ def generate_microcode_templates():
             ]
         elif signature[1] == M_CONST:
             step_0 = [
-                MODULE_CONTROL["PC"]["OUT"],
-                MODULE_CONTROL["MAR"]["IN"],
-            ]
-            # Need to store the address in the ALU rather than going
-            # directly into the MAR, otherwise memory will be read,
-            # and the address in memory will be change at the same
-            # time - which will likely cause clock sync issues.
-            step_1 = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
-                MODULE_CONTROL["ALU"]["STORE_RESULT"],
-                MODULE_CONTROL["ALU"]["A_IS_BUS"],
-            ]
-            step_1.extend(ALU_CONTROL_FLAGS["A"])
-                
-            step_2 = [
-                MODULE_CONTROL["ALU"]["OUT"],
                 MODULE_CONTROL["MAR"]["IN"],
             ]
-
-            step_3 = [
+            step_1 = [
                 MODULE_CONTROL["MEM"]["READ_FROM"],
                 MODULE_CONTROL["PC"]["IN"],
             ]
 
-            control_steps = [step_0, step_1, step_2, step_3]
+            control_steps = [step_0, step_1]
 
         templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps
