@@ -1079,6 +1079,7 @@ _INSTRUCTION_SIGNATURES = (
     (SET, B, CONST),
     (SET, C, CONST),
     (SET, SP, CONST),
+    (SET, M_CONST, CONST),
     (SET_ZERO, ACC),
     (SET_ZERO, A),
     (SET_ZERO, B),

@@ -16,10 +16,10 @@ from ..instruction_components import (
     C,
     SP,
     CONST,
+    M_CONST,
 )
 from ..language_defs import (
     MODULE_CONTROL,
-    ALU_CONTROL_FLAGS,
     FLAGS,
 )
 
@@ -30,6 +30,7 @@ _SUPPORTED_SIGNATURES = (
     (SET, B, CONST),
     (SET, C, CONST),
     (SET, SP, CONST),
+    (SET, M_CONST, CONST),
 )
 """
 The list of signatures this operation supports.
@@ -54,10 +55,17 @@ def generate_machinecode(signature, const_tokens):
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
 
-    return [
-        Word(value=instruction_listings.get_instruction_index(signature)),
-        Word(const_token=const_tokens[0]),
+    machinecode = [
+        Word(value=instruction_listings.get_instruction_index(signature))
     ]
+
+    if signature[1] == M_CONST:
+        machinecode.append(Word(const_token=const_tokens[1]))
+        machinecode.append(Word(const_token=const_tokens[0]))
+    else:
+        machinecode.append(Word(const_token=const_tokens[0]))
+
+    return machinecode
 
 
 def generate_microcode_templates():
@@ -76,18 +84,30 @@ def generate_microcode_templates():
         )
         flags_bitdefs = [FLAGS["ANY"]]
 
-        step_0 = [
-            MODULE_CONTROL["PC"]["OUT"],
-            MODULE_CONTROL["MAR"]["IN"],
-        ]
-
-        step_1 = [
-            MODULE_CONTROL["MEM"]["READ_FROM"],
-            MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
-            MODULE_CONTROL["PC"]["COUNT"],
-        ]
-
-        control_steps = [step_0, step_1]
+        if signature[1] == M_CONST:
+            step_0 = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL["SHR"]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
+                MODULE_CONTROL["MAR"]["COUNT"],
+            ]
+            step_1 = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
+            ]
+            step_2 = [
+                MODULE_CONTROL["MEM"]["WRITE_TO"],
+                MODULE_CONTROL["SHR"]["OUT"],
+            ]
+            control_steps = [step_0, step_1, step_2]
+        else:
+            step_0 = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"],
+            ]
+            control_steps = [step_0]
 
         templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps

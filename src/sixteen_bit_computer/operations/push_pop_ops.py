@@ -8,6 +8,9 @@ space.
 
 The stack pointer always points at the item at the top of the stack.
 
+The stack pointer gets a lower value/moves down in memory as you push
+items onto the stack.
+
 Initial State:
 
     0 <code>
