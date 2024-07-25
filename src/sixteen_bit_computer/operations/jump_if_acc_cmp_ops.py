@@ -18,8 +18,8 @@ from ..instruction_components import (
     A,
     B,
     C,
-    SP,
-    CONST
+    CONST,
+    M_CONST
 )
 from .. import number_utils
 from ..language_defs import (
@@ -33,23 +33,23 @@ _SUPPORTED_SIGNATURES = (
     (JUMP_IF_ACC_LT, A, CONST),
     (JUMP_IF_ACC_LT, B, CONST),
     (JUMP_IF_ACC_LT, C, CONST),
-    (JUMP_IF_ACC_LT, SP, CONST),
     (JUMP_IF_ACC_LT, CONST, CONST),
+    (JUMP_IF_ACC_LT, M_CONST, CONST),
     (JUMP_IF_ACC_LTE, A, CONST),
     (JUMP_IF_ACC_LTE, B, CONST),
     (JUMP_IF_ACC_LTE, C, CONST),
-    (JUMP_IF_ACC_LTE, SP, CONST),
     (JUMP_IF_ACC_LTE, CONST, CONST),
+    (JUMP_IF_ACC_LTE, M_CONST, CONST),
     (JUMP_IF_ACC_GTE, A, CONST),
     (JUMP_IF_ACC_GTE, B, CONST),
     (JUMP_IF_ACC_GTE, C, CONST),
-    (JUMP_IF_ACC_GTE, SP, CONST),
     (JUMP_IF_ACC_GTE, CONST, CONST),
+    (JUMP_IF_ACC_GTE, M_CONST, CONST),
     (JUMP_IF_ACC_GT, A, CONST),
     (JUMP_IF_ACC_GT, B, CONST),
     (JUMP_IF_ACC_GT, C, CONST),
-    (JUMP_IF_ACC_GT, SP, CONST),
     (JUMP_IF_ACC_GT, CONST, CONST),
+    (JUMP_IF_ACC_GT, M_CONST, CONST),
 )
 
 CONTROLS_MAP = {
@@ -97,6 +97,12 @@ def generate_machinecode(signature, const_tokens):
             Word(const_token=const_tokens[0]),
             Word(const_token=const_tokens[1]),
         ]
+    elif signature[1] == M_CONST:
+        return [
+            Word(value=get_instruction_index(signature)),
+            Word(const_token=const_tokens[1]),
+            Word(const_token=const_tokens[0]),
+        ]
     else:
         return [
             Word(value=get_instruction_index(signature)),
@@ -132,9 +138,77 @@ def generate_templates_for_signature(signature):
     """
     microcode_defs = []
 
+    # Comparing to a value in memory, e.g.
+    # JUMP_IF_ACC_<CMP> [#22] &label
+    if signature[1] == M_CONST:
+        # First unconditional step to store the value to jump to 
+        step_0_flags = [FLAGS["ANY"]]
+        step_0_module_controls = [
+            MODULE_CONTROL["MEM"]["READ_FROM"],
+            MODULE_CONTROL["SHR"]["IN"],
+            MODULE_CONTROL["PC"]["COUNT"],
+            MODULE_CONTROL["MAR"]["COUNT"],
+        ]
+        microcode_defs.append({
+            "step": 0,
+            "flags": step_0_flags,
+            "module_controls": step_0_module_controls,
+        })
+
+        # Second unconditional step to address the value to compare
+        step_1_flags = [FLAGS["ANY"]]
+        step_1_module_controls = [
+            MODULE_CONTROL["MEM"]["READ_FROM"],
+            MODULE_CONTROL["MAR"]["IN"],
+            MODULE_CONTROL["PC"]["COUNT"],
+        ]
+        microcode_defs.append({
+            "step": 1,
+            "flags": step_1_flags,
+            "module_controls": step_1_module_controls,
+        })
+
+        # Third unconditional step to generate the flags comparing the
+        # value from memory
+        step_2_flags = [FLAGS["ANY"]]
+        step_2_module_controls = [
+            MODULE_CONTROL["MEM"]["READ_FROM"],
+            MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+        ]
+        step_2_module_controls.extend(CONTROLS_MAP[signature[0]]["gen_flags_controls"])
+        microcode_defs.append({
+            "step": 2,
+            "flags": step_2_flags,
+            "module_controls": step_2_module_controls,
+        })
+
+        # If flag is the true condition, comparison is true, do the jump
+        true_step_3_flags = CONTROLS_MAP[signature[0]]["true_flags"]
+        true_step_3_module_controls = [
+            MODULE_CONTROL["SHR"]["OUT"],
+            MODULE_CONTROL["PC"]["IN"],
+            MODULE_CONTROL["CU"]["STEP_RESET"],
+        ]
+        microcode_defs.append({
+            "step": 3,
+            "flags": true_step_3_flags,
+            "module_controls": true_step_3_module_controls,
+        })
+
+        # If flag is the false condition, comparison is false, do not do the jump
+        false_step_3_flags = CONTROLS_MAP[signature[0]]["false_flags"]
+        false_step_3_module_controls = [
+            MODULE_CONTROL["CU"]["STEP_RESET"],
+        ]
+        microcode_defs.append({
+            "step": 3,
+            "flags": false_step_3_flags,
+            "module_controls": false_step_3_module_controls,
+        })
+
     # Comparing to a constant value, e.g.
     # JUMP_IF_ACC_<CMP> #34 &label
-    if signature[1] == CONST:
+    elif signature[1] == CONST:
         # First unconditional step to actually generate the flags,
         # comparing the value from memory
         step_0_flags = [FLAGS["ANY"]]
@@ -178,7 +252,7 @@ def generate_templates_for_signature(signature):
 
     # Comparing to a module, e.g.
     # JUMP_IF_ACC_<CMP> B &label
-    else:
+    elif signature[1] in (A, B, C):
         # Unconditional step to generate the flags.
         step_0_flags = [FLAGS["ANY"]]
         step_0_module_controls = [
@@ -216,6 +290,9 @@ def generate_templates_for_signature(signature):
             "flags": false_step_1_flags,
             "module_controls": false_step_1_module_controls,
         })
+    
+    else:
+        raise ValueError("Unexpected signature")
 
     instr_index = get_instruction_index(signature)
     data_templates = utils.assemble_explicit_instruction_steps(
