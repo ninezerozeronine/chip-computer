@@ -135,18 +135,6 @@ def generate_templates_for_signature(signature):
     # Comparing to a constant value, e.g.
     # JUMP_IF_ACC_<CMP> #34 &label
     if signature[1] == CONST:
-        # # First unconditional step to put PC into MAR
-        # step_0_flags = [FLAGS["ANY"]]
-        # step_0_module_controls = [
-        #     MODULE_CONTROL["PC"]["OUT"],
-        #     MODULE_CONTROL["MAR"]["IN"],
-        # ]
-        # microcode_defs.append({
-        #     "step": 0,
-        #     "flags": step_0_flags,
-        #     "module_controls": step_0_module_controls,
-        # })
-
         # First unconditional step to actually generate the flags,
         # comparing the value from memory
         step_0_flags = [FLAGS["ANY"]]
@@ -162,18 +150,6 @@ def generate_templates_for_signature(signature):
             "flags": step_0_flags,
             "module_controls": step_0_module_controls,
         })
-
-        # # If flag is the true condition, comparison is true, do the jump
-        # true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
-        # true_step_1_module_controls = [
-        #     MODULE_CONTROL["PC"]["OUT"],
-        #     MODULE_CONTROL["MAR"]["IN"],
-        # ]
-        # microcode_defs.append({
-        #     "step": 1,
-        #     "flags": true_step_1_flags,
-        #     "module_controls": true_step_1_module_controls,
-        # })
 
         # If flag is the true condition, comparison is true, do the jump
         true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
@@ -215,18 +191,6 @@ def generate_templates_for_signature(signature):
             "flags": step_0_flags,
             "module_controls": step_0_module_controls,
         })
-
-        # # If flag is the true condition, comparison is true, do the jump
-        # true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
-        # true_step_1_module_controls = [
-        #     MODULE_CONTROL["PC"]["OUT"],
-        #     MODULE_CONTROL["MAR"]["IN"],
-        # ]
-        # microcode_defs.append({
-        #     "step": 1,
-        #     "flags": true_step_1_flags,
-        #     "module_controls": true_step_1_module_controls,
-        # })
 
         # If flag is the true condition, comparison is true, do the jump
         true_step_1_flags = CONTROLS_MAP[signature[0]]["true_flags"]
