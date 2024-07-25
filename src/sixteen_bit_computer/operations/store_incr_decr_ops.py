@@ -168,7 +168,7 @@ def _generate_control_steps(signature):
         ]
 
         return [
-            val_to_shr_mar_and_pc_count
+            val_to_shr_mar_and_pc_count,
             store_mod_to_mar,
             shr_to_mem,
             incr_decr_mod_to_mar,
