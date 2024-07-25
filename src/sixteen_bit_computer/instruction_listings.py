@@ -1236,7 +1236,9 @@ _INSTRUCTION_SIGNATURES = (
     (DECR, C),
     (DECR, M_CONST),
     (STORE_INCR, ACC, M_A, M_B),
+    (STORE_INCR, CONST, M_A, M_B),
     (STORE_DECR, ACC, M_A, M_B),
+    (STORE_DECR, CONST, M_A, M_B),
 )
 """
 All possible instruction signatures.
