@@ -4,7 +4,7 @@ from .. import (
     number_utils
 )
 from ..data_structures import DataTemplate
-from ..instruction_components import ACC, A, B, C, PC, SP
+from ..instruction_components import ACC, A, B, C, X, Y, Z, PC, SP
 
 
 def assemble_instruction_steps(instruction_bitdef, flags_bitdefs, control_steps):
@@ -161,6 +161,9 @@ _COMPONENT_TO_MODULE_NAME = {
     A: "A",
     B: "B",
     C: "C",
+    X: "X",
+    Y: "Y",
+    Z: "Z",
     SP: "SP",
     PC: "PC",
 }

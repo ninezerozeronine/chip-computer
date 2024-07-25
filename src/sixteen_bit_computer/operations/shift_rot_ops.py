@@ -7,8 +7,8 @@ rotating in that direction) is a 1, the carry bit is set.
 from ..instruction_listings import get_instruction_index
 from ..instruction_components import (
     ROT_LEFT,
-    SHIFT_LEFT,
     ROT_RIGHT,
+    SHIFT_LEFT,
     SHIFT_RIGHT,
     ACC,
     A,
@@ -32,16 +32,16 @@ _SUPPORTED_SIGNATURES = (
     (ROT_LEFT, B),
     (ROT_LEFT, C),
     (ROT_LEFT, M_CONST),
-    (SHIFT_LEFT, ACC),
-    (SHIFT_LEFT, A),
-    (SHIFT_LEFT, B),
-    (SHIFT_LEFT, C),
-    (SHIFT_LEFT, M_CONST),
     (ROT_RIGHT, ACC),
     (ROT_RIGHT, A),
     (ROT_RIGHT, B),
     (ROT_RIGHT, C),
     (ROT_RIGHT, M_CONST),
+    (SHIFT_LEFT, ACC),
+    (SHIFT_LEFT, A),
+    (SHIFT_LEFT, B),
+    (SHIFT_LEFT, C),
+    (SHIFT_LEFT, M_CONST),
     (SHIFT_RIGHT, ACC),
     (SHIFT_RIGHT, A),
     (SHIFT_RIGHT, B),
@@ -84,8 +84,8 @@ def generate_microcode_templates():
 
 _OPCODE_TO_MODULE_OP = {
     ROT_LEFT: "ROTL_OUT",
-    SHIFT_LEFT: "SHL_OUT",
     ROT_RIGHT: "ROTR_OUT",
+    SHIFT_LEFT: "SHL_OUT",
     SHIFT_RIGHT: "SHR_OUT"
 }
 

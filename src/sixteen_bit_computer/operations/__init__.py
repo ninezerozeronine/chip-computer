@@ -14,11 +14,11 @@ def get_all_operations():
         load_store_ops,
         push_pop_ops,
         not_op,
-        rot_left_op,
         call_return_ops,
         jump_if_acc_cmp_ops,
         jump_if_flag_not_flag_ops,
-        lshift_op,
+        shift_rot_ops,
+        store_incr_decr_ops,
     )
 
     return [
@@ -35,9 +35,9 @@ def get_all_operations():
         load_store_ops,
         push_pop_ops,
         not_op,
-        rot_left_op,
         call_return_ops,
         jump_if_acc_cmp_ops,
         jump_if_flag_not_flag_ops,
-        lshift_op,
+        shift_rot_ops,
+        store_incr_decr_ops,
     ]

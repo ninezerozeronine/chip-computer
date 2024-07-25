@@ -14,7 +14,6 @@ from ..instruction_components import (
     A,
     B,
     C,
-    SP,
 )
 from ..language_defs import (
     MODULE_CONTROL,
@@ -28,7 +27,6 @@ _SUPPORTED_SIGNATURES = (
     (SET_ZERO, A),
     (SET_ZERO, B),
     (SET_ZERO, C),
-    (SET_ZERO, SP),
 )
 """
 The list of signatures this operation supports.

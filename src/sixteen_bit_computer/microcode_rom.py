@@ -10,7 +10,6 @@ from .language_defs import (
 )
 from .data_structures import RomData
 from . import bitdef
-from . import number_utils
 from .rom_utils import (
     romdatas_have_duplicate_addresses,
     populate_empty_addresses
