@@ -1724,9 +1724,9 @@ def test_assemble_all_instructions():
         DECR C
         DECR [#456]
         STORE_INCR ACC [A] [B]
-        STORE_INCR CONST [A] [B]
+        STORE_INCR #123 [A] [B]
         STORE_DECR ACC [A] [B]
-        STORE_DECR CONST [A] [B]
+        STORE_DECR #123 [A] [B]
     """
     dedent_and_split = textwrap.dedent(test_data).splitlines()
     assembler.assemble(dedent_and_split)

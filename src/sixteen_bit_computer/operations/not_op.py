@@ -12,6 +12,7 @@ from ..instruction_components import (
     A,
     B,
     C,
+    M_CONST
 )
 from .. import number_utils
 from ..language_defs import (
@@ -26,6 +27,7 @@ _SUPPORTED_SIGNATURES = (
     (NOT, A),
     (NOT, B),
     (NOT, C),
+    (NOT, M_CONST)
 )
 
 
@@ -44,9 +46,15 @@ def generate_machinecode(signature, const_tokens):
     if signature not in _SUPPORTED_SIGNATURES:
         raise ValueError
 
-    return [
-        Word(value=get_instruction_index(signature))
-    ]
+    if signature == (NOT, M_CONST):
+        return [
+            Word(value=get_instruction_index(signature)),
+            Word(const_token=const_tokens[0]),
+        ]
+    else:
+        return [
+            Word(value=get_instruction_index(signature))
+        ]
 
 
 def generate_microcode_templates():
@@ -65,20 +73,48 @@ def generate_microcode_templates():
             instr_index, bit_width=8
         )
         flags_bitdefs = [FLAGS["ANY"]]
-        step_0 = [
+
+        if signature[1] in (ACC, A, B, C):
+            step_0 = [
                 MODULE_CONTROL[utils.component_to_module_name(signature[1])]["OUT"],
                 MODULE_CONTROL["ALU"]["STORE_RESULT"],
                 MODULE_CONTROL["ALU"]["STORE_FLAGS"],
                 MODULE_CONTROL["ALU"]["A_IS_BUS"],
-        ]
-        step_0.extend(ALU_CONTROL_FLAGS["NOT_A"])
+            ]
+            step_0.extend(ALU_CONTROL_FLAGS["NOT_A"])
 
-        step_1 = [
-            MODULE_CONTROL["ALU"]["OUT"],
-            MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
-        ]
+            step_1 = [
+                MODULE_CONTROL["ALU"]["OUT"],
+                MODULE_CONTROL[utils.component_to_module_name(signature[1])]["IN"],
+            ]
 
-        control_steps = [step_0, step_1]
+            control_steps = [step_0, step_1]
+
+        if signature[1] == M_CONST:
+            address_mem_and_pc_count = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL["MAR"]["IN"],
+                MODULE_CONTROL["PC"]["COUNT"]
+            ]
+
+            not_val_into_alu = [
+                MODULE_CONTROL["MEM"]["READ_FROM"],
+                MODULE_CONTROL["ALU"]["STORE_RESULT"],
+                MODULE_CONTROL["ALU"]["STORE_FLAGS"],
+                MODULE_CONTROL["ALU"]["A_IS_BUS"],
+            ]
+            not_val_into_alu.extend(ALU_CONTROL_FLAGS["NOT_A"])
+
+            alu_into_mem = [
+                MODULE_CONTROL["MEM"]["WRITE_TO"],
+                MODULE_CONTROL["ALU"]["OUT"],
+            ]
+
+            control_steps = [
+                address_mem_and_pc_count,
+                not_val_into_alu,
+                alu_into_mem,
+            ]
 
         templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps

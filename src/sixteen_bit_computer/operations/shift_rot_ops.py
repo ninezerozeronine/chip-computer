@@ -59,7 +59,7 @@ def generate_machinecode(signature, const_tokens):
             Word(value=get_instruction_index(signature))
         ]
 
-    if signature[1] in (M_CONST):
+    if signature[1] == M_CONST:
         return [
             Word(value=get_instruction_index(signature)),
             Word(const_token=const_tokens[0]),

@@ -112,16 +112,16 @@ def generate_microcode_templates():
                 ],
             ]
         elif signature[1] == M_CONST:
-            step_0 = [
-                MODULE_CONTROL["MEM"]["READ_FROM"],
-                MODULE_CONTROL["MAR"]["IN"],
+            control_steps = [
+                [
+                    MODULE_CONTROL["MEM"]["READ_FROM"],
+                    MODULE_CONTROL["MAR"]["IN"],
+                ],
+                [
+                    MODULE_CONTROL["MEM"]["READ_FROM"],
+                    MODULE_CONTROL["PC"]["IN"],
+                ]
             ]
-            step_1 = [
-                MODULE_CONTROL["MEM"]["READ_FROM"],
-                MODULE_CONTROL["PC"]["IN"],
-            ]
-
-            control_steps = [step_0, step_1]
 
         templates = utils.assemble_instruction_steps(
             instr_index_bitdef, flags_bitdefs, control_steps
