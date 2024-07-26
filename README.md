@@ -44,11 +44,11 @@ in the root directory.
 
 # Development
 
-This is assuming the OS is Wondows and Anaconda is being used for Python/Environment managemnet.
+This is assuming the OS is Windows and Anaconda is being used for Python/Environment managemnet.
 
 If one hasn't already been created, create a virtualenv with:
 
-    conda create --name sbcdevenv python=3.9
+    conda create --name chipcomputerenv python=3.11
 
 Then activate the virtualenv:
 

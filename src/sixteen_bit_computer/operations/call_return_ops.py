@@ -8,9 +8,9 @@ the value in the given argument (module or constant).
 RETURN: Pops the top of the stack into the program counter. Expects to
 be used after having arrived at a section of assembly with the CALL
 operation.
-
-
 """
+
+import textwrap
 
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
@@ -201,3 +201,80 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+def gen_test_assembly():
+    test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // CALL AND RETURN
+        ////////////////////////////////////////////////////////////////
+
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+    &safe_sp
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+        NOOP
+
+
+    &increment_acc
+        INCR ACC
+        RETURN
+        HALT
+
+    &increment_a
+        INCR A
+        RETURN
+        HALT
+
+    &call_0
+        SET SP &safe_sp
+        SET A #0
+        SET ACC &increment_a
+        CALL ACC
+        SET ACC #1
+        JUMP_IF_ACC_EQ A &call_1
+        HALT
+
+    &call_1
+        SET ACC #0
+        SET A &increment_acc
+        CALL A
+        JUMP_IF_ACC_EQ #1 &call_2
+        HALT
+
+    &call_2
+        SET ACC #0
+        SET B &increment_acc
+        CALL B
+        JUMP_IF_ACC_EQ #1 &call_3
+        HALT
+
+    &call_3
+        SET ACC #0
+        SET C &increment_acc
+        CALL C
+        JUMP_IF_ACC_EQ #1 &call_4
+        HALT
+
+    &call_4
+        SET ACC #0
+        CALL &increment_acc
+        JUMP_IF_ACC_EQ #1 &call_end
+        HALT
+    
+    &call_end
+        NOOP
+
+    """
+
+    return textwrap.dedent(test_assembly)
