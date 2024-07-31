@@ -16,6 +16,7 @@ from ..instruction_components import (
     Z,
     PC,
     SP,
+    component_to_assembly,
 )
 from .. import number_utils
 from . import utils
@@ -193,7 +194,20 @@ def gen_test_assembly():
     
     &copy_end
         NOOP
-
     """
 
     return textwrap.dedent(test_assembly)
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

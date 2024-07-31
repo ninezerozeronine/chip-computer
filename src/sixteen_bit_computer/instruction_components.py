@@ -228,3 +228,88 @@ def memory_ref_to_component(memory_ref):
     """
 
     return _MEMORY_REF_TO_COMPONENT[memory_ref]
+
+_COMPONENT_TO_ASSEMBLY = {
+    ADD: "ADD",
+    ADDC: "ADDC",
+    SUB: "SUB",
+    SUBB: "SUBB",
+    INCR: "INCR",
+    DECR: "DECR",
+
+    COPY: "COPY",
+    LOAD: "LOAD",
+    STORE: "STORE",
+    PUSH: "PUSH",
+    POP: "POP",
+    SET: "SET",
+    SET_ZERO: "SET_ZERO",
+
+    NOOP: "NOOP",
+    JUMP: "JUMP",
+    JUMP_IF_ACC_LT: "JUMP_IF_ACC_LT",
+    JUMP_IF_ACC_LTE: "JUMP_IF_ACC_LTE",
+    JUMP_IF_ACC_EQ: "JUMP_IF_ACC_EQ",
+    JUMP_IF_ACC_NEQ: "JUMP_IF_ACC_NEQ",
+    JUMP_IF_ACC_GTE: "JUMP_IF_ACC_GTE",
+    JUMP_IF_ACC_GT: "JUMP_IF_ACC_GT",
+    JUMP_IF_EQ_ZERO: "JUMP_IF_EQ_ZERO",
+    JUMP_IF_NEQ_ZERO: "JUMP_IF_NEQ_ZERO",
+    JUMP_IF_CARRY: "JUMP_IF_CARRY",
+    JUMP_IF_NOT_CARRY: "JUMP_IF_NOT_CARRY",
+    JUMP_IF_BORROW: "JUMP_IF_BORROW",
+    JUMP_IF_NOT_BORROW: "JUMP_IF_NOT_BORROW",
+    JUMP_IF_NEGATIVE_FLAG: "JUMP_IF_NEGATIVE_FLAG",
+    JUMP_IF_NOT_NEGATIVE_FLAG: "JUMP_IF_NOT_NEGATIVE_FLAG",
+    JUMP_IF_EQUAL_FLAG: "JUMP_IF_EQUAL_FLAG",
+    JUMP_IF_NOT_EQUAL_FLAG: "JUMP_IF_NOT_EQUAL_FLAG",
+    JUMP_IF_ZERO_FLAG: "JUMP_IF_ZERO_FLAG",
+    JUMP_IF_NOT_ZERO_FLAG: "JUMP_IF_NOT_ZERO_FLAG",
+    CALL: "CALL",
+    RETURN: "RETURN",
+    HALT: "HALT",
+
+    NOT: "NOT",
+    AND: "AND",
+    NAND: "NAND",
+    OR: "OR",
+    NOR: "NOR",
+    XOR: "XOR",
+    NXOR: "NXOR",
+
+    ROT_LEFT: "ROT_LEFT",
+    ROT_RIGHT: "ROT_RIGHT",
+    SHIFT_LEFT: "SHIFT_LEFT",
+    SHIFT_RIGHT: "SHIFT_RIGHT",
+    STORE_DECR: "STORE_DECR",
+    STORE_INCR: "STORE_INCR",
+
+    ACC: "ACC",
+    A: "A",
+    B: "B",
+    C: "C",
+    X: "X",
+    Y: "Y",
+    Z: "Z",
+    SP: "SP",
+    PC: "PC",
+
+    CONST: "#123",
+
+    M_ACC: "[ACC]",
+    M_A: "[A]",
+    M_B: "[B]",
+    M_C: "[M]",
+    M_SP: "[SP]",
+    M_PC: "[PC]",
+    M_CONST: "[#456]",
+}
+
+def component_to_assembly(component):
+    """
+    Given an instruction component, get the equivalent assembly.
+
+    Args:
+        component (Any): The component to convert.
+    """
+    return _COMPONENT_TO_ASSEMBLY[component]

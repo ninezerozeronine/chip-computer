@@ -18,14 +18,14 @@ Submodules
    sixteen_bit_computer.operations.jump_if_flag_not_flag_ops
    sixteen_bit_computer.operations.jump_op
    sixteen_bit_computer.operations.load_store_ops
-   sixteen_bit_computer.operations.lshift_op
    sixteen_bit_computer.operations.noop_op
    sixteen_bit_computer.operations.not_op
    sixteen_bit_computer.operations.push_pop_ops
-   sixteen_bit_computer.operations.rot_left_op
    sixteen_bit_computer.operations.set_op
    sixteen_bit_computer.operations.set_zero_op
+   sixteen_bit_computer.operations.shift_rot_ops
    sixteen_bit_computer.operations.simple_alu_ops
+   sixteen_bit_computer.operations.store_incr_decr_ops
    sixteen_bit_computer.operations.utils
 
 Module contents

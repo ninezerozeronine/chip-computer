@@ -19,7 +19,8 @@ from ..instruction_components import (
     B,
     C,
     CONST,
-    M_CONST
+    M_CONST,
+    component_to_assembly,
 )
 from .. import number_utils
 from ..language_defs import (
@@ -313,3 +314,356 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+    test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_LT
+        ////////////////////////////////////////////////////////////////
+
+    // Test true cases
+    &jialt_0
+        SET A #12
+        SET ACC #2
+        JUMP_IF_ACC_LT A &jialt_1
+        HALT
+
+    &jialt_1
+        SET B #123
+        SET ACC #0
+        JUMP_IF_ACC_LT B &jialt_2
+        HALT
+
+    &jialt_2
+        SET C #12345
+        SET ACC #1234
+        JUMP_IF_ACC_LT C &jialt_3
+        HALT
+
+    &jialt_3
+        SET SP #6000
+        SET ACC #4242
+        JUMP_IF_ACC_LT SP &jialt_4
+        HALT
+
+    &jialt_4
+        SET ACC #1000
+        JUMP_IF_ACC_LT #1001 &jialt_5
+        HALT
+
+    // Test false cases
+    &jialt_5
+        SET A #2
+        SET ACC #2
+        JUMP_IF_ACC_LT A &jialt_halt_0
+
+        SET B #1
+        SET ACC #123
+        JUMP_IF_ACC_LT B &jialt_halt_1
+
+        SET C #123
+        SET ACC #12345
+        JUMP_IF_ACC_LT C &jialt_halt_2
+
+        SET SP #3545
+        SET ACC #3545
+        JUMP_IF_ACC_LT SP &jialt_halt_3
+
+        SET ACC #1001
+        JUMP_IF_ACC_LT #1000 &jialt_halt_4
+        JUMP &jialte_0
+
+    &jialt_halt_0
+        HALT
+    &jialt_halt_1
+        HALT
+    &jialt_halt_2
+        HALT
+    &jialt_halt_3
+        HALT
+    &jialt_halt_4
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_LTE
+        ////////////////////////////////////////////////////////////////
+
+    // Test true cases
+    &jialte_0
+        SET A #12
+        SET ACC #2
+        JUMP_IF_ACC_LTE A &jialte_1
+        HALT
+
+    &jialte_1
+        SET A #123
+        SET ACC #123
+        JUMP_IF_ACC_LTE A &jialte_2
+        HALT
+
+    &jialte_2
+        SET B #12345
+        SET ACC #1234
+        JUMP_IF_ACC_LTE B &jialte_3
+        HALT
+
+    &jialte_3
+        SET B #6000
+        SET ACC #6000
+        JUMP_IF_ACC_LTE B &jialte_4
+        HALT
+
+    &jialte_4
+        SET C #12345
+        SET ACC #1234
+        JUMP_IF_ACC_LTE C &jialte_5
+        HALT
+
+    &jialte_5
+        SET C #4321
+        SET ACC #4321
+        JUMP_IF_ACC_LTE C &jialte_6
+        HALT
+
+    &jialte_6
+        SET SP #12345
+        SET ACC #1234
+        JUMP_IF_ACC_LTE SP &jialte_7
+        HALT
+
+    &jialte_7
+        SET SP #6000
+        SET ACC #6000
+        JUMP_IF_ACC_LTE SP &jialte_8
+        HALT
+
+    &jialte_8
+        SET ACC #1000
+        JUMP_IF_ACC_LTE #1001 &jialte_9
+        HALT
+
+    &jialte_9
+        SET ACC #1111
+        JUMP_IF_ACC_LTE #1111 &jialte_10
+        HALT
+
+
+    // Test false cases
+    &jialte_10
+        SET A #2
+        SET ACC #12
+        JUMP_IF_ACC_LTE A &jialte_halt_0
+
+        SET B #1
+        SET ACC #123
+        JUMP_IF_ACC_LTE B &jialte_halt_1
+
+        SET C #123
+        SET ACC #12345
+        JUMP_IF_ACC_LTE C &jialte_halt_2
+
+        SET SP #3545
+        SET ACC #50000
+        JUMP_IF_ACC_LTE SP &jialte_halt_3
+
+        SET ACC #1001
+        JUMP_IF_ACC_LTE #1000 &jialte_halt_4
+        JUMP &jiagte_0
+
+    &jialte_halt_0
+        HALT
+    &jialte_halt_1
+        HALT
+    &jialte_halt_2
+        HALT
+    &jialte_halt_3
+        HALT
+    &jialte_halt_4
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_GTE
+        ////////////////////////////////////////////////////////////////
+
+    // Test true cases
+    &jiagte_0
+        SET A #12
+        SET ACC #20
+        JUMP_IF_ACC_GTE A &jiagte_1
+        HALT
+
+    &jiagte_1
+        SET A #123
+        SET ACC #123
+        JUMP_IF_ACC_GTE A &jiagte_2
+        HALT
+
+    &jiagte_2
+        SET B #1234
+        SET ACC #12341
+        JUMP_IF_ACC_GTE B &jiagte_3
+        HALT
+
+    &jiagte_3
+        SET B #6000
+        SET ACC #6000
+        JUMP_IF_ACC_GTE B &jiagte_4
+        HALT
+
+    &jiagte_4
+        SET C #123
+        SET ACC #1234
+        JUMP_IF_ACC_GTE C &jiagte_5
+        HALT
+
+    &jiagte_5
+        SET C #555
+        SET ACC #555
+        JUMP_IF_ACC_GTE C &jiagte_6
+        HALT
+
+    &jiagte_6
+        SET SP #500
+        SET ACC #1000
+        JUMP_IF_ACC_GTE SP &jiagte_7
+        HALT
+
+    &jiagte_7
+        SET SP #999
+        SET ACC #999
+        JUMP_IF_ACC_GTE SP &jiagte_8
+        HALT
+
+    &jiagte_8
+        SET ACC #1000
+        JUMP_IF_ACC_GTE #3 &jiagte_9
+        HALT
+
+    &jiagte_9
+        SET ACC #1111
+        JUMP_IF_ACC_GTE #1111 &jiagte_10
+        HALT
+
+
+    // Test false cases
+    &jiagte_10
+        SET A #24
+        SET ACC #12
+        JUMP_IF_ACC_GTE A &jiagte_halt_0
+
+        SET B #1
+        SET ACC #0
+        JUMP_IF_ACC_GTE B &jiagte_halt_1
+
+        SET C #987
+        SET ACC #654
+        JUMP_IF_ACC_GTE C &jiagte_halt_2
+
+        SET SP #50000
+        SET ACC #352
+        JUMP_IF_ACC_GTE SP &jiagte_halt_3
+
+        SET ACC #10001
+        JUMP_IF_ACC_GTE #12000 &jiagte_halt_4
+        JUMP &jiagt_0
+
+    &jiagte_halt_0
+        HALT
+    &jiagte_halt_1
+        HALT
+    &jiagte_halt_2
+        HALT
+    &jiagte_halt_3
+        HALT
+    &jiagte_halt_4
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_GT
+        ////////////////////////////////////////////////////////////////
+
+    // Test true cases
+    &jiagt_0
+        SET A #12
+        SET ACC #200
+        JUMP_IF_ACC_GT A &jiagt_1
+        HALT
+
+    &jiagt_1
+        SET B #123
+        SET ACC #9999
+        JUMP_IF_ACC_GT B &jiagt_2
+        HALT
+
+    &jiagt_2
+        SET C #100
+        SET ACC #10000
+        JUMP_IF_ACC_GT C &jiagt_3
+        HALT
+
+    &jiagt_3
+        SET SP #6000
+        SET ACC #7000
+        JUMP_IF_ACC_GT SP &jiagt_4
+        HALT
+
+    &jiagt_4
+        SET ACC #1111
+        JUMP_IF_ACC_GT #1110 &jiagt_5
+        HALT
+
+    // Test false cases
+    &jiagt_5
+        SET A #2
+        SET ACC #2
+        JUMP_IF_ACC_GT A &jiagt_halt_0
+
+        SET B #1112
+        SET ACC #12
+        JUMP_IF_ACC_GT B &jiagt_halt_1
+
+        SET C #9987
+        SET ACC #345
+        JUMP_IF_ACC_GT C &jiagt_halt_2
+
+        SET SP #748
+        SET ACC #333
+        JUMP_IF_ACC_GT SP &jiagt_halt_3
+
+        SET ACC #10
+        JUMP_IF_ACC_GT #15 &jiagt_halt_4
+        JUMP &jiagt_done
+
+    &jiagt_halt_0
+        HALT
+    &jiagt_halt_1
+        HALT
+    &jiagt_halt_2
+        HALT
+    &jiagt_halt_3
+        HALT
+    &jiagt_halt_4
+        HALT
+
+    &jiagt_done
+        NOOP
+    """
+
+    return textwrap.dedent(test_assembly)
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

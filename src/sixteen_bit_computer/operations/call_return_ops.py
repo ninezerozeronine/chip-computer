@@ -21,8 +21,10 @@ from ..instruction_components import (
     A,
     B,
     C,
-    CONST
+    CONST,
+    component_to_assembly,
 )
+from .. import instruction_components
 from .. import number_utils
 from ..language_defs import (
     MODULE_CONTROL,
@@ -203,6 +205,9 @@ def supports(signature):
     return signature in _SUPPORTED_SIGNATURES
 
 def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
     test_assembly = """\
         ////////////////////////////////////////////////////////////////
         // CALL AND RETURN
@@ -274,7 +279,20 @@ def gen_test_assembly():
     
     &call_end
         NOOP
-
     """
 
     return textwrap.dedent(test_assembly)
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret
