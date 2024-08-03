@@ -281,6 +281,7 @@ _COMPONENT_TO_ASSEMBLY = {
     ROT_RIGHT: "ROT_RIGHT",
     SHIFT_LEFT: "SHIFT_LEFT",
     SHIFT_RIGHT: "SHIFT_RIGHT",
+    
     STORE_DECR: "STORE_DECR",
     STORE_INCR: "STORE_INCR",
 
@@ -299,7 +300,7 @@ _COMPONENT_TO_ASSEMBLY = {
     M_ACC: "[ACC]",
     M_A: "[A]",
     M_B: "[B]",
-    M_C: "[M]",
+    M_C: "[C]",
     M_SP: "[SP]",
     M_PC: "[PC]",
     M_CONST: "[#456]",

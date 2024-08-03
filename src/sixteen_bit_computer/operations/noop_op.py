@@ -75,3 +75,30 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // NOOP
+        ////////////////////////////////////////////////////////////////
+
+        // NOOP
+        NOOP
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    return ["NOOP"]

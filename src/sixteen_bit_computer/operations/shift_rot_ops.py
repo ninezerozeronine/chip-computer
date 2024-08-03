@@ -4,6 +4,9 @@ The shift and rotate operations
 If the popped bit (the bit at the far left or right if shifting or
 rotating in that direction) is a 1, the carry bit is set.
 """
+
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..instruction_components import (
     ROT_LEFT,
@@ -15,6 +18,7 @@ from ..instruction_components import (
     B,
     C,
     M_CONST,
+    component_to_assembly
 )
 from .. import number_utils
 from . import utils
@@ -145,3 +149,29 @@ def _generate_control_steps(signature):
 
 def supports(signature):
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

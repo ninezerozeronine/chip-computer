@@ -6,6 +6,9 @@ then increment or decrement the value in memory at B
 
 It's useful for filling the screen with a colour quickly
 """
+
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..instruction_components import (
     STORE_INCR,
@@ -14,7 +17,8 @@ from ..instruction_components import (
     CONST,
     M_A,
     M_B,
-    memory_ref_to_component
+    memory_ref_to_component,
+    component_to_assembly,
 )
 from .. import number_utils
 from . import utils
@@ -182,3 +186,30 @@ def _generate_control_steps(signature):
 
 def supports(signature):
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret
+

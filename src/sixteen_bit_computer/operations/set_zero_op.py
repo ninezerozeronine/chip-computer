@@ -4,6 +4,8 @@ The SET_ZERO operation.
 Sets the given module to zero.
 """
 
+import textwrap
+
 from .. import instruction_listings
 from .. import number_utils
 from . import utils
@@ -14,6 +16,7 @@ from ..instruction_components import (
     A,
     B,
     C,
+    component_to_assembly,
 )
 from ..language_defs import (
     MODULE_CONTROL,
@@ -115,3 +118,29 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

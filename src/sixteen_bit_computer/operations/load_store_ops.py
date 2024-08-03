@@ -4,6 +4,8 @@ The LOAD and STORE operations.
 Load a value from or wtire a value to memory,
 """
 
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -21,12 +23,12 @@ from ..instruction_components import (
     M_SP,
     M_CONST,
     memory_ref_to_component,
+    component_to_assembly,
 )
 from .. import number_utils
 from ..language_defs import (
     MODULE_CONTROL,
     FLAGS,
-    ALU_CONTROL_FLAGS,
 )
 from . import utils
 
@@ -222,4 +224,30 @@ def supports(signature):
     Returns:
         bool: Whether it's supported or not.
     """
-    return signature in _SUPPORTED_SIGNATURES
+    return signature in _SUPPORTED_SIGNATURES\
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

@@ -4,6 +4,8 @@ The INCR and DECR operations.
 Increnent or decrement the given argument by 1.
 """
 
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -175,12 +177,14 @@ def gen_test_assembly():
         // INCR
         ////////////////////////////////////////////////////////////////
 
+    // INCR ACC
     &incr_0
         SET ACC #32
         INCR ACC 
         JUMP_IF_ACC_EQ #33 &incr_1
         HALT
 
+    // INCR A
     &incr_1
         SET ACC #-31
         SET A #-32
@@ -188,6 +192,7 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ A &incr_2
         HALT
 
+    // INCR B
     &incr_2
         SET ACC #256
         SET B #255
@@ -195,23 +200,41 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ B &incr_3
         HALT
 
+    // INCR C
     &incr_3
         SET ACC #0
         SET C #0xFFFF
         INCR C
-        JUMP_IF_ACC_EQ C &decr_0
+        JUMP_IF_ACC_EQ C &incr_4
+        HALT
+
+    // INCR M_CONST
+    $incr_const_1 #35
+    &incr_4
+        INCR [$incr_const_1]
+        LOAD [$incr_const_1] ACC
+        JUMP_IF_ACC_EQ #36 &incr_5
+        HALT
+
+    // INCR M_CONST (carry flag)
+    $incr_const_2 #0b1111_1111_1111_1111
+    &incr_5
+        INCR [$incr_const_2]
+        JUMP_IF_CARRY &decr_0
         HALT
 
         ////////////////////////////////////////////////////////////////
         // DECR
         ////////////////////////////////////////////////////////////////
 
+    // DECR ACC
     &decr_0
         SET ACC #32
         DECR ACC 
         JUMP_IF_ACC_EQ #31 &decr_1
         HALT
 
+    // DECR A
     &decr_1
         SET ACC #-33
         SET A #-32
@@ -219,6 +242,7 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ A &decr_2
         HALT
 
+    // DECR B
     &decr_2
         SET ACC #255
         SET B #256
@@ -226,11 +250,27 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ B &decr_3
         HALT
 
+    // DECR C
     &decr_3
         SET ACC #0xFFFF
         SET C #0
         DECR C
-        JUMP_IF_ACC_EQ C &decr_end
+        JUMP_IF_ACC_EQ C &decr_4
+        HALT
+
+    // DECR M_CONST
+    $decr_const_1 #50
+    &decr_4
+        DECR [$decr_const_1]
+        LOAD [$decr_const_1] ACC
+        JUMP_IF_ACC_EQ #49 &decr_5
+        HALT
+
+    // DECR M_CONST (borrow flag)
+    $decr_const_2 #0
+    &decr_5
+        DECR [$decr_const_2]
+        JUMP_IF_BORROW &decr_end
         HALT
 
     &decr_end

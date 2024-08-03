@@ -4,6 +4,8 @@ The JUMP_IF_EQ_ZERO  and JUMP_IF_NEQ_ZERO operations.
 Jumps to a location in memory of the given module is not equal to zero
 """
 
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -13,7 +15,8 @@ from ..instruction_components import (
     A,
     B,
     C,
-    CONST
+    CONST,
+    component_to_assembly,
 )
 from .. import number_utils
 from ..language_defs import (
@@ -140,3 +143,29 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret

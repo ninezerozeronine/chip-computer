@@ -1,5 +1,5 @@
 from sixteen_bit_computer import operations
-from sixteen_bit_computer.operations import call_return_ops, copy_op
+# from sixteen_bit_computer.operations import call_return_ops, copy_op
 
 import textwrap
 
@@ -11,7 +11,8 @@ def main():
     """
     )
     res = start
-    for op in [call_return_ops, copy_op]:
+    for op in operations.get_all_operations():
+    # for op in [call_return_ops, copy_op]:
         res += op.gen_all_assembly()
         res += "\n"
     end = textwrap.dedent("""\

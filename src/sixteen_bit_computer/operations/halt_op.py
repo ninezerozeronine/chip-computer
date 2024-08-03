@@ -4,6 +4,8 @@ The HALT operation.
 Halts execution of the computer.
 """
 
+import textwrap
+
 from .. import instruction_listings
 from ..data_structures import Word
 from ..instruction_components import HALT, component_to_assembly

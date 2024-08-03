@@ -4,6 +4,8 @@ The JUMP_IF_<FLAG> and JUMP_IF_NOT_<FLAG> operations.
 Jumps to a location in memory if the given flag is set (or not).
 """
 
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -18,12 +20,11 @@ from ..instruction_components import (
     JUMP_IF_ZERO_FLAG,
     JUMP_IF_NOT_ZERO_FLAG,
     CONST,
+    component_to_assembly,
 )
-from .. import number_utils
 from ..language_defs import (
     MODULE_CONTROL,
     FLAGS,
-    ALU_CONTROL_FLAGS,
 )
 from . import utils
 
@@ -165,3 +166,29 @@ def supports(signature):
         bool: Whether it's supported or not.
     """
     return signature in _SUPPORTED_SIGNATURES
+
+
+def gen_test_assembly():
+    """
+    Generate assembly code that verifies the instructions work as expected.
+    """
+
+    test_assembly = """\
+    """
+    
+    return textwrap.dedent(test_assembly)
+
+
+def gen_all_assembly():
+    """
+    Generate assembly lines for all the instructions this module supports.
+
+    Returns:
+        list(str): The assembly lines.
+    """
+    ret = []
+    for signature in _SUPPORTED_SIGNATURES:
+        ret.append(" ".join(
+            [component_to_assembly(component) for component in signature]
+        ))
+    return ret
