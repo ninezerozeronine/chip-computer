@@ -126,6 +126,36 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // SET_ZERO
+        ////////////////////////////////////////////////////////////////
+
+    &set_zero_0
+        SET_ZERO ACC
+        JUMP_IF_NEQ_ZERO ACC &set_zero_halt0
+
+        SET_ZERO A
+        JUMP_IF_NEQ_ZERO A &set_zero_halt1
+
+        SET_ZERO B
+        JUMP_IF_NEQ_ZERO B &set_zero_halt2
+
+        SET_ZERO C
+        JUMP_IF_NEQ_ZERO C &set_zero_halt3
+
+        JUMP &set_zero_done
+
+    &set_zero_halt0
+        HALT
+    &set_zero_halt1
+        HALT
+    &set_zero_halt2
+        HALT
+    &set_zero_halt3
+        HALT
+
+    &set_zero_done
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)

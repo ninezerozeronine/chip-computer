@@ -151,6 +151,109 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_EQ_ZERO
+        ////////////////////////////////////////////////////////////////
+
+    &jiez_0
+        SET_ZERO ACC
+        JUMP_IF_EQ_ZERO ACC &jiez_1
+        HALT
+
+    &jiez_1
+        SET_ZERO A
+        JUMP_IF_EQ_ZERO A &jiez_2
+        HALT
+
+    &jiez_2
+        SET_ZERO B
+        JUMP_IF_EQ_ZERO B &jiez_3
+        HALT
+
+    &jiez_3
+        SET_ZERO C
+        JUMP_IF_EQ_ZERO C &jiez_4
+        HALT
+
+    &jiez_4
+        SET ACC #1
+        JUMP_IF_EQ_ZERO ACC &jiez_halt_0
+
+        SET A #58767
+        JUMP_IF_EQ_ZERO A &jiez_halt_1
+
+        SET B #443
+        JUMP_IF_EQ_ZERO B &jiez_halt_2
+
+        SET C #7687
+        JUMP_IF_EQ_ZERO C &jiez_halt_3
+
+        SET SP #1536
+        JUMP_IF_EQ_ZERO SP &jiez_halt_4
+
+        JUMP &jinez_0
+
+    &jiez_halt_0
+        HALT
+    &jiez_halt_1
+        HALT
+    &jiez_halt_2
+        HALT
+    &jiez_halt_3
+        HALT
+    &jiez_halt_4
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NEQ_ZERO
+        ////////////////////////////////////////////////////////////////
+
+    &jinez_0
+        SET ACC #1
+        JUMP_IF_NEQ_ZERO ACC &jinez_1
+        HALT
+
+    &jinez_1
+        SET A #1
+        JUMP_IF_NEQ_ZERO A &jinez_2
+        HALT
+
+    &jinez_2
+        SET B #1
+        JUMP_IF_NEQ_ZERO B &jinez_3
+        HALT
+
+    &jinez_3
+        SET C #1
+        JUMP_IF_NEQ_ZERO C &jinez_4
+        HALT
+
+    &jinez_4
+        SET_ZERO ACC
+        JUMP_IF_NEQ_ZERO ACC &jinez_halt_0
+
+        SET_ZERO A
+        JUMP_IF_NEQ_ZERO A &jinez_halt_1
+
+        SET_ZERO B
+        JUMP_IF_NEQ_ZERO B &jinez_halt_2
+
+        SET_ZERO C
+        JUMP_IF_NEQ_ZERO C &jinez_halt_3
+
+        JUMP &jinez_done
+
+    &jinez_halt_0
+        HALT
+    &jinez_halt_1
+        HALT
+    &jinez_halt_2
+        HALT
+    &jinez_halt_3
+        HALT
+    
+    &jinez_done
+        HALT
     """
     
     return textwrap.dedent(test_assembly)

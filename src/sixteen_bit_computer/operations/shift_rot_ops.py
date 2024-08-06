@@ -157,6 +157,125 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // ROT_LEFT
+        ////////////////////////////////////////////////////////////////
+
+        // ROT_LEFT ACC
+        SET ACC #0b1000_0000_0100_0000
+        ROT_LEFT ACC
+        JUMP_IF_ACC_EQ #0b0000_0000_1000_0001 &rot_left_0
+        HALT
+
+    &rot_left_0
+        // ROT_LEFT A
+        SET A #0b1111_0000_1111_0000
+        ROT_LEFT A
+        SET ACC #0b1110_0001_1110_0001
+        JUMP_IF_ACC_EQ A &rot_left_1
+        HALT
+
+    &rot_left_1
+        // ROT_LEFT B
+        SET B #0b0000_0000_1111_0000
+        ROT_LEFT B
+        SET ACC #0b0000_0001_1110_0000
+        JUMP_IF_ACC_EQ B &rot_left_2
+        HALT
+
+    &rot_left_2
+        // ROT_LEFT C
+        SET C #0b1111_1111_1111_1110
+        ROT_LEFT C
+        SET ACC #0b1111_1111_1111_1101
+        JUMP_IF_ACC_EQ C &rot_left_3
+        HALT
+
+    $v_rot_left_0 #0b0101_0101_1010_1010
+    &rot_left_3
+        // ROT_LEFT M_CONST
+        ROT_LEFT [$v_rot_left_0]
+        LOAD [$v_rot_left_0] ACC
+        JUMP_IF_ACC_EQ #0b1010_1011_0101_0100 &rot_left_4
+        HALT
+    
+    &rot_left_4
+        // ROT_LEFT ACC (with carry)
+        SET ACC #0b1000_0000_0000_0000
+        ROT_LEFT ACC
+        JUMP_IF_CARRY &rot_left_5
+        HALT
+    
+    &rot_left_5
+        // ROT_LEFT ACC (no carry)
+        SET ACC #0b0111_0000_0000_0000
+        ROT_LEFT ACC
+        JUMP_IF_NOT_CARRY &rot_right_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // ROT_RIGHT
+        ////////////////////////////////////////////////////////////////
+
+    &rot_right_0
+        // ROT_RIGHT ACC
+        SET ACC #0b1000_0000_0100_0001
+        ROT_RIGHT ACC
+        JUMP_IF_ACC_EQ #0b1100_0000_0010_0000 &rot_right_1
+        HALT
+
+    &rot_right_1
+        // ROT_RIGHT A
+        SET A #0b1111_0000_1111_0001
+        ROT_RIGHT A
+        SET ACC #0b1111_1000_0111_1000
+        JUMP_IF_ACC_EQ A &rot_right_2
+        HALT
+
+    &rot_right_2
+        // ROT_RIGHT B
+        SET B #0b1111_0000_1111_0000
+        ROT_RIGHT B
+        SET ACC #0b0111_1000_0111_1000
+        JUMP_IF_ACC_EQ B &rot_right_3
+        HALT
+
+    &rot_right_3
+        // ROT_RIGHT C
+        SET C #0b1111_1111_1111_1111
+        ROT_RIGHT C
+        SET ACC #0b1111_1111_1111_1111
+        JUMP_IF_ACC_EQ C &rot_right_4
+        HALT
+
+    $v_rot_right_0 #0b0101_0101_1010_1010
+    &rot_right_4
+        // ROT_RIGHT M_CONST
+        ROT_RIGHT [$v_rot_right_0]
+        LOAD [$v_rot_right_0] ACC
+        JUMP_IF_ACC_EQ #0b0010_1010_1101_0101 &rot_right_5
+        HALT
+        
+    &rot_right_5
+        // ROT_RIGHT ACC (with carry)
+        SET ACC #0b0000_0000_0000_0001
+        ROT_RIGHT ACC
+        JUMP_IF_CARRY &rot_right_6
+        HALT
+
+    &rot_right_6
+        // ROT_RIGHT ACC (no carry)
+        SET ACC #0b1111_1111_1111_1110
+        ROT_RIGHT ACC
+        JUMP_IF_NOT_CARRY &shift_left_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // SHIFT_LEFT
+        ////////////////////////////////////////////////////////////////
+        
+    &shift_left_0
+
     """
     
     return textwrap.dedent(test_assembly)

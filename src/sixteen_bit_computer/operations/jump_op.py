@@ -151,6 +151,65 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+    ////////////////////////////////////////////////////////////////
+    // JUMP
+    ////////////////////////////////////////////////////////////////
+
+    &jump_0
+        SET ACC &jump_1
+        JUMP ACC
+        HALT
+
+    &jump_1
+        SET A &jump_2
+        JUMP A
+        HALT
+
+    &jump_2
+        SET B &jump_3
+        JUMP B
+        HALT
+
+    &jump_3
+        SET C &jump_5
+        JUMP C
+        HALT
+
+    &jump_5
+        JUMP &jump_6
+        HALT
+
+    $v_jump_0 &jump7
+    &jump_6
+        SET ACC $v_jump_0
+        JUMP [ACC]
+        HALT
+
+    $v_jump_1 &jump8
+    &jump7
+        SET A $v_jump_1
+        JUMP [A]
+        HALT
+
+    $v_jump_2 &jump9
+    &jump8
+        SET B $v_jump_2
+        JUMP [B]
+        HALT
+
+    $v_jump_3 &jump11
+    &jump9
+        SET C $v_jump_3
+        JUMP [C]
+        HALT
+
+    $v_jump_5 &jump_done
+    &jump11
+        JUMP [$v_jump_5]
+        HALT
+
+    &jump_done
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)

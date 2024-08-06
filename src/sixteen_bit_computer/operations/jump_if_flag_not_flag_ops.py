@@ -174,7 +174,198 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
-    """
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NEGATIVE_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jinf_0
+        SET ACC #10
+        SUB #20
+        JUMP_IF_NEGATIVE_FLAG &jinf_1
+        HALT
+
+    &jinf_1
+        SET ACC #222
+        SUB #5
+        JUMP_IF_NEGATIVE_FLAG &jinf_halt_0
+        JUMP &jinnf_0
+
+    &jinf_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NOT_NEGATIVE_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jinnf_0
+        SET ACC #10
+        SUB #5
+        JUMP_IF_NOT_NEGATIVE_FLAG &jinnf_1
+        HALT
+
+    &jinnf_1
+        SET ACC #5
+        SUB #10
+        JUMP_IF_NOT_NEGATIVE_FLAG &jinnf_halt_0
+        JUMP &jicbf_0
+
+    &jinnf_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_CARRY
+        ////////////////////////////////////////////////////////////////
+
+    &jic_0
+        SET ACC #0xFFFF
+        ADD #1
+        JUMP_IF_CARRYBORROW_FLAG &jic_1
+        HALT
+
+    &jic_1
+        SET ACC #5
+        ADD #10
+        JUMP_IF_CARRYBORROW_FLAG &jic_halt_0
+        JUMP &jincbf_0
+
+    &jic_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NOT_CARRY
+        ////////////////////////////////////////////////////////////////
+
+    &jinc_0
+        SET ACC #18
+        ADD #5
+        JUMP_IF_NOT_CARRYBORROW_FLAG &jinc_1
+        HALT
+
+    &jinc_1
+        SET ACC #0xFFFF
+        ADD #55
+        JUMP_IF_NOT_CARRYBORROW_FLAG &jinc_halt_0
+        JUMP &jib_0
+
+    &jinc_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_BORROW
+        ////////////////////////////////////////////////////////////////
+
+    &jib_0
+        SET ACC #0xFFFF
+        ADD #1
+        JUMP_IF_BORROW &jib_1
+        HALT
+
+    &jib_1
+        SET ACC #5
+        ADD #10
+        JUMP_IF_BORROW &jib_halt_0
+        JUMP &jinb_0
+
+    &jib_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NOT_BORROW
+        ////////////////////////////////////////////////////////////////
+
+    &jinb_0
+        SET ACC #18
+        ADD #5
+        JUMP_IF_NOT_BORROW &jinb_1
+        HALT
+
+    &jinb_1
+        SET ACC #0xFFFF
+        ADD #55
+        JUMP_IF_NOT_BORROW &jinb_halt_0
+        JUMP &jief_0
+
+    &jinc_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_EQUAL_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jief_0
+        // See the note on the ALU module because this is a bit magic.
+        SET ACC #1
+        SUB #2
+        JUMP_IF_EQUAL_FLAG &jief_1
+        HALT
+
+    &jief_1
+        SET ACC #5
+        ADD #10
+        JUMP_IF_EQUAL_FLAG &jief_halt_0
+        JUMP &jinef_0
+
+    &jief_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NOT_EQUAL_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jinef_0
+        SET ACC #34
+        ADD #5
+        JUMP_IF_NOT_EQUAL_FLAG &jinef_1
+        HALT
+
+    &jinef_1
+        // See the note on the ALU module because this is a bit magic.
+        SET ACC #1
+        SUB #2
+        JUMP_IF_NOT_EQUAL_FLAG &jinef_halt_0
+        JUMP &jizf_0
+
+    &jinef_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ZERO_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jizf_0
+        SET ACC #0
+        ADD #0
+        JUMP_IF_ZERO_FLAG &jizf_1
+        HALT
+
+    &jizf_1
+        SET ACC #1
+        ADD #1
+        JUMP_IF_ZERO_FLAG &jizf_halt_0
+        JUMP &jinzf_0
+
+    &jizf_halt_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_NOT_ZERO_FLAG
+        ////////////////////////////////////////////////////////////////
+
+    &jinzf_0
+        SET ACC #1
+        ADD #1
+        JUMP_IF_NOT_ZERO_FLAG &jinzf_1
+        HALT
+
+    &jinzf_1
+        SET ACC #0
+        ADD #0
+        JUMP_IF_NOT_ZERO_FLAG &jinzf_halt_0
+        JUMP &call_0
+
+    &jinzf_halt_0
+        HALT
+        """
     
     return textwrap.dedent(test_assembly)
 

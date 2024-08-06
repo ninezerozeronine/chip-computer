@@ -4,6 +4,8 @@ The NOOP operation.
 Does nothing for one micro cycle.
 """
 
+import textwrap
+
 from .. import instruction_listings
 from ..data_structures import Word
 from ..instruction_components import NOOP
