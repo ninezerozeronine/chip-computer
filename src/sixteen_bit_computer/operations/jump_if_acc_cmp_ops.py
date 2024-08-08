@@ -388,15 +388,35 @@ def gen_test_assembly():
         JUMP &jialte_0
 
     &jialt_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialt_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialt_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialt_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialt_halt_4
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
         ////////////////////////////////////////////////////////////////
         // JUMP_IF_ACC_LTE
@@ -499,15 +519,35 @@ def gen_test_assembly():
         JUMP &jiagte_0
 
     &jialte_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialte_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialte_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialte_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jialte_halt_4
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
         ////////////////////////////////////////////////////////////////
         // JUMP_IF_ACC_GTE
@@ -611,15 +651,35 @@ def gen_test_assembly():
         JUMP &jiagt_0
 
     &jiagte_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagte_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagte_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagte_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagte_halt_4
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
         ////////////////////////////////////////////////////////////////
         // JUMP_IF_ACC_GT
@@ -689,15 +749,35 @@ def gen_test_assembly():
         JUMP &jiagt_done
 
     &jiagt_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagt_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagt_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagt_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiagt_halt_4
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
     &jiagt_done
         NOOP

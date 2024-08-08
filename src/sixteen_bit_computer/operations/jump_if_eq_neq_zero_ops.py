@@ -18,7 +18,6 @@ from ..instruction_components import (
     CONST,
     component_to_assembly,
 )
-from .. import number_utils
 from ..language_defs import (
     MODULE_CONTROL,
     FLAGS,
@@ -194,15 +193,35 @@ def gen_test_assembly():
         JUMP &jinez_0
 
     &jiez_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiez_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiez_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiez_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jiez_halt_4
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
         ////////////////////////////////////////////////////////////////
         // JUMP_IF_NEQ_ZERO
@@ -244,13 +263,29 @@ def gen_test_assembly():
         JUMP &jinez_done
 
     &jinez_halt_0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jinez_halt_1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jinez_halt_2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &jinez_halt_3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     
     &jinez_done
         HALT
