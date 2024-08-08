@@ -5,6 +5,8 @@ Jumps to a location in memory if the given module or constant
 is or isn't equal to the Accumulator
 """
 
+import textwrap
+
 from ..instruction_listings import get_instruction_index
 from ..data_structures import Word
 from ..instruction_components import (
@@ -314,6 +316,184 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_EQ
+        ////////////////////////////////////////////////////////////////
+
+    &jiae_0
+        SET ACC #123
+        SET A #123
+        JUMP_IF_ACC_EQ A &jiae_1
+        HALT
+
+    &jiae_1
+        SET ACC #456
+        SET B #456
+        JUMP_IF_ACC_EQ B &jiae_2
+        HALT
+
+    &jiae_2
+        SET ACC #789
+        SET C #789
+        JUMP_IF_ACC_EQ C &jiae_3
+        HALT
+
+    &jiae_3
+        SET ACC #60123
+        JUMP_IF_ACC_EQ #60123 &jiae_4
+        HALT
+
+    $v_jiae_0 #37
+    &jiae_4
+        SET ACC #37
+        JUMP_IF_ACC_EQ [$v_jiae_0] &jiae_5
+        HALT
+
+    &jiae_5
+        SET ACC #123
+        SET A #345
+        JUMP_IF_ACC_EQ A &jiae_halt_0
+        
+        SET ACC #456
+        SET B #11111
+        JUMP_IF_ACC_EQ B &jiae_halt_1
+
+        SET ACC #789
+        SET C #477
+        JUMP_IF_ACC_EQ C &jiae_halt_2
+
+        SET ACC #1011
+        JUMP_IF_ACC_EQ #999 &jiae_halt_3
+        JUMP &jiae_6
+    
+    $v_jiae_1 #37
+    &jiae_6
+        SET ACC #60123
+        JUMP_IF_ACC_EQ [$v_jiae_1] &jiae_halt_4
+
+        JUMP &jiane_0
+
+    &jiae_halt_0
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiae_halt_1
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiae_halt_2
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiae_halt_3
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiae_halt_4
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+
+        ////////////////////////////////////////////////////////////////
+        // JUMP_IF_ACC_NEQ
+        ////////////////////////////////////////////////////////////////
+
+    &jiane_0
+        SET ACC #123
+        SET A #1234
+        JUMP_IF_ACC_NEQ A &jiane_1
+        HALT
+
+    &jiane_1
+        SET ACC #321
+        SET B #55555
+        JUMP_IF_ACC_NEQ B &jiane_2
+        HALT
+
+    &jiane_2
+        SET ACC #21454
+        SET C #6874
+        JUMP_IF_ACC_NEQ C &jiane_3
+        HALT
+
+    &jiane_3
+        SET ACC #34
+        JUMP_IF_ACC_NEQ #0xFFFF &jiane_4
+        HALT
+
+    $v_jiane_0 #12345
+    &jiane_4
+        SET ACC #48143
+        JUMP_IF_ACC_NEQ [$v_jiane_0] &jiane_5
+        HALT
+
+    &jiane_5
+        SET ACC #456
+        SET A #456
+        JUMP_IF_ACC_NEQ A &jiane_halt_0
+
+        SET ACC #1122
+        SET B #1122
+        JUMP_IF_ACC_NEQ B &jiane_halt_1
+
+        SET ACC #3333
+        SET C #3333
+        JUMP_IF_ACC_NEQ C &jiane_halt_2
+
+        SET ACC #3345
+        JUMP_IF_ACC_NEQ #3345 &jiane_halt_3
+        JUMP &jiane_6
+
+    $v_jiane_1 #12345
+    &jiane_5
+        SET ACC #12345
+        JUMP_IF_ACC_NEQ [$v_jiane_1] &jiane_halt_4
+        
+        JUMP &jiane_done
+
+    &jiane_halt_0
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiane_halt_1
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiane_halt_2
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiane_halt_3
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+    &jiane_halt_4
+        NOOP
+        NOOP
+        HALT
+        NOOP
+        NOOP
+
+    &jiane_done
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)

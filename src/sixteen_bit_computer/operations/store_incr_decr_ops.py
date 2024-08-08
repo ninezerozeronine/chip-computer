@@ -194,6 +194,96 @@ def gen_test_assembly():
     """
 
     test_assembly = """\
+        ////////////////////////////////////////////////////////////////
+        // STORE_INCR
+        ////////////////////////////////////////////////////////////////
+
+    $store_incr_v0 #34
+    $store_incr_v1 #789
+        // STORE_INCR ACC M_A M_B
+        SET ACC #23
+        SET A $store_incr_v0
+        SET B $store_incr_v1
+        STORE_INCR ACC [A] [B]
+        LOAD [$store_incr_v0] ACC
+        JUMP_IF_ACC_EQ #23 &store_incr_0
+        HALT
+    &store_incr_0
+        LOAD [$store_incr_v1] ACC
+        JUMP_IF_ACC_EQ #790 &store_incr_1
+        HALT
+
+    &store_incr_1
+    $store_incr_v2 #456
+    $store_incr_v3 #123
+        // STORE_INCR CONST M_A M_B
+        SET A $store_incr_v2
+        SET B $store_incr_v3
+        STORE_INCR #599 [A] [B]
+        LOAD [$store_incr_v2] ACC
+        JUMP_IF_ACC_EQ #599 &store_incr_2
+        HALT
+    &store_incr_2
+        LOAD [$store_incr_v3] ACC
+        JUMP_IF_ACC_EQ #124 &store_incr_3
+        HALT
+
+    &store_incr_3
+    $store_incr_v4 #456
+    $store_incr_v5 #0xFFFF
+        // STORE_INCR CONST M_A M_B (test carry)
+        SET A $store_incr_v4
+        SET B $store_incr_v5
+        STORE_INCR #599 [A] [B]
+        JUMP_IF_CARRY &store_decr_0
+        HALT
+
+        ////////////////////////////////////////////////////////////////
+        // STORE_DECR
+        ////////////////////////////////////////////////////////////////
+
+    $store_decr_v0 #34
+    $store_decr_v1 #789
+        // STORE_DECR ACC M_A M_B
+        SET ACC #23
+        SET A $store_decr_v0
+        SET B $store_decr_v1
+        STORE_DECR ACC [A] [B]
+        LOAD [$store_decr_v0] ACC
+        JUMP_IF_ACC_EQ #23 &store_decr_0
+        HALT
+    &store_decr_0
+        LOAD [$store_decr_v1] ACC
+        JUMP_IF_ACC_EQ #790 &store_decr_1
+        HALT
+
+    &store_decr_1
+    $store_decr_v2 #456
+    $store_decr_v3 #123
+        // STORE_DECR CONST M_A M_B
+        SET A $store_decr_v2
+        SET B $store_decr_v3
+        STORE_DECR #599 [A] [B]
+        LOAD [$store_decr_v2] ACC
+        JUMP_IF_ACC_EQ #599 &store_decr_2
+        HALT
+    &store_decr_2
+        LOAD [$store_decr_v3] ACC
+        JUMP_IF_ACC_EQ #124 &store_decr_3
+        HALT
+
+    &store_decr_3
+    $store_decr_v4 #456
+    $store_decr_v5 #1
+        // STORE_DECR CONST M_A M_B (test zero)
+        SET A $store_decr_v4
+        SET B $store_decr_v5
+        STORE_DECR #599 [A] [B]
+        JUMP_IF_ZERO_FLAG &store_decr_done
+        HALT
+
+    &store_decr_done
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)
