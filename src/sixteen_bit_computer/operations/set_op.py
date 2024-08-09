@@ -159,17 +159,41 @@ def gen_test_assembly():
         SET SP #4321
         COPY SP ACC
         JUMP_IF_ACC_NEQ #4321 &set_halt3
+        JUMP &set1
+
+    $v_set_0
+    &set_1
+        SET [$v_set0] #9589
+        LOAD [$v_set0] ACC
+        JUMP_IF_ACC_EQ #9589 &set_done
+        HALT
 
         JUMP &set_done
 
     &set_halt0
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &set_halt1
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &set_halt2
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
     &set_halt3
+        NOOP
+        NOOP
         HALT
+        NOOP
+        NOOP
 
     &set_done
         NOOP

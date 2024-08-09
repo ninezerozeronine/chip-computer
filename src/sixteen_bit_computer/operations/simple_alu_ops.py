@@ -518,8 +518,11 @@ def gen_test_assembly():
     &nxor_4
         SET ACC        #0b1111_1110_1110_1111
         NXOR [$v_nxor_0]
-        JUMP_IF_ACC_EQ #0b1110_1110_1111_1111 &rot_left_0
+        JUMP_IF_ACC_EQ #0b1110_1110_1111_1111 &nxor_done
         HALT
+
+    &nxor_done
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)

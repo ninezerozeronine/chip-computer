@@ -127,7 +127,6 @@ def generate_microcode_templates():
                     MODULE_CONTROL["SP"]["OUT"],
                     MODULE_CONTROL["ALU"]["A_IS_BUS"],
                     MODULE_CONTROL["ALU"]["STORE_RESULT"],
-                    MODULE_CONTROL["PC"]["COUNT"],
                 ]
                 sp_minus1_into_alu.extend(ALU_CONTROL_FLAGS["A_MINUS_1"])
 
@@ -230,7 +229,8 @@ def gen_test_assembly():
         NOOP
         NOOP
 
-
+        JUMP &call_0
+        
     &increment_acc
         INCR ACC
         RETURN

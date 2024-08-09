@@ -354,10 +354,10 @@ def gen_test_assembly():
         HALT
 
         // JUMP_IF_ACC_LT M_CONST CONST (true)
-    $jialt_const_1 #456
+    $v_jialt_const_1 #456
     &jialt_4
         SET ACC #13
-        JUMP_IF_ACC_LT [$jialt_const_1] &jialt_5
+        JUMP_IF_ACC_LT [$v_jialt_const_1] &jialt_5
         HALT
 
         // Test false cases
@@ -380,11 +380,13 @@ def gen_test_assembly():
         // JUMP_IF_ACC_LT CONST CONST (false)
         SET ACC #1001
         JUMP_IF_ACC_LT #1000 &jialt_halt_3
+        JUMP &jialt_6
 
         // JUMP_IF_ACC_LT M_CONST CONST (false)
-        $jialt_const_2 #113
+    $v_jialt_const_2 #113
+    &jialt_6
         SET ACC #200
-        JUMP_IF_ACC_LT [$jialt_const_2] &jialt_halt_4
+        JUMP_IF_ACC_LT [$v_jialt_const_2] &jialt_halt_4
         JUMP &jialte_0
 
     &jialt_halt_0
@@ -478,17 +480,17 @@ def gen_test_assembly():
         HALT
 
         // JUMP_IF_ACC_LTE M_CONST CONST (less than, true)
-    $jialte_const_1 #113
+    $v_jialte_const_1 #113
     &jialte_8
         SET ACC #10
-        JUMP_IF_ACC_LTE [$jialte_const_1] &jialte_9
+        JUMP_IF_ACC_LTE [$v_jialte_const_1] &jialte_9
         HALT
 
         // JUMP_IF_ACC_LTE M_CONST CONST (equal to, true)
-    $jialte_const_2 #4444
+    $v_jialte_const_2 #4444
     &jialte_9
         SET ACC #4444
-        JUMP_IF_ACC_LTE [$jialte_const_2] &jialte_10
+        JUMP_IF_ACC_LTE [$v_jialte_const_2] &jialte_10
         HALT
 
         // Test false cases
@@ -511,11 +513,13 @@ def gen_test_assembly():
         // JUMP_IF_ACC_LTE CONST CONST (false)
         SET ACC #1001
         JUMP_IF_ACC_LTE #1000 &jialte_halt_3
-
+        JUMP &jialte_11
+        
         // JUMP_IF_ACC_LTE M_CONST CONST (false)
-        $jialte_const_3 #15
+    $v_jialte_const_3 #15
+    &jialte_11
         SET ACC #5555
-        JUMP_IF_ACC_LTE [$jialte_const_3] &jialte_halt_4
+        JUMP_IF_ACC_LTE [$v_jialte_const_3] &jialte_halt_4
         JUMP &jiagte_0
 
     &jialte_halt_0
@@ -609,17 +613,17 @@ def gen_test_assembly():
         HALT
         
         // JUMP_IF_ACC_GTE M_CONST CONST (greater than, true)
-    $jiagte_const_0 #111
+    $v_jiagte_const_0 #111
     &jiagte_8
         SET ACC #222
-        JUMP_IF_ACC_GTE [$jiagte_const_0] &jiagte_9
+        JUMP_IF_ACC_GTE [$v_jiagte_const_0] &jiagte_9
         HALT
 
         // JUMP_IF_ACC_GTE M_CONST CONST (equal to, true)
-    $jiagte_const_1 #999
+    $v_jiagte_const_1 #999
     &jiagte_9
         SET ACC #999
-        JUMP_IF_ACC_GTE [$jiagte_const_1] &jiagte_10
+        JUMP_IF_ACC_GTE [$v_jiagte_const_1] &jiagte_10
         HALT
 
         // Test false cases
@@ -643,11 +647,13 @@ def gen_test_assembly():
         // JUMP_IF_ACC_GTE CONST CONST (false)
         SET ACC #10001
         JUMP_IF_ACC_GTE #12000 &jiagte_halt_3
+        JUMP &jiagte_11
 
         // JUMP_IF_ACC_GTE M_CONST CONST (false)
-        $jiagte_const_2 #999
+    $v_jiagte_const_2 #999
+    &jiagte_11
         SET ACC #0
-        JUMP_IF_ACC_GTE [$jiagte_const_2] &jiagte_halt_4
+        JUMP_IF_ACC_GTE [$v_jiagte_const_2] &jiagte_halt_4
         JUMP &jiagt_0
 
     &jiagte_halt_0
@@ -714,10 +720,10 @@ def gen_test_assembly():
         HALT
 
        // JUMP_IF_ACC_GT M_CONST CONST (true)
-    $jiagt_const_0 #4523
+    $v_jiagt_const_0 #4523
     &jiagt_4
         SET ACC #9856
-        JUMP_IF_ACC_GT [$jiagt_const_0] &jiagt_5
+        JUMP_IF_ACC_GT [$v_jiagt_const_0] &jiagt_5
         HALT
 
         // Test false cases
@@ -741,9 +747,11 @@ def gen_test_assembly():
         // JUMP_IF_ACC_GT CONST CONST (false)
         SET ACC #10
         JUMP_IF_ACC_GT #15 &jiagt_halt_3
+        JUMP &jiagt_6
 
         // JUMP_IF_ACC_GT M_CONST CONST (false)
-        $jiagt_const_1 #3214
+    $jiagt_const_1 #3214
+    &jiagt_6
         SET ACC #1554
         JUMP_IF_ACC_GT [$jiagt_const_1] &jiagt_halt_4
         JUMP &jiagt_done

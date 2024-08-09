@@ -279,7 +279,7 @@ def gen_test_assembly():
         NOOP
     
     &jinez_done
-        HALT
+        NOOP
     """
     
     return textwrap.dedent(test_assembly)

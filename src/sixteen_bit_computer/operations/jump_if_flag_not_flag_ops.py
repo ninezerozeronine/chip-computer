@@ -255,8 +255,8 @@ def gen_test_assembly():
         ////////////////////////////////////////////////////////////////
 
     &jib_0
-        SET ACC #0xFFFF
-        ADD #1
+        SET ACC #0x25
+        SUB #54
         JUMP_IF_BORROW &jib_1
         HALT
 
@@ -275,13 +275,13 @@ def gen_test_assembly():
 
     &jinb_0
         SET ACC #18
-        ADD #5
+        SUB #5
         JUMP_IF_NOT_BORROW &jinb_1
         HALT
 
     &jinb_1
-        SET ACC #0xFFFF
-        ADD #55
+        SET ACC #0
+        SUB #55
         JUMP_IF_NOT_BORROW &jinb_halt_0
         JUMP &jief_0
 
