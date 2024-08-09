@@ -227,14 +227,14 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ #84 &add_5
         HALT
 
-    &add5
+    &add_5
         // Test carry flag
         SET ACC #60000
         ADD #60000
         JUMP_IF_CARRY &add_6
         HALT
 
-    &add5
+    &add_6
         // Test no carry flag
         SET ACC #5
         ADD #10
@@ -283,14 +283,14 @@ def gen_test_assembly():
         // Test borrow flag
         SET ACC #34
         SUB #500
-        JUMP_IF_BORROW_FLAG &sub_6
+        JUMP_IF_BORROW &sub_6
         HALT
 
     &sub_6
         // Test no carry flag
         SET ACC #34
         SUB #3
-        JUMP_IF_NOT BORROW_FLAG &and_0
+        JUMP_IF_NOT_BORROW &and_0
         HALT
         
         ////////////////////////////////////////////////////////////////

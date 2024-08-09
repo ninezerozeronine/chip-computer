@@ -156,9 +156,9 @@ def gen_test_assembly():
         SET C #1234
         JUMP_IF_ACC_NEQ C &set_halt2   
 
-        SET ACC #4321
         SET SP #4321
-        JUMP_IF_ACC_NEQ SP &set_halt3
+        COPY SP ACC
+        JUMP_IF_ACC_NEQ #4321 &set_halt3
 
         JUMP &set_done
 

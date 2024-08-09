@@ -237,10 +237,10 @@ def gen_test_assembly():
 
     &push_4
         SET SP &push_1 
-        SET C !zero_one
+        SET C #22341
         PUSH C
         LOAD [SP] ACC
-        JUMP_IF_ACC_EQ !zero_one &pop_0
+        JUMP_IF_ACC_EQ #22341 &pop_0
         HALT
 
         ////////////////////////////////////////////////////////////////
@@ -256,11 +256,11 @@ def gen_test_assembly():
         NOOP
         SET SP &pop_1    
 
-        SET ACC !one_zero
+        SET ACC #6381
         PUSH ACC
         SET_ZERO ACC
         LOAD [SP] ACC
-        JUMP_IF_ACC_EQ !one_zero &pop_2
+        JUMP_IF_ACC_EQ #6381 &pop_2
         HALT
 
     &pop_2

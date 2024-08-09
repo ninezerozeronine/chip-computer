@@ -143,7 +143,7 @@ def gen_test_assembly():
         COPY ACC Y
         SET_ZERO ACC
         COPY Y ACC
-        JUMP_IF_ACC_EQ A &copy_6
+        JUMP_IF_ACC_EQ A &copy_7
         HALT 
 
         // COPY ACC Z

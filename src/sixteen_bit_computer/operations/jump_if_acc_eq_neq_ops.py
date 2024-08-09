@@ -455,7 +455,7 @@ def gen_test_assembly():
         JUMP &jiane_6
 
     $v_jiane_1 #12345
-    &jiane_5
+    &jiane_6
         SET ACC #12345
         JUMP_IF_ACC_NEQ [$v_jiane_1] &jiane_halt_4
         

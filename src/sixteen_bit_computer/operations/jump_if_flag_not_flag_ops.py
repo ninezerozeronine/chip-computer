@@ -207,7 +207,7 @@ def gen_test_assembly():
         SET ACC #5
         SUB #10
         JUMP_IF_NOT_NEGATIVE_FLAG &jinnf_halt_0
-        JUMP &jicbf_0
+        JUMP &jic_0
 
     &jinnf_halt_0
         HALT
@@ -219,14 +219,14 @@ def gen_test_assembly():
     &jic_0
         SET ACC #0xFFFF
         ADD #1
-        JUMP_IF_CARRYBORROW_FLAG &jic_1
+        JUMP_IF_CARRY &jic_1
         HALT
 
     &jic_1
         SET ACC #5
         ADD #10
-        JUMP_IF_CARRYBORROW_FLAG &jic_halt_0
-        JUMP &jincbf_0
+        JUMP_IF_CARRY &jic_halt_0
+        JUMP &jinc_0
 
     &jic_halt_0
         HALT
@@ -238,13 +238,13 @@ def gen_test_assembly():
     &jinc_0
         SET ACC #18
         ADD #5
-        JUMP_IF_NOT_CARRYBORROW_FLAG &jinc_1
+        JUMP_IF_NOT_CARRY &jinc_1
         HALT
 
     &jinc_1
         SET ACC #0xFFFF
         ADD #55
-        JUMP_IF_NOT_CARRYBORROW_FLAG &jinc_halt_0
+        JUMP_IF_NOT_CARRY &jinc_halt_0
         JUMP &jib_0
 
     &jinc_halt_0
@@ -285,7 +285,7 @@ def gen_test_assembly():
         JUMP_IF_NOT_BORROW &jinb_halt_0
         JUMP &jief_0
 
-    &jinc_halt_0
+    &jinb_halt_0
         HALT
 
         ////////////////////////////////////////////////////////////////

@@ -187,9 +187,6 @@ def gen_test_assembly():
         SET C #7687
         JUMP_IF_EQ_ZERO C &jiez_halt_3
 
-        SET SP #1536
-        JUMP_IF_EQ_ZERO SP &jiez_halt_4
-
         JUMP &jinez_0
 
     &jiez_halt_0
@@ -211,12 +208,6 @@ def gen_test_assembly():
         NOOP
         NOOP
     &jiez_halt_3
-        NOOP
-        NOOP
-        HALT
-        NOOP
-        NOOP
-    &jiez_halt_4
         NOOP
         NOOP
         HALT

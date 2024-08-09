@@ -173,14 +173,14 @@ def gen_test_assembly():
         SET C   #0b0000_0000_0000_0000
         SET ACC #0b1111_1111_1111_1111
         NOT C
-        JUMP_IF_ACC_EQ C &not4
+        JUMP_IF_ACC_EQ C &not_4
         HALT
 
     $v_not_0 #0b1111_0000_0101_1010
     &not_4
         NOT [$v_not_0]
         LOAD [$v_not_0] ACC
-        JUMP_IF_ACC_EQ #0b0000_1111_1010_0101 $not_done
+        JUMP_IF_ACC_EQ #0b0000_1111_1010_0101 &not_done
         HALT
 
     &not_done

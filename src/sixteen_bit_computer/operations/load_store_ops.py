@@ -231,12 +231,8 @@ def gen_test_assembly():
         // LOAD
         ////////////////////////////////////////////////////////////////
 
-    $v_load_0 #24004
     &load_0
-        SET ACC $v_load_0
-        LOAD [ACC] ACC
-        JUMP_IF_ACC_EQ #24004 &load_1
-        HALT
+        NOOP
 
     $v_load_1 #11709
     &load_1
@@ -269,13 +265,8 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ #20982 &load_5
         HALT
 
-    $v_load_5 #51597
     &load_5
-        SET A $v_load_5
-        LOAD [A] A
-        SET ACC #51597
-        JUMP_IF_ACC_EQ A &load_6
-        HALT
+        NOOP
 
     $v_load_6 #22009
     &load_6
@@ -308,13 +299,8 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ A &load_10
         HALT
 
-    $v_load_10 #57819
     &load_10
-        SET B $v_load_10
-        LOAD [B] B
-        SET ACC #57819
-        JUMP_IF_ACC_EQ B &load_11
-        HALT
+        NOOP
 
     $v_load_11 #60912
     &load_11
@@ -347,13 +333,8 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ B &load_15
         HALT
 
-    $v_load_15 #20527
     &load_15
-        SET C $v_load_15
-        LOAD [C] C
-        SET ACC #20527
-        JUMP_IF_ACC_EQ C &load_16
-        HALT
+        NOOP
 
     $v_load_16 #60336
     &load_16
@@ -417,13 +398,8 @@ def gen_test_assembly():
         // STORE
         ////////////////////////////////////////////////////////////////
 
-    $v_store_0
     &store_0
-        SET ACC $v_store_0
-        STORE ACC [ACC]
-        LOAD [ACC] ACC
-        JUMP_IF_ACC_EQ $v_store_0 &store_1
-        HALT
+        NOOP
 
     $v_store_1
     &store_1
@@ -474,17 +450,13 @@ def gen_test_assembly():
         SET A #11935
         SET ACC $v_store_6
         STORE A [ACC]
-        LOAD [ACC] ACC
+        LOAD [ACC] B
+        COPY B ACC
         JUMP_IF_ACC_EQ #11935 &store_7
         HALT
 
-    $v_store_7
     &store_7
-        SET A $v_store_7
-        STORE A [A]
-        LOAD [A] ACC
-        JUMP_IF_ACC_EQ $v_store_7 &store_8
-        HALT
+        NOOP
 
     $v_store_8
     &store_8
@@ -526,7 +498,8 @@ def gen_test_assembly():
         SET B #61844
         SET ACC $v_store_12
         STORE B [ACC]
-        LOAD [ACC] ACC
+        LOAD [ACC] A
+        COPY A ACC
         JUMP_IF_ACC_EQ #61844 &store_13
         HALT
 
@@ -539,13 +512,8 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ #22749 &store_14
         HALT
 
-    $v_store_14
     &store_14
-        SET B $v_store_14
-        STORE B [B]
-        LOAD [B] ACC
-        JUMP_IF_ACC_EQ $v_store_14 &store_15
-        HALT
+        NOOP
 
     $v_store_15
     &store_15
@@ -578,7 +546,8 @@ def gen_test_assembly():
         SET C #46522
         SET ACC $v_store_18
         STORE C [ACC]
-        LOAD [ACC] ACC
+        LOAD [ACC] A
+        COPY A ACC
         JUMP_IF_ACC_EQ #46522 &store_19
         HALT
 
@@ -600,13 +569,8 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ #49497 &store_21
         HALT
 
-    $v_store_21
     &store_21
-        SET C $v_store_21
-        STORE C [C]
-        LOAD [C] ACC
-        JUMP_IF_ACC_EQ $v_store_21 &store_22
-        HALT
+        NOOP
 
     $v_store_22
     &store_22

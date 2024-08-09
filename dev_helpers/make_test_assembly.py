@@ -5,7 +5,7 @@ import textwrap
 
 def main():
     start = textwrap.dedent("""\
-    @start
+    &start
         NOOP
 
     """
@@ -13,10 +13,10 @@ def main():
     res = start
     for op in operations.get_all_operations():
     # for op in [call_return_ops, copy_op]:
-        res += op.gen_all_assembly()
+        res += op.gen_test_assembly()
         res += "\n"
     end = textwrap.dedent("""\
-        JUMP @start
+        JUMP &start
     """
     )
     res += end
