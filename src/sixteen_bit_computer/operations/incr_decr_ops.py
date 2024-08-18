@@ -209,16 +209,18 @@ def gen_test_assembly():
         HALT
 
     // INCR M_CONST
-    $incr_const_1 #35
+    $incr_const_1
     &incr_4
+        SET [$incr_const_1] #35
         INCR [$incr_const_1]
         LOAD [$incr_const_1] ACC
         JUMP_IF_ACC_EQ #36 &incr_5
         HALT
 
     // INCR M_CONST (carry flag)
-    $incr_const_2 #0b1111_1111_1111_1111
+    $incr_const_2
     &incr_5
+        SET [$incr_const_2] #0b1111_1111_1111_1111
         INCR [$incr_const_2]
         JUMP_IF_CARRY &decr_0
         HALT
@@ -259,16 +261,18 @@ def gen_test_assembly():
         HALT
 
     // DECR M_CONST
-    $decr_const_1 #50
+    $decr_const_1
     &decr_4
+        SET [$decr_const_1] #50
         DECR [$decr_const_1]
         LOAD [$decr_const_1] ACC
         JUMP_IF_ACC_EQ #49 &decr_5
         HALT
 
     // DECR M_CONST (borrow flag)
-    $decr_const_2 #0
+    $decr_const_2
     &decr_5
+        SET [$decr_const_2] #0
         DECR [$decr_const_2]
         JUMP_IF_BORROW &decr_end
         HALT

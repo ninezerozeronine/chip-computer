@@ -60,17 +60,41 @@
     SET SP #4321
     COPY SP ACC
     JUMP_IF_ACC_NEQ #4321 &set_halt3
+    JUMP &set_1
+
+$v_set_0
+&set_1
+    SET [$v_set_0] #9589
+    LOAD [$v_set_0] ACC
+    JUMP_IF_ACC_EQ #9589 &set_done
+    HALT
 
     JUMP &set_done
 
 &set_halt0
+    NOOP
+    NOOP
     HALT
+    NOOP
+    NOOP
 &set_halt1
+    NOOP
+    NOOP
     HALT
+    NOOP
+    NOOP
 &set_halt2
+    NOOP
+    NOOP
     HALT
+    NOOP
+    NOOP
 &set_halt3
+    NOOP
+    NOOP
     HALT
+    NOOP
+    NOOP
 
 &set_done
     NOOP
@@ -969,16 +993,18 @@ $v_jump_5 &jump_done
     HALT
 
 // INCR M_CONST
-$incr_const_1 #35
+$incr_const_1
 &incr_4
+    SET [$incr_const_1] #35
     INCR [$incr_const_1]
     LOAD [$incr_const_1] ACC
     JUMP_IF_ACC_EQ #36 &incr_5
     HALT
 
 // INCR M_CONST (carry flag)
-$incr_const_2 #0b1111_1111_1111_1111
+$incr_const_2
 &incr_5
+    SET [$incr_const_2] #0b1111_1111_1111_1111
     INCR [$incr_const_2]
     JUMP_IF_CARRY &decr_0
     HALT
@@ -1019,16 +1045,18 @@ $incr_const_2 #0b1111_1111_1111_1111
     HALT
 
 // DECR M_CONST
-$decr_const_1 #50
+$decr_const_1
 &decr_4
+    SET [$decr_const_1] #50
     DECR [$decr_const_1]
     LOAD [$decr_const_1] ACC
     JUMP_IF_ACC_EQ #49 &decr_5
     HALT
 
 // DECR M_CONST (borrow flag)
-$decr_const_2 #0
+$decr_const_2
 &decr_5
+    SET [$decr_const_2] #0
     DECR [$decr_const_2]
     JUMP_IF_BORROW &decr_end
     HALT
@@ -1524,8 +1552,9 @@ $v_store_23
     JUMP_IF_ACC_EQ C &not_4
     HALT
 
-$v_not_0 #0b1111_0000_0101_1010
+$v_not_0
 &not_4
+    SET [$v_not_0] #0b1111_0000_0101_1010
     NOT [$v_not_0]
     LOAD [$v_not_0] ACC
     JUMP_IF_ACC_EQ #0b0000_1111_1010_0101 &not_done
@@ -2162,8 +2191,8 @@ $jiagt_const_1 #3214
     HALT
 
 &jib_1
-    SET ACC #5
-    ADD #10
+    SET ACC #20
+    SUB #1
     JUMP_IF_BORROW &jib_halt_0
     JUMP &jinb_0
 
@@ -2262,10 +2291,13 @@ $jiagt_const_1 #3214
     SET ACC #0
     ADD #0
     JUMP_IF_NOT_ZERO_FLAG &jinzf_halt_0
-    JUMP &call_0
+    JUMP &jinzf_done
 
 &jinzf_halt_0
     HALT
+
+&jinzf_done
+    NOOP
 
     ////////////////////////////////////////////////////////////////
     // ROT_LEFT
@@ -2301,9 +2333,10 @@ $jiagt_const_1 #3214
     JUMP_IF_ACC_EQ C &rot_left_3
     HALT
 
-$v_rot_left_0 #0b0101_0101_1010_1010
+$v_rot_left_0
 &rot_left_3
     // ROT_LEFT M_CONST
+    SET [$v_rot_left_0] #0b0101_0101_1010_1010
     ROT_LEFT [$v_rot_left_0]
     LOAD [$v_rot_left_0] ACC
     JUMP_IF_ACC_EQ #0b1010_1011_0101_0100 &rot_left_4
@@ -2358,9 +2391,10 @@ $v_rot_left_0 #0b0101_0101_1010_1010
     JUMP_IF_ACC_EQ C &rot_right_4
     HALT
 
-$v_rot_right_0 #0b0101_0101_1010_1010
+$v_rot_right_0
 &rot_right_4
     // ROT_RIGHT M_CONST
+    SET [$v_rot_right_0] #0b0101_0101_1010_1010
     ROT_RIGHT [$v_rot_right_0]
     LOAD [$v_rot_right_0] ACC
     JUMP_IF_ACC_EQ #0b0010_1010_1101_0101 &rot_right_5
@@ -2412,12 +2446,13 @@ $v_rot_right_0 #0b0101_0101_1010_1010
     SET C #0b0000_0101_1111_1111
     SHIFT_LEFT C
     SET ACC #0b0000_1011_1111_1110
-    JUMP_IF_ACC_EQ B &shift_left_4
+    JUMP_IF_ACC_EQ C &shift_left_4
     HALT
 
-$v_shift_left_0 #0b0101_0101_1010_1010
+$v_shift_left_0
 &shift_left_4
     // SHIFT_LEFT M_CONST
+    SET [$v_shift_left_0] #0b0101_0101_1010_1010
     SHIFT_LEFT [$v_shift_left_0]
     LOAD [$v_shift_left_0] ACC
     JUMP_IF_ACC_EQ #0b1010_1011_0101_0100 &shift_left_5
@@ -2469,12 +2504,13 @@ $v_shift_left_0 #0b0101_0101_1010_1010
     SET C #0b0000_0101_1111_1111
     SHIFT_RIGHT C
     SET ACC #0b0000_0010_1111_1111
-    JUMP_IF_ACC_EQ B &shift_right_4
+    JUMP_IF_ACC_EQ C &shift_right_4
     HALT
 
-$v_shift_right_0 #0b0101_0101_1010_1010
+$v_shift_right_0
 &shift_right_4
     // SHIFT_RIGHT M_CONST
+    SET [$v_shift_right_0] #0b0101_0101_1010_1010
     SHIFT_RIGHT [$v_shift_right_0]
     LOAD [$v_shift_right_0] ACC
     JUMP_IF_ACC_EQ #0b0010_1010_1101_0101 &shift_right_5
@@ -2501,9 +2537,13 @@ $v_shift_right_0 #0b0101_0101_1010_1010
     // STORE_INCR
     ////////////////////////////////////////////////////////////////
 
-$store_incr_v0 #34
-$store_incr_v1 #789
+JUMP &store_incr_begin
+$store_incr_v0
+$store_incr_v1
+&store_incr_begin
     // STORE_INCR ACC M_A M_B
+    SET [$store_incr_v0] #34
+    SET [$store_incr_v1] #789
     SET ACC #23
     SET A $store_incr_v0
     SET B $store_incr_v1
@@ -2516,10 +2556,12 @@ $store_incr_v1 #789
     JUMP_IF_ACC_EQ #790 &store_incr_1
     HALT
 
+$store_incr_v2
+$store_incr_v3
 &store_incr_1
-$store_incr_v2 #456
-$store_incr_v3 #123
     // STORE_INCR CONST M_A M_B
+    SET [$store_incr_v2] #456
+    SET [$store_incr_v3] #123
     SET A $store_incr_v2
     SET B $store_incr_v3
     STORE_INCR #599 [A] [B]
@@ -2531,10 +2573,12 @@ $store_incr_v3 #123
     JUMP_IF_ACC_EQ #124 &store_incr_3
     HALT
 
+$store_incr_v4
+$store_incr_v5
 &store_incr_3
-$store_incr_v4 #456
-$store_incr_v5 #0xFFFF
     // STORE_INCR CONST M_A M_B (test carry)
+    SET [$store_incr_v4] #456
+    SET [$store_incr_v5] #0xFFFF
     SET A $store_incr_v4
     SET B $store_incr_v5
     STORE_INCR #599 [A] [B]
@@ -2545,44 +2589,63 @@ $store_incr_v5 #0xFFFF
     // STORE_DECR
     ////////////////////////////////////////////////////////////////
 
-$store_decr_v0 #34
-$store_decr_v1 #789
+$store_decr_v0
+$store_decr_v1
+&store_decr_0
     // STORE_DECR ACC M_A M_B
+    SET [$store_decr_v0] #34
+    SET [$store_decr_v1] #789
     SET ACC #23
     SET A $store_decr_v0
     SET B $store_decr_v1
     STORE_DECR ACC [A] [B]
     LOAD [$store_decr_v0] ACC
-    JUMP_IF_ACC_EQ #23 &store_decr_0
+    JUMP_IF_ACC_EQ #23 &store_decr_1
     HALT
-&store_decr_0
+&store_decr_1
     LOAD [$store_decr_v1] ACC
-    JUMP_IF_ACC_EQ #790 &store_decr_1
+    JUMP_IF_ACC_EQ #788 &store_decr_2
     HALT
 
-&store_decr_1
-$store_decr_v2 #456
-$store_decr_v3 #123
+$store_decr_v2
+$store_decr_v3
+&store_decr_2
     // STORE_DECR CONST M_A M_B
+    SET [$store_decr_v2] #456
+    SET [$store_decr_v3] #123
     SET A $store_decr_v2
     SET B $store_decr_v3
     STORE_DECR #599 [A] [B]
     LOAD [$store_decr_v2] ACC
-    JUMP_IF_ACC_EQ #599 &store_decr_2
+    JUMP_IF_ACC_EQ #599 &store_decr_3
     HALT
-&store_decr_2
+&store_decr_3
     LOAD [$store_decr_v3] ACC
-    JUMP_IF_ACC_EQ #124 &store_decr_3
+    JUMP_IF_ACC_EQ #122 &store_decr_4
     HALT
 
-&store_decr_3
-$store_decr_v4 #456
-$store_decr_v5 #1
+$store_decr_v4
+$store_decr_v5
+&store_decr_4
     // STORE_DECR CONST M_A M_B (test zero)
+    SET [$store_decr_v4] #456
+    SET [$store_decr_v5] #1
     SET A $store_decr_v4
     SET B $store_decr_v5
     STORE_DECR #599 [A] [B]
-    JUMP_IF_ZERO_FLAG &store_decr_done
+    JUMP_IF_ZERO_FLAG &store_decr_5
+    HALT
+
+$store_decr_v6
+$store_decr_v7
+&store_decr_5
+    // STORE_DECR CONST M_A M_B (test borrow)
+    SET [$store_decr_v6] #456
+    SET [$store_decr_v7] #0
+    SET A $store_decr_v6
+    SET B $store_decr_v7
+    STORE_DECR #599 [A] [B]
+    JUMP_IF_BORROW &store_decr_done
     HALT
 
 &store_decr_done

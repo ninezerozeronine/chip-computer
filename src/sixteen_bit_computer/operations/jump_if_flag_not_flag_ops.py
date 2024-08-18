@@ -261,8 +261,8 @@ def gen_test_assembly():
         HALT
 
     &jib_1
-        SET ACC #5
-        ADD #10
+        SET ACC #20
+        SUB #1
         JUMP_IF_BORROW &jib_halt_0
         JUMP &jinb_0
 
@@ -361,10 +361,13 @@ def gen_test_assembly():
         SET ACC #0
         ADD #0
         JUMP_IF_NOT_ZERO_FLAG &jinzf_halt_0
-        JUMP &call_0
+        JUMP &jinzf_done
 
     &jinzf_halt_0
         HALT
+
+    &jinzf_done
+        NOOP
         """
     
     return textwrap.dedent(test_assembly)

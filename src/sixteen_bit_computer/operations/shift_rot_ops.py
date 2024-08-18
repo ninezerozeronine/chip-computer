@@ -191,9 +191,10 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ C &rot_left_3
         HALT
 
-    $v_rot_left_0 #0b0101_0101_1010_1010
+    $v_rot_left_0
     &rot_left_3
         // ROT_LEFT M_CONST
+        SET [$v_rot_left_0] #0b0101_0101_1010_1010
         ROT_LEFT [$v_rot_left_0]
         LOAD [$v_rot_left_0] ACC
         JUMP_IF_ACC_EQ #0b1010_1011_0101_0100 &rot_left_4
@@ -248,9 +249,10 @@ def gen_test_assembly():
         JUMP_IF_ACC_EQ C &rot_right_4
         HALT
 
-    $v_rot_right_0 #0b0101_0101_1010_1010
+    $v_rot_right_0
     &rot_right_4
         // ROT_RIGHT M_CONST
+        SET [$v_rot_right_0] #0b0101_0101_1010_1010
         ROT_RIGHT [$v_rot_right_0]
         LOAD [$v_rot_right_0] ACC
         JUMP_IF_ACC_EQ #0b0010_1010_1101_0101 &rot_right_5
@@ -302,12 +304,13 @@ def gen_test_assembly():
         SET C #0b0000_0101_1111_1111
         SHIFT_LEFT C
         SET ACC #0b0000_1011_1111_1110
-        JUMP_IF_ACC_EQ B &shift_left_4
+        JUMP_IF_ACC_EQ C &shift_left_4
         HALT
 
-    $v_shift_left_0 #0b0101_0101_1010_1010
+    $v_shift_left_0
     &shift_left_4
         // SHIFT_LEFT M_CONST
+        SET [$v_shift_left_0] #0b0101_0101_1010_1010
         SHIFT_LEFT [$v_shift_left_0]
         LOAD [$v_shift_left_0] ACC
         JUMP_IF_ACC_EQ #0b1010_1011_0101_0100 &shift_left_5
@@ -359,12 +362,13 @@ def gen_test_assembly():
         SET C #0b0000_0101_1111_1111
         SHIFT_RIGHT C
         SET ACC #0b0000_0010_1111_1111
-        JUMP_IF_ACC_EQ B &shift_right_4
+        JUMP_IF_ACC_EQ C &shift_right_4
         HALT
 
-    $v_shift_right_0 #0b0101_0101_1010_1010
+    $v_shift_right_0
     &shift_right_4
         // SHIFT_RIGHT M_CONST
+        SET [$v_shift_right_0] #0b0101_0101_1010_1010
         SHIFT_RIGHT [$v_shift_right_0]
         LOAD [$v_shift_right_0] ACC
         JUMP_IF_ACC_EQ #0b0010_1010_1101_0101 &shift_right_5
