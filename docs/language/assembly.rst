@@ -257,7 +257,7 @@ JUMP
 
 The ``JUMP`` operation will set the program counter to a value. The next
 instruction to be executed will be the word in memory at the specifed
-location in memory.
+location.
 
 The possible usages are:
 
@@ -273,11 +273,11 @@ The possible usages are:
  - ``JUMP [SP]``
  - ``JUMP [CONST]``
 
-JUMP_IF_LT_ACC
+JUMP_IF_ACC_LT
 ^^^^^^^^^^^^^^
 
-The ``JUMP_IF_LT_ACC`` operation will set the program counter (jump)
-to the value of a given constant (second argument) if the value of the
+The ``JUMP_IF_ACC_LT`` operation will set the program counter (jump)
+to the givel location in memory (second argument) if the value of the
 first argument (module or constant or word in memory) is less than the
 accumulator.
 
@@ -285,16 +285,16 @@ The instruction generates and stores (clobbers) the ALU flags.
 
 The possible usages are:
 
- - ``JUMP_IF_LT_ACC A CONST``
- - ``JUMP_IF_LT_ACC B CONST``
- - ``JUMP_IF_LT_ACC C CONST``
- - ``JUMP_IF_LT_ACC CONST CONST``
- - ``JUMP_IF_LT_ACC [CONST] CONST``
+ - ``JUMP_IF_ACC_LT A CONST``
+ - ``JUMP_IF_ACC_LT B CONST``
+ - ``JUMP_IF_ACC_LT C CONST``
+ - ``JUMP_IF_ACC_LT CONST CONST``
+ - ``JUMP_IF_ACC_LT [CONST] CONST``
 
-JUMP_IF_LTE_ACC
+JUMP_IF_ACC_LTE
 ^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_LTE_ACC`` operation will set the program counter (jump)
+The ``JUMP_IF_ACC_LTE`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
 first argument (module or constant or word in memory) is less than 
 or equal to the accumulator.
@@ -303,18 +303,19 @@ The instruction generates and stores (clobbers) the ALU flags.
 
 The possible usages are:
 
- - ``JUMP_IF_LTE_ACC A CONST``
- - ``JUMP_IF_LTE_ACC B CONST``
- - ``JUMP_IF_LTE_ACC C CONST``
- - ``JUMP_IF_LTE_ACC CONST CONST``
- - ``JUMP_IF_LTE_ACC [CONST] CONST``
+ - ``JUMP_IF_ACC_LTE A CONST``
+ - ``JUMP_IF_ACC_LTE B CONST``
+ - ``JUMP_IF_ACC_LTE C CONST``
+ - ``JUMP_IF_ACC_LTE CONST CONST``
+ - ``JUMP_IF_ACC_LTE [CONST] CONST``
 
 JUMP_IF_ACC_EQ
 ^^^^^^^^^^^^^^
 
 The ``JUMP_IF_ACC_EQ`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the accumulator
-is equal to the value of the first argument (module or constant).
+is equal to the value of the first argument (module or constant or
+word in memory).
 
 The instruction generates and stores (clobbers) the ALU flags.
 
@@ -323,9 +324,8 @@ The possible usages are:
  - ``JUMP_IF_ACC_EQ A CONST``
  - ``JUMP_IF_ACC_EQ B CONST``
  - ``JUMP_IF_ACC_EQ C CONST``
- - ``JUMP_IF_ACC_EQ PC CONST``
- - ``JUMP_IF_ACC_EQ SP CONST``
  - ``JUMP_IF_ACC_EQ CONST CONST``
+ - ``JUMP_IF_ACC_EQ [CONST] CONST``
 
 
 JUMP_IF_ACC_NEQ
@@ -333,7 +333,8 @@ JUMP_IF_ACC_NEQ
 
 The ``JUMP_IF_ACC_NEQ`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the accumulator
-is not equal to the value of the first argument (module or constant).
+is not equal to the value of the first argument (module or constant or
+word in memory).
 
 The instruction generates and stores (clobbers) the ALU flags.
 
@@ -342,46 +343,44 @@ The possible usages are:
  - ``JUMP_IF_ACC_NEQ A CONST``
  - ``JUMP_IF_ACC_NEQ B CONST``
  - ``JUMP_IF_ACC_NEQ C CONST``
- - ``JUMP_IF_ACC_NEQ PC CONST``
- - ``JUMP_IF_ACC_NEQ SP CONST``
  - ``JUMP_IF_ACC_NEQ CONST CONST``
+ - ``JUMP_IF_ACC_NEQ [CONST] CONST``
 
-JUMP_IF_GTE_ACC
+JUMP_IF_ACC_GTE
 ^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_GTE_ACC`` operation will set the program counter (jump)
+The ``JUMP_IF_ACC_GTE`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
-first argument (module or constant) is greater than or equal to the
-accumulator.
+first argument (module or constant or word in memory) is greater than 
+or equal to the accumulator.
 
 The instruction generates and stores (clobbers) the ALU flags.
 
 The possible usages are:
 
- - ``JUMP_IF_GTE_ACC A CONST``
- - ``JUMP_IF_GTE_ACC B CONST``
- - ``JUMP_IF_GTE_ACC C CONST``
- - ``JUMP_IF_GTE_ACC PC CONST``
- - ``JUMP_IF_GTE_ACC SP CONST``
- - ``JUMP_IF_GTE_ACC CONST CONST``
+ - ``JUMP_IF_ACC_GTE A CONST``
+ - ``JUMP_IF_ACC_GTE B CONST``
+ - ``JUMP_IF_ACC_GTE C CONST``
+ - ``JUMP_IF_ACC_GTE CONST CONST``
+ - ``JUMP_IF_ACC_GTE [CONST] CONST``
 
-JUMP_IF_GT_ACC
+JUMP_IF_ACC_GT
 ^^^^^^^^^^^^^^
 
-The ``JUMP_IF_GT_ACC`` operation will set the program counter (jump)
+The ``JUMP_IF_ACC_GT`` operation will set the program counter (jump)
 to the value of a given constant (second argument) if the value of the
-first argument (module or constant) is greater than the accumulator.
+first argument (module or constant or word in memory) is greater than
+the accumulator.
 
 The instruction generates and stores (clobbers) the ALU flags.
 
 The possible usages are:
 
- - ``JUMP_IF_GT_ACC A CONST``
- - ``JUMP_IF_GT_ACC B CONST``
- - ``JUMP_IF_GT_ACC C CONST``
- - ``JUMP_IF_GT_ACC PC CONST``
- - ``JUMP_IF_GT_ACC SP CONST``
- - ``JUMP_IF_GT_ACC CONST CONST``
+ - ``JUMP_IF_ACC_GT A CONST``
+ - ``JUMP_IF_ACC_GT B CONST``
+ - ``JUMP_IF_ACC_GT C CONST``
+ - ``JUMP_IF_ACC_GT CONST CONST``
+ - ``JUMP_IF_ACC_GT [CONST] CONST``
 
 JUMP_IF_EQ_ZERO
 ^^^^^^^^^^^^^^^
@@ -398,8 +397,6 @@ The possible usages are:
  - ``JUMP_IF_EQ_ZERO A CONST``
  - ``JUMP_IF_EQ_ZERO B CONST``
  - ``JUMP_IF_EQ_ZERO C CONST``
- - ``JUMP_IF_EQ_ZERO PC CONST``
- - ``JUMP_IF_EQ_ZERO SP CONST``
 
 
 JUMP_IF_NEQ_ZERO
@@ -417,81 +414,79 @@ The possible usages are:
  - ``JUMP_IF_NEQ_ZERO A CONST``
  - ``JUMP_IF_NEQ_ZERO B CONST``
  - ``JUMP_IF_NEQ_ZERO C CONST``
- - ``JUMP_IF_NEQ_ZERO PC CONST``
- - ``JUMP_IF_NEQ_ZERO SP CONST``
 
-
-JUMP_IF_POSITIVE_FLAG
-^^^^^^^^^^^^^^^^^^^^^
-
-The ``JUMP_IF_POSITIVE_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
-stored for resulted in a positive value (when read as 2's compliment).
-
-The possible usages are:
-
- - ``JUMP_IF_POSITIVE_FLAG CONST``
 
 JUMP_IF_NEGATIVE_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_NEGATIVE_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
+The ``JUMP_IF_NEGATIVE_FLAG`` operation will set the program counter to
+the given constant if the last operation that the ALU flags were
 stored for resulted in a negative value (when read as 2's compliment).
 
 The possible usages are:
 
  - ``JUMP_IF_NEGATIVE_FLAG CONST``
 
-JUMP_IF_OVERFLOW_FLAG
+JUMP_IF_NOT_NEGATIVE_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_OVERFLOW_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
-stored for resulted in an overflow.
+The ``JUMP_IF_NOT_NEGATIVE_FLAG`` operation will set the program counter
+to the given constant if the last operation that the ALU flags were
+stored for resulted in a positive value (when read as 2's compliment).
 
 The possible usages are:
 
- - ``JUMP_IF_OVERFLOW_FLAG CONST``
+ - ``JUMP_IF_NOT_NEGATIVE_FLAG CONST``
 
-JUMP_IF_NOT_OVERFLOW_FLAG
+JUMP_IF_CARRY_FLAG
+^^^^^^^^^^^^^^^^^^^^^
+
+The ``JUMP_IF_CARRY_FLAG`` operation will set the program counter to the
+given constant if the last operation that the ALU flags were
+stored for resulted in an overflow/carry.
+
+The possible usages are:
+
+ - ``JUMP_IF_CARRY_FLAG CONST``
+
+JUMP_IF_NOT_CARRY_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_OVERFLOW_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
-stored for did not result in an overflow.
+The ``JUMP_IF_NOT_CARRY_FLAG`` operation will set the program counter to the
+given constant if the last operation that the ALU flags were
+stored for did not result in an overflow/carry.
 
 The possible usages are:
 
- - ``JUMP_IF_NOT_OVERFLOW_FLAG CONST``
+ - ``JUMP_IF_NOT_CARRY_FLAG CONST``
 
-JUMP_IF_UNDERFLOW_FLAG
+JUMP_IF_BORROW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_UNDERFLOW_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
-stored for resulted in an underflow.
+The ``JUMP_IF_BORROW_FLAG`` operation will set the program counter to
+the given constant if the last operation that the ALU flags were
+stored for resulted in an underflow/borrow.
 
 The possible usages are:
 
- - ``JUMP_IF_UNDERFLOW_FLAG CONST``
+ - ``JUMP_IF_BORROW_FLAG CONST``
 
-JUMP_IF_NOT_UNDERFLOW_FLAG
+JUMP_IF_NOT_BORROW_FLAG
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_NOT_UNDERFLOW_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
-stored for did not result in an underflow.
+The ``JUMP_IF_NOT_BORROW_FLAG`` operation will set the program counter to the
+given constant if the last operation that the ALU flags were
+stored for did not result in an underflow/borrow.
 
 The possible usages are:
 
- - ``JUMP_IF_NOT_UNDERFLOW_FLAG CONST``
+ - ``JUMP_IF_NOT_BORROW_FLAG CONST``
 
 JUMP_IF_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_ZERO_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
+given constant if the last operation that the ALU flags were
 stored for resulted in an answer of zero.
 
 The possible usages are:
@@ -502,7 +497,7 @@ JUMP_IF_NOT_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^^^^^
 
 The ``JUMP_IF_NOT_ZERO_FLAG`` operation will set the program counter to the
-value of a given constant if the last operation that the ALU flags were
+given constant if the last operation that the ALU flags were
 stored for resulted in a non zero answer.
 
 The possible usages are:
@@ -512,7 +507,7 @@ The possible usages are:
 CALL
 ^^^^
 
-The ``CALL`` operation will push the current program counter (i.e. the next
+The ``CALL`` operation will push the program counter (i.e. the address of the next
 instruction to be executed) onto the stack, then set the program counter (
 i.e. jump) to the value in the given module or constant.
 
@@ -677,7 +672,7 @@ The possible usages are:
  - ``ROT_LEFT [CONST]``
 
 ROT_RIGHT
-^^^^^^^^
+^^^^^^^^^
 
 The ``ROT_RIGHT`` operation rotates all the bits in the specifed
 module or memory location to the right (least significant side). All the bits
@@ -697,7 +692,7 @@ The possible usages are:
 
 
 SHIFT_LEFT
-^^^^^^^^
+^^^^^^^^^^
 
 The ``SHIFT_LEFT`` operation shifts all the bits in the specifed
 module or memory location one place to the left (most significant side).
@@ -714,7 +709,7 @@ The possible usages are:
  - ``SHIFT_LEFT [CONST]``
 
 SHIFT_RIGHT
-^^^^^^^^
+^^^^^^^^^^^
 
 The ``SHIFT_RIGHT`` operation shifts all the bits in the specifed
 module or memory location one place to the right (least significant side).
@@ -730,6 +725,31 @@ The possible usages are:
  - ``SHIFT_RIGHT C``
  - ``SHIFT_RIGHT [CONST]``
 
+STORE_INCR
+^^^^^^^^^^
+
+The ``STORE_INCR`` operation takes the value in ACC or a constant,
+stores it in memory at A, then increments the word in memory at B.
+
+The ALU flags generated by the increment are stored.
+
+The possible usages are:
+
+ - ``STORE_INCR ACC [A] [B]``
+ - ``STORE_INCR CONST [A] [B]``
+
+STORE_DECR
+^^^^^^^^^^
+
+The ``STORE_DECR`` operation takes the value in ACC or a constant,
+stores it in memory at A, then decrements the word in memory at B.
+
+The ALU flags generated by the decrement are stored.
+
+The possible usages are:
+
+ - ``STORE_DECR ACC [A] [B]``
+ - ``STORE_DECR CONST [A] [B]``
 
 Constants
 ---------
@@ -738,7 +758,28 @@ Constants are values that the assembler will convert to machine code bytes for
 operations that require data in the machine code. For example, a jump to an
 explicit index in program memory, or setting a register to an explicit value.
 
-There are 3 kinds of constants: labels, variables and numbers.
+There are 4 kinds of constants: aliases, labels, variables and numbers.
+
+Aliases
+^^^^^^^
+
+Alises are named numbers.
+
+Aliases are tokens that starts with the ``!`` character followed by any letter or
+an underscore, then any alphanumeric or an underscore. E.g.:
+
+ - ``!alias1``
+ - ``!alias_2``
+ - ``!_another_alias``
+
+An alias is defined by specifying an alias and it's value, e.g.:
+
+.. code-block:: text
+
+    !speed #3
+        LOAD [$location] ACC
+        ADD !speed
+        STORE ACC [$location]
 
 Labels
 ^^^^^^
@@ -752,21 +793,21 @@ followed the label definition. E.g. If an assembly file looked like this:
         LOAD [#123] A
         ADD A
 
-    @label
+    &label
         SET B #42
 
-The value of ``@label`` would be 3. The instruction byte corresponding to
+The value of ``&label`` would be 3. The instruction byte corresponding to
 ``SET B #42`` is at program memory index 3. ``LOAD [#123] A`` takes 2 bytes,
 ``ADD A`` one, and ``SET B #42`` is the byte after that.
 
 Labels are typically used by jump operations.
 
-A label is a token that starts with the ``@`` character followed by any letter or
+A label is a token that starts with the ``&`` character followed by any letter or
 an underscore, then any alphanumeric or an underscore. E.g.:
 
- - ``@label``
- - ``@label_1``
- - ``@_other_label``
+ - ``&label``
+ - ``&label_1``
+ - ``&_other_label``
    
 Labels must be unique.
 
@@ -775,9 +816,8 @@ A label is defined by putting it on a line by itself.
 Variables
 ^^^^^^^^^
 
-Variables are named aliases for indexes into data memory. They can be
-predeclared by putting them by themselves on a line or declared as they are
-used by using them as an argument.
+Variables are named aliases for indexes into memory. They are declared by
+themselves on a line and may optionally have a value set for them.
 
 The index for a given variable is determined by the assembler. As it parses
 assembly lines from the start of the file to the end, addresses are assigned to
@@ -785,12 +825,16 @@ variables as they are encountered in the file. E.g. for the following assembly:
 
 .. code-block:: text
 
+        NOOP
         $variable1
         COPY A ACC
-        LOAD [$variable2] A
+        $variable2 #34
 
-variable1 is predeclared, variable2 is declared as it's used. Once assembled,
-variable1 is an alias for 0, variable2 is an alias for 1.
+variable1 is declared with no value (uninitialised), and variable2 is
+declared with a value of 34. Once assembled,
+``$variable1`` will have a value of 1`, and ``$variable2`` will have value of
+3 as those are the indexes in memory where the variables were declared once the
+assembly is converted to machine code.
 
 A variable is a token that starts with the ``$`` character followed by any letter or
 an underscore, then any alphanumeric or an underscore. E.g.:
@@ -802,9 +846,9 @@ an underscore, then any alphanumeric or an underscore. E.g.:
 Numbers
 ^^^^^^^
 
-Numbers are integer values. In most cases they within the range -127 to 255
-(inclusive). This range comes from the minimum and maximum values that 8 bits,
-or 8 bits with 2's compliment encoding can hold.
+Numbers are integer values. In most cases they within the range -32767 to 65535
+(inclusive). This range comes from the minimum and maximum values that 16 bits,
+or 16 bits with 2's compliment encoding can hold.
 
 A number is a token that starts with the ``#`` character and is followed by any
 valid Python integer definition. E.g. 
@@ -815,6 +859,26 @@ valid Python integer definition. E.g.
  - ``#-0b0101`` (binary)
  - ``#0xA2`` (hex)
  - ``#0o107`` (octal)
+
+Anchors
+-------
+
+Anchors pin the machinecode that follows them to a specific address. They
+are declared by placing them on a line by themselves.
+
+E.g. for the following assembly:
+
+.. code-block:: text
+
+    @ #23
+        NOOP
+        ADD #1
+
+    @ #60
+        COPY ACC X
+
+The ``NOOP`` instruction will be at memory index 23, and the ``COPY A ACC``
+instruction will be in memory at index 60.
 
 Comments
 --------
