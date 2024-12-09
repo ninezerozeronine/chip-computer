@@ -438,49 +438,49 @@ The possible usages are:
 
  - ``JUMP_IF_NOT_NEGATIVE_FLAG CONST``
 
-JUMP_IF_CARRY_FLAG
-^^^^^^^^^^^^^^^^^^^^^
+JUMP_IF_CARRY
+^^^^^^^^^^^^^
 
-The ``JUMP_IF_CARRY_FLAG`` operation will set the program counter to the
+The ``JUMP_IF_CARRY`` operation will set the program counter to the
 given constant if the last operation that the ALU flags were
 stored for resulted in an overflow/carry.
 
 The possible usages are:
 
- - ``JUMP_IF_CARRY_FLAG CONST``
+ - ``JUMP_IF_CARRY CONST``
 
-JUMP_IF_NOT_CARRY_FLAG
-^^^^^^^^^^^^^^^^^^^^^^^^^
+JUMP_IF_NOT_CARRY
+^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_NOT_CARRY_FLAG`` operation will set the program counter to the
+The ``JUMP_IF_NOT_CARRY`` operation will set the program counter to the
 given constant if the last operation that the ALU flags were
 stored for did not result in an overflow/carry.
 
 The possible usages are:
 
- - ``JUMP_IF_NOT_CARRY_FLAG CONST``
+ - ``JUMP_IF_NOT_CARRY CONST``
 
-JUMP_IF_BORROW_FLAG
-^^^^^^^^^^^^^^^^^^^^^^
+JUMP_IF_BORROW
+^^^^^^^^^^^^^^
 
-The ``JUMP_IF_BORROW_FLAG`` operation will set the program counter to
+The ``JUMP_IF_BORROW`` operation will set the program counter to
 the given constant if the last operation that the ALU flags were
 stored for resulted in an underflow/borrow.
 
 The possible usages are:
 
- - ``JUMP_IF_BORROW_FLAG CONST``
+ - ``JUMP_IF_BORROW CONST``
 
-JUMP_IF_NOT_BORROW_FLAG
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+JUMP_IF_NOT_BORROW
+^^^^^^^^^^^^^^^^^^
 
-The ``JUMP_IF_NOT_BORROW_FLAG`` operation will set the program counter to the
+The ``JUMP_IF_NOT_BORROW`` operation will set the program counter to the
 given constant if the last operation that the ALU flags were
 stored for did not result in an underflow/borrow.
 
 The possible usages are:
 
- - ``JUMP_IF_NOT_BORROW_FLAG CONST``
+ - ``JUMP_IF_NOT_BORROW CONST``
 
 JUMP_IF_ZERO_FLAG
 ^^^^^^^^^^^^^^^^^

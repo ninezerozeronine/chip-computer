@@ -364,7 +364,7 @@ class LineNumberArea(QtWidgets.QWidget):
                 painter.setPen(QtGui.QColor("black"))
                 painter.drawText(
                     0,
-                    top,
+                    int(top),
                     # This creates some padding on the right
                     self.width() - 3,
                     height,
