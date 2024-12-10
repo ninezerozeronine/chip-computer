@@ -231,8 +231,7 @@ def gen_test_assembly():
         // LOAD
         ////////////////////////////////////////////////////////////////
 
-    &load_0
-        NOOP
+        JUMP &load_1
 
     $v_load_1 #11709
     &load_1
@@ -262,11 +261,8 @@ def gen_test_assembly():
     &load_4
         SET A $v_load_4
         LOAD [A] ACC
-        JUMP_IF_ACC_EQ #20982 &load_5
+        JUMP_IF_ACC_EQ #20982 &load_6
         HALT
-
-    &load_5
-        NOOP
 
     $v_load_6 #22009
     &load_6
@@ -296,11 +292,8 @@ def gen_test_assembly():
         SET B $v_load_9
         LOAD [B] A
         SET ACC #37360
-        JUMP_IF_ACC_EQ A &load_10
+        JUMP_IF_ACC_EQ A &load_11
         HALT
-
-    &load_10
-        NOOP
 
     $v_load_11 #60912
     &load_11
@@ -330,11 +323,8 @@ def gen_test_assembly():
         SET C $v_load_14
         LOAD [C] B
         SET ACC #25444
-        JUMP_IF_ACC_EQ B &load_15
+        JUMP_IF_ACC_EQ B &load_16
         HALT
-
-    &load_15
-        NOOP
 
     $v_load_16 #60336
     &load_16
@@ -391,15 +381,12 @@ def gen_test_assembly():
     &load_23
         LOAD [$v_load_23] C
         SET ACC #7661
-        JUMP_IF_ACC_EQ C &store_0
+        JUMP_IF_ACC_EQ C &store_1
         HALT
 
         ////////////////////////////////////////////////////////////////
         // STORE
         ////////////////////////////////////////////////////////////////
-
-    &store_0
-        NOOP
 
     $v_store_1
     &store_1
@@ -452,11 +439,8 @@ def gen_test_assembly():
         STORE A [ACC]
         LOAD [ACC] B
         COPY B ACC
-        JUMP_IF_ACC_EQ #11935 &store_7
+        JUMP_IF_ACC_EQ #11935 &store_8
         HALT
-
-    &store_7
-        NOOP
 
     $v_store_8
     &store_8
@@ -509,11 +493,8 @@ def gen_test_assembly():
         SET A $v_store_13
         STORE B [A]
         LOAD [A] ACC
-        JUMP_IF_ACC_EQ #22749 &store_14
+        JUMP_IF_ACC_EQ #22749 &store_15
         HALT
-
-    &store_14
-        NOOP
 
     $v_store_15
     &store_15
@@ -566,11 +547,8 @@ def gen_test_assembly():
         SET B $v_store_20
         STORE C [B]
         LOAD [B] ACC
-        JUMP_IF_ACC_EQ #49497 &store_21
+        JUMP_IF_ACC_EQ #49497 &store_22
         HALT
-
-    &store_21
-        NOOP
 
     $v_store_22
     &store_22
