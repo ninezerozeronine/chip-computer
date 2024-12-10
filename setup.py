@@ -14,7 +14,7 @@ setup(
             "sbc-assemble=sixteen_bit_computer.cli:assemble",
             "sbc-assemble-and-send=sixteen_bit_computer.cli:assemble_and_send",
             "sbc-gen-roms=sixteen_bit_computer.cli:gen_roms",
-
+            "sbc-ui=sixteen_bit_computer.ui.main:open_ui"
         ]
     }
 )

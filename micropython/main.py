@@ -150,6 +150,7 @@ class Manager():
         Connect to the WiFi network.
         """
         wlan = network.WLAN(network.STA_IF)
+        wlan.active(False) # Makes reconnects more successful after soft reboot
         wlan.active(True)
         wlan.connect(secrets.NETWORK_SSID, secrets.NETWORK_PASSWORD)
         connection_seconds = 10
@@ -177,7 +178,7 @@ class Manager():
         https://docs.micropython.org/en/latest/library/network.WLAN.html#network.WLAN.status
 
         Args:
-            status (?): The statues from the WLAN object
+            status (?): The status from the WLAN object
         Return:
             str: The human readable equivalent of the status constant.
         """
@@ -193,7 +194,7 @@ class Manager():
         elif status == network.STAT_CONNECT_FAIL:
             return "Failed due to other problems."
         elif status == network.STAT_GOT_IP:
-            return "Vonnection successful."
+            return "Connection successful."
         else:
             return f"Unknown status: {status}"
 

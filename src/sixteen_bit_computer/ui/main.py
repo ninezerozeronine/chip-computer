@@ -452,7 +452,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     break
                 else:
                     data_bytes = self.socket.read(self.num_data_bytes)
-                    data_str = data_bytes.data().decode("ascii")
+                    data_str = data_bytes.decode("ascii")
                     data = json.loads(data_str)
                     print(f"Decoded main data: {data}")
                     self.waiting_for = "header"
@@ -642,8 +642,12 @@ def decode_state(state):
         return "Unknown state"
 
 
-if __name__ == '__main__':
+def open_ui():
     app = QtWidgets.QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
     app.exec()
+
+
+if __name__ == '__main__':
+    open_ui()
