@@ -5,6 +5,9 @@ Hardware
    :maxdepth: 2
    :caption: Hardware:
 
+   cpu
+   peripherals
+   accessories
    ls_vs_hct_vs_hc
    fanout
    materials_and_tools
