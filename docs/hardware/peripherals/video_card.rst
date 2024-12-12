@@ -30,14 +30,14 @@ Status
 
 The 8 least significant bits of the status word are used.
 
-Bits 0-2 are read only and provide a running count of the number of frames, wrapping back to 0 after the 7th frame.
+Bits 0-2 are read only and provide a running count of the number of frames, wrapping back to 0 after the 7th frame. The count increments when vblank goes from high to low - i.e. the start of the frame.
 
 Bits 3 and 4 are read and write and select the resolution:
 
-* ``xxx00xxx``: 20 x 15
-* ``xxx01xxx``: 40 x 30
-* ``xxx10xxx``: 80 x 60
-* ``xxx11xxx``: 160 x 120
+* ``xxx1_1xxx``: 20 x 15
+* ``xxx1_0xxx``: 40 x 30
+* ``xxx0_1xxx``: 80 x 60
+* ``xxx0_0xxx``: 160 x 120
 
 Bit 5 is read and write and selects the active buffer.
 

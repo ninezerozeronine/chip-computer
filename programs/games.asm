@@ -42,8 +42,9 @@ $NUM_COLS
 ////////////////////////////////////////////////////////////
 &init
     CALL &set_res_to_20x15
-    CALL &check_and_set_screen_res
-    CALL &initialise_dot
+    // CALL &check_and_set_screen_res
+    // CALL &initialise_dot
+    CALL &init_playing_field
     CALL &wait_for_frame_end
     RETURN
 
@@ -93,13 +94,14 @@ $NUM_COLS
 ////////////////////////////////////////////////////////////
 &main_loop
 
-    SET [!STATUS_WORD] #0b1000_0000_0000_0000
-    CALL &check_and_set_screen_res
-    CALL &update_dot
+    // SET [!STATUS_WORD] #0b1000_0000_0000_0000
+    // CALL &check_and_set_screen_res
+    // CALL &update_dot
     SET C #0
     CALL &fill_screen
-    CALL &draw_dot
-    SET [!STATUS_WORD] #0b0000_0000_0000_0000
+    CALL &draw_playing_field
+    // CALL &draw_dot
+    // SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
     JUMP &main_loop
@@ -225,6 +227,7 @@ $NUM_COLS
     JUMP_IF_ACC_EQ #0b0000_0000_0001_0000 &fill_screen_draw_row_40
     JUMP_IF_ACC_EQ #0b0000_0000_0000_1000 &fill_screen_draw_row_80
     JUMP_IF_ACC_EQ #0b0000_0000_0000_0000 &fill_screen_draw_row_160
+    HALT
 
 &fill_screen_draw_row_20
     // Put the colour in ACC
@@ -611,17 +614,6 @@ $NUM_COLS
 
     JUMP &fill_screen_move_to_next_row
 
-&fill_screen_draw_next_pixel_in_row
-
-    // Store the colour (ACC) into video data (pointed to by A)
-    // then decrement the cursor column (pointed to by B)
-    STORE_DECR ACC [A] [B]
-
-    // If we didn't go below zero draw the next pixel
-    JUMP_IF_NOT_BORROW &fill_screen_draw_next_pixel_in_row
-
-    // Otherwise run through to go to the next row
-
 &fill_screen_move_to_next_row
     // Decrement the row
     DECR [!VIDEO_CURSOR_ROW]
@@ -648,7 +640,6 @@ $NUM_COLS
     XOR #0b_0000_0000_0010_0000
     STORE ACC [!VIDEO_STATUS]
     RETURN
-
 
 $DOT_COLUMN
 ////////////////////////////////////////////////////////////
@@ -687,16 +678,76 @@ $DOT_COLUMN
     STORE ACC [!VIDEO_CURSOR_COL]
     SET [!VIDEO_DATA] !VID_COL_WHITE
     RETURN
+
+
+$PF_TOP_LEFT_COL
+$PF_TOP_RIGHT_COL
+$PF_TOP_ROW
+$PF_TOP_COL
+
+$PF_BOTTOM_LEFT_COL
+$PF_BOTTOM_RIGHT_COL
+$PF_BOTTOM_ROW
+$PF_BOTTOM_COL
+
+
+////////////////////////////////////////////////////////////
+//
+// Initialise playing field
+//
+////////////////////////////////////////////////////////////
+&init_playing_field
+    SET [$PF_TOP_LEFT_COL] #4
+    SET [$PF_TOP_RIGHT_COL] #16
+    SET [$PF_TOP_ROW] #5
+    SET [$PF_TOP_COL] #0b0000_0000_0000_0011
+
+    SET [$PF_BOTTOM_LEFT_COL] #4
+    SET [$PF_BOTTOM_RIGHT_COL] #16
+    SET [$PF_BOTTOM_ROW] #14
+    SET [$PF_BOTTOM_COL] #0b0000_0000_0000_0011
+
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Draw playing field
+//
+////////////////////////////////////////////////////////////
+&draw_playing_field
+    LOAD [$PF_TOP_ROW] ACC
+    STORE ACC [!VIDEO_CURSOR_ROW]
+    LOAD [$PF_TOP_LEFT_COL] ACC
+    STORE ACC [!VIDEO_CURSOR_COL]
+    LOAD [$PF_TOP_RIGHT_COL] B
+    STORE ACC [!VIDEO_CURSOR_COL]
+    LOAD [$PF_TOP_COL] C
     
+&draw_playing_field_top_line_loop
+    STORE C [!VIDEO_DATA]
+    INCR ACC
+    JUMP_IF_ACC_GT B &draw_playing_field_bottom_line
+    STORE ACC [!VIDEO_CURSOR_COL]
+    JUMP &draw_playing_field_top_line_loop
 
+&draw_playing_field_bottom_line
+    LOAD [$PF_BOTTOM_ROW] ACC
+    STORE ACC [!VIDEO_CURSOR_ROW]
+    LOAD [$PF_BOTTOM_LEFT_COL] ACC
+    STORE ACC [!VIDEO_CURSOR_COL]
+    LOAD [$PF_BOTTOM_RIGHT_COL] B
+    STORE ACC [!VIDEO_CURSOR_COL]
+    LOAD [$PF_BOTTOM_COL] C
+    
+&draw_playing_field_bottom_line_loop
+    STORE C [!VIDEO_DATA]
+    INCR ACC
+    JUMP_IF_ACC_GT B &draw_playing_field_done
+    STORE ACC [!VIDEO_CURSOR_COL]
+    JUMP &draw_playing_field_bottom_line_loop
 
-
-
-
-
-
-
-
+&draw_playing_field_done
+    RETURN
 
 
 
