@@ -601,7 +601,7 @@ The possible usages are:
  - ``OR B``
  - ``OR C``
  - ``OR CONST``
- - ``[OR CONST]``
+ - ``OR [CONST]``
 
 NOR
 ^^^

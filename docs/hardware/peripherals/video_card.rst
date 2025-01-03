@@ -16,7 +16,7 @@ There are 4 supported resolutions:
 
 Frames are drawn at 60 fps.
 
-There are 2 frame buffers, when once is being accessed by the CPU, the other is being drawn.
+There are 2 frame buffers, when one is being accessed by the CPU, the other is being drawn.
 
 Control of the video card is via 4 words in memory:
 

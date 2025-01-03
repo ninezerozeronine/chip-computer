@@ -80,6 +80,7 @@ $NUM_SCREEN_COLUMNS
     SET [$NUM_SCREEN_COLUMNS] #20
     LOAD [!VIDEO_STATUS] ACC
     OR !VIDEO_RES_20x15_OR
+    SET ACC #0b0000_0000_0001_1000
     STORE ACC [!VIDEO_STATUS]
     RETURN
 
@@ -230,7 +231,6 @@ $PF_BOTTOM_COLOUR
     LOAD [$PF_TOP_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
     LOAD [$PF_TOP_RIGHT_COLUMN] B
-    STORE ACC [!VIDEO_CURSOR_COL]
     LOAD [$PF_TOP_COLOUR] C
     
 &draw_playing_field_top_line_loop
@@ -246,7 +246,6 @@ $PF_BOTTOM_COLOUR
     LOAD [$PF_BOTTOM_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
     LOAD [$PF_BOTTOM_RIGHT_COLUMN] B
-    STORE ACC [!VIDEO_CURSOR_COL]
     LOAD [$PF_BOTTOM_COLOUR] C
     
 &draw_playing_field_bottom_line_loop
@@ -275,7 +274,7 @@ $BALL_COLUMN_SPEED_FP
     SET [$BALL_COLUMN_FP] #0b0000_0000_1001_0000
     SET [$BALL_COLOUR] #0b0000_0000_0011_0000
     SET [$BALL_ROW_SPEED_FP] #0
-    SET [$BALL_COLUMN_SPEED_FP] #0b0000_0000_0000_0011
+    SET [$BALL_COLUMN_SPEED_FP] #6
 
     RETURN
 
@@ -285,25 +284,68 @@ $BALL_COLUMN_SPEED_FP
 //
 ////////////////////////////////////////////////////////////
 &update_ball
+
+    // Check if the ball is moving to the right
+    SET_ZERO ACC
+    ADD [$BALL_COLUMN_SPEED_FP]
+    JUMP_IF_NEGATIVE_FLAG &update_ball_moving_left
+
+    // If the pos plus speed is less than the right paddle column, it's fine
     LOAD [$BALL_COLUMN_FP] ACC
-    LOAD [$BALL_COLUMN_SPEED_FP] A
-    ADD A
-    LOAD [$R_PADDLE_COLUMN_FP] B
-    JUMP_IF_ACC_LTE B &update_ball_check_if_too_far_left
-    COPY B ACC
-    SET [$BALL_COLUMN_SPEED_FP] #-3
-    JUMP &update_ball_done
+    ADD [$BALL_COLUMN_SPEED_FP]
+    JUMP_IF_ACC_LT [$R_PADDLE_COLUMN_FP] &update_ball_moving_right_no_collision
 
-&update_ball_check_if_too_far_left
-    LOAD [$L_PADDLE_COLUMN_FP] B
-    JUMP_IF_ACC_GT B &update_ball_done
-    COPY B ACC
-    SET [$BALL_COLUMN_SPEED_FP] #3
-
-&update_ball_done
+    // Otherwise we need to resolve the collision
+    // Calculate new ball position
+    LOAD [$R_PADDLE_COLUMN_FP] ACC
+    SHIFT_LEFT ACC
+    SUB [$BALL_COLUMN_FP]
+    SUB [$BALL_COLUMN_SPEED_FP]
+    SUB #2
     STORE ACC [$BALL_COLUMN_FP]
 
+    // Reverse direction
+    SET_ZERO ACC
+    SUB [$BALL_COLUMN_SPEED_FP]
+    STORE ACC [$BALL_COLUMN_SPEED_FP]
     RETURN
+    
+&update_ball_moving_right_no_collision
+    STORE ACC [$BALL_COLUMN_FP]
+    RETURN
+
+&update_ball_moving_left
+    // If the pos plus speed is greater than the left paddle column, it's fine
+    LOAD [$BALL_COLUMN_FP] ACC
+    ADD [$BALL_COLUMN_SPEED_FP]
+    JUMP_IF_ACC_GT [$L_PADDLE_COLUMN_FP] &update_ball_moving_left_no_collision
+
+    // Otherwise we need to resolve the collision
+    // Calculate new ball position
+    LOAD [$L_PADDLE_COLUMN_FP] ACC
+    SHIFT_LEFT ACC
+    SUB [$BALL_COLUMN_FP]
+    SUB [$BALL_COLUMN_SPEED_FP]
+    ADD #2
+    STORE ACC [$BALL_COLUMN_FP]
+
+    // Reverse direction
+    SET_ZERO ACC
+    SUB [$BALL_COLUMN_SPEED_FP]
+    STORE ACC [$BALL_COLUMN_SPEED_FP]
+    RETURN
+
+&update_ball_moving_left_no_collision
+    STORE ACC [$BALL_COLUMN_FP]
+    RETURN
+
+&update_ball_up_down
+    // Check if the ball is moving horizontally
+
+
+    RETURN
+
+
 
 
 ////////////////////////////////////////////////////////////
@@ -341,7 +383,7 @@ $L_PADDLE_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &init_left_paddle
-    SET [$L_PADDLE_COLUMN_FP] #0b0000_0000_0001_1111
+    SET [$L_PADDLE_COLUMN_FP] #0b0000_0000_0010_1111
     SET [$L_PADDLE_TOP_ROW_FP] #0b0000_0000_0101_0000
     SET [$L_PADDLE_BOTTOM_ROW_FP] #0b0000_0000_1000_1111
     SET [$L_PADDLE_COLOUR] #0b0000_0000_0011_1111
