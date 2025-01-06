@@ -28,6 +28,8 @@
 
 !VID_COL_WHITE #0b0000_0000_0011_1111
 
+    SET SP #0b0001_1111_1111_0000
+
     CALL &init
     CALL &main_loop
 
@@ -80,7 +82,6 @@ $NUM_SCREEN_COLUMNS
     SET [$NUM_SCREEN_COLUMNS] #20
     LOAD [!VIDEO_STATUS] ACC
     OR !VIDEO_RES_20x15_OR
-    SET ACC #0b0000_0000_0001_1000
     STORE ACC [!VIDEO_STATUS]
     RETURN
 
@@ -195,12 +196,12 @@ $NUM_SCREEN_COLUMNS
 
 $PF_TOP_LEFT_COLUMN
 $PF_TOP_RIGHT_COLUMN
-$PF_TOP_ROW
+$PF_TOP_ROW_FP
 $PF_TOP_COLOUR
 
 $PF_BOTTOM_LEFT_COLUMN
 $PF_BOTTOM_RIGHT_COLUMN
-$PF_BOTTOM_ROW
+$PF_BOTTOM_ROW_FP
 $PF_BOTTOM_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -210,12 +211,16 @@ $PF_BOTTOM_COLOUR
 &init_playing_field
     SET [$PF_TOP_LEFT_COLUMN] #3
     SET [$PF_TOP_RIGHT_COLUMN] #16
-    SET [$PF_TOP_ROW] #2
+    
+    // Row index 2 - 
+    SET [$PF_TOP_ROW_FP] #0b0000_0000_0010_1111
     SET [$PF_TOP_COLOUR] #0b0000_0000_0000_0011
 
     SET [$PF_BOTTOM_LEFT_COLUMN] #3
     SET [$PF_BOTTOM_RIGHT_COLUMN] #16
-    SET [$PF_BOTTOM_ROW] #13
+    
+    // Row index 13
+    SET [$PF_BOTTOM_ROW_FP] #0b0000_0000_1101_0000
     SET [$PF_BOTTOM_COLOUR] #0b0000_0000_0000_0011
 
     RETURN
@@ -226,7 +231,11 @@ $PF_BOTTOM_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &draw_playing_field
-    LOAD [$PF_TOP_ROW] ACC
+    LOAD [$PF_TOP_ROW_FP] ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$PF_TOP_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
@@ -241,7 +250,11 @@ $PF_BOTTOM_COLOUR
     JUMP &draw_playing_field_top_line_loop
 
 &draw_playing_field_bottom_line
-    LOAD [$PF_BOTTOM_ROW] ACC
+    LOAD [$PF_BOTTOM_ROW_FP] ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
+    SHIFT_RIGHT ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$PF_BOTTOM_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
@@ -273,8 +286,8 @@ $BALL_COLUMN_SPEED_FP
     SET [$BALL_ROW_FP] #0b0000_0000_0110_0000
     SET [$BALL_COLUMN_FP] #0b0000_0000_1001_0000
     SET [$BALL_COLOUR] #0b0000_0000_0011_0000
-    SET [$BALL_ROW_SPEED_FP] #0
-    SET [$BALL_COLUMN_SPEED_FP] #6
+    SET [$BALL_ROW_SPEED_FP] #10
+    SET [$BALL_COLUMN_SPEED_FP] #9
 
     RETURN
 
@@ -285,6 +298,71 @@ $BALL_COLUMN_SPEED_FP
 ////////////////////////////////////////////////////////////
 &update_ball
 
+    // Check if the ball isn't moving up or down - if so - no need for vertical checks
+    LOAD [$BALL_ROW_SPEED_FP] A
+    JUMP_IF_EQ_ZERO A &update_ball_left_right
+
+    // Check if the ball is moving up - i.e. row speed is negative
+    SET_ZERO ACC
+    ADD A
+    JUMP_IF_NOT_NEGATIVE_FLAG &update_ball_moving_down
+    
+    // See how far past the barrier the ball is after the move (in the direction of travel)
+    LOAD [$BALL_ROW_FP] ACC
+    ADD [$BALL_ROW_SPEED_FP]
+    STORE ACC [$BALL_ROW_FP] // (Store unchecked result)
+    COPY ACC A
+    LOAD [$PF_TOP_ROW_FP] ACC
+    SUB A
+
+    // If the result is < 0, we're OK, stick with the already stored position,
+    // Move on to left/right checks
+    JUMP_IF_NEGATIVE_FLAG &update_ball_left_right
+    
+    // Otherwise add the distance and 2 to the barrier to determine the new position
+    COPY ACC A
+    LOAD [$PF_TOP_ROW_FP] ACC
+    ADD #2
+    ADD A
+    STORE ACC [$BALL_ROW_FP]
+
+    // Negate the speed
+    SET_ZERO ACC 
+    SUB [$BALL_ROW_SPEED_FP]
+    STORE ACC [$BALL_ROW_SPEED_FP]
+
+    // Move on to left and right checks
+    JUMP &update_ball_left_right
+    
+
+&update_ball_moving_down
+    // See how far past the barrier the ball is after the move (in the direction of travel)
+    LOAD [$BALL_ROW_FP] ACC
+    ADD [$BALL_ROW_SPEED_FP]
+    STORE ACC [$BALL_ROW_FP] // (Store unchecked result)
+    SUB [$PF_BOTTOM_ROW_FP]
+    
+    // If the result is < 0 we're OK, stick with the alredy stored position, move
+    // on to the left right checks
+    JUMP_IF_NEGATIVE_FLAG &update_ball_left_right
+
+    // Otherwise subtract the distance and 2 from the barrier to determine the new position
+    COPY ACC A
+    LOAD [$PF_BOTTOM_ROW_FP] ACC
+    SUB #2
+    SUB A
+    STORE ACC [$BALL_ROW_FP]
+
+    // Negate the speed
+    SET_ZERO ACC 
+    SUB [$BALL_ROW_SPEED_FP]
+    STORE ACC [$BALL_ROW_SPEED_FP]
+
+    // Move on to left and right checks
+    JUMP &update_ball_left_right
+
+    
+&update_ball_left_right
     // Check if the ball is moving to the right
     SET_ZERO ACC
     ADD [$BALL_COLUMN_SPEED_FP]
@@ -339,14 +417,6 @@ $BALL_COLUMN_SPEED_FP
     STORE ACC [$BALL_COLUMN_FP]
     RETURN
 
-&update_ball_up_down
-    // Check if the ball is moving horizontally
-
-
-    RETURN
-
-
-
 
 ////////////////////////////////////////////////////////////
 //
@@ -376,6 +446,7 @@ $BALL_COLUMN_SPEED_FP
 $L_PADDLE_COLUMN_FP
 $L_PADDLE_TOP_ROW_FP
 $L_PADDLE_BOTTOM_ROW_FP
+$L_PADDLE_SPEED_FP
 $L_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -386,6 +457,7 @@ $L_PADDLE_COLOUR
     SET [$L_PADDLE_COLUMN_FP] #0b0000_0000_0010_1111
     SET [$L_PADDLE_TOP_ROW_FP] #0b0000_0000_0101_0000
     SET [$L_PADDLE_BOTTOM_ROW_FP] #0b0000_0000_1000_1111
+    SET [$L_PADDLE_SPEED_FP] #0
     SET [$L_PADDLE_COLOUR] #0b0000_0000_0011_1111
     RETURN
 
@@ -427,6 +499,7 @@ $L_PADDLE_COLOUR
 $R_PADDLE_COLUMN_FP
 $R_PADDLE_TOP_ROW_FP
 $R_PADDLE_BOTTOM_ROW_FP
+$R_PADDLE_SPEED_FP
 $R_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -438,6 +511,7 @@ $R_PADDLE_COLOUR
     SET [$R_PADDLE_COLUMN_FP] #0b0000_0001_0001_0000
     SET [$R_PADDLE_TOP_ROW_FP] #0b0000_0000_0101_0000
     SET [$R_PADDLE_BOTTOM_ROW_FP] #0b0000_0000_1000_1111
+    SET [$R_PADDLE_SPEED_FP] #0
     SET [$R_PADDLE_COLOUR] #0b0000_0000_0011_1111
     RETURN
 
