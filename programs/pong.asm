@@ -28,9 +28,10 @@
 
 
 
-!VID_COL_WHITE #0b0000_0000_0011_1111
-!SNES_PAD_UP   #0b0000_0000_0001_0000
-!SNES_PAD_DOWN #0b0000_0000_0010_0000
+!VID_COL_WHITE   #0b0000_0000_0011_1111
+!SNES_PAD_UP     #0b0000_0000_0001_0000
+!SNES_PAD_DOWN   #0b0000_0000_0010_0000
+!SNES_PAD_SELECT #0b0000_0000_0000_0100
 
 
 
@@ -40,8 +41,8 @@
 !L_PADDLE_INIT_COLOUR_FP      #0b0000_0000_0011_1111
 
 !PADDLE_SPEED #3
-!PADDLE_UP_BALL_COL_SPEED_CHANGE #-1
-!PADDLE_DOWN_BALL_COL_SPEED_CHANGE #1
+!PADDLE_UP_BALL_COL_SPEED_CHANGE_FP #-1
+!PADDLE_DOWN_BALL_COL_SPEED_CHANGE_FP #1
 
 !PADDLE_TOP_MIN_ROW_FP       #0b0000_0000_0010_0000
 !PADDLE_BOTTOM_MAX_ROW_FP    #0b0000_0000_1101_1111
@@ -51,7 +52,7 @@
 !BALL_INIT_ROW_FP           #0b0000_0000_0110_0000
 !BALL_INIT_COLUMN_FP        #0b0000_0000_1001_0000
 !BALL_INIT_COLOUR           #0b0000_0000_0011_0000
-!BALL_INIT_ROW_SPEED_FP     #2
+!BALL_INIT_ROW_SPEED_FP     #0
 !BALL_INIT_COLUMN_SPEED_FP  #3
 
 
@@ -108,8 +109,25 @@ $NUM_SCREEN_COLUMNS
     SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
+    CALL &check_select
     JUMP &main_loop
 
+
+////////////////////////////////////////////////////////////
+//
+// Check to see if the game should reset
+//
+////////////////////////////////////////////////////////////
+&check_select
+    // Read up button on controller
+    LOAD [!GAME_PAD_1] ACC
+    AND !SNES_PAD_SELECT
+    JUMP_IF_ZERO_FLAG &check_select_done
+    CALL &init
+    RETURN
+
+&check_select_done
+    RETURN
 
 ////////////////////////////////////////////////////////////
 //
@@ -407,12 +425,22 @@ $BALL_COLUMN_SPEED_FP
     ADD [$BALL_COLUMN_SPEED_FP]
     JUMP_IF_NEGATIVE_FLAG &update_ball_moving_left
 
+    // Ball is moving to the right
     // If the pos plus speed is less than the right paddle column, it's fine
     LOAD [$BALL_COLUMN_FP] ACC
     ADD [$BALL_COLUMN_SPEED_FP]
     JUMP_IF_ACC_LT [$R_PADDLE_COLUMN_FP] &update_ball_moving_right_no_collision
 
-    // Otherwise we need to resolve the collision
+    // Otherwise we need to check if we hit the paddle
+    // Check if it's above the top
+    LOAD [$BALL_ROW_FP] ACC
+    LOAD [$R_PADDLE_TOP_ROW_FP] A
+    JUMP_IF_ACC_LT A &update_ball_right_paddle_miss
+
+    // Check if it's below the bottom
+    LOAD [$R_PADDLE_BOTTOM_ROW_FP] A
+    JUMP_IF_ACC_GT A &update_ball_right_paddle_miss
+
     // Calculate new ball position
     LOAD [$R_PADDLE_COLUMN_FP] ACC
     SHIFT_LEFT ACC
@@ -425,6 +453,11 @@ $BALL_COLUMN_SPEED_FP
     SET_ZERO ACC
     SUB [$BALL_COLUMN_SPEED_FP]
     STORE ACC [$BALL_COLUMN_SPEED_FP]
+
+    // Fetch and apply row speed change
+    LOAD [$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP] A
+    CALL &update_ball_update_row_speed_after_collision
+
     RETURN
     
 &update_ball_moving_right_no_collision
@@ -450,11 +483,26 @@ $BALL_COLUMN_SPEED_FP
     SET_ZERO ACC
     SUB [$BALL_COLUMN_SPEED_FP]
     STORE ACC [$BALL_COLUMN_SPEED_FP]
+
+    // Fetch and apply row speed change
+    LOAD [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] A
+    CALL &update_ball_update_row_speed_after_collision
+
     RETURN
 
 &update_ball_moving_left_no_collision
     STORE ACC [$BALL_COLUMN_FP]
     RETURN
+
+&update_ball_update_row_speed_after_collision
+    LOAD [$BALL_ROW_SPEED_FP] ACC
+    ADD A
+    STORE ACC [$BALL_ROW_SPEED_FP]
+    RETURN
+
+&update_ball_right_paddle_miss
+    RETURN
+
 
 
 ////////////////////////////////////////////////////////////
@@ -485,7 +533,7 @@ $BALL_COLUMN_SPEED_FP
 $L_PADDLE_COLUMN_FP
 $L_PADDLE_TOP_ROW_FP
 $L_PADDLE_BOTTOM_ROW_FP
-$L_PADDLE_BALL_ROW_SPEED_CHANGE
+$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP
 $L_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -496,7 +544,7 @@ $L_PADDLE_COLOUR
     SET [$L_PADDLE_COLUMN_FP] !L_PADDLE_INIT_COLUMN_FP
     SET [$L_PADDLE_TOP_ROW_FP] !L_PADDLE_INIT_TOP_ROW_FP
     SET [$L_PADDLE_BOTTOM_ROW_FP] !L_PADDLE_INIT_BOTTOM_ROW_FP
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE] #0
+    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
     SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLUMN_FP
     RETURN
 
@@ -520,7 +568,7 @@ $L_PADDLE_COLOUR
     LOAD [$L_PADDLE_BOTTOM_ROW_FP] ACC
     SUB !PADDLE_SPEED
     STORE ACC [$L_PADDLE_BOTTOM_ROW_FP]
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE] !PADDLE_UP_BALL_COL_SPEED_CHANGE
+    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] !PADDLE_UP_BALL_COL_SPEED_CHANGE_FP
     RETURN
 
 &update_left_paddle_check_down
@@ -536,11 +584,11 @@ $L_PADDLE_COLOUR
     LOAD [$L_PADDLE_TOP_ROW_FP] ACC
     ADD !PADDLE_SPEED
     STORE ACC [$L_PADDLE_TOP_ROW_FP]
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE] !PADDLE_DOWN_BALL_COL_SPEED_CHANGE
+    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] !PADDLE_DOWN_BALL_COL_SPEED_CHANGE_FP
     RETURN
 
 &update_left_paddle_no_movement
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE] #0
+    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
 
 
 
@@ -583,6 +631,7 @@ $R_PADDLE_COLUMN_FP
 $R_PADDLE_TOP_ROW_FP
 $R_PADDLE_BOTTOM_ROW_FP
 $R_PADDLE_SPEED_FP
+$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP
 $R_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -595,6 +644,7 @@ $R_PADDLE_COLOUR
     SET [$R_PADDLE_TOP_ROW_FP] #0b0000_0000_0101_0000
     SET [$R_PADDLE_BOTTOM_ROW_FP] #0b0000_0000_1000_1111
     SET [$R_PADDLE_SPEED_FP] #0
+    SET [$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
     SET [$R_PADDLE_COLOUR] #0b0000_0000_0011_1111
     RETURN
 
