@@ -28,6 +28,7 @@
 
 !VID_COL_WHITE #0b0000_0000_0011_1111
 
+    SET SP #0b0001_1111_1111_0000
     CALL &init
     CALL &main_loop
 
@@ -42,10 +43,7 @@ $NUM_COLS
 ////////////////////////////////////////////////////////////
 &init
     CALL &set_res_to_20x15
-    // CALL &check_and_set_screen_res
-    // CALL &initialise_dot
-    CALL &init_playing_field
-    CALL &wait_for_frame_end
+    CALL &initialise_dot
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -94,14 +92,13 @@ $NUM_COLS
 ////////////////////////////////////////////////////////////
 &main_loop
 
-    // SET [!STATUS_WORD] #0b1000_0000_0000_0000
-    // CALL &check_and_set_screen_res
-    // CALL &update_dot
+    SET [!STATUS_WORD] #0b1000_0000_0000_0000
+    CALL &check_and_set_screen_res
+    CALL &update_dot
     SET C #0
     CALL &fill_screen
-    CALL &draw_playing_field
-    // CALL &draw_dot
-    // SET [!STATUS_WORD] #0b0000_0000_0000_0000
+    CALL &draw_dot
+    SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
     JUMP &main_loop
@@ -211,11 +208,9 @@ $NUM_COLS
     SET [!VIDEO_CURSOR_COL] #0
     
     // Set cursor row to max row index
-    // LOAD [$NUM_ROWS] ACC
-    // DECR ACC
-    // STORE ACC [!VIDEO_CURSOR_ROW]
-
-    SET [!VIDEO_CURSOR_ROW] #1
+    LOAD [$NUM_ROWS] ACC
+    DECR ACC
+    STORE ACC [!VIDEO_CURSOR_ROW]
 
     SET A !VIDEO_DATA
     SET B !VIDEO_CURSOR_COL
@@ -678,102 +673,4 @@ $DOT_COLUMN
     STORE ACC [!VIDEO_CURSOR_COL]
     SET [!VIDEO_DATA] !VID_COL_WHITE
     RETURN
-
-
-$PF_TOP_LEFT_COL
-$PF_TOP_RIGHT_COL
-$PF_TOP_ROW
-$PF_TOP_COL
-
-$PF_BOTTOM_LEFT_COL
-$PF_BOTTOM_RIGHT_COL
-$PF_BOTTOM_ROW
-$PF_BOTTOM_COL
-
-
-////////////////////////////////////////////////////////////
-//
-// Initialise playing field
-//
-////////////////////////////////////////////////////////////
-&init_playing_field
-    SET [$PF_TOP_LEFT_COL] #4
-    SET [$PF_TOP_RIGHT_COL] #16
-    SET [$PF_TOP_ROW] #5
-    SET [$PF_TOP_COL] #0b0000_0000_0000_0011
-
-    SET [$PF_BOTTOM_LEFT_COL] #4
-    SET [$PF_BOTTOM_RIGHT_COL] #16
-    SET [$PF_BOTTOM_ROW] #14
-    SET [$PF_BOTTOM_COL] #0b0000_0000_0000_0011
-
-    RETURN
-
-////////////////////////////////////////////////////////////
-//
-// Draw playing field
-//
-////////////////////////////////////////////////////////////
-&draw_playing_field
-    LOAD [$PF_TOP_ROW] ACC
-    STORE ACC [!VIDEO_CURSOR_ROW]
-    LOAD [$PF_TOP_LEFT_COL] ACC
-    STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$PF_TOP_RIGHT_COL] B
-    STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$PF_TOP_COL] C
-    
-&draw_playing_field_top_line_loop
-    STORE C [!VIDEO_DATA]
-    INCR ACC
-    JUMP_IF_ACC_GT B &draw_playing_field_bottom_line
-    STORE ACC [!VIDEO_CURSOR_COL]
-    JUMP &draw_playing_field_top_line_loop
-
-&draw_playing_field_bottom_line
-    LOAD [$PF_BOTTOM_ROW] ACC
-    STORE ACC [!VIDEO_CURSOR_ROW]
-    LOAD [$PF_BOTTOM_LEFT_COL] ACC
-    STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$PF_BOTTOM_RIGHT_COL] B
-    STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$PF_BOTTOM_COL] C
-    
-&draw_playing_field_bottom_line_loop
-    STORE C [!VIDEO_DATA]
-    INCR ACC
-    JUMP_IF_ACC_GT B &draw_playing_field_done
-    STORE ACC [!VIDEO_CURSOR_COL]
-    JUMP &draw_playing_field_bottom_line_loop
-
-&draw_playing_field_done
-    RETURN
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
