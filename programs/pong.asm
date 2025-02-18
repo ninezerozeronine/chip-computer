@@ -26,44 +26,45 @@
 
 !VIDEO_RES_160x120_AND   #0b1111_1111_1110_0111
 
-
-
 !VID_COL_WHITE   #0b0000_0000_0011_1111
+
+
 !SNES_PAD_UP     #0b0000_0000_0001_0000
 !SNES_PAD_DOWN   #0b0000_0000_0010_0000
 !SNES_PAD_SELECT #0b0000_0000_0000_0100
 
 
+!L_PADDLE_INIT_TOP_ROW     #5
+!L_PADDLE_INIT_BOTTOM_ROW  #9
+!L_PADDLE_INIT_COLUMN      #2
+!L_PADDLE_INIT_COLOUR      #0b0000_0000_0011_1111
+!L_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
-!L_PADDLE_INIT_TOP_ROW_FP     #0b0000_0000_0101_0000
-!L_PADDLE_INIT_BOTTOM_ROW_FP  #0b0000_0000_1000_0000
-!L_PADDLE_INIT_COLUMN_FP      #0b0000_0000_0010_1111
-!L_PADDLE_INIT_COLOUR_FP      #0b0000_0000_0011_1111
+!R_PADDLE_INIT_TOP_ROW     #5
+!R_PADDLE_INIT_BOTTOM_ROW  #9
+!R_PADDLE_INIT_COLUMN      #18
+!R_PADDLE_INIT_COLOUR      #0b0000_0000_0011_1111
+!R_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
-!PADDLE_SPEED #3
-!PADDLE_UP_BALL_COL_SPEED_CHANGE_FP #-1
-!PADDLE_DOWN_BALL_COL_SPEED_CHANGE_FP #1
-
-!PADDLE_TOP_MIN_ROW_FP       #0b0000_0000_0010_0000
-!PADDLE_BOTTOM_MAX_ROW_FP    #0b0000_0000_1101_1111
+!PADDLE_HIGHEST_ROW        #0
+!PADDLE_LOWEST_ROW         #14
 
 
-
-!BALL_INIT_ROW_FP           #0b0000_0000_0110_0000
-!BALL_INIT_COLUMN_FP        #0b0000_0000_1001_0000
-!BALL_INIT_COLOUR           #0b0000_0000_0011_0000
-!BALL_INIT_ROW_SPEED_FP     #0
-!BALL_INIT_COLUMN_SPEED_FP  #3
-
+!BALL_INIT_ROW                  #7
+!BALL_INIT_COLUMN               #9
+!BALL_INIT_COLOUR               #0b0000_0000_0011_0000
+!BALL_HORIZ_MOVE_TICKER_INCR    #0b0100_0000_0000_0000
+!BALL_VERT_MOVE_TICKER_INCR     #0b0001_0000_0000_0000
 
 
 !PF_INIT_TOP_LEFT_COLUMN #3
 !PF_INIT_TOP_RIGHT_COLUMN #16
-!PF_INIT_TOP_ROW_FP #0b0000_0000_0010_1111
+!PF_INIT_TOP_ROW #2
 !PF_INIT_TOP_COLOUR #0b0000_0000_0000_0011
+
 !PF_INIT_BOTTOM_LEFT_COLUMN #3
 !PF_INIT_BOTTOM_RIGHT_COLUMN #16
-!PF_INIT_BOTTOM_ROW_FP #0b0000_0000_1101_0000
+!PF_INIT_BOTTOM_ROW #12
 !PF_INIT_BOTTOM_COLOUR #0b0000_0000_0000_0011
 
 
@@ -74,7 +75,6 @@
 
 $NUM_SCREEN_ROWS
 $NUM_SCREEN_COLUMNS
-
 
 ////////////////////////////////////////////////////////////
 //
@@ -253,12 +253,12 @@ $NUM_SCREEN_COLUMNS
 
 $PF_TOP_LEFT_COLUMN
 $PF_TOP_RIGHT_COLUMN
-$PF_TOP_ROW_FP
+$PF_TOP_ROW
 $PF_TOP_COLOUR
 
 $PF_BOTTOM_LEFT_COLUMN
 $PF_BOTTOM_RIGHT_COLUMN
-$PF_BOTTOM_ROW_FP
+$PF_BOTTOM_ROW
 $PF_BOTTOM_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -268,16 +268,12 @@ $PF_BOTTOM_COLOUR
 &init_playing_field
     SET [$PF_TOP_LEFT_COLUMN] !PF_INIT_TOP_LEFT_COLUMN
     SET [$PF_TOP_RIGHT_COLUMN] !PF_INIT_TOP_RIGHT_COLUMN
-    
-    // Row index 2 - 
-    SET [$PF_TOP_ROW_FP] !PF_INIT_TOP_ROW_FP
+    SET [$PF_TOP_ROW] !PF_INIT_TOP_ROW
     SET [$PF_TOP_COLOUR] !PF_INIT_TOP_COLOUR
 
     SET [$PF_BOTTOM_LEFT_COLUMN] !PF_INIT_BOTTOM_LEFT_COLUMN
     SET [$PF_BOTTOM_RIGHT_COLUMN] !PF_INIT_BOTTOM_RIGHT_COLUMN
-    
-    // Row index 13
-    SET [$PF_BOTTOM_ROW_FP] !PF_INIT_BOTTOM_ROW_FP
+    SET [$PF_BOTTOM_ROW] !PF_INIT_BOTTOM_ROW
     SET [$PF_BOTTOM_COLOUR] !PF_INIT_BOTTOM_COLOUR
 
     RETURN
@@ -288,11 +284,7 @@ $PF_BOTTOM_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &draw_playing_field
-    LOAD [$PF_TOP_ROW_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$PF_TOP_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$PF_TOP_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
@@ -307,11 +299,7 @@ $PF_BOTTOM_COLOUR
     JUMP &draw_playing_field_top_line_loop
 
 &draw_playing_field_bottom_line
-    LOAD [$PF_BOTTOM_ROW_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$PF_BOTTOM_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$PF_BOTTOM_LEFT_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
@@ -329,22 +317,30 @@ $PF_BOTTOM_COLOUR
     RETURN
 
 
-$BALL_ROW_FP
-$BALL_COLUMN_FP
+$BALL_ROW
+$BALL_COLUMN
 $BALL_COLOUR
-$BALL_ROW_SPEED_FP
-$BALL_COLUMN_SPEED_FP
+$BALL_HORIZ_DIR
+$BALL_HORIZ_MOVE_TICKER
+$BALL_HORIZ_MOVE_TICKER_INCR
+$BALL_VERT_DIR
+$BALL_VERT_MOVE_TICKER
+$BALL_VERT_MOVE_TICKER_INCR
 ////////////////////////////////////////////////////////////
 //
 // Initialise ball
 //
 ////////////////////////////////////////////////////////////
 &init_ball
-    SET [$BALL_ROW_FP] !BALL_INIT_ROW_FP 
-    SET [$BALL_COLUMN_FP] !BALL_INIT_COLUMN_FP 
-    SET [$BALL_COLOUR] !BALL_INIT_COLOUR 
-    SET [$BALL_ROW_SPEED_FP] !BALL_INIT_ROW_SPEED_FP
-    SET [$BALL_COLUMN_SPEED_FP] !BALL_INIT_COLUMN_SPEED_FP
+    SET [$BALL_ROW] !BALL_INIT_ROW
+    SET [$BALL_COLUMN] !BALL_INIT_COLUMN
+    SET [$BALL_COLOUR] !BALL_INIT_COLOUR
+    SET [$BALL_HORIZ_DIR] #1
+    SET [$BALL_HORIZ_MOVE_TICKER] #0
+    SET [$BALL_HORIZ_MOVE_TICKER_INCR] !BALL_HORIZ_MOVE_TICKER_INCR
+    SET [$BALL_VERT_DIR] #1
+    SET [$BALL_VERT_MOVE_TICKER] #0
+    SET [$BALL_VERT_MOVE_TICKER_INCR] !BALL_VERT_MOVE_TICKER_INCR
 
     RETURN
 
@@ -355,153 +351,214 @@ $BALL_COLUMN_SPEED_FP
 ////////////////////////////////////////////////////////////
 &update_ball
 
-    // Check if the ball isn't moving up or down - if so - no need for vertical checks
-    LOAD [$BALL_ROW_SPEED_FP] A
-    JUMP_IF_EQ_ZERO A &update_ball_left_right
+    // See if it's time to move the ball horizontally
+    LOAD [$BALL_HORIZ_MOVE_TICKER] ACC
+    ADD [$BALL_HORIZ_MOVE_TICKER_INCR]
+    STORE ACC [$BALL_HORIZ_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_ball_up_down
 
-    // Check if the ball is moving up - i.e. row speed is negative
-    SET_ZERO ACC
-    ADD A
-    JUMP_IF_NOT_NEGATIVE_FLAG &update_ball_moving_down
-    
-    // See how far past the barrier the ball is after the move (in the direction of travel)
-    LOAD [$BALL_ROW_FP] ACC
-    ADD [$BALL_ROW_SPEED_FP]
-    STORE ACC [$BALL_ROW_FP] // (Store unchecked result)
-    COPY ACC A
-    LOAD [$PF_TOP_ROW_FP] ACC
-    SUB A
-
-    // If the result is < 0, we're OK, stick with the already stored position,
-    // Move on to left/right checks
-    JUMP_IF_NEGATIVE_FLAG &update_ball_left_right
-    
-    // Otherwise add the distance and 2 to the barrier to determine the new position
-    COPY ACC A
-    LOAD [$PF_TOP_ROW_FP] ACC
-    ADD #2
-    ADD A
-    STORE ACC [$BALL_ROW_FP]
-
-    // Negate the speed
-    SET_ZERO ACC 
-    SUB [$BALL_ROW_SPEED_FP]
-    STORE ACC [$BALL_ROW_SPEED_FP]
-
-    // Move on to left and right checks
-    JUMP &update_ball_left_right
-    
-
-&update_ball_moving_down
-    // See how far past the barrier the ball is after the move (in the direction of travel)
-    LOAD [$BALL_ROW_FP] ACC
-    ADD [$BALL_ROW_SPEED_FP]
-    STORE ACC [$BALL_ROW_FP] // (Store unchecked result)
-    SUB [$PF_BOTTOM_ROW_FP]
-    
-    // If the result is < 0 we're OK, stick with the alredy stored position, move
-    // on to the left right checks
-    JUMP_IF_NEGATIVE_FLAG &update_ball_left_right
-
-    // Otherwise subtract the distance and 2 from the barrier to determine the new position
-    COPY ACC A
-    LOAD [$PF_BOTTOM_ROW_FP] ACC
-    SUB #2
-    SUB A
-    STORE ACC [$BALL_ROW_FP]
-
-    // Negate the speed
-    SET_ZERO ACC 
-    SUB [$BALL_ROW_SPEED_FP]
-    STORE ACC [$BALL_ROW_SPEED_FP]
-
-    // Move on to left and right checks
-    JUMP &update_ball_left_right
-
-    
-&update_ball_left_right
     // Check if the ball is moving to the right
-    SET_ZERO ACC
-    ADD [$BALL_COLUMN_SPEED_FP]
-    JUMP_IF_NEGATIVE_FLAG &update_ball_moving_left
+    LOAD [$BALL_HORIZ_DIR] ACC
+    JUMP_IF_ACC_NEQ #1 &update_ball_moving_left
 
     // Ball is moving to the right
     // If the pos plus speed is less than the right paddle column, it's fine
-    LOAD [$BALL_COLUMN_FP] ACC
-    ADD [$BALL_COLUMN_SPEED_FP]
-    JUMP_IF_ACC_LT [$R_PADDLE_COLUMN_FP] &update_ball_moving_right_no_collision
+    LOAD [$BALL_COLUMN] ACC
+    INCR ACC
+    JUMP_IF_ACC_LT [$R_PADDLE_COLUMN] &update_ball_moving_right_no_collision
 
     // Otherwise we need to check if we hit the paddle
     // Check if it's above the top
-    LOAD [$BALL_ROW_FP] ACC
-    LOAD [$R_PADDLE_TOP_ROW_FP] A
+    LOAD [$BALL_ROW] ACC
+    LOAD [$R_PADDLE_TOP_ROW] A
     JUMP_IF_ACC_LT A &update_ball_right_paddle_miss
 
     // Check if it's below the bottom
-    LOAD [$R_PADDLE_BOTTOM_ROW_FP] A
+    LOAD [$R_PADDLE_BOTTOM_ROW] A
     JUMP_IF_ACC_GT A &update_ball_right_paddle_miss
 
-    // Calculate new ball position
-    LOAD [$R_PADDLE_COLUMN_FP] ACC
-    SHIFT_LEFT ACC
-    SUB [$BALL_COLUMN_FP]
-    SUB [$BALL_COLUMN_SPEED_FP]
-    SUB #2
-    STORE ACC [$BALL_COLUMN_FP]
+    // Update the ball position - make it bounce off the paddle
+    DECR [$BALL_COLUMN]
 
     // Reverse direction
-    SET_ZERO ACC
-    SUB [$BALL_COLUMN_SPEED_FP]
-    STORE ACC [$BALL_COLUMN_SPEED_FP]
+    SET [$BALL_HORIZ_DIR] #-1
 
-    // Fetch and apply row speed change
-    LOAD [$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP] A
-    CALL &update_ball_update_row_speed_after_collision
+    // Update ball vertical speed and dir
+    CALL &ball_paddle_hit_update_vert_speed_and_dir
 
     RETURN
     
 &update_ball_moving_right_no_collision
-    STORE ACC [$BALL_COLUMN_FP]
+    STORE ACC [$BALL_COLUMN]
     RETURN
 
 &update_ball_moving_left
     // If the pos plus speed is greater than the left paddle column, it's fine
-    LOAD [$BALL_COLUMN_FP] ACC
-    ADD [$BALL_COLUMN_SPEED_FP]
-    JUMP_IF_ACC_GT [$L_PADDLE_COLUMN_FP] &update_ball_moving_left_no_collision
+    LOAD [$BALL_COLUMN] ACC
+    DECR ACC
+    JUMP_IF_ACC_GT [$L_PADDLE_COLUMN] &update_ball_moving_left_no_collision
 
-    // Otherwise we need to resolve the collision
-    // Calculate new ball position
-    LOAD [$L_PADDLE_COLUMN_FP] ACC
-    SHIFT_LEFT ACC
-    SUB [$BALL_COLUMN_FP]
-    SUB [$BALL_COLUMN_SPEED_FP]
+    // Otherwise we need to resolve the collision - have it bounce off the paddle
     ADD #2
-    STORE ACC [$BALL_COLUMN_FP]
+    STORE ACC [$BALL_COLUMN]
 
     // Reverse direction
-    SET_ZERO ACC
-    SUB [$BALL_COLUMN_SPEED_FP]
-    STORE ACC [$BALL_COLUMN_SPEED_FP]
+    SET [$BALL_HORIZ_DIR] #1
 
-    // Fetch and apply row speed change
-    LOAD [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] A
-    CALL &update_ball_update_row_speed_after_collision
+    // Update ball vertical speed and dir
+    CALL &ball_paddle_hit_update_vert_speed_and_dir
 
     RETURN
 
 &update_ball_moving_left_no_collision
-    STORE ACC [$BALL_COLUMN_FP]
-    RETURN
-
-&update_ball_update_row_speed_after_collision
-    LOAD [$BALL_ROW_SPEED_FP] ACC
-    ADD A
-    STORE ACC [$BALL_ROW_SPEED_FP]
+    STORE ACC [$BALL_COLUMN]
     RETURN
 
 &update_ball_right_paddle_miss
     RETURN
+
+&update_ball_up_down
+
+    // See if it's time to move the ball vertically
+    LOAD [$BALL_VERT_MOVE_TICKER] ACC
+    ADD [$BALL_VERT_MOVE_TICKER_INCR]
+    STORE ACC [$BALL_VERT_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_ball_up_down_done
+
+    // Check if the ball isn't moving up or down - if so - no need for vertical checks
+    LOAD [$BALL_VERT_DIR] ACC
+    JUMP_IF_ACC_EQ #0 &update_ball_up_down_done
+
+    // Check if the ball is moving down - i.e. vert dir is 1
+    JUMP_IF_ACC_EQ #1 &update_ball_moving_down
+    
+    // Otherwise we're moving up
+    // Calculate new position
+    DECR [$BALL_ROW]
+    LOAD [$BALL_ROW] ACC
+
+    // Check we haven't collided with the barrier
+    JUMP_IF_ACC_GT [$PF_TOP_ROW] &update_ball_up_down_done
+
+    // Otherwise we've collided
+
+    // Update the position
+    ADD #2
+    STORE ACC [$BALL_ROW]
+
+    // Flip direction (so we're moving down)
+    SET [$BALL_VERT_DIR] #1
+
+    // Done
+    RETURN
+
+&update_ball_moving_down
+
+    // Calculate new position
+    INCR [$BALL_ROW]
+    LOAD [$BALL_ROW] ACC
+
+    // Check we haven't collided with the barrier
+    JUMP_IF_ACC_LT [$PF_BOTTOM_ROW] &update_ball_up_down_done
+
+    // Otherwise we've collided
+
+    // Update the position
+    SUB #2
+    STORE ACC [$BALL_ROW]
+
+    // Flip direction (so we're moving up)
+    SET [$BALL_VERT_DIR] #-1
+
+    // Done
+    RETURN
+
+&update_ball_up_down_done
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Resolve ball vertical motion on paddle collision
+//
+////////////////////////////////////////////////////////////
+&ball_paddle_hit_update_vert_speed_and_dir
+    RETURN
+    // If paddle stationary
+
+        // No vertical change necessary
+
+    // If paddle up
+
+        // If ball up
+
+            // Incr vert incr
+
+            // Clamp vert incr
+
+        // If ball down
+
+            // Decr vert incr
+
+                // If ticker is zero
+
+                    // Set vert dir to zero
+
+                // If ticker is negative
+
+                    // Clamp to zero
+
+                    // Set vert dir to zero
+        
+        // If ball horiz
+
+            // Incr vert incr
+
+            // Set vert dir up
+        
+    // If paddle down
+
+        // If ball down
+
+            // Incr vert incr
+
+            // Clamp vert incr
+        
+        // If ball up
+
+            // Decr vert incr
+
+                // If incr is zero
+
+                    // Set virt dir to zero
+
+                // If incr is negative
+
+                    // Clamp to zero
+
+                    // Set vert dir to zero
+
+        // If ball horiz
+
+            // Incr vert incr
+
+            // Set vert dir down
+
+    // Update the vertical update ticker
+    LOAD [$BALL_VERT_MOVE_TICKER_INCR] ACC
+    ADD [L_PADDLE_VERT_TICKER_DIFF]
+    STORE ACC [$BALL_VERT_MOVE_TICKER_INCR]
+
+    JUMP_IF_ZERO_FLAG &update_ball_collide_stationary_paddle
+    JUMP_IF_NEGATIVE_FLAG &update_ball_collide_stationary_paddle
+
+    RETURN
+
+
+
+
+
+
 
 
 
@@ -511,18 +568,10 @@ $BALL_COLUMN_SPEED_FP
 //
 ////////////////////////////////////////////////////////////
 &draw_ball
-    LOAD [$BALL_ROW_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$BALL_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
 
-    LOAD [$BALL_COLUMN_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$BALL_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
 
     LOAD [$BALL_COLOUR] ACC
@@ -530,10 +579,12 @@ $BALL_COLUMN_SPEED_FP
     RETURN
 
 
-$L_PADDLE_COLUMN_FP
-$L_PADDLE_TOP_ROW_FP
-$L_PADDLE_BOTTOM_ROW_FP
-$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP
+$L_PADDLE_COLUMN
+$L_PADDLE_TOP_ROW
+$L_PADDLE_BOTTOM_ROW
+$L_PADDLE_MOVE_TICKER
+$L_PADDLE_MOVE_TICKER_INCR
+$L_PADDLE_VERT_DIR
 $L_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -541,11 +592,13 @@ $L_PADDLE_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &init_left_paddle
-    SET [$L_PADDLE_COLUMN_FP] !L_PADDLE_INIT_COLUMN_FP
-    SET [$L_PADDLE_TOP_ROW_FP] !L_PADDLE_INIT_TOP_ROW_FP
-    SET [$L_PADDLE_BOTTOM_ROW_FP] !L_PADDLE_INIT_BOTTOM_ROW_FP
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
-    SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLUMN_FP
+    SET [$L_PADDLE_COLUMN] !L_PADDLE_INIT_COLUMN
+    SET [$L_PADDLE_TOP_ROW] !L_PADDLE_INIT_TOP_ROW
+    SET [$L_PADDLE_BOTTOM_ROW] !L_PADDLE_INIT_BOTTOM_ROW
+    SET [$L_PADDLE_MOVE_TICKER] #0
+    SET [$L_PADDLE_MOVE_TICKER_INCR] !L_PADDLE_MOVE_TICKER_INCR
+    SET [$L_PADDLE_VERT_DIR] #0
+    SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLOUR
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -556,41 +609,80 @@ $L_PADDLE_COLOUR
 &update_left_paddle
     // Read up button on controller
     LOAD [!GAME_PAD_1] A
+
+    // Check if up is pressed
     COPY A ACC
     AND !SNES_PAD_UP
-    JUMP_IF_ZERO_FLAG &update_left_paddle_check_down
-    
-    // Check the paddle has room to move up
-    LOAD [$L_PADDLE_TOP_ROW_FP] ACC
-    SUB !PADDLE_SPEED
-    JUMP_IF_ACC_LT !PADDLE_TOP_MIN_ROW_FP &update_left_paddle_no_movement
-    STORE ACC [$L_PADDLE_TOP_ROW_FP]
-    LOAD [$L_PADDLE_BOTTOM_ROW_FP] ACC
-    SUB !PADDLE_SPEED
-    STORE ACC [$L_PADDLE_BOTTOM_ROW_FP]
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] !PADDLE_UP_BALL_COL_SPEED_CHANGE_FP
-    RETURN
+    JUMP_IF_NOT_ZERO_FLAG &update_left_paddle_up_pressed
 
-&update_left_paddle_check_down
+    // Check if down is pressed
     COPY A ACC
     AND !SNES_PAD_DOWN
-    JUMP_IF_ZERO_FLAG &update_left_paddle_no_movement
+    JUMP_IF_NOT_ZERO_FLAG &update_left_paddle_down_pressed
 
-    // Check the paddle has room to move down
-    LOAD [$L_PADDLE_BOTTOM_ROW_FP] ACC
-    ADD !PADDLE_SPEED
-    JUMP_IF_ACC_GT !PADDLE_BOTTOM_MAX_ROW_FP &update_left_paddle_no_movement
-    STORE ACC [$L_PADDLE_BOTTOM_ROW_FP]
-    LOAD [$L_PADDLE_TOP_ROW_FP] ACC
-    ADD !PADDLE_SPEED
-    STORE ACC [$L_PADDLE_TOP_ROW_FP]
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] !PADDLE_DOWN_BALL_COL_SPEED_CHANGE_FP
+    // Otherwise nothing is pressed
+    JUMP &update_left_paddle_nothing_pressed
+
+&update_left_paddle_up_pressed
+    // See if there's room to move up
+    LOAD [$L_PADDLE_TOP_ROW] ACC
+    JUMP_IF_ACC_EQ !PADDLE_HIGHEST_ROW &update_left_paddle_hit_top
+
+    // There's room for the paddle to move up
+    // Set the direction for ref in paddle collisions
+    SET [$L_PADDLE_VERT_DIR] #-1
+
+    // See if it's time to move the paddle
+    LOAD [$L_PADDLE_MOVE_TICKER] ACC
+    ADD [$L_PADDLE_MOVE_TICKER_INCR]
+    STORE ACC [$L_PADDLE_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_left_paddle_done
+
+    // Move the paddle up
+    DECR [$L_PADDLE_TOP_ROW]
+    DECR [$L_PADDLE_BOTTOM_ROW]
+
+    // Done
     RETURN
 
-&update_left_paddle_no_movement
-    SET [$L_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
+&update_left_paddle_hit_top
+    // No room to move the paddle up - reset the direction ref to still
+    SET [$L_PADDLE_VERT_DIR] #0
+    RETURN
 
+&update_left_paddle_down_pressed
+    // See if there's room to move down
+    LOAD [$L_PADDLE_BOTTOM_ROW] ACC
+    JUMP_IF_ACC_EQ !PADDLE_LOWEST_ROW &update_left_paddle_hit_bottom
 
+    // There's room for the paddle to move down
+    // Set the direction for ref in paddle collisions
+    SET [$L_PADDLE_VERT_DIR] #1
+
+    // See if it's time to move the paddle
+    LOAD [$L_PADDLE_MOVE_TICKER] ACC
+    ADD [$L_PADDLE_MOVE_TICKER_INCR]
+    STORE ACC [$L_PADDLE_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_left_paddle_done
+
+    // Move the paddle down
+    INCR [$L_PADDLE_TOP_ROW]
+    INCR [$L_PADDLE_BOTTOM_ROW]
+
+    // Done!
+    RETURN
+
+&update_left_paddle_hit_bottom
+    // No room to move the paddle down - reset the direction ref to still
+    SET [$L_PADDLE_VERT_DIR] #0
+    RETURN
+
+&update_left_paddle_nothing_pressed
+    // Set the direction for ref in paddle collisions
+    SET [$L_PADDLE_VERT_DIR] #0
+
+&update_left_paddle_done
+    RETURN
 
 ////////////////////////////////////////////////////////////
 //
@@ -598,24 +690,12 @@ $L_PADDLE_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &draw_left_paddle
-    LOAD [$L_PADDLE_COLUMN_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$L_PADDLE_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
     
-    LOAD [$L_PADDLE_TOP_ROW_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$L_PADDLE_TOP_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
-    LOAD [$L_PADDLE_BOTTOM_ROW_FP] A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
+    LOAD [$L_PADDLE_BOTTOM_ROW] A
 
     LOAD [$L_PADDLE_COLOUR] C
 
@@ -627,11 +707,12 @@ $L_PADDLE_COLOUR
     RETURN
 
 
-$R_PADDLE_COLUMN_FP
-$R_PADDLE_TOP_ROW_FP
-$R_PADDLE_BOTTOM_ROW_FP
-$R_PADDLE_SPEED_FP
-$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP
+$R_PADDLE_COLUMN
+$R_PADDLE_TOP_ROW
+$R_PADDLE_BOTTOM_ROW
+$R_PADDLE_MOVE_TICKER
+$R_PADDLE_MOVE_TICKER_INCR
+$R_PADDLE_VERT_DIR
 $R_PADDLE_COLOUR
 ////////////////////////////////////////////////////////////
 //
@@ -639,39 +720,35 @@ $R_PADDLE_COLOUR
 //
 ////////////////////////////////////////////////////////////
 &init_right_paddle
-    // 18
-    SET [$R_PADDLE_COLUMN_FP] #0b0000_0001_0001_0000
-    SET [$R_PADDLE_TOP_ROW_FP] #0b0000_0000_0101_0000
-    SET [$R_PADDLE_BOTTOM_ROW_FP] #0b0000_0000_1000_1111
-    SET [$R_PADDLE_SPEED_FP] #0
-    SET [$R_PADDLE_BALL_ROW_SPEED_CHANGE_FP] #0
-    SET [$R_PADDLE_COLOUR] #0b0000_0000_0011_1111
+    SET [$R_PADDLE_COLUMN] !R_PADDLE_INIT_COLUMN
+    SET [$R_PADDLE_TOP_ROW] !R_PADDLE_INIT_TOP_ROW
+    SET [$R_PADDLE_BOTTOM_ROW] !R_PADDLE_INIT_BOTTOM_ROW
+    SET [$R_PADDLE_MOVE_TICKER] #0
+    SET [$R_PADDLE_MOVE_TICKER_INCR] !R_PADDLE_MOVE_TICKER_INCR
+    SET [$R_PADDLE_VERT_DIR] #0
+    SET [$R_PADDLE_COLOUR] !R_PADDLE_INIT_COLOUR
     RETURN
 
 ////////////////////////////////////////////////////////////
 //
-// Draw right paddle
+// Update right paddle
+//
+////////////////////////////////////////////////////////////
+&update_right_paddle
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Draw right_paddle
 //
 ////////////////////////////////////////////////////////////
 &draw_right_paddle
-    LOAD [$R_PADDLE_COLUMN_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$R_PADDLE_COLUMN] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
     
-    LOAD [$R_PADDLE_TOP_ROW_FP] ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
-    SHIFT_RIGHT ACC
+    LOAD [$R_PADDLE_TOP_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
-    LOAD [$R_PADDLE_BOTTOM_ROW_FP] A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
-    SHIFT_RIGHT A
+    LOAD [$R_PADDLE_BOTTOM_ROW] A
 
     LOAD [$R_PADDLE_COLOUR] C
 
@@ -681,14 +758,6 @@ $R_PADDLE_COLOUR
     STORE ACC [!VIDEO_CURSOR_ROW]
     JUMP_IF_ACC_LTE A &draw_right_paddle_col_loop
     RETURN
-
-
-
-
-
-
-
-
 
 
 
