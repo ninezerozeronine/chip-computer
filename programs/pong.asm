@@ -50,11 +50,11 @@
 !PADDLE_LOWEST_ROW         #14
 
 
-!BALL_INIT_ROW                  #7
-!BALL_INIT_COLUMN               #9
-!BALL_INIT_COLOUR               #0b0000_0000_0011_0000
-!BALL_HORIZ_MOVE_TICKER_INCR    #0b0100_0000_0000_0000
-!BALL_VERT_MOVE_TICKER_INCR     #0b0001_0000_0000_0000
+!BALL_INIT_ROW                      #7
+!BALL_INIT_COLUMN                   #9
+!BALL_INIT_COLOUR                   #0b0000_0000_0011_0000
+!BALL_HORIZ_MOVE_TICKER_INCR        #0b0100_0000_0000_0000
+!BALL_VERT_MOVE_TICKER_INCR_UNIT    #0b0001_0000_0000_0000
 
 
 !PF_INIT_TOP_LEFT_COLUMN #3
@@ -338,9 +338,9 @@ $BALL_VERT_MOVE_TICKER_INCR
     SET [$BALL_HORIZ_DIR] #1
     SET [$BALL_HORIZ_MOVE_TICKER] #0
     SET [$BALL_HORIZ_MOVE_TICKER_INCR] !BALL_HORIZ_MOVE_TICKER_INCR
-    SET [$BALL_VERT_DIR] #1
+    SET [$BALL_VERT_DIR] #0
     SET [$BALL_VERT_MOVE_TICKER] #0
-    SET [$BALL_VERT_MOVE_TICKER_INCR] !BALL_VERT_MOVE_TICKER_INCR
+    SET [$BALL_VERT_MOVE_TICKER_INCR] #0
 
     RETURN
 
@@ -384,19 +384,23 @@ $BALL_VERT_MOVE_TICKER_INCR
     SET [$BALL_HORIZ_DIR] #-1
 
     // Update ball vertical speed and dir
+    LOAD [$R_PADDLE_VERT_DIR] A
     CALL &ball_paddle_hit_update_vert_speed_and_dir
 
-    RETURN
+    JUMP &update_ball_up_down
     
 &update_ball_moving_right_no_collision
     STORE ACC [$BALL_COLUMN]
-    RETURN
+    JUMP &update_ball_up_down
 
 &update_ball_moving_left
     // If the pos plus speed is greater than the left paddle column, it's fine
     LOAD [$BALL_COLUMN] ACC
     DECR ACC
     JUMP_IF_ACC_GT [$L_PADDLE_COLUMN] &update_ball_moving_left_no_collision
+
+    // Otherwise we need to check if we hit the paddle
+    // Assume it always hits it for now
 
     // Otherwise we need to resolve the collision - have it bounce off the paddle
     ADD #2
@@ -406,16 +410,18 @@ $BALL_VERT_MOVE_TICKER_INCR
     SET [$BALL_HORIZ_DIR] #1
 
     // Update ball vertical speed and dir
+    LOAD [$L_PADDLE_VERT_DIR] A
     CALL &ball_paddle_hit_update_vert_speed_and_dir
 
-    RETURN
+    // Proceed to up down checks
+    JUMP &update_ball_up_down
 
 &update_ball_moving_left_no_collision
     STORE ACC [$BALL_COLUMN]
-    RETURN
+    JUMP &update_ball_up_down
 
 &update_ball_right_paddle_miss
-    RETURN
+    NOOP
 
 &update_ball_up_down
 
@@ -429,8 +435,11 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$BALL_VERT_DIR] ACC
     JUMP_IF_ACC_EQ #0 &update_ball_up_down_done
 
-    // Check if the ball is moving down - i.e. vert dir is 1
-    JUMP_IF_ACC_EQ #1 &update_ball_moving_down
+    // Check if the ball is moving down - i.e. vert dir is +ve
+    COPY ACC A
+    SET_ZERO ACC
+    ADD A
+    JUMP_IF_NOT_NEGATIVE_FLAG &update_ball_moving_down
     
     // Otherwise we're moving up
     // Calculate new position
@@ -447,7 +456,9 @@ $BALL_VERT_MOVE_TICKER_INCR
     STORE ACC [$BALL_ROW]
 
     // Flip direction (so we're moving down)
-    SET [$BALL_VERT_DIR] #1
+    SET_ZERO ACC
+    SUB [$BALL_VERT_DIR]
+    STORE ACC [$BALL_VERT_DIR]
 
     // Done
     RETURN
@@ -468,7 +479,9 @@ $BALL_VERT_MOVE_TICKER_INCR
     STORE ACC [$BALL_ROW]
 
     // Flip direction (so we're moving up)
-    SET [$BALL_VERT_DIR] #-1
+    SET_ZERO ACC
+    SUB [$BALL_VERT_DIR]
+    STORE ACC [$BALL_VERT_DIR]
 
     // Done
     RETURN
@@ -481,85 +494,67 @@ $BALL_VERT_MOVE_TICKER_INCR
 //
 // Resolve ball vertical motion on paddle collision
 //
+// Value in A is the paddle dir
+//
 ////////////////////////////////////////////////////////////
 &ball_paddle_hit_update_vert_speed_and_dir
-    RETURN
-    // If paddle stationary
+    // Assume the result of adding the paddle vel to the ball dir
+    // is positive
+    SET_ZERO B
 
-        // No vertical change necessary
+    // Add paddle vel to ball
+    LOAD [$BALL_VERT_DIR] ACC
+    ADD A
 
-    // If paddle up
+    // If negative
+    JUMP_IF_NOT_NEGATIVE_FLAG &bph_neg_check_done
 
-        // If ball up
+        // Store that it's negative
+        SET B #1
 
-            // Incr vert incr
+        // Flip it to positive
+        COPY ACC C
+        SET_ZERO ACC
+        SUB C
 
-            // Clamp vert incr
+    &bph_neg_check_done
+    // If > 3
+    JUMP_IF_ACC_LTE #3 &bph_calc_new_incr
 
-        // If ball down
+        // Clamp to 3
+        SET ACC #3
 
-            // Decr vert incr
+    &bph_calc_new_incr
+    COPY ACC A // We might need to invert this at the end
 
-                // If ticker is zero
+    // Incr = incr * vel
+    COPY ACC C
+    SET_ZERO ACC
 
-                    // Set vert dir to zero
+    &bph_inc_ticker_loop
+    DECR C
+    JUMP_IF_NEGATIVE_FLAG &bph_ticker_loop_done
+    ADD !BALL_VERT_MOVE_TICKER_INCR_UNIT
+    JUMP &bph_inc_ticker_loop
 
-                // If ticker is negative
-
-                    // Clamp to zero
-
-                    // Set vert dir to zero
-        
-        // If ball horiz
-
-            // Incr vert incr
-
-            // Set vert dir up
-        
-    // If paddle down
-
-        // If ball down
-
-            // Incr vert incr
-
-            // Clamp vert incr
-        
-        // If ball up
-
-            // Decr vert incr
-
-                // If incr is zero
-
-                    // Set virt dir to zero
-
-                // If incr is negative
-
-                    // Clamp to zero
-
-                    // Set vert dir to zero
-
-        // If ball horiz
-
-            // Incr vert incr
-
-            // Set vert dir down
-
-    // Update the vertical update ticker
-    LOAD [$BALL_VERT_MOVE_TICKER_INCR] ACC
-    ADD [L_PADDLE_VERT_TICKER_DIFF]
+    &bph_ticker_loop_done
     STORE ACC [$BALL_VERT_MOVE_TICKER_INCR]
 
-    JUMP_IF_ZERO_FLAG &update_ball_collide_stationary_paddle
-    JUMP_IF_NEGATIVE_FLAG &update_ball_collide_stationary_paddle
+    // Assume dir was positive and store result
+    STORE A [$BALL_VERT_DIR]
 
+    // If was negative
+    SET_ZERO ACC
+    ADD B
+    JUMP_IF_ZERO_FLAG &bph_done
+
+        // Flip ball vert dir and store it
+        SET_ZERO ACC
+        SUB A
+        STORE ACC [$BALL_VERT_DIR]
+
+    &bph_done
     RETURN
-
-
-
-
-
-
-
 
 
 ////////////////////////////////////////////////////////////
