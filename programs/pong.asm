@@ -90,6 +90,7 @@ $NUM_SCREEN_COLUMNS
     CALL &wait_for_frame_end
     RETURN
 
+
 ////////////////////////////////////////////////////////////
 //
 // Main execution loop
@@ -377,6 +378,8 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$R_PADDLE_BOTTOM_ROW] A
     JUMP_IF_ACC_GT A &update_ball_right_paddle_miss
 
+&update_ball_temp_right_miss_bounce
+
     // Update the ball position - make it bounce off the paddle
     DECR [$BALL_COLUMN]
 
@@ -400,11 +403,18 @@ $BALL_VERT_MOVE_TICKER_INCR
     JUMP_IF_ACC_GT [$L_PADDLE_COLUMN] &update_ball_moving_left_no_collision
 
     // Otherwise we need to check if we hit the paddle
-    // Assume it always hits it for now
+    // Check if it's above the top
+    LOAD [$BALL_ROW] ACC
+    LOAD [$L_PADDLE_TOP_ROW] A
+    JUMP_IF_ACC_LT A &update_ball_left_paddle_miss
 
+    // Check if it's below the bottom
+    LOAD [$L_PADDLE_BOTTOM_ROW] A
+    JUMP_IF_ACC_GT A &update_ball_left_paddle_miss
+
+&update_ball_temp_left_miss_bounce
     // Otherwise we need to resolve the collision - have it bounce off the paddle
-    ADD #2
-    STORE ACC [$BALL_COLUMN]
+    INCR [$BALL_COLUMN]
 
     // Reverse direction
     SET [$BALL_HORIZ_DIR] #1
@@ -421,7 +431,12 @@ $BALL_VERT_MOVE_TICKER_INCR
     JUMP &update_ball_up_down
 
 &update_ball_right_paddle_miss
-    NOOP
+    INCR [$L_SCORE]
+    JUMP &update_ball_temp_right_miss_bounce
+
+&update_ball_left_paddle_miss
+    INCR [$R_SCORE]
+    JUMP &update_ball_temp_left_miss_bounce
 
 &update_ball_up_down
 
@@ -581,6 +596,7 @@ $L_PADDLE_MOVE_TICKER
 $L_PADDLE_MOVE_TICKER_INCR
 $L_PADDLE_VERT_DIR
 $L_PADDLE_COLOUR
+$L_SCORE
 ////////////////////////////////////////////////////////////
 //
 // Initialise left_paddle
@@ -594,6 +610,7 @@ $L_PADDLE_COLOUR
     SET [$L_PADDLE_MOVE_TICKER_INCR] !L_PADDLE_MOVE_TICKER_INCR
     SET [$L_PADDLE_VERT_DIR] #0
     SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLOUR
+    SET [$L_SCORE] #0
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -709,6 +726,7 @@ $R_PADDLE_MOVE_TICKER
 $R_PADDLE_MOVE_TICKER_INCR
 $R_PADDLE_VERT_DIR
 $R_PADDLE_COLOUR
+$R_SCORE
 ////////////////////////////////////////////////////////////
 //
 // Initialise right paddle
@@ -722,6 +740,7 @@ $R_PADDLE_COLOUR
     SET [$R_PADDLE_MOVE_TICKER_INCR] !R_PADDLE_MOVE_TICKER_INCR
     SET [$R_PADDLE_VERT_DIR] #0
     SET [$R_PADDLE_COLOUR] !R_PADDLE_INIT_COLOUR
+    SET [$R_SCORE] #0
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -754,14 +773,43 @@ $R_PADDLE_COLOUR
     JUMP_IF_ACC_LTE A &draw_right_paddle_col_loop
     RETURN
 
+////////////////////////////////////////////////////////////
+//
+// Check if a point was scored
+//
+////////////////////////////////////////////////////////////
+&point_score
+
+    // Reset the ball
+
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Check if the game has ended
+//
+////////////////////////////////////////////////////////////
+&game_end
+    LOAD [$L_SCORE] ACC
+    JUMP_IF_ACC_EQ #5 &game_end_points
+
+    LOAD [$R_SCORE] ACC
+    JUMP_IF_ACC_EQ #5 &game_end_points
+
+&game_end_points
+
+    RETURN
+
+Draw 
 
 
-
-
-
-
-
-
+////////////////////////////////////////////////////////////
+//
+// Draw the score
+//
+////////////////////////////////////////////////////////////
+&draw_score
+    RETURN
 
 
 
