@@ -37,13 +37,13 @@
 !L_PADDLE_INIT_TOP_ROW     #5
 !L_PADDLE_INIT_BOTTOM_ROW  #9
 !L_PADDLE_INIT_COLUMN      #2
-!L_PADDLE_INIT_COLOUR      #0b0000_0000_0011_1111
+!L_PADDLE_INIT_COLOUR      #0b0000_0000_0011_0000
 !L_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
 !R_PADDLE_INIT_TOP_ROW     #5
 !R_PADDLE_INIT_BOTTOM_ROW  #9
 !R_PADDLE_INIT_COLUMN      #18
-!R_PADDLE_INIT_COLOUR      #0b0000_0000_0011_1111
+!R_PADDLE_INIT_COLOUR      #0b0000_0000_0000_1100
 !R_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
 !PADDLE_HIGHEST_ROW        #0
@@ -52,9 +52,9 @@
 
 !BALL_INIT_ROW                      #7
 !BALL_INIT_COLUMN                   #9
-!BALL_INIT_COLOUR                   #0b0000_0000_0011_0000
+!BALL_INIT_COLOUR                   #0b0000_0000_0011_1111
 !BALL_HORIZ_MOVE_TICKER_INCR        #0b0100_0000_0000_0000
-!BALL_VERT_MOVE_TICKER_INCR_UNIT    #0b0001_0000_0000_0000
+!BALL_VERT_MOVE_TICKER_INCR_UNIT    #0b0100_0000_0000_0000
 
 
 !PF_INIT_TOP_LEFT_COLUMN #3
@@ -107,6 +107,7 @@ $NUM_SCREEN_COLUMNS
     CALL &draw_left_paddle
     CALL &draw_right_paddle
     CALL &draw_ball
+    CALL &draw_score
     SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
@@ -356,7 +357,7 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$BALL_HORIZ_MOVE_TICKER] ACC
     ADD [$BALL_HORIZ_MOVE_TICKER_INCR]
     STORE ACC [$BALL_HORIZ_MOVE_TICKER]
-    JUMP_IF_NOT_CARRY &update_ball_up_down
+    JUMP_IF_NOT_CARRY &update_ball_done
 
     // Check if the ball is moving to the right
     LOAD [$BALL_HORIZ_DIR] ACC
@@ -444,11 +445,11 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$BALL_VERT_MOVE_TICKER] ACC
     ADD [$BALL_VERT_MOVE_TICKER_INCR]
     STORE ACC [$BALL_VERT_MOVE_TICKER]
-    JUMP_IF_NOT_CARRY &update_ball_up_down_done
+    JUMP_IF_NOT_CARRY &update_ball_done
 
     // Check if the ball isn't moving up or down - if so - no need for vertical checks
     LOAD [$BALL_VERT_DIR] ACC
-    JUMP_IF_ACC_EQ #0 &update_ball_up_down_done
+    JUMP_IF_ACC_EQ #0 &update_ball_done
 
     // Check if the ball is moving down - i.e. vert dir is +ve
     COPY ACC A
@@ -462,7 +463,7 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$BALL_ROW] ACC
 
     // Check we haven't collided with the barrier
-    JUMP_IF_ACC_GT [$PF_TOP_ROW] &update_ball_up_down_done
+    JUMP_IF_ACC_GT [$PF_TOP_ROW] &update_ball_done
 
     // Otherwise we've collided
 
@@ -485,7 +486,7 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$BALL_ROW] ACC
 
     // Check we haven't collided with the barrier
-    JUMP_IF_ACC_LT [$PF_BOTTOM_ROW] &update_ball_up_down_done
+    JUMP_IF_ACC_LT [$PF_BOTTOM_ROW] &update_ball_done
 
     // Otherwise we've collided
 
@@ -501,7 +502,7 @@ $BALL_VERT_MOVE_TICKER_INCR
     // Done
     RETURN
 
-&update_ball_up_down_done
+&update_ball_done
     RETURN
 
 
@@ -800,17 +801,53 @@ $R_SCORE
 
     RETURN
 
-Draw 
-
-
 ////////////////////////////////////////////////////////////
 //
 // Draw the score
 //
 ////////////////////////////////////////////////////////////
 &draw_score
+
+    // Left paddle score
+    SET [!VIDEO_CURSOR_COL] #0
+    SET [!VIDEO_CURSOR_ROW] #0
+    LOAD [$L_PADDLE_COLOUR] C
+    LOAD [$L_SCORE] ACC
+    CALL &draw_score_dots
+
+    // Right paddle score
+    SET [!VIDEO_CURSOR_COL] #11
+    SET [!VIDEO_CURSOR_ROW] #0
+    LOAD [$R_PADDLE_COLOUR] C
+    LOAD [$R_SCORE] ACC
+    CALL &draw_score_dots
     RETURN
 
+////////////////////////////////////////////////////////////
+//
+// Draw the score dots
+//
+// Video cursor should be where first dot will be
+// C is colour of dots
+// ACC is score
+////////////////////////////////////////////////////////////
+&draw_score_dots
 
+    // Decr score
+    DECR ACC
 
+    // If borrow, done
+    JUMP_IF_BORROW &draw_score_dots_done
 
+    // Otherwise Draw l colour dot
+    STORE C [!VIDEO_DATA]
+
+    // Inrc cursor col by 2
+    INCR [!VIDEO_CURSOR_COL]
+    INCR [!VIDEO_CURSOR_COL]
+
+    // Back to loop
+    JUMP &draw_score_dots
+
+&draw_score_dots_done
+    RETURN
