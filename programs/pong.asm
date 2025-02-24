@@ -34,37 +34,37 @@
 !SNES_PAD_SELECT #0b0000_0000_0000_0100
 
 
-!L_PADDLE_INIT_TOP_ROW     #5
-!L_PADDLE_INIT_BOTTOM_ROW  #9
+!L_PADDLE_INIT_TOP_ROW     #14
+!L_PADDLE_INIT_BOTTOM_ROW  #20
 !L_PADDLE_INIT_COLUMN      #2
 !L_PADDLE_INIT_COLOUR      #0b0000_0000_0011_0000
 !L_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
-!R_PADDLE_INIT_TOP_ROW     #5
-!R_PADDLE_INIT_BOTTOM_ROW  #9
-!R_PADDLE_INIT_COLUMN      #18
+!R_PADDLE_INIT_TOP_ROW     #14
+!R_PADDLE_INIT_BOTTOM_ROW  #20
+!R_PADDLE_INIT_COLUMN      #37
 !R_PADDLE_INIT_COLOUR      #0b0000_0000_0000_1100
 !R_PADDLE_MOVE_TICKER_INCR #0b0100_0000_0000_0000
 
-!PADDLE_HIGHEST_ROW        #0
-!PADDLE_LOWEST_ROW         #14
+!PADDLE_HIGHEST_ROW        #7
+!PADDLE_LOWEST_ROW         #28
 
 
-!BALL_INIT_ROW                      #7
-!BALL_INIT_COLUMN                   #9
+!BALL_INIT_ROW                      #17
+!BALL_INIT_COLUMN                   #19
 !BALL_INIT_COLOUR                   #0b0000_0000_0011_1111
 !BALL_HORIZ_MOVE_TICKER_INCR        #0b0100_0000_0000_0000
 !BALL_VERT_MOVE_TICKER_INCR_UNIT    #0b0100_0000_0000_0000
 
 
 !PF_INIT_TOP_LEFT_COLUMN #3
-!PF_INIT_TOP_RIGHT_COLUMN #16
-!PF_INIT_TOP_ROW #2
+!PF_INIT_TOP_RIGHT_COLUMN #36
+!PF_INIT_TOP_ROW #8
 !PF_INIT_TOP_COLOUR #0b0000_0000_0000_0011
 
 !PF_INIT_BOTTOM_LEFT_COLUMN #3
-!PF_INIT_BOTTOM_RIGHT_COLUMN #16
-!PF_INIT_BOTTOM_ROW #12
+!PF_INIT_BOTTOM_RIGHT_COLUMN #36
+!PF_INIT_BOTTOM_ROW #27
 !PF_INIT_BOTTOM_COLOUR #0b0000_0000_0000_0011
 
 
@@ -82,7 +82,7 @@ $NUM_SCREEN_COLUMNS
 //
 ////////////////////////////////////////////////////////////
 &init
-    CALL &set_res_to_20x15
+    CALL &set_res_to_40x30
     CALL &init_playing_field
     CALL &init_ball
     CALL &init_left_paddle
@@ -99,6 +99,7 @@ $NUM_SCREEN_COLUMNS
 &main_loop
 
     SET [!STATUS_WORD] #0b1000_0000_0000_0000
+    CALL &check_select
     CALL &update_left_paddle
     CALL &update_ball
     SET C #0
@@ -111,7 +112,6 @@ $NUM_SCREEN_COLUMNS
     SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
-    CALL &check_select
     JUMP &main_loop
 
 
@@ -136,12 +136,14 @@ $NUM_SCREEN_COLUMNS
 // Set the video resolutions
 //
 ////////////////////////////////////////////////////////////
-&set_res_to_20x15
-    SET [$NUM_SCREEN_ROWS] #15
-    SET [$NUM_SCREEN_COLUMNS] #20
+&set_res_to_40x30
+    SET [$NUM_SCREEN_COLUMNS] #40
+    SET [$NUM_SCREEN_ROWS] #30
     LOAD [!VIDEO_STATUS] ACC
-    OR !VIDEO_RES_20x15_OR
+    AND !VIDEO_RES_40x30_AND
+    OR !VIDEO_RES_40x30_OR
     STORE ACC [!VIDEO_STATUS]
+
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -216,6 +218,30 @@ $NUM_SCREEN_COLUMNS
     STORE_INCR ACC [A] [B]
 
     // 10 -> 19
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+
+    // 20 -> 29
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+    STORE_INCR ACC [A] [B]
+
+    // 30 -> 39
     STORE_INCR ACC [A] [B]
     STORE_INCR ACC [A] [B]
     STORE_INCR ACC [A] [B]
