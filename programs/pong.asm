@@ -28,6 +28,15 @@
 
 !VID_COL_WHITE   #0b0000_0000_0011_1111
 
+!CHAR_P             #0b11111_10100_01000_0
+!CHAR_COLON         #0b00000_01010_00000_0
+!CHAR_0             #0b11111_10001_11111_0
+!CHAR_1             #0b01001_11111_00001_0
+!CHAR_2             #0b10011_10101_01001_0
+!CHAR_3             #0b10001_10101_01010_0
+!CHAR_4             #0b11100_00100_11111_0
+!CHAR_5             #0b11101_10101_10010_0
+
 
 !SNES_PAD_UP     #0b0000_0000_0001_0000
 !SNES_PAD_DOWN   #0b0000_0000_0010_0000
@@ -834,20 +843,113 @@ $R_SCORE
 ////////////////////////////////////////////////////////////
 &draw_score
 
-    // Left paddle score
-    SET [!VIDEO_CURSOR_COL] #0
-    SET [!VIDEO_CURSOR_ROW] #0
+    // Left paddle/P1
+    SET [!VIDEO_CURSOR_COL] #1
+    SET [!VIDEO_CURSOR_ROW] #1
     LOAD [$L_PADDLE_COLOUR] C
+    SET A !CHAR_P
+    CALL &draw_character
+    SET A !CHAR_1
+    CALL &draw_character
+    SET A !CHAR_COLON
+    CALL &draw_character
     LOAD [$L_SCORE] ACC
-    CALL &draw_score_dots
+    JUMP_IF_ACC_EQ #0 &draw_score_set_l_char_0
+    JUMP_IF_ACC_EQ #1 &draw_score_set_l_char_1
+    JUMP_IF_ACC_EQ #2 &draw_score_set_l_char_2
+    JUMP_IF_ACC_EQ #3 &draw_score_set_l_char_3
+    JUMP_IF_ACC_EQ #4 &draw_score_set_l_char_4
+    JUMP_IF_ACC_EQ #5 &draw_score_set_l_char_5
+
+&draw_score_set_l_char_0
+    SET A !CHAR_0
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_1
+    SET A !CHAR_1
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_2
+    SET A !CHAR_2
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_3
+    SET A !CHAR_3
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_4
+    SET A !CHAR_4
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_5
+    SET A !CHAR_5
+    JUMP &draw_score_set_l_char_done
+
+&draw_score_set_l_char_done
+    CALL &draw_character
+
+    // Right paddle/P2
+    SET [!VIDEO_CURSOR_COL] #24
+    SET [!VIDEO_CURSOR_ROW] #1
+    LOAD [$R_PADDLE_COLOUR] C
+    SET A !CHAR_P
+    CALL &draw_character
+    SET A !CHAR_2
+    CALL &draw_character
+    SET A !CHAR_COLON
+    CALL &draw_character
+    LOAD [$R_SCORE] ACC
+    JUMP_IF_ACC_EQ #0 &draw_score_set_r_char_0
+    JUMP_IF_ACC_EQ #1 &draw_score_set_r_char_1
+    JUMP_IF_ACC_EQ #2 &draw_score_set_r_char_2
+    JUMP_IF_ACC_EQ #3 &draw_score_set_r_char_3
+    JUMP_IF_ACC_EQ #4 &draw_score_set_r_char_4
+    JUMP_IF_ACC_EQ #5 &draw_score_set_r_char_5
+
+&draw_score_set_r_char_0
+    SET A !CHAR_0
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_1
+    SET A !CHAR_1
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_2
+    SET A !CHAR_2
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_3
+    SET A !CHAR_3
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_4
+    SET A !CHAR_4
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_5
+    SET A !CHAR_5
+    JUMP &draw_score_set_r_char_done
+
+&draw_score_set_r_char_done
+    CALL &draw_character
+
+    RETURN
+
+
+    // Left paddle score
+    // SET [!VIDEO_CURSOR_COL] #0
+    // SET [!VIDEO_CURSOR_ROW] #0
+    // LOAD [$L_PADDLE_COLOUR] C
+    // LOAD [$L_SCORE] ACC
+    // CALL &draw_score_dots
 
     // Right paddle score
-    SET [!VIDEO_CURSOR_COL] #11
-    SET [!VIDEO_CURSOR_ROW] #0
-    LOAD [$R_PADDLE_COLOUR] C
-    LOAD [$R_SCORE] ACC
-    CALL &draw_score_dots
-    RETURN
+    // SET [!VIDEO_CURSOR_COL] #11
+    // SET [!VIDEO_CURSOR_ROW] #0
+    // LOAD [$R_PADDLE_COLOUR] C
+    // LOAD [$R_SCORE] ACC
+    // CALL &draw_score_dots
+    // RETURN
 
 ////////////////////////////////////////////////////////////
 //
@@ -876,4 +978,50 @@ $R_SCORE
     JUMP &draw_score_dots
 
 &draw_score_dots_done
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Draw character
+//
+// Video cursor should be at the top left pixel of the character
+// C is colour of character
+// A is the character to draw
+//
+// Pixels are drawn left to right then top to bottom
+////////////////////////////////////////////////////////////
+&draw_character
+
+    LOAD [!VIDEO_CURSOR_ROW] B
+    CALL &draw_character_column
+    CALL &draw_character_column
+    CALL &draw_character_column
+
+&draw_character_column
+    // set counter to 4
+    SET ACC #4
+
+&draw_character_column_loop
+    // Pop out msb
+    SHIFT_LEFT A
+
+    // If bit is not 1, skip drawing pixel
+    JUMP_IF_NOT_CARRY &draw_character_column_loop_incr_cursor
+
+    // Draw the pixel
+    STORE C [!VIDEO_DATA]
+
+&draw_character_column_loop_incr_cursor
+    // increment cursor row
+    INCR [!VIDEO_CURSOR_ROW]
+
+    // decr counter
+    DECR ACC
+
+    // If not negative, next iteration of loop
+    JUMP_IF_NOT_NEGATIVE_FLAG &draw_character_column_loop
+
+    // Otherwise done
+    STORE B [!VIDEO_CURSOR_ROW]
+    INCR [!VIDEO_CURSOR_COL]
     RETURN
