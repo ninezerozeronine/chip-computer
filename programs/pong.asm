@@ -28,7 +28,13 @@
 
 !VID_COL_WHITE   #0b0000_0000_0011_1111
 
+!CHAR_C             #0b01110_10001_01010_0
+!CHAR_E             #0b11111_10101_10101_0
+!CHAR_O             #0b01110_10001_01110_0
 !CHAR_P             #0b11111_10100_01000_0
+!CHAR_R             #0b11111_10100_01011_0
+!CHAR_S             #0b01001_10101_10010_0
+!CHAR_EXCLM         #0b00000_11101_00000_0
 !CHAR_COLON         #0b00000_01010_00000_0
 !CHAR_0             #0b11111_10001_11111_0
 !CHAR_1             #0b01001_11111_00001_0
@@ -76,6 +82,11 @@
 !PF_INIT_BOTTOM_ROW #27
 !PF_INIT_BOTTOM_COLOUR #0b0000_0000_0000_0011
 
+!GAME_MODE_READY #0
+!GAME_MODE_PLAYING #1
+!GAME_MODE_POINT_SCORED #2
+!GAME_MODE_WINNER #3
+
 
     SET SP #0b0001_1111_1111_0000
 
@@ -84,6 +95,9 @@
 
 $NUM_SCREEN_ROWS
 $NUM_SCREEN_COLUMNS
+$GAME_MODE
+$POINT_SCORED_COUNTER
+$WHO_SCORED
 
 ////////////////////////////////////////////////////////////
 //
@@ -91,6 +105,7 @@ $NUM_SCREEN_COLUMNS
 //
 ////////////////////////////////////////////////////////////
 &init
+    SET [$GAME_MODE] !GAME_MODE_PLAYING
     CALL &set_res_to_40x30
     CALL &init_playing_field
     CALL &init_ball
@@ -109,6 +124,12 @@ $NUM_SCREEN_COLUMNS
 
     SET [!STATUS_WORD] #0b1000_0000_0000_0000
     CALL &check_select
+
+    LOAD [$GAME_MODE] ACC
+    JUMP_IF_ACC_EQ !GAME_MODE_PLAYING &main_loop_playing
+    JUMP_IF_ACC_EQ !GAME_MODE_POINT_SCORED &main_loop_point_scored
+
+&main_loop_playing
     CALL &update_left_paddle
     CALL &update_ball
     SET C #0
@@ -118,11 +139,25 @@ $NUM_SCREEN_COLUMNS
     CALL &draw_right_paddle
     CALL &draw_ball
     CALL &draw_score
+    JUMP &main_loop_end
+
+&main_loop_point_scored
+    CALL &update_point_scored
+    SET C #0
+    CALL &fill_screen
+    CALL &draw_playing_field
+    CALL &draw_left_paddle
+    CALL &draw_right_paddle
+    CALL &draw_ball
+    CALL &draw_score
+    CALL &draw_point_scorer
+    JUMP &main_loop_end
+
+&main_loop_end
     SET [!STATUS_WORD] #0b0000_0000_0000_0000
     CALL &wait_for_frame_end
     CALL &flip_draw_buffer
     JUMP &main_loop
-
 
 ////////////////////////////////////////////////////////////
 //
@@ -468,11 +503,15 @@ $BALL_VERT_MOVE_TICKER_INCR
 
 &update_ball_right_paddle_miss
     INCR [$L_SCORE]
-    JUMP &update_ball_temp_right_miss_bounce
+    SET [$WHO_SCORED] #1
+    CALL &set_game_mode_point_scored
+    RETURN
 
 &update_ball_left_paddle_miss
     INCR [$R_SCORE]
-    JUMP &update_ball_temp_left_miss_bounce
+    SET [$WHO_SCORED] #2
+    CALL &set_game_mode_point_scored
+    RETURN
 
 &update_ball_up_down
 
@@ -639,14 +678,23 @@ $L_SCORE
 //
 ////////////////////////////////////////////////////////////
 &init_left_paddle
+    CALL &reset_left_paddle_pos
+    SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLOUR
+    SET [$L_SCORE] #0
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Reset left paddle pos
+//
+////////////////////////////////////////////////////////////
+&reset_left_paddle_pos
     SET [$L_PADDLE_COLUMN] !L_PADDLE_INIT_COLUMN
     SET [$L_PADDLE_TOP_ROW] !L_PADDLE_INIT_TOP_ROW
     SET [$L_PADDLE_BOTTOM_ROW] !L_PADDLE_INIT_BOTTOM_ROW
     SET [$L_PADDLE_MOVE_TICKER] #0
     SET [$L_PADDLE_MOVE_TICKER_INCR] !L_PADDLE_MOVE_TICKER_INCR
     SET [$L_PADDLE_VERT_DIR] #0
-    SET [$L_PADDLE_COLOUR] !L_PADDLE_INIT_COLOUR
-    SET [$L_SCORE] #0
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -778,6 +826,20 @@ $R_SCORE
     SET [$R_PADDLE_COLOUR] !R_PADDLE_INIT_COLOUR
     SET [$R_SCORE] #0
     RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Reset right paddle pos
+//
+////////////////////////////////////////////////////////////
+&reset_right_paddle_pos
+    SET [$R_PADDLE_COLUMN] !R_PADDLE_INIT_COLUMN
+    SET [$R_PADDLE_TOP_ROW] !R_PADDLE_INIT_TOP_ROW
+    SET [$R_PADDLE_BOTTOM_ROW] !R_PADDLE_INIT_BOTTOM_ROW
+    SET [$R_PADDLE_MOVE_TICKER] #0
+    SET [$R_PADDLE_MOVE_TICKER_INCR] !R_PADDLE_MOVE_TICKER_INCR
+    SET [$R_PADDLE_VERT_DIR] #0
+
 
 ////////////////////////////////////////////////////////////
 //
@@ -1024,4 +1086,84 @@ $R_SCORE
     // Otherwise done
     STORE B [!VIDEO_CURSOR_ROW]
     INCR [!VIDEO_CURSOR_COL]
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Draw a message to whoever scored
+//
+////////////////////////////////////////////////////////////
+&draw_point_scorer
+    SET [!VIDEO_CURSOR_COL] #16
+    SET [!VIDEO_CURSOR_ROW] #12
+    SET C !L_PADDLE_INIT_COLOUR
+    SET B !CHAR_1
+    LOAD [$WHO_SCORED] ACC
+    JUMP_IF_ACC_EQ #1 &draw_point_scorer_draw
+    SET C !R_PADDLE_INIT_COLOUR
+    SET B !CHAR_2
+    
+&draw_point_scorer_draw
+    COPY B ACC
+    COPY ACC X
+    SET A !CHAR_P
+    CALL &draw_character
+    COPY X ACC
+    COPY ACC A
+    CALL &draw_character
+
+    SET [!VIDEO_CURSOR_COL] #9
+    SET [!VIDEO_CURSOR_ROW] #19
+    SET A !CHAR_S
+    CALL &draw_character
+    SET A !CHAR_C
+    CALL &draw_character
+    SET A !CHAR_O
+    CALL &draw_character
+    SET A !CHAR_R
+    CALL &draw_character
+    SET A !CHAR_E
+    CALL &draw_character
+    SET A !CHAR_EXCLM
+    CALL &draw_character
+
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Transition to playing mode
+//
+////////////////////////////////////////////////////////////
+&set_game_mode_playing
+    CALL &init_ball
+    CALL &reset_left_paddle_pos
+    CALL &reset_right_paddle_pos
+    SET [$GAME_MODE] !GAME_MODE_PLAYING
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Transition to point scored mode
+//
+////////////////////////////////////////////////////////////
+&set_game_mode_point_scored
+    SET [$POINT_SCORED_COUNTER] #90
+    SET [$GAME_MODE] !GAME_MODE_POINT_SCORED
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Update when in point scored mode
+//
+////////////////////////////////////////////////////////////
+&update_point_scored
+    DECR [$POINT_SCORED_COUNTER]
+    JUMP_IF_NOT_BORROW &update_point_scored_done
+    CALL &set_game_mode_playing
+
+&update_point_scored_done
     RETURN

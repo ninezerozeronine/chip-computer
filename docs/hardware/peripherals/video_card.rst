@@ -56,4 +56,4 @@ The index of the row of the cursor. Can be read from and written to.
 Data
 ----
 
-The value of the pixel pointed at by the cursor in the buffer currently being accessed by the CPU.
+The value of the pixel pointed at by the cursor in the buffer currently being accessed by the CPU. Can be read from and written to.
