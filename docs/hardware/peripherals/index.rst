@@ -7,3 +7,4 @@ Peripherals
 
    video_card
    status_word
+   sound_square

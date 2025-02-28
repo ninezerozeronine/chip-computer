@@ -5,7 +5,7 @@
                   // #0b1111_1111_1111_0100
                   // #0b1111_1111_1111_0101
                   // #0b1111_1111_1111_0110
-                  // #0b1111_1111_1111_0111
+!SOUND_SQUARE        #0b1111_1111_1111_0111
 !GAME_PAD_2          #0b1111_1111_1111_1000
 !GAME_PAD_1          #0b1111_1111_1111_1001
 !STATUS_WORD         #0b1111_1111_1111_1010
@@ -116,6 +116,7 @@ $WHO_SCORED
 &init
     SET [$GAME_MODE] !GAME_MODE_PLAYING
     CALL &set_res_to_40x30
+    CALL &initialise_sound
     CALL &init_playing_field
     CALL &init_ball
     CALL &init_left_paddle
@@ -133,6 +134,7 @@ $WHO_SCORED
 
     SET [!STATUS_WORD] #0b1000_0000_0000_0000
     CALL &check_select
+    CALL &update_sound
 
     LOAD [$GAME_MODE] ACC
     JUMP_IF_ACC_EQ !GAME_MODE_PLAYING &main_loop_playing
@@ -459,8 +461,6 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$R_PADDLE_BOTTOM_ROW] A
     JUMP_IF_ACC_GT A &update_ball_right_paddle_miss
 
-&update_ball_temp_right_miss_bounce
-
     // Update the ball position - make it bounce off the paddle
     DECR [$BALL_COLUMN]
 
@@ -470,6 +470,11 @@ $BALL_VERT_MOVE_TICKER_INCR
     // Update ball vertical speed and dir
     LOAD [$R_PADDLE_VERT_DIR] A
     CALL &ball_paddle_hit_update_vert_speed_and_dir
+
+    // Make a sound
+    SET A #0b0111_0000_0011_1111
+    SET B #5
+    CALL &add_note
 
     JUMP &update_ball_up_down
     
@@ -493,7 +498,6 @@ $BALL_VERT_MOVE_TICKER_INCR
     LOAD [$L_PADDLE_BOTTOM_ROW] A
     JUMP_IF_ACC_GT A &update_ball_left_paddle_miss
 
-&update_ball_temp_left_miss_bounce
     // Otherwise we need to resolve the collision - have it bounce off the paddle
     INCR [$BALL_COLUMN]
 
@@ -503,6 +507,11 @@ $BALL_VERT_MOVE_TICKER_INCR
     // Update ball vertical speed and dir
     LOAD [$L_PADDLE_VERT_DIR] A
     CALL &ball_paddle_hit_update_vert_speed_and_dir
+
+    // Make a sound
+    SET A #0b0111_0000_1111_1111
+    SET B #5
+    CALL &add_note
 
     // Proceed to up down checks
     JUMP &update_ball_up_down
@@ -1237,6 +1246,17 @@ $R_SCORE
 &set_game_mode_point_scored
     SET [$POINT_SCORED_COUNTER] #90
     SET [$GAME_MODE] !GAME_MODE_POINT_SCORED
+
+    // Play a small tune
+    SET A #0b0111_0000_0111_1111
+    SET B #5
+    CALL &add_note
+    SET A #0b0111_0000_0110_1111
+    SET B #5
+    CALL &add_note
+    SET A #0b0111_0000_0101_1111
+    SET B #5
+    CALL &add_note
     RETURN
 
 
@@ -1251,4 +1271,167 @@ $R_SCORE
     CALL &set_game_mode_playing
 
 &update_point_scored_done
+    RETURN
+
+$NEXT_NOTE
+$END_NOTE
+$NEXT_DURATION
+$END_DURATION
+
+$NUM_NOTES
+
+$NOTES #0 #0 #0 #0
+$LAST_NOTE
+$DURATIONS #0 #0 #0 #0
+$LAST_DURATION
+
+$NOTE_TIMER
+////////////////////////////////////////////////////////////
+//
+// Initialise the sound system
+//
+////////////////////////////////////////////////////////////
+&initialise_sound
+    // Count the number of notes
+    SET ACC $LAST_NOTE
+    SUB $NOTES
+    INCR ACC
+    STORE ACC [$NUM_NOTES]
+
+    // Set next and end note to be the same, at beginning of notes
+    SET [$NEXT_NOTE] $NOTES
+    SET [$END_NOTE] $NOTES
+
+    // Set next and end duration to be the same, at beginning of durations
+    SET [$NEXT_DURATION] $DURATIONS
+    SET [$END_DURATION] $DURATIONS
+
+    SET [$NOTE_TIMER] #0
+
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Update the sound system
+//
+////////////////////////////////////////////////////////////
+&update_sound
+    // If timer != 0
+    LOAD [$NOTE_TIMER] ACC
+    JUMP_IF_EQ_ZERO ACC &update_sound_timer_is_zero
+        // Decrement timer
+        DECR [$NOTE_TIMER]
+
+        // If timer == 0
+        JUMP_IF_NOT_ZERO_FLAG &update_sound_time_left_in_note
+
+            // If next != end
+            LOAD [$NEXT_NOTE] ACC
+            LOAD [$END_NOTE] A
+            JUMP_IF_ACC_EQ A &update_sound_stop_note
+                
+                // Move on to next note
+                CALL &update_sound_move_on_to_next_note
+                RETURN
+
+&update_sound_stop_note
+            // Else
+                // Stop note
+                SET [!SOUND_SQUARE] #0
+                RETURN
+
+&update_sound_time_left_in_note
+        // Else
+            // Keep playing note
+            RETURN
+        
+&update_sound_timer_is_zero
+    // Else
+        // If next != end
+        LOAD [$NEXT_NOTE] ACC
+        LOAD [$END_NOTE] A
+        JUMP_IF_ACC_EQ A &update_sound_nothing_to_do
+            
+            // Move on to next note
+            CALL &update_sound_move_on_to_next_note
+            RETURN
+
+&update_sound_nothing_to_do
+        // Else
+            // Nothing to do
+            RETURN
+
+&update_sound_move_on_to_next_note
+    // Increment next note, wrapping
+    INCR [$NEXT_NOTE]
+    SET ACC $NOTES
+    ADD [$NUM_NOTES]
+    DECR ACC
+    LOAD [$NEXT_NOTE] A
+    JUMP_IF_ACC_GTE A &update_sound_store_next_note
+    SET A $NOTES
+&update_sound_store_next_note
+    STORE A [$NEXT_NOTE]
+
+    // Increment next duration, wrapping
+    INCR [$NEXT_DURATION]
+    SET ACC $DURATIONS
+    ADD [$NUM_NOTES]
+    DECR ACC
+    LOAD [$NEXT_DURATION] A
+    JUMP_IF_ACC_GTE A &update_sound_store_next_duration
+    SET A $DURATIONS
+&update_sound_store_next_duration
+    STORE A [$NEXT_DURATION]
+
+    // Set volume and pitch
+    LOAD [$NEXT_NOTE] ACC
+    LOAD [ACC] A
+    STORE A [!SOUND_SQUARE]
+
+    // Set the duration counter
+    LOAD [$NEXT_DURATION] ACC
+    LOAD [ACC] A
+    STORE A [$NOTE_TIMER]
+
+    RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Add a note to play in the system
+//
+// A is the volume and pitch
+// B is the duration in frames
+//
+////////////////////////////////////////////////////////////
+&add_note
+    // Increment end note, wrapping
+    INCR [$END_NOTE]
+    SET ACC $NOTES
+    ADD [$NUM_NOTES]
+    DECR ACC
+    LOAD [$END_NOTE] C
+    JUMP_IF_ACC_GTE C &add_note_store_end_note
+    SET C $NOTES
+&add_note_store_end_note
+    STORE C [$END_NOTE]
+
+    // Increment end duration, wrapping
+    INCR [$END_DURATION]
+    SET ACC $DURATIONS
+    ADD [$NUM_NOTES]
+    DECR ACC
+    LOAD [$END_DURATION] C
+    JUMP_IF_ACC_GTE C &add_note_store_end_duration
+    SET C $DURATIONS
+&add_note_store_end_duration
+    STORE C [$END_DURATION]
+
+    // Write into end
+    LOAD [$END_NOTE] ACC
+    STORE A [ACC]
+    LOAD [$END_DURATION] ACC
+    STORE B [ACC]
+
     RETURN
