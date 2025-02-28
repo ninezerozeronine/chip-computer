@@ -6,7 +6,7 @@
                   // #0b1111_1111_1111_0101
                   // #0b1111_1111_1111_0110
                   // #0b1111_1111_1111_0111
-                  // #0b1111_1111_1111_1000
+!GAME_PAD_2          #0b1111_1111_1111_1000
 !GAME_PAD_1          #0b1111_1111_1111_1001
 !STATUS_WORD         #0b1111_1111_1111_1010
 !VIDEO_STATUS        #0b1111_1111_1111_1011
@@ -47,6 +47,15 @@
 !SNES_PAD_UP     #0b0000_0000_0001_0000
 !SNES_PAD_DOWN   #0b0000_0000_0010_0000
 !SNES_PAD_SELECT #0b0000_0000_0000_0100
+
+!NES_PAD_UP     #0b0000_0000_0001_0000
+!NES_PAD_DOWN   #0b0000_0000_0010_0000
+!NES_PAD_LEFT   #0b0000_0000_0100_0000
+!NES_PAD_RIGHT  #0b0000_0000_1000_0000
+!NES_PAD_A      #0b0000_0000_0000_0001
+!NES_PAD_B      #0b0000_0000_0000_0010
+!NES_PAD_START  #0b0000_0000_0000_1000
+!NES_PAD_SELECT #0b0000_0000_0000_0100
 
 
 !L_PADDLE_INIT_TOP_ROW     #14
@@ -131,6 +140,7 @@ $WHO_SCORED
 
 &main_loop_playing
     CALL &update_left_paddle
+    CALL &update_right_paddle
     CALL &update_ball
     SET C #0
     CALL &fill_screen
@@ -847,6 +857,81 @@ $R_SCORE
 //
 ////////////////////////////////////////////////////////////
 &update_right_paddle
+    // Read up button on controller
+    LOAD [!GAME_PAD_2] A
+
+    // Check if up is pressed
+    COPY A ACC
+    AND !NES_PAD_UP
+    JUMP_IF_NOT_ZERO_FLAG &update_right_paddle_up_pressed
+
+    // Check if down is pressed
+    COPY A ACC
+    AND !NES_PAD_DOWN
+    JUMP_IF_NOT_ZERO_FLAG &update_right_paddle_down_pressed
+
+    // Otherwise nothing is pressed
+    JUMP &update_right_paddle_nothing_pressed
+
+&update_right_paddle_up_pressed
+    // See if there's room to move up
+    LOAD [$R_PADDLE_TOP_ROW] ACC
+    JUMP_IF_ACC_EQ !PADDLE_HIGHEST_ROW &update_right_paddle_hit_top
+
+    // There's room for the paddle to move up
+    // Set the direction for ref in paddle collisions
+    SET [$R_PADDLE_VERT_DIR] #-1
+
+    // See if it's time to move the paddle
+    LOAD [$R_PADDLE_MOVE_TICKER] ACC
+    ADD [$R_PADDLE_MOVE_TICKER_INCR]
+    STORE ACC [$R_PADDLE_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_right_paddle_done
+
+    // Move the paddle up
+    DECR [$R_PADDLE_TOP_ROW]
+    DECR [$R_PADDLE_BOTTOM_ROW]
+
+    // Done
+    RETURN
+
+&update_right_paddle_hit_top
+    // No room to move the paddle up - reset the direction ref to still
+    SET [$R_PADDLE_VERT_DIR] #0
+    RETURN
+
+&update_right_paddle_down_pressed
+    // See if there's room to move down
+    LOAD [$R_PADDLE_BOTTOM_ROW] ACC
+    JUMP_IF_ACC_EQ !PADDLE_LOWEST_ROW &update_right_paddle_hit_bottom
+
+    // There's room for the paddle to move down
+    // Set the direction for ref in paddle collisions
+    SET [$R_PADDLE_VERT_DIR] #1
+
+    // See if it's time to move the paddle
+    LOAD [$R_PADDLE_MOVE_TICKER] ACC
+    ADD [$R_PADDLE_MOVE_TICKER_INCR]
+    STORE ACC [$R_PADDLE_MOVE_TICKER]
+    JUMP_IF_NOT_CARRY &update_right_paddle_done
+
+    // Move the paddle down
+    INCR [$R_PADDLE_TOP_ROW]
+    INCR [$R_PADDLE_BOTTOM_ROW]
+
+    // Done!
+    RETURN
+
+&update_right_paddle_hit_bottom
+    // No room to move the paddle down - reset the direction ref to still
+    SET [$R_PADDLE_VERT_DIR] #0
+    RETURN
+
+&update_right_paddle_nothing_pressed
+    // Set the direction for ref in paddle collisions
+    SET [$R_PADDLE_VERT_DIR] #0
+
+&update_right_paddle_done
     RETURN
 
 ////////////////////////////////////////////////////////////
