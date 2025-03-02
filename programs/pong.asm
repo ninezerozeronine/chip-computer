@@ -404,6 +404,8 @@ $PF_BOTTOM_COLOUR
 $BALL_ROW
 $BALL_COLUMN
 $BALL_COLOUR
+!BALL_FADE_TO_WHITE_MAX #3
+$BALL_FADE_TO_WHITE_TICKER
 $BALL_HORIZ_DIR
 $BALL_HORIZ_MOVE_TICKER
 $BALL_HORIZ_MOVE_TICKER_INCR
@@ -428,6 +430,7 @@ $BALL_PREV_COLOUR_3
     SET [$BALL_ROW] !BALL_INIT_ROW
     SET [$BALL_COLUMN] !BALL_INIT_COLUMN
     SET [$BALL_COLOUR] !BALL_INIT_COLOUR
+    SET [$BALL_FADE_TO_WHITE_TICKER] !BALL_FADE_TO_WHITE_MAX
     SET [$BALL_HORIZ_DIR] #1
     SET [$BALL_HORIZ_MOVE_TICKER] #0
     SET [$BALL_HORIZ_MOVE_TICKER_INCR] !BALL_HORIZ_MOVE_TICKER_INCR
@@ -460,6 +463,17 @@ $BALL_PREV_COLOUR_3
     // Take the current attrs of the ball and store them for the trail
     CALL &update_ball_set_prev_attrs
 
+    DECR [$BALL_FADE_TO_WHITE_TICKER]
+    JUMP_IF_NOT_ZERO_FLAG &update_ball_move_right_check
+
+    SET [$BALL_FADE_TO_WHITE_TICKER] !BALL_FADE_TO_WHITE_MAX
+
+    // Fade the ball back to white
+    LOAD [$BALL_COLOUR] C
+    CALL &increase_colour_by_1
+    STORE C [$BALL_COLOUR]
+
+&update_ball_move_right_check
     // Check if the ball is moving to the right
     LOAD [$BALL_HORIZ_DIR] ACC
     JUMP_IF_ACC_NEQ #1 &update_ball_moving_left
@@ -494,6 +508,9 @@ $BALL_PREV_COLOUR_3
     SET A #0b0111_0000_0011_1111
     SET B #5
     CALL &add_note
+
+    // Make the ball green
+    SET [$BALL_COLOUR] #0b0000_0000_0000_1100
 
     JUMP &update_ball_up_down
     
@@ -531,6 +548,9 @@ $BALL_PREV_COLOUR_3
     SET A #0b0111_0000_1111_1111
     SET B #5
     CALL &add_note
+
+    // Make the ball red
+    SET [$BALL_COLOUR] #0b0000_0000_0011_0000
 
     // Proceed to up down checks
     JUMP &update_ball_up_down
@@ -588,6 +608,14 @@ $BALL_PREV_COLOUR_3
     SUB [$BALL_VERT_DIR]
     STORE ACC [$BALL_VERT_DIR]
 
+    // Make a sound
+    SET A #0b0111_0011_1111_1111
+    SET B #2
+    CALL &add_note
+
+    // Make the ball blue
+    SET [$BALL_COLOUR] #0b0000_0000_0000_0011
+
     // Done
     RETURN
 
@@ -611,6 +639,14 @@ $BALL_PREV_COLOUR_3
     SUB [$BALL_VERT_DIR]
     STORE ACC [$BALL_VERT_DIR]
 
+    // Make a sound
+    SET A #0b0111_0011_1111_1111
+    SET B #2
+    CALL &add_note
+
+    // Make the ball blue
+    SET [$BALL_COLOUR] #0b0000_0000_0000_0011
+
     // Done
     RETURN
 
@@ -632,6 +668,7 @@ $BALL_PREV_COLOUR_3
     STORE ACC [$BALL_PREV_COLOUR_2]
     LOAD [$BALL_COLOUR] ACC
     STORE ACC [$BALL_PREV_COLOUR_1]
+
     RETURN
 
 ////////////////////////////////////////////////////////////
@@ -723,7 +760,6 @@ $BALL_PREV_COLOUR_3
     LOAD [$BALL_PREV_COLOUR_2] C
     CALL &reduce_colour_by_1
     STORE C [!VIDEO_DATA]
-    STORE ACC [!VIDEO_DATA]
 
     LOAD [$BALL_ROW] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
@@ -733,6 +769,7 @@ $BALL_PREV_COLOUR_3
     STORE ACC [!VIDEO_DATA]
 
     RETURN
+
 
 ////////////////////////////////////////////////////////////
 //
@@ -748,6 +785,9 @@ $BALL_PREV_COLOUR_3
     COPY C ACC
     AND #0b0000_0000_0011_0000
     SUB #0b0000_0000_0001_0000
+    JUMP_IF_NOT_BORROW &reduce_colour_by_1_skip_reset_r_to_zero
+    SET_ZERO ACC
+&reduce_colour_by_1_skip_reset_r_to_zero
     AND #0b0000_0000_0011_0000
     COPY ACC A
     COPY C ACC
@@ -758,6 +798,9 @@ $BALL_PREV_COLOUR_3
     COPY ACC C
     AND #0b0000_0000_0000_1100
     SUB #0b0000_0000_0000_0100
+    JUMP_IF_NOT_BORROW &reduce_colour_by_1_skip_reset_g_to_zero
+    SET_ZERO ACC
+&reduce_colour_by_1_skip_reset_g_to_zero
     AND #0b0000_0000_0000_1100
     COPY ACC A
     COPY C ACC
@@ -768,13 +811,73 @@ $BALL_PREV_COLOUR_3
     COPY ACC C
     AND #0b0000_0000_0000_0011
     SUB #1
-    JUMP_IF_NOT_BORROW &reduce_colour_by_1_skip_reset_to_zero
+    JUMP_IF_NOT_BORROW &reduce_colour_by_1_skip_reset_b_to_zero
     SET_ZERO ACC
-&reduce_colour_by_1_skip_reset_to_zero
+&reduce_colour_by_1_skip_reset_b_to_zero
     COPY ACC A
     COPY C ACC
     AND #0b1111_1111_1111_1100
     OR A
+
+
+    COPY ACC C
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Increase colour by 1
+//
+// Increase all the values of the colour by 1
+//
+// C: The colour - edited in place
+//
+////////////////////////////////////////////////////////////
+&increase_colour_by_1
+    // Check if it's already max
+    SET ACC #0b0000_0000_0011_1111
+    JUMP_IF_ACC_NEQ C &increase_colour_by_1_increase_r
+    RETURN
+    
+&increase_colour_by_1_increase_r
+    // Increase R
+    COPY C ACC
+    AND #0b0000_0000_0011_0000
+    ADD #0b0000_0000_0001_0000
+    AND #0b0000_0000_0011_0000
+    JUMP_IF_NOT_ZERO_FLAG &increase_colour_by_1_skip_reset_r_to_max
+    OR #0b0000_0000_0011_0000
+&increase_colour_by_1_skip_reset_r_to_max
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1100_1111
+    OR A
+
+    // Increase G
+    COPY ACC C
+    AND #0b0000_0000_0000_1100
+    ADD #0b0000_0000_0000_0100
+    AND #0b0000_0000_0000_1100
+    JUMP_IF_NOT_ZERO_FLAG &increase_colour_by_1_skip_reset_g_to_max
+    OR #0b0000_0000_0000_1100
+&increase_colour_by_1_skip_reset_g_to_max
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1111_0011
+    OR A
+
+    // Increase B
+    COPY ACC C
+    AND #0b0000_0000_0000_0011
+    ADD #0b0000_0000_0000_0001
+    AND #0b0000_0000_0000_0011
+    JUMP_IF_NOT_ZERO_FLAG &increase_colour_by_1_skip_reset_b_to_max
+    OR #0b0000_0000_0000_0011
+&increase_colour_by_1_skip_reset_b_to_max
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1111_1100
+    OR A
+
     COPY ACC C
     RETURN
 
@@ -1187,50 +1290,6 @@ $R_SCORE
 
     RETURN
 
-
-    // Left paddle score
-    // SET [!VIDEO_CURSOR_COL] #0
-    // SET [!VIDEO_CURSOR_ROW] #0
-    // LOAD [$L_PADDLE_COLOUR] C
-    // LOAD [$L_SCORE] ACC
-    // CALL &draw_score_dots
-
-    // Right paddle score
-    // SET [!VIDEO_CURSOR_COL] #11
-    // SET [!VIDEO_CURSOR_ROW] #0
-    // LOAD [$R_PADDLE_COLOUR] C
-    // LOAD [$R_SCORE] ACC
-    // CALL &draw_score_dots
-    // RETURN
-
-////////////////////////////////////////////////////////////
-//
-// Draw the score dots
-//
-// Video cursor should be where first dot will be
-// C is colour of dots
-// ACC is score
-////////////////////////////////////////////////////////////
-&draw_score_dots
-
-    // Decr score
-    DECR ACC
-
-    // If borrow, done
-    JUMP_IF_BORROW &draw_score_dots_done
-
-    // Otherwise Draw l colour dot
-    STORE C [!VIDEO_DATA]
-
-    // Inrc cursor col by 2
-    INCR [!VIDEO_CURSOR_COL]
-    INCR [!VIDEO_CURSOR_COL]
-
-    // Back to loop
-    JUMP &draw_score_dots
-
-&draw_score_dots_done
-    RETURN
 
 ////////////////////////////////////////////////////////////
 //
