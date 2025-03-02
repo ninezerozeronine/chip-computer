@@ -437,13 +437,10 @@ $BALL_PREV_COLOUR_3
 
     SET [$BALL_PREV_ROW_1] !BALL_INIT_ROW
     SET [$BALL_PREV_ROW_2] !BALL_INIT_ROW
-    SET [$BALL_PREV_ROW_3] !BALL_INIT_ROW
     SET [$BALL_PREV_COLUMN_1] !BALL_INIT_COLUMN
     SET [$BALL_PREV_COLUMN_2] !BALL_INIT_COLUMN
-    SET [$BALL_PREV_COLUMN_3] !BALL_INIT_COLUMN
     SET [$BALL_PREV_COLOUR_1] !BALL_INIT_COLOUR
     SET [$BALL_PREV_COLOUR_2] !BALL_INIT_COLOUR
-    SET [$BALL_PREV_COLOUR_3] !BALL_INIT_COLOUR
 
     RETURN
 
@@ -621,22 +618,16 @@ $BALL_PREV_COLOUR_3
     RETURN
 
 &update_ball_set_prev_attrs
-    LOAD [$BALL_PREV_ROW_2] ACC
-    STORE ACC [$BALL_PREV_ROW_3]
     LOAD [$BALL_PREV_ROW_1] ACC
     STORE ACC [$BALL_PREV_ROW_2]
     LOAD [$BALL_ROW] ACC
     STORE ACC [$BALL_PREV_ROW_1]
 
-    LOAD [$BALL_PREV_COLUMN_2] ACC
-    STORE ACC [$BALL_PREV_COLUMN_3]
     LOAD [$BALL_PREV_COLUMN_1] ACC
     STORE ACC [$BALL_PREV_COLUMN_2]
     LOAD [$BALL_COLUMN] ACC
     STORE ACC [$BALL_PREV_COLUMN_1]
 
-    LOAD [$BALL_PREV_COLOUR_2] ACC
-    STORE ACC [$BALL_PREV_COLOUR_3]
     LOAD [$BALL_PREV_COLOUR_1] ACC
     STORE ACC [$BALL_PREV_COLOUR_2]
     LOAD [$BALL_COLOUR] ACC
@@ -716,25 +707,22 @@ $BALL_PREV_COLOUR_3
 //
 ////////////////////////////////////////////////////////////
 &draw_ball
-    LOAD [$BALL_PREV_ROW_3] ACC
-    STORE ACC [!VIDEO_CURSOR_ROW]
-    LOAD [$BALL_PREV_COLUMN_3] ACC
-    STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$BALL_PREV_COLOUR_3] ACC
-    STORE ACC [!VIDEO_DATA]
-
     LOAD [$BALL_PREV_ROW_2] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$BALL_PREV_COLUMN_2] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$BALL_PREV_COLOUR_2] ACC
-    STORE ACC [!VIDEO_DATA]
+    LOAD [$BALL_PREV_COLOUR_2] C
+    CALL &reduce_colour_by_1
+    CALL &reduce_colour_by_1
+    STORE C [!VIDEO_DATA]
 
     LOAD [$BALL_PREV_ROW_1] ACC
     STORE ACC [!VIDEO_CURSOR_ROW]
     LOAD [$BALL_PREV_COLUMN_1] ACC
     STORE ACC [!VIDEO_CURSOR_COL]
-    LOAD [$BALL_PREV_COLOUR_1] ACC
+    LOAD [$BALL_PREV_COLOUR_2] C
+    CALL &reduce_colour_by_1
+    STORE C [!VIDEO_DATA]
     STORE ACC [!VIDEO_DATA]
 
     LOAD [$BALL_ROW] ACC
@@ -744,6 +732,50 @@ $BALL_PREV_COLOUR_3
     LOAD [$BALL_COLOUR] ACC
     STORE ACC [!VIDEO_DATA]
 
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Reduce colour by 1
+//
+// Reduce all the values of the colour by 1
+//
+// C: The colour - edited in place
+//
+////////////////////////////////////////////////////////////
+&reduce_colour_by_1
+    // Reduce R
+    COPY C ACC
+    AND #0b0000_0000_0011_0000
+    SUB #0b0000_0000_0001_0000
+    AND #0b0000_0000_0011_0000
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1100_1111
+    OR A
+
+    // Reduce G
+    COPY ACC C
+    AND #0b0000_0000_0000_1100
+    SUB #0b0000_0000_0000_0100
+    AND #0b0000_0000_0000_1100
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1111_0011
+    OR A
+
+    // Reduce B
+    COPY ACC C
+    AND #0b0000_0000_0000_0011
+    SUB #1
+    JUMP_IF_NOT_BORROW &reduce_colour_by_1_skip_reset_to_zero
+    SET_ZERO ACC
+&reduce_colour_by_1_skip_reset_to_zero
+    COPY ACC A
+    COPY C ACC
+    AND #0b1111_1111_1111_1100
+    OR A
+    COPY ACC C
     RETURN
 
 
