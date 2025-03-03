@@ -30,10 +30,13 @@
 
 !CHAR_C             #0b01110_10001_01010_0
 !CHAR_E             #0b11111_10101_10101_0
+!CHAR_I             #0b10001_11111_10001_0
+!CHAR_N             #0b11111_10000_01111_0
 !CHAR_O             #0b01110_10001_01110_0
 !CHAR_P             #0b11111_10100_01000_0
 !CHAR_R             #0b11111_10100_01011_0
 !CHAR_S             #0b01001_10101_10010_0
+!CHAR_W             #0b11111_00010_11111_0
 !CHAR_EXCLM         #0b00000_11101_00000_0
 !CHAR_COLON         #0b00000_01010_00000_0
 !CHAR_0             #0b11111_10001_11111_0
@@ -96,6 +99,7 @@
 !GAME_MODE_POINT_SCORED #2
 !GAME_MODE_WINNER #3
 
+!NUM_POINTS_TO_WIN #2
 
     SET SP #0b0001_1111_1111_0000
 
@@ -105,8 +109,9 @@
 $NUM_SCREEN_ROWS
 $NUM_SCREEN_COLUMNS
 $GAME_MODE
-$POINT_SCORED_COUNTER
+$POINT_SCORED_TIMER
 $WHO_SCORED
+$WINNER_MODE_TIMER
 
 ////////////////////////////////////////////////////////////
 //
@@ -139,6 +144,7 @@ $WHO_SCORED
     LOAD [$GAME_MODE] ACC
     JUMP_IF_ACC_EQ !GAME_MODE_PLAYING &main_loop_playing
     JUMP_IF_ACC_EQ !GAME_MODE_POINT_SCORED &main_loop_point_scored
+    JUMP_IF_ACC_EQ !GAME_MODE_WINNER &main_loop_winner
 
 &main_loop_playing
     CALL &update_left_paddle
@@ -163,6 +169,18 @@ $WHO_SCORED
     CALL &draw_ball
     CALL &draw_score
     CALL &draw_point_scorer
+    JUMP &main_loop_end
+
+&main_loop_winner
+    CALL &update_winner_mode
+    SET C #0
+    CALL &fill_screen
+    CALL &draw_playing_field
+    CALL &draw_left_paddle
+    CALL &draw_right_paddle
+    CALL &draw_ball
+    CALL &draw_score
+    CALL &draw_winner
     JUMP &main_loop_end
 
 &main_loop_end
@@ -1164,32 +1182,6 @@ $R_SCORE
     JUMP_IF_ACC_LTE A &draw_right_paddle_col_loop
     RETURN
 
-////////////////////////////////////////////////////////////
-//
-// Check if a point was scored
-//
-////////////////////////////////////////////////////////////
-&point_score
-
-    // Reset the ball
-
-    RETURN
-
-////////////////////////////////////////////////////////////
-//
-// Check if the game has ended
-//
-////////////////////////////////////////////////////////////
-&game_end
-    LOAD [$L_SCORE] ACC
-    JUMP_IF_ACC_EQ #5 &game_end_points
-
-    LOAD [$R_SCORE] ACC
-    JUMP_IF_ACC_EQ #5 &game_end_points
-
-&game_end_points
-
-    RETURN
 
 ////////////////////////////////////////////////////////////
 //
@@ -1346,8 +1338,12 @@ $R_SCORE
 &draw_point_scorer
     SET [!VIDEO_CURSOR_COL] #16
     SET [!VIDEO_CURSOR_ROW] #12
+
+    // Assume P1 scored
     SET C !L_PADDLE_INIT_COLOUR
     SET B !CHAR_1
+
+    // Check who scored and correct if necessary
     LOAD [$WHO_SCORED] ACC
     JUMP_IF_ACC_EQ #1 &draw_point_scorer_draw
     SET C !R_PADDLE_INIT_COLOUR
@@ -1382,6 +1378,55 @@ $R_SCORE
 
 ////////////////////////////////////////////////////////////
 //
+// Draw a message to whoever won
+//
+////////////////////////////////////////////////////////////
+&draw_winner
+    SET [!VIDEO_CURSOR_COL] #16
+    SET [!VIDEO_CURSOR_ROW] #12
+
+    // Assume P1 won
+    SET C !L_PADDLE_INIT_COLOUR
+    SET B !CHAR_1
+
+    // Check who scored and correct if necessary
+    LOAD [$WHO_SCORED] ACC
+    JUMP_IF_ACC_EQ #1 &draw_winner_draw
+    SET C !R_PADDLE_INIT_COLOUR
+    SET B !CHAR_2
+    
+&draw_winner_draw
+    COPY B ACC
+    COPY ACC X
+    SET A !CHAR_P
+    CALL &draw_character
+    COPY X ACC
+    COPY ACC A
+    CALL &draw_character
+
+    SET [!VIDEO_CURSOR_COL] #7
+    SET [!VIDEO_CURSOR_ROW] #19
+    SET A !CHAR_W
+    CALL &draw_character
+    SET A !CHAR_I
+    CALL &draw_character
+    SET A !CHAR_N
+    CALL &draw_character
+    SET A !CHAR_S
+    CALL &draw_character
+    SET A !CHAR_EXCLM
+    CALL &draw_character
+    SET A !CHAR_EXCLM
+    CALL &draw_character
+    SET A !CHAR_EXCLM
+    CALL &draw_character
+
+    RETURN
+
+
+
+////////////////////////////////////////////////////////////
+//
 // Transition to playing mode
 //
 ////////////////////////////////////////////////////////////
@@ -1399,7 +1444,21 @@ $R_SCORE
 //
 ////////////////////////////////////////////////////////////
 &set_game_mode_point_scored
-    SET [$POINT_SCORED_COUNTER] #90
+    // Check left win
+    LOAD [$L_SCORE] ACC
+    JUMP_IF_ACC_LT !NUM_POINTS_TO_WIN &update_point_scored_check_right_win
+    CALL &set_game_mode_winner
+    RETURN
+
+&update_point_scored_check_right_win
+    // Check left win
+    LOAD [$R_SCORE] ACC
+    JUMP_IF_ACC_LT !NUM_POINTS_TO_WIN &set_game_mode_point_scored_continue
+    CALL &set_game_mode_winner
+    RETURN
+
+&set_game_mode_point_scored_continue
+    SET [$POINT_SCORED_TIMER] #90
     SET [$GAME_MODE] !GAME_MODE_POINT_SCORED
 
     // Play a small tune
@@ -1421,12 +1480,61 @@ $R_SCORE
 //
 ////////////////////////////////////////////////////////////
 &update_point_scored
-    DECR [$POINT_SCORED_COUNTER]
+    DECR [$POINT_SCORED_TIMER]
     JUMP_IF_NOT_BORROW &update_point_scored_done
     CALL &set_game_mode_playing
 
 &update_point_scored_done
     RETURN
+
+
+////////////////////////////////////////////////////////////
+//
+// Transition to winner mode
+//
+////////////////////////////////////////////////////////////
+&set_game_mode_winner
+    SET [$WINNER_MODE_TIMER] #240
+    SET [$GAME_MODE] !GAME_MODE_WINNER
+
+    // Play the FF7 winning theme
+    // C   O.O.O.OO................OO....OOOO
+    // A#  ..................OOO.......O.....
+    // G# .............OOO...................
+    // G   O.O.O.OO................OO....OOOO
+    // F   ..................OOO.......O.....
+    // D#  ............OOO...................
+    // Ch1 C.C.C.CC....ggg...aaa...CC..a.CCCC
+    // Ch2 G.G.G.GG....ddd...FFF...GG..F.GGGG
+
+
+
+    SET A #0b0111_0000_0111_1111
+    SET B #5
+    CALL &add_note
+    SET A #0b0111_0000_0110_1111
+    SET B #5
+    CALL &add_note
+    SET A #0b0111_0000_0101_1111
+    SET B #5
+    CALL &add_note
+    RETURN
+
+////////////////////////////////////////////////////////////
+//
+// Update when in winner mode
+//
+////////////////////////////////////////////////////////////
+&update_winner_mode
+    DECR [$WINNER_MODE_TIMER]
+    JUMP_IF_NOT_BORROW &update_winner_mode_done
+    SET [$L_SCORE] #0
+    SET [$R_SCORE] #0
+    CALL &set_game_mode_playing
+
+&update_winner_mode_done
+    RETURN
+
 
 $NEXT_NOTE
 $END_NOTE
